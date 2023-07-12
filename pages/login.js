@@ -38,10 +38,10 @@ export default function LoginPage() {
                     path: '/', // Путь, на котором куки будет доступно
                 });
 
-                router.push('/create');
+                router.push('/dashboard');
             } else {
                 const errorData = await response.json();
-                console.log(errorData.error);
+
                 // Обработка ошибки аутентификации
             }
         } catch (error) {

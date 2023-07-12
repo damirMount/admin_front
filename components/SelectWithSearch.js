@@ -1,18 +1,18 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import {parseCookies} from "nookies";
+import { parseCookies } from 'nookies';
 
-const SelectWithSearch = ({apiUrl, required, name, onSelectChange}) => {
+const SelectWithSearch = ({ apiUrl, required, name, onSelectChange, defaultValue }) => {
     const [options, setOptions] = useState([]);
     const [selectedOption, setSelectedOption] = useState(null);
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchOptions = async () => {
             try {
                 const cookies = parseCookies();
                 const authToken = JSON.parse(cookies.authToken).value;
-                console.log(authToken);
                 const response = await fetch(apiUrl, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -22,6 +22,7 @@ const SelectWithSearch = ({apiUrl, required, name, onSelectChange}) => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch options');
                 }
+
                 const data = await response.json();
 
                 const options = data.map((item) => ({
@@ -29,10 +30,11 @@ const SelectWithSearch = ({apiUrl, required, name, onSelectChange}) => {
                     label: item.name + '   ' + item.id,
                 }));
 
-
                 setOptions(options);
+                setIsLoading(false);
             } catch (error) {
                 setError(error.message);
+                setIsLoading(false);
             }
         };
 
@@ -44,14 +46,20 @@ const SelectWithSearch = ({apiUrl, required, name, onSelectChange}) => {
         onSelectChange(selectedOption ? selectedOption.value : '');
     };
 
+    const selectedDefaultValue = options.find((option) => option.value === defaultValue);
 
     if (error) {
         return <div>Error: {error}</div>;
     }
 
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <Select
-            value={selectedOption}
+            // value={selectedDefaultValue}
+            value={selectedDefaultValue}
             onChange={handleSelectChange}
             options={options}
             isSearchable={true}
