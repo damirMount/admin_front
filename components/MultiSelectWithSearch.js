@@ -3,12 +3,12 @@ import Select from 'react-select';
 import { parseCookies } from 'nookies';
 import Link from 'next/link';
 
-const MultiSelectWithSearch = ({ apiUrl, required, name, onSelectChange, defaultValue }) => {
+const MultiSelectWithSearch = ({ apiUrl, required, name, onSelectChange, defaultValue = [] }) => {
     const [options, setOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
-
+    console.log(defaultValue)
     useEffect(() => {
         const fetchOptions = async () => {
             try {
