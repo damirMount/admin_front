@@ -43,7 +43,7 @@ export default function CreateRegistry() {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
 
-            const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_CREATE_URL;
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL + '/registry-file';
             // Отправка данных формы на API
             const response = await fetch(apiUrl, {
                 method: 'POST', headers: {
@@ -111,7 +111,7 @@ export default function CreateRegistry() {
                     </div>
                     <div className="form-group">
                         <label htmlFor="registry_file_ids">Файлы реестров</label>
-                        <MultiSelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_GET_REGISTRY_FILES_URL}`} required
+                        <MultiSelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_API_URL}/registry-file`} required
                                                name="registry_file_ids"
                                                multi={false}
                                                onSelectChange={(selectedValue) => handleInputChange({

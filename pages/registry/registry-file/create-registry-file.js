@@ -86,7 +86,7 @@ export default function CreateRegistryFile() {
                     </div>
                     <div className="form-group">
                         <label htmlFor="serviceId">Сервис</label>
-                        <SelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVICES_URL}`} required
+                        <SelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_API_URL}/listServices`} required
                                           name="serviceId"
                                           onSelectChange={(selectedValue) =>
                                               handleInputChange({target: {name: 'serviceId', value: selectedValue}})
@@ -94,7 +94,7 @@ export default function CreateRegistryFile() {
                     </div>
                     <div className="form-group">
                         <label htmlFor="serverId">Сервер</label>
-                        <SelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVERS_URL}`} required
+                        <SelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_API_URL}/listServers`} required
                                           name="serverId"
                                           onSelectChange={(selectedValue) =>
                                               handleInputChange({target: {name: 'serverId', value: selectedValue}})

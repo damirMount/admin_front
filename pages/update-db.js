@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+import {useState} from 'react';
+import {useRouter} from 'next/router';
 import SelectWithSearch from '../components/SelectWithSearch';
 import FormInput from '../components/FormInput';
-import { parseCookies } from 'nookies';
+import {parseCookies} from 'nookies';
 import Navigation from '../components/Navigation';
 
 export default function UpdateDBPage() {
@@ -15,7 +15,7 @@ export default function UpdateDBPage() {
     const router = useRouter();
 
     const handleInputChange = (event) => {
-        const { name, value, type, files } = event.target;
+        const {name, value, type, files} = event.target;
 
         if (type === 'file' && files.length) {
             const file = files[0];
@@ -43,7 +43,7 @@ export default function UpdateDBPage() {
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = process.env.NEXT_PUBLIC_POST_ABONENT_SERVICE_URL;
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/abonent-service/store`;
             // Отправка данных формы на API
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -77,12 +77,12 @@ export default function UpdateDBPage() {
                     <div className="form-group">
                         <label htmlFor="service_id">Сервис</label>
                         <SelectWithSearch
-                            apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVICES_URL}`}
+                            apiUrl={`${process.env.NEXT_PUBLIC_API_URL}/listServices`}
                             required
                             name="serviceId"
                             onSelectChange={(selectedValue) =>
                                 handleInputChange({
-                                    target: { name: 'serviceId', value: selectedValue },
+                                    target: {name: 'serviceId', value: selectedValue},
                                 })
                             }
                         />

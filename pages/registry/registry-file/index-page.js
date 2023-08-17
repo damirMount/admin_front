@@ -3,12 +3,12 @@ import Navigation from "../../../components/Navigation";
 import RegistryTabs from "../../../components/RegistryTabs";
 
 export default function IndexPage() {
-    const apiUrl = `${process.env.NEXT_PUBLIC_REGISTRY_FILE_INDEX_URL}`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/registry-file/index`;
     const tableHeaders = ['ID','Название', 'Номер сервиса'];
     const tableValues = ['id', 'name', 'service_id'];
     const createRoute = `/registry/registry-file/create-registry-file`;
     const editRoute = `/registry/registry-file/edit-registry-file`;
-    const deleteRoute = `${process.env.NEXT_PUBLIC_REGISTRY_FILE_DELETE_URL}`;
+    const deleteRoute = `${process.env.NEXT_PUBLIC_API_URL}/registry-file`;
 
     return (
         <div>

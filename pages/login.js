@@ -9,7 +9,8 @@ export default function LoginPage() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const apiUrl = `${process.env.NEXT_PUBLIC_POST_LOGIN_URL}`;
+        const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/login/`;
+        alert(apiUrl);
         // Проверка учетных данных и генерация токена аутентификации
         try {
             const response = await fetch(apiUrl, {

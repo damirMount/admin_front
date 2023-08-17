@@ -27,7 +27,7 @@ export default function EditRegistryFile() {
             try {
                 const cookies = parseCookies();
                 const authToken = JSON.parse(cookies.authToken).value;
-                const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_FILE_SHOW_URL + '/' + itemId;
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL + 'registry-file/' + itemId;
                 const response = await fetch(apiUrl, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -83,7 +83,7 @@ export default function EditRegistryFile() {
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_FILE_UPDATE_URL + '/' + itemId;
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL + '/registry-file/' + itemId;
             // Отправка данных формы на API
             const response = await fetch(apiUrl, {
                 method: 'PUT',
@@ -132,7 +132,7 @@ export default function EditRegistryFile() {
                     </div>
                     <div className="form-group">
                         <label htmlFor="serviceId">Сервис</label>
-                        <SelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVICES_URL}`} required
+                        <SelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_API_URL}/listServices`} required
                                           name="serviceId"
                                           defaultValue={formData.serviceId}
                                           onSelectChange={(selectedValue) =>
@@ -141,7 +141,7 @@ export default function EditRegistryFile() {
                     </div>
                     <div className="form-group">
                         <label htmlFor="serverId">Сервер</label>
-                        <SelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVERS_URL}`} required
+                        <SelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_API_URL}/listServers`} required
                                           name="serverId"
                                           defaultValue={formData.serverId}
                                           onSelectChange={(selectedValue) =>

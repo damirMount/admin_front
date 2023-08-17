@@ -29,7 +29,7 @@ export default function EditRegistry() {
             try {
                 const cookies = parseCookies();
                 const authToken = JSON.parse(cookies.authToken).value;
-                const apiUrl = `${process.env.NEXT_PUBLIC_REGISTRY_SHOW_URL}/${itemId}`;
+                const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/registry-file/${itemId}`;
                 const response = await fetch(apiUrl, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -79,7 +79,7 @@ export default function EditRegistry() {
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = `${process.env.NEXT_PUBLIC_REGISTRY_UDPATE_URL}/${itemId}`;
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/registry-file/${itemId}`;
 
             const response = await fetch(apiUrl, {
                 method: 'PUT',
@@ -149,7 +149,7 @@ export default function EditRegistry() {
                     <div className="form-group">
                         <label htmlFor="registry_file_ids">Файлы реестров</label>
                         <MultiSelectWithSearch
-                            apiUrl={`${process.env.NEXT_PUBLIC_GET_REGISTRY_FILES_URL}`}
+                            apiUrl={`${process.env.NEXT_PUBLIC_API_URL}/registry-file`}
                             required
                             name="registry_file_ids"
                             multi={false}

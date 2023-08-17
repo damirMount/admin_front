@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {useRouter} from 'next/router';
+import Link from 'next/link';
 
 const RegistryTabs = () => {
     const router = useRouter();
@@ -9,18 +10,18 @@ const RegistryTabs = () => {
             <div className="vertical-tabs">
                 <div className="vertical-tabs-wrapper">
                     <div className="tab-navigation">
-                        <a
+                        <Link
                             href="/registry/index-page"
                             className={`tab-item ${router.pathname === '/registry/index-page' ? 'active' : ''}`}
                         >
                             Реестры
-                        </a>
-                        <a
+                        </Link>
+                        <Link
                             href="/registry/registry-file/index-page"
                             className={`tab-item ${router.pathname === '/registry/registry-file/index-page' ? 'active' : ''}`}
                         >
                             Файлы реестров
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

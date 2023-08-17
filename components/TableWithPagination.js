@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { parseCookies } from 'nookies';
+import Link from 'next/link'
 
 const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, editRoute, deleteRoute }) => {
     const [data, setData] = useState([]);
@@ -57,7 +58,7 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
     return (
         <div>
             <div className="create-button">
-                <a href={createRoute} className="create-link">Создать</a>
+                <Link href={createRoute} className="create-link">Создать</Link>
             </div>
 
             <table className="table">
@@ -77,7 +78,7 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
                         ))}
                         <td>
                             {editRoute && (
-                                <a href={`${editRoute}/${row.id}`} className="edit-link">Изменить</a>
+                                <Link href={`${editRoute}/${row.id}`} className="edit-link">Изменить</Link>
                             )}
                             {deleteRoute && (
                                 <button onClick={() => handleDelete(row.id)} className="delete-button">Удалить</button>
