@@ -13,7 +13,7 @@ function MyApp({Component, pageProps}) {
             const authToken = JSON.parse(cookies.authToken);
             const {value, expiration} = authToken;
             if (router.pathname === '/') {
-                // router.push('/dashboard');
+                router.push('/dashboard');
             } else if (
                 router.pathname === '/dashboard' ||
                 router.pathname === '/update-db' ||

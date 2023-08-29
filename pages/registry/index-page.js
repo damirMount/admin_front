@@ -4,7 +4,7 @@ import RegistryTabs from "../../components/RegistryTabs";
 
 export default function IndexPage() {
     const apiUrl = `${process.env.NEXT_PUBLIC_REGISTRY_INDEX_URL}`;
-    const tableHeaders = ['ID','Name', 'Тип', 'Отключен'];
+    const tableHeaders = ['ID','Name', 'Тип', 'Статус'];
     const tableValues = ['id', 'name', 'type', 'is_blocked'];
     const createRoute = `/registry/create-registry`;
     const editRoute = `/registry/edit-registry`;
@@ -19,7 +19,7 @@ export default function IndexPage() {
                 <RegistryTabs></RegistryTabs>
             </div>
             <div className="container">
-                <h1>Список пользователей</h1>
+                <h1>Список реестров</h1>
                 <TableWithPagination
                     apiUrl={apiUrl}
                     tableHeaders={tableHeaders}

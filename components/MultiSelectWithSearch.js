@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
 import { parseCookies } from 'nookies';
-import Link from 'next/link';
+import Select from 'react-select';
 
 const MultiSelectWithSearch = ({ apiUrl, required, name, onSelectChange, defaultValue = [] }) => {
     const [options, setOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
-    console.log(defaultValue)
+
     useEffect(() => {
         const fetchOptions = async () => {
             try {
@@ -33,6 +32,10 @@ const MultiSelectWithSearch = ({ apiUrl, required, name, onSelectChange, default
 
                 setOptions(options);
                 setIsLoading(false);
+
+                // Initialize selectedOptions based on defaultValue
+                const defaultOptions = options.filter((option) => defaultValue.includes(option.value));
+                setSelectedOptions(defaultOptions);
             } catch (error) {
                 setError(error.message);
                 setIsLoading(false);
@@ -40,15 +43,7 @@ const MultiSelectWithSearch = ({ apiUrl, required, name, onSelectChange, default
         };
 
         fetchOptions();
-    }, [apiUrl]);
-
-    if (isLoading || options.length === 0) {
-        return null; // Возврат null, если данные еще загружаются или options пустой
-    }
-
-    const defaultOptions = defaultValue.map((item) => {
-        return options.find((opt) => opt.value === item.id);
-    });
+    }, [apiUrl, defaultValue]);
 
     const handleSelectChange = (selectedOptions) => {
         setSelectedOptions(selectedOptions);
@@ -58,6 +53,10 @@ const MultiSelectWithSearch = ({ apiUrl, required, name, onSelectChange, default
 
     if (error) {
         return <div>Error: {error}</div>;
+    }
+
+    if (isLoading || options.length === 0) {
+        return <div>Loading...</div>;
     }
 
     return (
@@ -72,21 +71,9 @@ const MultiSelectWithSearch = ({ apiUrl, required, name, onSelectChange, default
                 required={required}
                 name={name}
             />
-            {defaultOptions.length > 0 && (
-                <sup>
-                    Выбранные файлы реестров <br />
-                    {defaultOptions.map((option) => (
-                        <span key={option.value}>
-              <a href={`/registry/registry-file/edit-registry-file/${option.value}`}>
-                {option.label}
-              </a>
-              <br />
-            </span>
-                    ))}
-                </sup>
-            )}
         </div>
     );
 };
+
 
 export default MultiSelectWithSearch;

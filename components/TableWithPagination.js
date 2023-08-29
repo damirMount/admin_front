@@ -5,6 +5,8 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
     const [data, setData] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+    const [showModal, setShowModal] = useState(false);
+    const [rowToDelete, setRowToDelete] = useState(null);
 
     useEffect(() => {
         fetchData();
@@ -34,6 +36,12 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
         setPage(newPage);
     };
 
+    const handleDeleteConfirmation = (id) => {
+        setRowToDelete(id);
+        setShowModal(true);
+    };
+
+
     const handleDelete = async (id) => {
         try {
             const cookies = parseCookies();
@@ -44,6 +52,8 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
                     Authorization: `Bearer ${authToken}`,
                 },
             });
+            setShowModal(false);
+            setRowToDelete(null);
             fetchData();
         } catch (error) {
             console.error('Error deleting data:', error);
@@ -51,7 +61,7 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
     };
     console.log(tableValues)
     const formatBooleanValue = (value) => {
-        return value ? 'ДА' : 'НЕТ';
+        return value ? 'ОТКЛЮЧЁН' : 'АКТИВЕН';
     };
 
     return (
@@ -80,7 +90,7 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
                                 <a href={`${editRoute}/${row.id}`} className="edit-link">Изменить</a>
                             )}
                             {deleteRoute && (
-                                <button onClick={() => handleDelete(row.id)} className="delete-button">Удалить</button>
+                                <button onClick={() => handleDeleteConfirmation(row.id)} className="delete-button">Удалить</button>
                             )}
                         </td>
                     </tr>
@@ -96,6 +106,15 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
                     <button onClick={() => handlePageChange(page + 1)} className="pagination-button">Next</button>
                 )}
             </div>
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="delete-modal">
+                        <p>Вы уверены, что хотите удалить?</p>
+                        <button onClick={() => handleDelete(rowToDelete)}>Да</button>
+                        <button onClick={() => setShowModal(false)}>Отмена</button>
+                    </div>
+                </div>
+            )}
 
             <style jsx>{`
               .create-button {
@@ -135,7 +154,24 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
               .delete-button {
                 background-color: #5b3f3f;
               }
+              .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
 
+              .delete-modal {
+                background-color: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              }
               .pagination {
                 margin-top: 10px;
               }

@@ -1,17 +1,18 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {useRouter} from 'next/router';
-import SelectWithSearch from '../../components/SelectWithSearch';
 import FormInput from '../../components/FormInput';
 import {parseCookies} from "nookies";
 import Navigation from "../../components/Navigation";
-import FormTextarea from "../../components/FormTextarea";
-import BooleanSelect from "../../components/SelectBoolean";
 import CustomSelect from "../../components/CustomSelect";
 import MultiSelectWithSearch from "../../components/MultiSelectWithSearch";
 
 export default function CreateRegistry() {
     const [formData, setFormData] = useState({
-        name: '', type: '', is_blocked: '', registry_file_ids: '',
+        name: '', 
+        type: '', 
+        is_blocked: '', 
+        registry_file_ids: '',
+        emails: ''
     });
     const router = useRouter();
 
@@ -21,6 +22,19 @@ export default function CreateRegistry() {
         {value: '3', label: 'Ежемесячный'},
         {value: '4', label: 'Ежегодный'},
     ];
+
+    const [emails, setEmails] = useState(['']);
+
+    const handleEmailChange = (index, value) => {
+        const newEmails = [...emails];
+        newEmails[index] = value;
+        setEmails(newEmails);
+    };
+
+    const handleAddEmailInput = () => {
+        setEmails([...emails, '']); // Добавляем новое пустое поле
+    };
+
     const handleInputChange = (event) => {
         const {name, value} = event.target;
         setFormData((prevFormData) => ({
@@ -44,17 +58,25 @@ export default function CreateRegistry() {
             const authToken = JSON.parse(cookies.authToken).value;
 
             const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_CREATE_URL;
+
+
+            // Формируем данные для отправки на сервер, включая данные emails
+            const dataToSend = {
+                ...formData,
+                emails: emails,
+            };
+
             // Отправка данных формы на API
             const response = await fetch(apiUrl, {
                 method: 'POST', headers: {
                     'Content-Type': 'application/json', Authorization: `Bearer ${authToken}`,
-                }, body: JSON.stringify(formData),
+                }, body: JSON.stringify(dataToSend),
             });
 
             if (response.ok) {
                 console.log('Данные успешно отправлены на API');
                 // Перенаправление на другую страницу после успешной отправки
-                router.push('/update-db');
+                router.push('/registry/index-page');
             } else {
                 console.error('Ошибка при отправке данных на API');
             }
@@ -96,44 +118,59 @@ export default function CreateRegistry() {
                             })}
                         />
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="emails">Emails</label>
-                        <FormTextarea
-                            id="emails"
-                            name="emails"
-                            value={formData.fields}
-                            onChange={handleTextareaChange}
-                            rows={6}
-                            cols={60}
-                            className="text-field"
-                        />
-                        <sup>Если адресов несколько, то перечислить их через запятую</sup>
+
+                    <div className="form-gtoup">
+                        <label htmlFor="emails">Email</label>
+                        {emails.map((email, index) => (
+                            <div key={index} className="form-group">
+
+                                <FormInput
+                                    type="email"
+                                    id={`email-${index}`}
+                                    value={email}
+                                    onChange={(e) => handleEmailChange(index, e.target.value)}
+                                />
+                            </div>
+                        ))}
+                        <button type="button" onClick={handleAddEmailInput}>
+                            Добавить еще email
+                        </button>
                     </div>
                     <div className="form-group">
                         <label htmlFor="registry_file_ids">Файлы реестров</label>
-                        <MultiSelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_GET_REGISTRY_FILES_URL}`} required
-                                               name="registry_file_ids"
-                                               multi={false}
-                                               onSelectChange={(selectedValue) => handleInputChange({
-                                                   target: {
-                                                       name: 'registry_file_ids', value: selectedValue
-                                                   }
-                                               })}
+
+                        <MultiSelectWithSearch
+                            apiUrl={`${process.env.NEXT_PUBLIC_GET_REGISTRY_FILES_URL}`}
+                            required
+                            name="registry_file_ids"
+                            multi={true}
+                            onSelectChange={(selectedValues) => handleInputChange({
+                            target: {
+                                name: 'registry_file_ids',
+                                value: selectedValues,
+                                }
+                            })}
+                            defaultValue={Array.isArray(formData.registry_file_ids) ? formData.registry_file_ids : []}
+
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="is_blocked">Отключить сервис</label>
+                        <label htmlFor="is_blocked">Статус реестра</label>
                         <CustomSelect
-                            options={[{value: '1', label: 'Да'}, {value: '0', label: 'Нет'},]}
+                            options={[
+                                { value: '0', label: 'Реестр активен' },
+                                { value: '1', label: 'Реестр отключён' },
+                            ]}
                             required
-                            value={formData.is_blocked}
-                            onSelectChange={(selectedValue) => handleInputChange({
-                                target: {
-                                    name: 'is_blocked', value: selectedValue
-                                }
-                            })}
+                            onSelectChange={(selectedValue) => {
+                                setFormData((prevFormData) => ({
+                                    ...prevFormData,
+                                    is_blocked: selectedValue,
+                                }));
+                            }}
                             name='is_blocked'
                         />
+
                     </div>
                     <button type="submit">Сохранить</button>
                 </form>
