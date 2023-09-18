@@ -6,8 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import RegistryTabs from "./RegistryTabs";
 
-const RegistryBackups = ({ apiUrl, downloadUrl }) => {
-    const [logFiles, setRegistryBackup] = useState([]);
+const RegistryLogs = ({ apiUrl, downloadUrl }) => {
+    const [logFiles, setRegistryLog] = useState([]);
     const [page, setPage] = useState(1); // Текущая страница
     const [totalPages, setTotalPages] = useState(0);
     const maxButtons = 5; // Максимальное количество отображаемых кнопок
@@ -15,7 +15,7 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
 
-    const fetchRegistryBackup = async () => {
+    const fetchRegistryLog = async () => {
         // Создайте объект с параметрами запроса, включая поиск
         const queryParams = {
             page,
@@ -46,7 +46,7 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
 
             const data = await response.json();
             console.log(data);
-            setRegistryBackup(data.data);
+            setRegistryLog(data.data);
             setTotalPages(data.last_page);
         } catch (error) {
             console.error('Error fetching log files:', error);
@@ -66,7 +66,7 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
         const formData = new FormData();
         formData.append('searchTerm', searchTerm);
 
-        fetchRegistryBackup(formData);
+        fetchRegistryLog(formData);
     };
 
 
@@ -138,7 +138,7 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
     };
 
     useEffect(() => {
-        fetchRegistryBackup();
+        fetchRegistryLog();
     }, [page, searchTerm]); // Зависимость от page и searchTerm
 
     // Вызываем generatePaginationButtons после установки totalPages
@@ -187,7 +187,7 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
                         ))
                     ) : (
                         <tr>
-                            <td>No registry files available.</td>
+                            <td>No logs files available.</td>
                             <td></td>
                         </tr>
                     )}
@@ -221,4 +221,4 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
     );
 };
 
-export default RegistryBackups;
+export default RegistryLogs;

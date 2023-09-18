@@ -5,6 +5,8 @@ import { faCalendar, faPenToSquare, faTrashAlt } from "@fortawesome/free-regular
 import { faSearch, faFileCircleXmark, faAnglesLeft, faAnglesRight } from "@fortawesome/free-solid-svg-icons";
 import Link from 'next/link';
 import { useRouter } from "next/router";
+import RegistryTabs from "./RegistryTabs";
+
 
 const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, editRoute, deleteRoute }) => {
     const [data, setData] = useState([]);
@@ -197,15 +199,7 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
     return (
         <div>
             <div className="create-button d-flex justify-content-center mb-5">
-                <Link href="/registries/recipient/index-page" className={`btn ${router.pathname === '/registries/recipient/index-page' ? 'btn-purple' : 'btn-grey'} me-2 ms-2`}>
-                    Получатели
-                </Link>
-                <Link href="/registries/registry/index-page" className={`btn ${router.pathname === '/registries/registry/index-page' ? 'btn-purple' : 'btn-grey'} me-2 ms-2`}>
-                    Реестры
-                </Link>
-                <Link href="/registries/backup/index-page" className={`btn ${router.pathname === '/registries/backup/index-page' ? 'btn-purple' : 'btn-grey'} me-2 ms-2`}>
-                    Резервные копии
-                </Link>
+                <RegistryTabs />
             </div>
             <div className="create-button d-flex justify-content-between">
                 <div className="d-flex flex-row">
