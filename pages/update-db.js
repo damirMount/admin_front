@@ -4,6 +4,7 @@ import SelectWithSearch from '../components/SelectWithSearch';
 import FormInput from '../components/FormInput';
 import { parseCookies } from 'nookies';
 import Navigation from '../components/Navigation';
+import Footer from "../components/Footer";
 
 export default function UpdateDBPage() {
     const [formData, setFormData] = useState({
@@ -71,7 +72,7 @@ export default function UpdateDBPage() {
             <div>
                 <Navigation></Navigation>
             </div>
-            <div className="container">
+            <div className="container body-container">
                 <h1>Страница обновления БД</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -176,6 +177,7 @@ export default function UpdateDBPage() {
           }
         `}</style>
             </div>
+            <Footer></Footer>
         </div>
     );
 }

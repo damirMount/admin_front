@@ -1,13 +1,13 @@
-import TableWithPagination from '../../components/TableWithPagination';
-import Navigation from "../../components/Navigation";
-import Footer from "../../components/Footer";
+import TableWithPagination from '../../../components/TableWithPagination';
+import Navigation from "../../../components/Navigation";
+import Footer from "../../../components/Footer";
 
 export default function IndexPage() {
     const apiUrl = `${process.env.NEXT_PUBLIC_RECIPIENT_INDEX_URL}`;
     const tableHeaders = ['ID','Name', 'Тип', 'Статус'];
     const tableValues = ['id', 'name', 'type', 'is_blocked'];
-    const createRoute = `/registry/recipient/create-recipient`;
-    const editRoute = `/registry/recipient/edit-recipient`;
+    const createRoute = `/registries/recipient/create-recipient`;
+    const editRoute = `/registries/recipient/edit-recipient`;
     const deleteRoute = `${process.env.NEXT_PUBLIC_RECIPIENT_DELETE_URL}`;
 
     return (

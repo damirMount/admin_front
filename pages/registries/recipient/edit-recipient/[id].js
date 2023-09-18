@@ -17,10 +17,10 @@ export default function EditRecipient() {
         type: '',
         emails: [''], // Начнем с одного поля по умолчанию
         is_blocked: '',
-        registry_file_ids: '',
+        registry_ids: '',
     });
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedRegistryFileIds, setSelectedRegistryFileIds] = useState([]);
+    const [selectedRegistryIds, setSelectedRegistryIds] = useState([]);
 
     const router = useRouter();
     const itemId = router.query.id;
@@ -39,14 +39,14 @@ export default function EditRecipient() {
                 if (response.ok) {
                     const data = await response.json();
                     console.log('data get');
-                    setSelectedRegistryFileIds(data.registry_file_ids);
+                    setSelectedRegistryIds(data.registry_ids);
                     setFormData((prevFormData) => ({
                         ...prevFormData,
                         name: data.name,
                         type: data.type,
                         emails: data.emails.split(',').map(email => email.trim()),
                         is_blocked: data.is_blocked,
-                        registry_file_ids: data.registry_file_ids.map((item) => item.id),
+                        registry_ids: data.registry_ids.map((item) => item.id),
                     }));
                 } else {
                     console.error('Ошибка при загрузке данных с API');
@@ -94,7 +94,7 @@ export default function EditRecipient() {
 
             if (response.ok) {
                 console.log('Данные успешно отправлены на API');
-                router.push('/registry/index-page');
+                router.push('/registries/recipient/index-page');
             } else {
                 console.error('Ошибка при отправке данных на API');
             }
@@ -194,20 +194,20 @@ export default function EditRecipient() {
                                 />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="registry_file_ids">Файлы реестров</label>
+                                <label htmlFor="registry_ids">Файлы реестров</label>
                                 {!isLoading && (
                                     <MultiSelectWithSearch
-                                        apiUrl={`${process.env.NEXT_PUBLIC_GET_REGISTRY_FILES_URL}`}
+                                        apiUrl={`${process.env.NEXT_PUBLIC_GET_REGISTRYS_URL}`}
                                         required
-                                        name="registry_file_ids"
+                                        name="registry_ids"
                                         multi={true}
                                         onSelectChange={(selectedValues) => handleInputChange({
                                             target: {
-                                                name: 'registry_file_ids',
+                                                name: 'registry_ids',
                                                 value: selectedValues,
                                             }
                                         })}
-                                        defaultValue={Array.isArray(formData.registry_file_ids) ? formData.registry_file_ids : []}
+                                        defaultValue={Array.isArray(formData.registry_ids) ? formData.registry_ids : []}
 
                                     />
                                 )}
@@ -265,7 +265,7 @@ export default function EditRecipient() {
                     </div>
                     <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
                         <button className="btn btn-purple me-2" type="submit">Сохранить</button>
-                        <Link href="/registry/index-page" className="btn btn-cancel ms-2" type="button">Отмена</Link>
+                        <Link href="/registries/recipient/index-page" className="btn btn-cancel ms-2" type="button">Отмена</Link>
                     </div>
                 </form>
             </div>

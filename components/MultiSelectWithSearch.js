@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { parseCookies } from 'nookies';
 import Select from 'react-select';
 
-const MultiSelectWithSearch = ({ apiUrl, required, name, onSelectChange, defaultValue = [] }) => {
+const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectChange, className, defaultValue = [] }) => {
     const [options, setOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -66,8 +66,9 @@ const MultiSelectWithSearch = ({ apiUrl, required, name, onSelectChange, default
                 onChange={handleSelectChange}
                 options={options}
                 isMulti
+                className={className}
                 isSearchable
-                placeholder="Выберите опции"
+                placeholder={placeholder}
                 required={required}
                 name={name}
             />

@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {useRouter} from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import SelectWithSearch from '../../../../components/SelectWithSearch';
 import FormInput from '../../../../components/FormInput';
-import {parseCookies} from "nookies";
-import Navigation from "../../../../components/Navigation";
-import FormTextarea from "../../../../components/FormTextarea";
-import CustomSelect from "../../../../components/CustomSelect";
-import {log} from "util";
-import MultiSelectWithSearch from "../../../../components/MultiSelectWithSearch";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheck, faGripVertical} from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
-import Footer from "../../../../components/Footer";
+import { parseCookies } from 'nookies';
+import Navigation from '../../../../components/Navigation';
+import FormTextarea from '../../../../components/FormTextarea';
+import CustomSelect from '../../../../components/CustomSelect';
+import MultiSelectWithSearch from '../../../../components/MultiSelectWithSearch';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faGripVertical } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
+import Footer from '../../../../components/Footer';
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 
 export default function EditRegistryFile() {
     const [formData, setFormData] = useState({
@@ -20,31 +20,23 @@ export default function EditRegistryFile() {
         serverId: '',
         tableHeaders: '',
         is_blocked: '',
-        fields: '',
-        formats: '',
+        formats: [],
         sqlQuery: '',
     });
     const [isLoading, setIsLoading] = useState(true);
-
 
     const router = useRouter();
     const itemId = router.query.id;
 
     const [rows, setRows] = useState([
-        { isActive: true, field: 'identifier', tableHeader: 'Лицевой счёт' },
-        { isActive: true, field: 'real_pay', tableHeader: 'Сумма платежа' },
-        { isActive: true, field: 'time_proc', tableHeader: 'Дата оплаты' },
-        { isActive: false, field: 'id', tableHeader: 'Номер платежа' },
-        { isActive: false, field: 'account.fio', tableHeader: 'ФИО' },
-        { isActive: false, field: 'id_trans', tableHeader: 'Номер чека' },
-        { isActive: false, field: 'id_apparat', tableHeader: 'ID терминала' },
     ]);
+
     useEffect(() => {
         const fetchRegistryItem = async () => {
             try {
                 const cookies = parseCookies();
                 const authToken = JSON.parse(cookies.authToken).value;
-                const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_FILE_SHOW_URL + '/' + itemId;
+                const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_SHOW_URL + '/' + itemId;
                 const response = await fetch(apiUrl, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -59,34 +51,23 @@ export default function EditRegistryFile() {
                         servicesId: data.services_id,
                         serverId: data.server_id,
                         tableHeaders: data.table_headers,
-                        fields: data.fields,
                         is_blocked: data.is_blocked,
                         sqlQuery: data.sql_query,
                     }));
 
-                    const updateRowsData = async () => {
-                        const dataFieldArray = data.fields.split(',').map((item) => item.trim());
-                        const dataHeadersArray = data.table_headers.split(',').map((item) => item.trim());
+                    const dataFieldArray = data.fields.split(',').map((item) => item.trim());
+                    const dataHeadersArray = data.table_headers.split(',').map((item) => item.trim());
 
-                        const combinedData = combineDataFromDatabase(dataFieldArray, dataHeadersArray, rows);
+                    const combinedData = combineDataFromDatabase(dataFieldArray, dataHeadersArray, rows);
 
-                        setRows(combinedData);
-                    };
-
-                    updateRowsData();
-
-
+                    setRows(combinedData);
 
                     const selectedFormats = data.formats; // предположим, что это уже массив форматов
                     setFormData((prevFormData) => ({
                         ...prevFormData,
                         formats: selectedFormats,
                     }));
-                    console.log(formData.is_blocked);
-                }
-
-
-                else {
+                } else {
                     console.error('Ошибка при загрузке данных с API');
                 }
             } catch (error) {
@@ -94,7 +75,6 @@ export default function EditRegistryFile() {
             } finally {
                 setIsLoading(false); // Устанавливаем isLoading в false после завершения загрузки
             }
-
         };
 
         if (itemId) {
@@ -102,7 +82,7 @@ export default function EditRegistryFile() {
         }
     }, [itemId]);
 
-    console.log(formData)
+    console.log(formData);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -118,13 +98,6 @@ export default function EditRegistryFile() {
             updatedRows[index][field] = value;
             return updatedRows;
         });
-
-        // Обновите formData здесь
-        const updatedTableHeaders = rows.map((row) => row.tableHeader).join(', ');
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            tableHeaders: updatedTableHeaders,
-        }));
     };
 
     const handleTableCheckboxChange = (index) => {
@@ -136,35 +109,49 @@ export default function EditRegistryFile() {
     };
 
     const handleCheckboxChange = (event) => {
-        const {name, checked} = event.target;
-        if (checked) {
-            setFormData((prevFormData) => ({
+        const { name, checked } = event.target;
+        setFormData((prevFormData) => {
+            const formats = [...prevFormData.formats];
+            if (checked && !formats.includes(name)) {
+                formats.push(name);
+            } else if (!checked && formats.includes(name)) {
+                formats.splice(formats.indexOf(name), 1);
+            }
+            return {
                 ...prevFormData,
-                formats: [...prevFormData.formats, name],
-            }));
-        } else {
-            setFormData((prevFormData) => ({
-                ...prevFormData,
-                formats: prevFormData.formats.filter((type) => type !== name),
-            }));
-        }
-    }
+                formats,
+            };
+        });
+    };
 
+    const handleAddColumn = () => {
+        setRows((prevRows) => [
+            ...prevRows,
+            { isActive: true, field: '', tableHeader: '' },
+        ]);
+    };
+
+    const handleRemoveColumn = (index) => {
+        setRows((prevRows) => {
+            const updatedRows = [...prevRows];
+            updatedRows.splice(index, 1);
+            return updatedRows;
+        });
+    };
 
     const [dropIndex, setDropIndex] = useState(null);
-
     const [isDragging, setIsDragging] = useState(false);
+
     const handleDragStart = (e, index) => {
         e.dataTransfer.setData('text/plain', index);
         setIsDragging(true);
-
     };
+
     const handleDragOver = (e, index) => {
         e.preventDefault();
-        setDropIndex(index); // Установите индекс строки, над которой находится курсор
-
-
+        setDropIndex(index);
     };
+
     const handleDrop = (e, toIndex) => {
         e.preventDefault();
         const fromIndex = e.dataTransfer.getData('text/plain');
@@ -179,36 +166,31 @@ export default function EditRegistryFile() {
     };
 
     const handleDragLeave = () => {
-        setDropIndex(null); // Сбрасываем dropIndex при покидании компонента
+        setDropIndex(null);
     };
 
     function combineDataFromDatabase(databaseFields, databaseHeaders, rows) {
         const combinedData = [];
 
-        // Пройдитесь по всем столбцам из базы данных и добавьте их в объединенный массив
         for (let i = 0; i < databaseFields.length; i++) {
             const field = databaseFields[i].trim();
             const header = databaseHeaders[i].trim();
 
-            // Проверьте, есть ли такой столбец уже в массиве rows
             const existingRow = rows.find((row) => row.field === field);
 
             if (existingRow) {
-                // Если столбец уже существует, обновите его заголовок
                 existingRow.tableHeader = header;
                 existingRow.isActive = true;
                 combinedData.push(existingRow);
             } else {
-                // Если столбец отсутствует в массиве rows, добавьте его
                 combinedData.push({
-                    isActive: true, // Здесь установите активность в true или false в зависимости от вашей логики
+                    isActive: true,
                     field: field,
                     tableHeader: header,
                 });
             }
         }
 
-        // Теперь добавьте все столбцы из массива rows, которые не были добавлены выше
         rows.forEach((row) => {
             if (!combinedData.find((item) => item.field === row.field)) {
                 combinedData.push(row);
@@ -218,42 +200,36 @@ export default function EditRegistryFile() {
         return combinedData;
     }
 
-
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_FILE_UPDATE_URL + '/' + itemId;
+            const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_UPDATE_URL + '/' + itemId;
 
-            // Фильтруем активные строки для отправки
             const activeRows = rows.filter((row) => row.isActive);
-
-            // Создаем объект данных для отправки, включая только активные строки
             const activeFields = activeRows.map((row) => row.field);
             const activeTableHeaders = activeRows.map((row) => row.tableHeader);
 
             const activeFormData = {
                 ...formData,
-                fields: activeFields.join(', '), // Обновляем строку полей
-                tableHeaders: activeTableHeaders.join(', '), // Обновляем строку заголовков таблицы
+                fields: activeFields.join(', '),
+                tableHeaders: activeTableHeaders.join(', '),
             };
 
-            // Отправка данных формы на API
             const response = await fetch(apiUrl, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${authToken}`,
                 },
-                body: JSON.stringify(activeFormData), // Отправляем только активные строки
+                body: JSON.stringify(activeFormData),
             });
 
             if (response.ok) {
                 console.log('Данные успешно отправлены на API');
-                // Перенаправление на другую страницу после успешной отправки
-                await router.push('/registry/registry/index-page');
+                await router.push('/registries/registry/index-page');
             } else {
                 console.error('Ошибка при отправке данных на API');
             }
@@ -262,88 +238,90 @@ export default function EditRegistryFile() {
         }
     };
 
-
-
     if (isLoading) {
-        return <div>Loading...</div>; // Отображаем сообщение о загрузке пока данные не получены
+        return <div>Loading...</div>;
     }
 
     return (
         <div>
             <div>
-                <Navigation></Navigation>
+                <Navigation />
             </div>
             <div className="container body-container mt-5">
                 <h1>Страница редактирования файла реестров</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="container d-flex">
                         <div className="container w-50">
-
-                    <div className="form-group">
-                        <label htmlFor="name">Название файла реестра*</label>
-                        <FormInput
-                            type="text"
-                            className="input-field"
-                            id="name"
-                            name="name"
-                            placeholder="Название"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="is_blocked">Статус реестра</label>
-                        <CustomSelect
-                            options={[
-                                { value: '0', label: 'Файл реестра активен' },
-                                { value: '1', label: 'Файл реестра отключён' },
-                            ]}
-                            required
-                            defaultValue={formData.is_blocked ? { value: '1', label: 'Файл реестра отключён' } : { value: '0', label: 'Файл реестра активен' }}
-                            onSelectChange={(selectedValue) => {
-                                setFormData((prevFormData) => ({
-                                    ...prevFormData,
-                                    is_blocked: selectedValue,
-                                }));
-                            }}
-                            name='is_blocked'
-                        />
-
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="serverId">Сервер</label>
-                        <SelectWithSearch apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVERS_URL}`} required
-                                          name="serverId"
-                                          defaultValue={formData.serverId ? formData.serverId : []}
-                                          onSelectChange={(selectedValue) =>
-                                              handleInputChange({
-                                                  target: {
-                                                          name: 'serverId',
-                                                          value: selectedValue
-                                                      }})
-                                          }/>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="serverId">Сервисы</label>
-                    <MultiSelectWithSearch
-                        apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVICES_URL}`}
-                        required
-                        name="servicesId"
-                        multi={true}
-                        onSelectChange={(selectedValues) => handleInputChange({
-                            target: {
-                                name: 'servicesId',
-                                value: selectedValues,
-                            }
-                        })}
-                        defaultValue={Array.isArray(formData.servicesId) ? formData.servicesId : []}
-                    />
-                    </div>
-
-
-
+                            <div className="form-group mt-5">
+                                <label htmlFor="name">Название файла реестра*</label>
+                                <FormInput
+                                    type="text"
+                                    className="input-field"
+                                    id="name"
+                                    name="name"
+                                    placeholder="Название"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="is_blocked">Статус реестра</label>
+                                <CustomSelect
+                                    options={[
+                                        { value: '0', label: 'Файл реестра активен' },
+                                        { value: '1', label: 'Файл реестра отключён' },
+                                    ]}
+                                    required
+                                    defaultValue={
+                                        formData.is_blocked
+                                            ? { value: '1', label: 'Файл реестра отключён' }
+                                            : { value: '0', label: 'Файл реестра активен' }
+                                    }
+                                    onSelectChange={(selectedValue) => {
+                                        setFormData((prevFormData) => ({
+                                            ...prevFormData,
+                                            is_blocked: selectedValue,
+                                        }));
+                                    }}
+                                    name="is_blocked"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="serverId">Сервер</label>
+                                <SelectWithSearch
+                                    apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVERS_URL}`}
+                                    required
+                                    name="serverId"
+                                    defaultValue={formData.serverId ? formData.serverId : []}
+                                    onSelectChange={(selectedValue) =>
+                                        handleInputChange({
+                                            target: {
+                                                name: 'serverId',
+                                                value: selectedValue,
+                                            },
+                                        })
+                                    }
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="serverId">Сервисы</label>
+                                <MultiSelectWithSearch
+                                    apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVICES_URL}`}
+                                    required
+                                    name="servicesId"
+                                    multi={true}
+                                    onSelectChange={(selectedValues) =>
+                                        handleInputChange({
+                                            target: {
+                                                name: 'servicesId',
+                                                value: selectedValues,
+                                            },
+                                        })
+                                    }
+                                    defaultValue={Array.isArray(formData.servicesId) ? formData.servicesId : []}
+                                />
+                            </div>
                             <div className="form-group d-flex align-items-center flex-column">
                                 <div className="d-flex justify-content-evenly w-75">
                                     <div>
@@ -356,9 +334,14 @@ export default function EditRegistryFile() {
                                             checked={formData.formats.includes('xlsx')}
                                             onChange={handleCheckboxChange}
                                         />
-                                        <label className={`btn ${formData.formats.includes('xlsx') ? 'btn-purple' : 'btn-grey'}`} htmlFor="btn-xlsx">XLSX</label>
-
-
+                                        <label
+                                            className={`btn ${
+                                                formData.formats.includes('xlsx') ? 'btn-purple' : 'btn-grey'
+                                            }`}
+                                            htmlFor="btn-xlsx"
+                                        >
+                                            XLSX
+                                        </label>
                                     </div>
                                     <div>
                                         <input
@@ -370,7 +353,14 @@ export default function EditRegistryFile() {
                                             checked={formData.formats.includes('csv')}
                                             onChange={handleCheckboxChange}
                                         />
-                                        <label className={`btn ${formData.formats.includes('csv') ? 'btn-purple' : 'btn-grey'}`} htmlFor="btn-csv">CSV</label>
+                                        <label
+                                            className={`btn ${
+                                                formData.formats.includes('csv') ? 'btn-purple' : 'btn-grey'
+                                            }`}
+                                            htmlFor="btn-csv"
+                                        >
+                                            CSV
+                                        </label>
                                     </div>
                                     <div>
                                         <input
@@ -382,77 +372,117 @@ export default function EditRegistryFile() {
                                             checked={formData.formats.includes('dbf')}
                                             onChange={handleCheckboxChange}
                                         />
-                                        <label className={`btn ${formData.formats.includes('dbf') ? 'btn-purple' : 'btn-grey'}`} htmlFor="btn-dbf">DBF</label>
+                                        <label
+                                            className={`btn ${
+                                                formData.formats.includes('dbf') ? 'btn-purple' : 'btn-grey'
+                                            }`}
+                                            htmlFor="btn-dbf"
+                                        >
+                                            DBF
+                                        </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-
                         <div className="container w-75">
-                            <label htmlFor="name">Внимание! Формат DBF имеет ограничение в названии столбцов! Можно ввести максимум 10 символов на Английском или же 5 на Русском</label>
+                            <label htmlFor="name">
+                                Внимание! Формат DBF имеет ограничение в названии столбцов! Можно ввести максимум 10
+                                символов на Английском или же 5 на Русском
+                            </label>
                             <table className="table table-bordered mt-4">
-                        <thead>
-                        <tr>
-                            <th scope="col"></th>
-                            <th scope="col">Таблица в базе</th>
-                            <th scope="col">Название таблицы в реестре</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {rows.map((row, index) => (
-                            <tr key={index}
-                                draggable="true"
-                                onDragStart={(e) => handleDragStart(e, index)}
-                                onDragOver={(e) => handleDragOver(e, index, 'before')}
-                                onDrop={(e) => handleDrop(e, index)}
-                                onDragLeave={handleDragLeave}
-                                className={isDragging ? 'active' : ''}
-                                style={{ borderBottom: dropIndex === index ? '2px solid #532C59' : '' }}
-                            >
-                                <td scope="row" className="table-center table-buttons">
-                                    <label>
-                                        <FontAwesomeIcon icon={faGripVertical} size="xl" className="me-2"/>
-                                    </label>
-                                    <input
-                                        id={row.field}
-                                        type="checkbox"
-                                        className="btn-checked btn-purple"
-                                        checked={row.isActive}
-                                        onChange={() => handleTableCheckboxChange(index)}
-                                    />
-                                    <label className="check"  htmlFor={row.field}>
-                                        {row.isActive && <FontAwesomeIcon className="w-100" icon={faCheck} size="lg" />}
-                                    </label>
-                                </td>
-                                <td className="fw-bold">
-                                    {row.field}
-                                </td>
-                                <td>
-                                    <input
-                                        type="text"
-                                        className="w-100 fields-input"
-                                        value={row.tableHeader}
-                                        onChange={(event) =>
-                                            handleTableInputChange(index, 'tableHeader', event.target.value)
-                                        }
-                                        disabled={!row.isActive}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                    </div>
+                                <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Таблица в базе</th>
+                                    <th scope="col">Название таблицы в реестре</th>
+                                    <th scope="col"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {rows.map((row, index) => (
+                                    <tr
+                                        key={index}
+                                        draggable="true"
+                                        onDragStart={(e) => handleDragStart(e, index)}
+                                        onDragOver={(e) => handleDragOver(e, index, 'before')}
+                                        onDrop={(e) => handleDrop(e, index)}
+                                        onDragLeave={handleDragLeave}
+                                        className={isDragging ? 'active' : ''}
+                                        style={{ borderBottom: dropIndex === index ? '2px solid #532C59' : '' }}
+                                    >
+                                        <td scope="row" className="table-center table-buttons">
+                                            <label>
+                                                <FontAwesomeIcon icon={faGripVertical} size="xl" className="me-2" />
+                                            </label>
+                                            <input
+                                                id={row.field}
+                                                type="checkbox"
+                                                className="btn-checked btn-purple"
+                                                checked={row.isActive}
+                                                onChange={() => handleTableCheckboxChange(index)}
+                                            />
+                                            <label className="check" htmlFor={row.field}>
+                                                {row.isActive && <FontAwesomeIcon className="w-100" icon={faCheck} size="lg" />}
+                                            </label>
+                                        </td>
+                                        <td className="fw-bold">
+                                            <td className="fw-bold">
+                                                    <input
+                                                        required
+                                                        type="text"
+                                                        className="w-100 fields-input fw-bold "
+                                                        value={row.field}
+                                                        onChange={(event) =>
+                                                            handleTableInputChange(index, 'field', event.target.value)
+                                                        }
+                                                        disabled={!row.isActive}
+                                                    />
+                                            </td>
+                                        </td>
+                                        <td>
+                                            <input
+                                                required
+                                                type="text"
+                                                className="w-100 fields-input"
+                                                value={row.tableHeader}
+                                                onChange={(event) =>
+                                                    handleTableInputChange(index, 'tableHeader', event.target.value)
+                                                }
+                                                disabled={!row.isActive}
+                                            />
+                                        </td>
+                                        <td>
+                                            <button
+                                                type="button"
+                                                className="btn btn-purple"
+                                                onClick={() => handleRemoveColumn(index)}
+                                                disabled={!row.isActive}
+                                            >
+                                                <FontAwesomeIcon icon={faTrashAlt} size="xl" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                            <div className="d-flex justify-content-end">
+                                <button type="button" className="btn btn-purple mt-2" onClick={handleAddColumn}>
+                                    Добавить столбец
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
-                        <button className="btn btn-purple me-2" type="submit">Сохранить</button>
-                        <Link href="/registry/registry/index-page" className="btn btn-cancel ms-2" type="button">Отмена</Link>
+                        <button className="btn btn-purple me-2" type="submit">
+                            Сохранить
+                        </button>
+                        <Link href="/registries/registry/index-page" className="btn btn-cancel ms-2" type="button">
+                            Отмена
+                        </Link>
                     </div>
                 </form>
             </div>
-            <Footer></Footer>
+            <Footer />
         </div>
-
     );
 }

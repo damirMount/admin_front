@@ -7,61 +7,35 @@ const Navigation = () => {
 
     return (
         <div>
-        <nav>
-            <ul className="nav-list">
-                <li>
-                    <Link href="/dashboard" className={router.pathname === '/dashboard' ? 'active' : ''}>
-                        Главная
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/update-db" className={router.pathname === '/update-db' ? 'active' : ''}>
-                        Обновить БД
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/registry/index-page" className={router.pathname === '/create-registry' ? 'active' : ''}>
-                        Реестры
-                    </Link>
-                </li>
-            </ul>
-        </nav>
-            <style jsx='true'>{`
-              .nav-list {
-                list-style: none;
-                padding: 0;
-                margin-top: 30px;
-                display: flex;
-                justify-content: center;
-                background-color: #f2f2f2;
-              }
+            <nav className="navbar navbar-expand-lg ">
+                <div className="container-fluid">
 
-              .nav-list li {
-                margin-right: 1rem;
-              }
-
-              .nav-list li:last-child {
-                margin-right: 0;
-              }
-
-              .nav-list li a {
-                text-decoration: none;
-                color: #333;
-                padding: 0.5rem;
-                border-radius: 4px;
-              }
-
-              .nav-list li a.active {
-                background-color: #ccc;
-              }
-
-              h1 {
-                text-align: center;
-                margin-top: 2rem;
-                font-family: sans-serif;
-                font-size: 1.5rem;
-              }
-            `}</style>
+                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Переключатель навигации">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul className="navbar-nav me-auto align-items-center justify-content-center w-100 d-flex mb-2 mb-lg-0">
+                            <li className="nav-item">
+                                <Link href="https://kg.quickpay.kg/idx.php/news" className={`nav-link`}>
+                                Админ зона
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link href="/update-db" className={`nav-link $router.pathname === '/update-db' ? 'active' : ''}`}>
+                                Обновить БД
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link href="/registries/recipient/index-page" className={`nav-link ${router.pathname === '/create-registries' ? 'active' : ''}`}>
+                                Реестры
+                            </Link>
+                        </li>
+                    </ul>
+                </div>
+        </div>
+</nav>
         </div>
     );
 }

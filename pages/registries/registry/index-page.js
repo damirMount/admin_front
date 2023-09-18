@@ -3,12 +3,12 @@ import Navigation from "../../../components/Navigation";
 import Footer from "../../../components/Footer";
 
 export default function IndexPage() {
-    const apiUrl = `${process.env.NEXT_PUBLIC_REGISTRY_FILE_INDEX_URL}`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_REGISTRY_INDEX_URL}`;
     const tableHeaders = ['ID','Название','Формат','Сервер', 'Сервисы','Статус'];
     const tableValues = ['id', 'name','formats','server_id','services_id','is_blocked'];
-    const createRoute = `/registry/registry/create-registry`;
-    const editRoute = `/registry/registry/edit-registry`;
-    const deleteRoute = `${process.env.NEXT_PUBLIC_REGISTRY_FILE_DELETE_URL}`;
+    const createRoute = `/registries/registry/create-registry`;
+    const editRoute = `/registries/registry/edit-registry`;
+    const deleteRoute = `${process.env.NEXT_PUBLIC_REGISTRY_DELETE_URL}`;
 
     return (
         <div>

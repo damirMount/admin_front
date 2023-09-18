@@ -23,22 +23,22 @@ export default function LoginPage() {
             if (response.ok) {
                 const { token } = await response.json();
 
-                // Вычисление времени истечения токена (1 час)
+                // Вычисление времени истечения токена (12 часов)
                 const expirationTime = new Date();
-                expirationTime.setHours(expirationTime.getHours() + 1);
+                expirationTime.setHours(expirationTime.getHours() + 12);
 
                 const tokenData = {
                     value: token,
                     expiration: expirationTime.getTime(),
                 };
 
-                // Сохранение токена в куки с продлением на 1 час
+                // Сохранение токена в куки с продлением на 12 час
                 setCookie(null, 'authToken', JSON.stringify(tokenData), {
-                    maxAge: 3600, // Время жизни куки в секундах (1 час = 3600 секунд)
+                    maxAge: 43200, // Время жизни куки в секундах (1 час = 3600 секунд)
                     path: '/', // Путь, на котором куки будет доступно
                 });
 
-                router.push('/dashboard');
+                router.push('/update-db');
             } else {
                 const errorData = await response.json();
 
@@ -74,20 +74,12 @@ export default function LoginPage() {
                         style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
                     />
                 </div>
+                <div className="d-flex justify-content-center">
                 <button
-                    type="submit"
-                    style={{
-                        width: '100%',
-                        padding: '0.5rem',
-                        backgroundColor: 'grey',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                    }}
-                >
+                    type="submit" className="btn btn-purple">
                     Войти
                 </button>
+                </div>
             </form>
         </div>
     );

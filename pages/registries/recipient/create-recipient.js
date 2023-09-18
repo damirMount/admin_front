@@ -15,7 +15,7 @@ export default function CreateRecipient() {
         name: '',
         type: '',
         is_blocked: '',
-        registry_file_ids: '',
+        registry_ids: '',
         emails: [''], // Начнем с одного поля по умолчанию
     });
     const router = useRouter();
@@ -94,7 +94,7 @@ export default function CreateRecipient() {
             if (response.ok) {
                 console.log('Данные успешно отправлены на API');
                 // Перенаправление на другую страницу после успешной отправки
-                router.push('/registry/index-page');
+                router.push('/registries/recipient/index-page');
             } else {
                 console.error('Ошибка при отправке данных на API');
             }
@@ -161,23 +161,23 @@ export default function CreateRecipient() {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="registry_file_ids">Файлы реестров</label>
+                        <label htmlFor="registry_ids">Файлы реестров</label>
 
                         <MultiSelectWithSearch
-                            apiUrl={`${process.env.NEXT_PUBLIC_GET_REGISTRY_FILES_URL}`}
+                            apiUrl={`${process.env.NEXT_PUBLIC_GET_REGISTRYS_URL}`}
                             required
-                            name="registry_file_ids"
+                            name="registry_ids"
                             placeholder="Выберете фаил для отправки"
                             multi={true}
                             onSelectChange={(selectedValues) =>
                                 handleInputChange({
                                     target: {
-                                        name: 'registry_file_ids',
+                                        name: 'registry_ids',
                                         value: selectedValues,
                                     },
                                 })
                             }
-                            defaultValue={Array.isArray(formData.registry_file_ids) ? formData.registry_file_ids : []}
+                            defaultValue={Array.isArray(formData.registry_ids) ? formData.registry_ids : []}
                         />
                     </div>
 
@@ -216,7 +216,7 @@ export default function CreateRecipient() {
                         <button className="btn btn-purple me-2" type="submit">
                             Сохранить
                         </button>
-                        <Link href="/registry/index-page" className="btn btn-cancel ms-2" type="button">
+                        <Link href="/registries/recipient/index-page" className="btn btn-cancel ms-2" type="button">
                             Отмена
                         </Link>
                     </div>
