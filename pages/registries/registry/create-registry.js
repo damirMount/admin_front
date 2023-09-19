@@ -38,6 +38,8 @@ export default function CreateRegistry() {
     });
     const router = useRouter();
 
+
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setFormData((prevFormData) => ({
@@ -104,6 +106,40 @@ export default function CreateRegistry() {
                 rowsData: updatedRowsData,
             };
         });
+    };
+
+    const [dropIndex, setDropIndex] = useState(null);
+    const [isDragging, setIsDragging] = useState(false);
+
+    const handleDragStart = (e, index) => {
+        e.dataTransfer.setData('text/plain', index);
+        setIsDragging(true);
+    };
+
+    const handleDragOver = (e, index) => {
+        e.preventDefault();
+        setDropIndex(index);
+    };
+
+    const handleDrop = (e, toIndex) => {
+        e.preventDefault();
+        const fromIndex = e.dataTransfer.getData('text/plain');
+
+        setIsDragging(false);
+        setFormData((prevFormData) => {
+            const updatedRowsData = [...prevFormData.rowsData];
+            const [movedRow] = updatedRowsData.splice(fromIndex, 1);
+            updatedRowsData.splice(toIndex, 0, movedRow);
+            return {
+                ...prevFormData,
+                rowsData: updatedRowsData,
+            };
+        });
+    };
+
+
+    const handleDragLeave = () => {
+        setDropIndex(null);
     };
 
     const handleSubmit = async (event) => {
@@ -229,8 +265,7 @@ export default function CreateRegistry() {
                                                     ? 'btn-purple'
                                                     : 'btn-grey'
                                             }`}
-                                            htmlFor="btn-xlsx"
-                                        >
+                                            htmlFor="btn-xlsx">
                                             XLSX
                                         </label>
                                     </div>
@@ -250,8 +285,7 @@ export default function CreateRegistry() {
                                                     ? 'btn-purple'
                                                     : 'btn-grey'
                                             }`}
-                                            htmlFor="btn-csv"
-                                        >
+                                            htmlFor="btn-csv">
                                             CSV
                                         </label>
                                     </div>
@@ -271,8 +305,7 @@ export default function CreateRegistry() {
                                                     ? 'btn-purple'
                                                     : 'btn-grey'
                                             }`}
-                                            htmlFor="btn-dbf"
-                                        >
+                                            htmlFor="btn-dbf">
                                             DBF
                                         </label>
                                     </div>
@@ -296,13 +329,20 @@ export default function CreateRegistry() {
                                 </thead>
                                 <tbody>
                                 {formData.rowsData.map((row, index) => (
-                                    <tr key={index}>
+                                    <tr key={index}
+                                        draggable="true"
+                                        onDragStart={(e) => handleDragStart(e, index)}
+                                        onDragOver={(e) => handleDragOver(e, index, 'before')}
+                                        onDrop={(e) => handleDrop(e, index)}
+                                        onDragLeave={handleDragLeave}
+                                        className={isDragging ? 'active' : ''}
+                                        style={{ borderBottom: dropIndex === index ? '2px solid #532C59' : '' }}>
                                         <td scope="row" className="table-center table-buttons">
                                             <label>
                                                 <FontAwesomeIcon
                                                     icon={faGripVertical}
                                                     size="xl"
-                                                    className="me-2"
+                                                    className="me-2 cursor-grab"
                                                 />
                                             </label>
                                             <input
@@ -323,20 +363,16 @@ export default function CreateRegistry() {
                                             </label>
                                         </td>
                                         <td className="fw-bold">
-                                            {index < 7 ? (
-                                                row.field
-                                            ) : (
                                                 <input
                                                     required
                                                     type="text"
-                                                    className="w-100 fields-input fst-italic "
+                                                    className="w-100 fields-input fw-bold"
                                                     value={row.field}
                                                     onChange={(event) =>
                                                         handleTableInputChange(index, 'field', event.target.value)
                                                     }
                                                     disabled={!row.isActive}
                                                 />
-                                            )}
                                         </td>
                                         <td>
                                             <input
@@ -355,7 +391,7 @@ export default function CreateRegistry() {
                                                     type="button"
                                                     className="btn btn-purple"
                                                     onClick={() => handleRemoveColumn(index)}
-                                                    disabled={index < 7 || !row.isActive}
+                                                    disabled={!row.isActive}
                                                 >
                                                     <FontAwesomeIcon icon={faTrashAlt} size="xl" />
                                                 </button>

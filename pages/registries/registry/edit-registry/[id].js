@@ -82,7 +82,6 @@ export default function EditRegistryFile() {
         }
     }, [itemId]);
 
-    console.log(formData);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -412,7 +411,7 @@ export default function EditRegistryFile() {
                                     >
                                         <td scope="row" className="table-center table-buttons">
                                             <label>
-                                                <FontAwesomeIcon icon={faGripVertical} size="xl" className="me-2" />
+                                                <FontAwesomeIcon icon={faGripVertical} size="xl" className="me-2 cursor-grab" />
                                             </label>
                                             <input
                                                 id={row.field}
