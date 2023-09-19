@@ -45,7 +45,6 @@ const RegistryLogs = ({ apiUrl, downloadUrl }) => {
             }
 
             const data = await response.json();
-            console.log(data);
             setRegistryLog(data.data);
             setTotalPages(data.last_page);
         } catch (error) {
@@ -149,22 +148,22 @@ const RegistryLogs = ({ apiUrl, downloadUrl }) => {
             <div className="create-button d-flex justify-content-center mb-5">
                 <RegistryTabs />
             </div>
-            {/*<div className="d-flex flex-row">*/}
-            {/*    <form onSubmit={handleSearch} className="d-flex justify-content-end">*/}
-            {/*        <input*/}
-            {/*            className="form-control"*/}
-            {/*            type="text"*/}
-            {/*            placeholder="Поиск..."*/}
-            {/*            value={searchTerm}*/}
-            {/*            onChange={handleSearchChange}*/}
-            {/*        />*/}
-            {/*        <button className="btn btn-grey d-flex position-absolute" type="submit">*/}
-            {/*            <FontAwesomeIcon icon={faSearch} className="icon-search" />*/}
-            {/*        </button>*/}
-            {/*    </form>*/}
-            {/*</div>*/}
+            <div className="d-flex flex-row">
+                <form onSubmit={handleSearch} className="d-flex justify-content-end">
+                    <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Поиск..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                    <button className="btn btn-grey d-flex position-absolute" type="submit">
+                        <FontAwesomeIcon icon={faSearch} className="icon-search" />
+                    </button>
+                </form>
+            </div>
             <div className="d-flex flex-column justify-content-center align-items-center">
-                <table className="table w-50 table-bordered mt-4">
+                <table className="table table-bordered mt-4">
                     <thead>
                     <tr>
                         <th className="col-12">Название</th>

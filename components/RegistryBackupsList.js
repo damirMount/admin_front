@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import RegistryTabs from "./RegistryTabs";
 
 const RegistryBackups = ({ apiUrl, downloadUrl }) => {
-    const [logFiles, setRegistryBackup] = useState([]);
+    const [registryFiles, setRegistryBackup] = useState([]);
     const [page, setPage] = useState(1); // Текущая страница
     const [totalPages, setTotalPages] = useState(0);
     const maxButtons = 5; // Максимальное количество отображаемых кнопок
@@ -19,11 +19,8 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
         // Создайте объект с параметрами запроса, включая поиск
         const queryParams = {
             page,
+            search: searchTerm, // Добавьте поисковый параметр, если он есть
         };
-
-        if (searchTerm) {
-            queryParams.search = searchTerm; // Добавьте поисковый параметр, если он есть
-        }
 
         const queryString = new URLSearchParams(queryParams).toString(); // Преобразуйте параметры в строку
 
@@ -49,10 +46,9 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
             setRegistryBackup(data.data);
             setTotalPages(data.last_page);
         } catch (error) {
-            console.error('Error fetching log files:', error);
+            console.error('Error fetching registry files:', error);
         }
     };
-
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -61,15 +57,9 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
     const handleSearch = (e) => {
         e.preventDefault();
 
-        // Отладочный вывод для проверки значения searchTerm перед отправкой
-
-        const formData = new FormData();
-        formData.append('searchTerm', searchTerm);
-
-        fetchRegistryBackup(formData);
+        // Вызываем fetchRegistryBackup с новыми параметрами поиска
+        fetchRegistryBackup();
     };
-
-
 
     const handleDownload = async (filename) => {
         try {
@@ -111,6 +101,7 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
         setPage(newPage); // Обновляем текущую страницу
     };
 
+
     const generatePaginationButtons = () => {
         const buttons = [];
         const half = Math.floor(maxButtons / 2);
@@ -149,22 +140,22 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
             <div className="create-button d-flex justify-content-center mb-5">
                 <RegistryTabs />
             </div>
-            {/*<div className="d-flex flex-row">*/}
-            {/*    <form onSubmit={handleSearch} className="d-flex justify-content-end">*/}
-            {/*        <input*/}
-            {/*            className="form-control"*/}
-            {/*            type="text"*/}
-            {/*            placeholder="Поиск..."*/}
-            {/*            value={searchTerm}*/}
-            {/*            onChange={handleSearchChange}*/}
-            {/*        />*/}
-            {/*        <button className="btn btn-grey d-flex position-absolute" type="submit">*/}
-            {/*            <FontAwesomeIcon icon={faSearch} className="icon-search" />*/}
-            {/*        </button>*/}
-            {/*    </form>*/}
-            {/*</div>*/}
+            <div className="d-flex flex-row">
+                <form onSubmit={handleSearch} className="d-flex justify-content-end">
+                    <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Поиск..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                    <button className="btn btn-grey d-flex position-absolute" type="submit">
+                        <FontAwesomeIcon icon={faSearch} className="icon-search" />
+                    </button>
+                </form>
+            </div>
             <div className="d-flex flex-column justify-content-center align-items-center">
-                <table className="table w-50 table-bordered mt-4">
+                <table className="table table-bordered mt-4">
                     <thead>
                     <tr>
                         <th className="col-12">Название</th>
@@ -172,8 +163,8 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {Array.isArray(logFiles) && logFiles.length > 0 ? (
-                        logFiles.map((file) => (
+                    {Array.isArray(registryFiles) && registryFiles.length > 0 ? (
+                        registryFiles.map((file) => (
                             <tr key={file}>
                                 <td>
                                     {file}
