@@ -42,12 +42,23 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
             }
 
             const data = await response.json();
-            console.log(data);
             setRegistryBackup(data.data);
             setTotalPages(data.last_page);
         } catch (error) {
             console.error('Error fetching registry files:', error);
         }
+    };
+
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Б';
+        const sizes = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ'];
+        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(100 * (bytes / Math.pow(1024, i))) / 100 + ' ' + sizes[i];
+    };
+
+    const formatDateTime = (dateTimeString) => {
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        return new Date(dateTimeString).toLocaleDateString('ru-RU', options);
     };
 
     const handleSearchChange = (e) => {
@@ -158,31 +169,38 @@ const RegistryBackups = ({ apiUrl, downloadUrl }) => {
                 <table className="table table-bordered mt-4">
                     <thead>
                     <tr>
-                        <th className="col-12">Название</th>
+                        <th className="col-9">Название</th>
+                        <th className="col-1">Размер</th>
+                        <th className="col-2">Дата создания</th>
                         <th>Скачать</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {Array.isArray(registryFiles) && registryFiles.length > 0 ? (
-                        registryFiles.map((file) => (
-                            <tr key={file}>
-                                <td>
-                                    {file}
-                                </td>
-                                <td>
-                                    <button onClick={() => handleDownload(file)} className="btn btn-purple ms-2">
-                                        <FontAwesomeIcon icon={faDownload} size="lg" />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td>No registry files available.</td>
-                            <td></td>
+                {Array.isArray(registryFiles) && registryFiles.length > 0 ? (
+                    registryFiles.map((file) => (
+                        <tr key={file.name}>
+                            <td>
+                                {file.name}
+                            </td>
+                            <td>
+                                {formatFileSize(file.size)}
+                            </td>
+                            <td>
+                                {formatDateTime(file.createdAt)}
+                            </td>
+                            <td>
+                                <button onClick={() => handleDownload(file.name)} className="btn btn-purple ms-2">
+                                    <FontAwesomeIcon icon={faDownload} size="lg" />
+                                </button>
+                            </td>
                         </tr>
-                    )}
-                    </tbody>
+                    ))
+                ) : (
+                    <tr>
+                        <td colSpan="4">Нет доступных файлов.</td>
+                    </tr>
+                )}
+                </tbody>
                 </table>
             </div>
             <div className="d-flex justify-content-center mt-5">
