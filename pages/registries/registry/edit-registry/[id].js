@@ -12,6 +12,7 @@ import { faCheck, faGripVertical } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import Footer from '../../../../components/Footer';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import RegistryTable from "../../../../components/RegistryTable";
 
 export default function EditRegistryFile() {
     const [formData, setFormData] = useState({
@@ -28,8 +29,13 @@ export default function EditRegistryFile() {
     const router = useRouter();
     const itemId = router.query.id;
 
-    const [rows, setRows] = useState([
+    const [getRows, setRows] = useState([
     ]);
+
+
+    const handleUpdateRows = (updatedRows) => {
+        setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryTable
+    };
 
     useEffect(() => {
         const fetchRegistryItem = async () => {
@@ -52,14 +58,12 @@ export default function EditRegistryFile() {
                         serverId: data.server_id,
                         tableHeaders: data.table_headers,
                         is_blocked: data.is_blocked,
-                        sqlQuery: data.sql_query,
                     }));
 
                     const dataFieldArray = data.fields.split(',').map((item) => item.trim());
+
                     const dataHeadersArray = data.table_headers.split(',').map((item) => item.trim());
-
-                    const combinedData = combineDataFromDatabase(dataFieldArray, dataHeadersArray, rows);
-
+                    const combinedData = combineDataFromDatabase(dataFieldArray, dataHeadersArray);
                     setRows(combinedData);
 
                     const selectedFormats = data.formats; // предположим, что это уже массив форматов
@@ -91,21 +95,6 @@ export default function EditRegistryFile() {
         }));
     };
 
-    const handleTableInputChange = (index, field, value) => {
-        setRows((prevRows) => {
-            const updatedRows = [...prevRows];
-            updatedRows[index][field] = value;
-            return updatedRows;
-        });
-    };
-
-    const handleTableCheckboxChange = (index) => {
-        setRows((prevRows) => {
-            const updatedRows = [...prevRows];
-            updatedRows[index].isActive = !updatedRows[index].isActive;
-            return updatedRows;
-        });
-    };
 
     const handleCheckboxChange = (event) => {
         const { name, checked } = event.target;
@@ -123,59 +112,15 @@ export default function EditRegistryFile() {
         });
     };
 
-    const handleAddColumn = () => {
-        setRows((prevRows) => [
-            ...prevRows,
-            { isActive: true, field: '', tableHeader: '' },
-        ]);
-    };
 
-    const handleRemoveColumn = (index) => {
-        setRows((prevRows) => {
-            const updatedRows = [...prevRows];
-            updatedRows.splice(index, 1);
-            return updatedRows;
-        });
-    };
-
-    const [dropIndex, setDropIndex] = useState(null);
-    const [isDragging, setIsDragging] = useState(false);
-
-    const handleDragStart = (e, index) => {
-        e.dataTransfer.setData('text/plain', index);
-        setIsDragging(true);
-    };
-
-    const handleDragOver = (e, index) => {
-        e.preventDefault();
-        setDropIndex(index);
-    };
-
-    const handleDrop = (e, toIndex) => {
-        e.preventDefault();
-        const fromIndex = e.dataTransfer.getData('text/plain');
-
-        setIsDragging(false);
-        setRows((prevRows) => {
-            const updatedRows = [...prevRows];
-            const [movedRow] = updatedRows.splice(fromIndex, 1);
-            updatedRows.splice(toIndex, 0, movedRow);
-            return updatedRows;
-        });
-    };
-
-    const handleDragLeave = () => {
-        setDropIndex(null);
-    };
-
-    function combineDataFromDatabase(databaseFields, databaseHeaders, rows) {
+    function combineDataFromDatabase(databaseFields, databaseHeaders) {
         const combinedData = [];
 
         for (let i = 0; i < databaseFields.length; i++) {
             const field = databaseFields[i].trim();
             const header = databaseHeaders[i].trim();
 
-            const existingRow = rows.find((row) => row.field === field);
+            const existingRow = getRows.find((row) => row.field === field);
 
             if (existingRow) {
                 existingRow.tableHeader = header;
@@ -190,7 +135,7 @@ export default function EditRegistryFile() {
             }
         }
 
-        rows.forEach((row) => {
+        getRows.forEach((row) => {
             if (!combinedData.find((item) => item.field === row.field)) {
                 combinedData.push(row);
             }
@@ -198,6 +143,7 @@ export default function EditRegistryFile() {
 
         return combinedData;
     }
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -207,7 +153,7 @@ export default function EditRegistryFile() {
             const authToken = JSON.parse(cookies.authToken).value;
             const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_UPDATE_URL + '/' + itemId;
 
-            const activeRows = rows.filter((row) => row.isActive);
+            const activeRows = getRows.filter((row) => row.isActive);
             const activeFields = activeRows.map((row) => row.field);
             const activeTableHeaders = activeRows.map((row) => row.tableHeader);
 
@@ -384,91 +330,10 @@ export default function EditRegistryFile() {
                             </div>
                         </div>
                         <div className="container w-75">
-                            <label htmlFor="name">
-                                Внимание! Формат DBF имеет ограничение в названии столбцов! Можно ввести максимум 10
-                                символов на Английском или же 5 на Русском
-                            </label>
-                            <table className="table table-bordered mt-4">
-                                <thead>
-                                <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col">Таблица в базе</th>
-                                    <th scope="col">Название таблицы в реестре</th>
-                                    <th scope="col"></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {rows.map((row, index) => (
-                                    <tr
-                                        key={index}
-                                        draggable="true"
-                                        onDragStart={(e) => handleDragStart(e, index)}
-                                        onDragOver={(e) => handleDragOver(e, index, 'before')}
-                                        onDrop={(e) => handleDrop(e, index)}
-                                        onDragLeave={handleDragLeave}
-                                        className={isDragging ? 'active' : ''}
-                                        style={{ borderBottom: dropIndex === index ? '2px solid #532C59' : '' }}
-                                    >
-                                        <td scope="row" className="table-center table-buttons">
-                                            <label>
-                                                <FontAwesomeIcon icon={faGripVertical} size="xl" className="me-2 cursor-grab" />
-                                            </label>
-                                            <input
-                                                id={row.field}
-                                                type="checkbox"
-                                                className="btn-checked btn-purple"
-                                                checked={row.isActive}
-                                                onChange={() => handleTableCheckboxChange(index)}
-                                            />
-                                            <label className="check" htmlFor={row.field}>
-                                                {row.isActive && <FontAwesomeIcon className="w-100" icon={faCheck} size="lg" />}
-                                            </label>
-                                        </td>
-                                        <td className="fw-bold">
-                                            <td className="fw-bold">
-                                                    <input
-                                                        required
-                                                        type="text"
-                                                        className="w-100 fields-input fw-bold "
-                                                        value={row.field}
-                                                        onChange={(event) =>
-                                                            handleTableInputChange(index, 'field', event.target.value)
-                                                        }
-                                                        disabled={!row.isActive}
-                                                    />
-                                            </td>
-                                        </td>
-                                        <td>
-                                            <input
-                                                required
-                                                type="text"
-                                                className="w-100 fields-input"
-                                                value={row.tableHeader}
-                                                onChange={(event) =>
-                                                    handleTableInputChange(index, 'tableHeader', event.target.value)
-                                                }
-                                                disabled={!row.isActive}
-                                            />
-                                        </td>
-                                        <td>
-                                            <button
-                                                type="button"
-                                                className="btn btn-purple"
-                                                onClick={() => handleRemoveColumn(index)}
-                                                disabled={!row.isActive}
-                                            >
-                                                <FontAwesomeIcon icon={faTrashAlt} size="xl" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                            <div className="d-flex justify-content-end">
-                                <button type="button" className="btn btn-purple mt-2" onClick={handleAddColumn}>
-                                    Добавить столбец
-                                </button>
-                            </div>
+                            <RegistryTable
+                                getRows={getRows}
+                                onUpdateData={handleUpdateRows}
+                            />
                         </div>
                     </div>
                     <div className="w-100 mt-5 mb-5 d-flex justify-content-center">

@@ -17,6 +17,7 @@ import Link from 'next/link';
 import SelectWithSearch from '../../../components/SelectWithSearch';
 import Footer from '../../../components/Footer';
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import RegistryTable from "../../../components/RegistryTable";
 
 library.add(faCheck, faTag, faGripVertical, faPlus);
 
@@ -25,19 +26,23 @@ export default function CreateRegistry() {
         name: '',
         formats: [],
         is_blocked: '',
-        sqlQuery: '',
-        rowsData: [
-            { isActive: true, field: 'identifier', tableHeader: 'Лицевой счёт' },
-            { isActive: true, field: 'real_pay', tableHeader: 'Сумма платежа' },
-            { isActive: true, field: 'time_proc', tableHeader: 'Дата оплаты' },
-            { isActive: false, field: 'id', tableHeader: 'Номер платежа' },
-            { isActive: false, field: 'account.fio', tableHeader: 'ФИО' },
-            { isActive: false, field: 'id_trans', tableHeader: 'Номер чека' },
-            { isActive: false, field: 'id_apparat', tableHeader: 'ID терминала' },
-        ],
     });
     const router = useRouter();
 
+    const [getRows, setRows] = useState([
+        { isActive: true, field: 'identifier', tableHeader: 'Лицевой счёт' },
+        { isActive: true, field: 'real_pay', tableHeader: 'Сумма платежа' },
+        { isActive: true, field: 'time_proc', tableHeader: 'Дата оплаты' },
+        { isActive: false, field: 'id', tableHeader: 'Номер платежа' },
+        { isActive: false, field: 'account.fio', tableHeader: 'ФИО' },
+        { isActive: false, field: 'id_trans', tableHeader: 'Номер чека' },
+        { isActive: false, field: 'id_apparat', tableHeader: 'ID терминала' },
+    ]);
+
+
+    const handleUpdateRows = (updatedRows) => {
+        setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryTable
+    };
 
 
     const handleInputChange = (event) => {
@@ -46,7 +51,6 @@ export default function CreateRegistry() {
             ...prevFormData,
             [name]: value,
         }));
-        console.log(formData.rowsData);
     };
 
     // Обработчик изменения выбранных чекбоксов
@@ -65,89 +69,22 @@ export default function CreateRegistry() {
         }
     };
 
-    const handleTableCheckboxChange = (index) => {
-        setFormData((prevFormData) => {
-            const updatedRowsData = [...prevFormData.rowsData];
-            updatedRowsData[index].isActive = !updatedRowsData[index].isActive;
-            return {
-                ...prevFormData,
-                rowsData: updatedRowsData,
-            };
-        });
-    };
-
-    const handleTableInputChange = (index, field, value) => {
-        setFormData((prevFormData) => {
-            const updatedRowsData = [...prevFormData.rowsData];
-            updatedRowsData[index][field] = value;
-            return {
-                ...prevFormData,
-                rowsData: updatedRowsData,
-            };
-        });
-    };
-
-    const handleAddColumn = () => {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            rowsData: [
-                ...prevFormData.rowsData,
-                { isActive: true, field: '', tableHeader: '' },
-            ],
-        }));
-    };
-
-    const handleRemoveColumn = (index) => {
-        setFormData((prevFormData) => {
-            const updatedRowsData = [...prevFormData.rowsData];
-            updatedRowsData.splice(index, 1);
-            return {
-                ...prevFormData,
-                rowsData: updatedRowsData,
-            };
-        });
-    };
-
-    const [dropIndex, setDropIndex] = useState(null);
-    const [isDragging, setIsDragging] = useState(false);
-
-    const handleDragStart = (e, index) => {
-        e.dataTransfer.setData('text/plain', index);
-        setIsDragging(true);
-    };
-
-    const handleDragOver = (e, index) => {
-        e.preventDefault();
-        setDropIndex(index);
-    };
-
-    const handleDrop = (e, toIndex) => {
-        e.preventDefault();
-        const fromIndex = e.dataTransfer.getData('text/plain');
-
-        setIsDragging(false);
-        setFormData((prevFormData) => {
-            const updatedRowsData = [...prevFormData.rowsData];
-            const [movedRow] = updatedRowsData.splice(fromIndex, 1);
-            updatedRowsData.splice(toIndex, 0, movedRow);
-            return {
-                ...prevFormData,
-                rowsData: updatedRowsData,
-            };
-        });
-    };
-
-
-    const handleDragLeave = () => {
-        setDropIndex(null);
-    };
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
             const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_CREATE_URL;
+
+            const activeRows = getRows.filter((row) => row.isActive);
+            const activeFields = activeRows.map((row) => row.field);
+            const activeTableHeaders = activeRows.map((row) => row.tableHeader);
+
+            const activeFormData = {
+                ...formData,
+                fields: activeFields.join(', '),
+                tableHeaders: activeTableHeaders.join(', '),
+            };
 
             // Отправка данных формы на API
             const response = await fetch(apiUrl, {
@@ -156,7 +93,7 @@ export default function CreateRegistry() {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${authToken}`,
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(activeFormData),
             });
 
             if (response.ok) {
@@ -314,101 +251,10 @@ export default function CreateRegistry() {
                         </div>
 
                         <div className="container w-75">
-                            <label htmlFor="name">
-                                Внимание! Формат DBF имеет ограничение в названии столбцов! Можно
-                                ввести максимум 10 символов на английском или же 5 на русском
-                            </label>
-                            <table className="table table-bordered mt-4">
-                                <thead>
-                                <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col">Таблица в базе</th>
-                                    <th scope="col">Название таблицы в реестре</th>
-                                    <th scope="col"></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {formData.rowsData.map((row, index) => (
-                                    <tr key={index}
-                                        draggable="true"
-                                        onDragStart={(e) => handleDragStart(e, index)}
-                                        onDragOver={(e) => handleDragOver(e, index, 'before')}
-                                        onDrop={(e) => handleDrop(e, index)}
-                                        onDragLeave={handleDragLeave}
-                                        className={isDragging ? 'active' : ''}
-                                        style={{ borderBottom: dropIndex === index ? '2px solid #532C59' : '' }}>
-                                        <td scope="row" className="table-center table-buttons">
-                                            <label>
-                                                <FontAwesomeIcon
-                                                    icon={faGripVertical}
-                                                    size="xl"
-                                                    className="me-2 cursor-grab"
-                                                />
-                                            </label>
-                                            <input
-                                                id={row.field}
-                                                className="btn-checked btn-purple ms-2"
-                                                type="checkbox"
-                                                checked={row.isActive}
-                                                onChange={() => handleTableCheckboxChange(index)}
-                                            />
-                                            <label className="check" htmlFor={row.field}>
-                                                {row.isActive && (
-                                                    <FontAwesomeIcon
-                                                        className="w-100"
-                                                        icon={faCheck}
-                                                        size="lg"
-                                                    />
-                                                )}
-                                            </label>
-                                        </td>
-                                        <td className="fw-bold">
-                                                <input
-                                                    required
-                                                    type="text"
-                                                    className="w-100 fields-input fw-bold"
-                                                    value={row.field}
-                                                    onChange={(event) =>
-                                                        handleTableInputChange(index, 'field', event.target.value)
-                                                    }
-                                                    disabled={!row.isActive}
-                                                />
-                                        </td>
-                                        <td>
-                                            <input
-                                                required
-                                                type="text"
-                                                className="w-100 fields-input"
-                                                value={row.tableHeader}
-                                                onChange={(event) =>
-                                                    handleTableInputChange(index, 'tableHeader', event.target.value)
-                                                }
-                                                disabled={!row.isActive}
-                                            />
-                                        </td>
-                                        <td>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-purple"
-                                                    onClick={() => handleRemoveColumn(index)}
-                                                    disabled={!row.isActive}
-                                                >
-                                                    <FontAwesomeIcon icon={faTrashAlt} size="xl" />
-                                                </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                            <div className="d-flex justify-content-end">
-                                <button
-                                    type="button"
-                                    className="btn btn-purple mt-2"
-                                    onClick={handleAddColumn}
-                                >
-                                    Добавить столбец
-                                </button>
-                            </div>
+                            <RegistryTable
+                                getRows={getRows}
+                                onUpdateData={handleUpdateRows}
+                            />
                         </div>
                     </div>
                     <div className="w-100 mt-5 mb-5 d-flex justify-content-center">

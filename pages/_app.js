@@ -29,9 +29,12 @@ function MyApp({ Component, pageProps }) {
                 // Обновляем куку с продлением на 12 часов для защищенных страниц
                 // router.pathname === '/dashboard' ||
                 router.pathname === '/update-db' ||
-                router.pathname === '/registries/index' ||
-                router.pathname === '/create-recipient' ||
-                router.pathname === '/registries/create-registries'
+                router.pathname === '/recipient/index' ||
+                router.pathname === '/recipient/create-recipient' ||
+                router.pathname === '/registry/index' ||
+                router.pathname === '/registry/create-registry' ||
+                router.pathname === '/log/index' ||
+                router.pathname === '/backup/index'
             ) {
                 setCookie(null, 'authToken', JSON.stringify({ value, expiration }), {
                     maxAge: 43200, // Время жизни куки в секундах (12 часов)
