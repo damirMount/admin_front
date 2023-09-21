@@ -259,7 +259,7 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
                                     {value === "id" && <td className="col">{row[value]}</td>}
                                     {value === "name" && <td className="col-8">{row[value]}</td>}
                                     {value === "formats" && (
-                                        <td className="col-auto">
+                                        <td className="col-auto action-table-buttons flex-nowrap">
                                             {row[value].map((format, index) => (
                                                 <span key={index} className="status status-formats ms-1 me-1">{format}</span>
                                             ))}

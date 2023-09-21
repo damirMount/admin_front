@@ -1,4 +1,4 @@
-import RegistryBackups from '../../../components/RegistryBackupsList';
+import RegistryBackups from '../../../components/RegistryFilesList';
 import Navigation from "../../../components/Navigation";
 import Footer from "../../../components/Footer";
 

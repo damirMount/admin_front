@@ -1,7 +1,6 @@
-import RegistryBackups from '../../../components/RegistryBackupsList';
+import RegistryBackups from '../../../components/RegistryFilesList';
 import Navigation from "../../../components/Navigation";
 import Footer from "../../../components/Footer";
-import RegistryLogs from "../../../components/RegistryLogsList";
 
 export default function IndexPage() {
     const apiUrl = `${process.env.NEXT_PUBLIC_REGISTRY_LOG_INDEX_URL}`;
@@ -15,7 +14,7 @@ export default function IndexPage() {
 
             <div className="container body-container mt-5">
                 <h1>Логи реестров</h1>
-                <RegistryLogs
+                <RegistryBackups
                     apiUrl={apiUrl}
                     downloadUrl={downloadUrl}
                 />

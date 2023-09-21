@@ -6,8 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import RegistryTabs from "./RegistryTabs";
 
-const RegistryLogs = ({ apiUrl, downloadUrl }) => {
-    const [logFiles, setRegistryLog] = useState([]);
+const RegisrtyFiles = ({ apiUrl, downloadUrl }) => {
+    const [registryFiles, setRegisrtyFile] = useState([]);
     const [page, setPage] = useState(1); // Текущая страница
     const [totalPages, setTotalPages] = useState(0);
     const maxButtons = 5; // Максимальное количество отображаемых кнопок
@@ -15,15 +15,12 @@ const RegistryLogs = ({ apiUrl, downloadUrl }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
 
-    const fetchRegistryLog = async () => {
+    const fetchRegisrtyFile = async () => {
         // Создайте объект с параметрами запроса, включая поиск
         const queryParams = {
             page,
+            search: searchTerm, // Добавьте поисковый параметр, если он есть
         };
-
-        if (searchTerm) {
-            queryParams.search = searchTerm; // Добавьте поисковый параметр, если он есть
-        }
 
         const queryString = new URLSearchParams(queryParams).toString(); // Преобразуйте параметры в строку
 
@@ -45,10 +42,10 @@ const RegistryLogs = ({ apiUrl, downloadUrl }) => {
             }
 
             const data = await response.json();
-            setRegistryLog(data.data);
+            setRegisrtyFile(data.data);
             setTotalPages(data.last_page);
         } catch (error) {
-            console.error('Error fetching log files:', error);
+            console.error('Error fetching registry files:', error);
         }
     };
 
@@ -64,7 +61,6 @@ const RegistryLogs = ({ apiUrl, downloadUrl }) => {
         return new Date(dateTimeString).toLocaleDateString('ru-RU', options);
     };
 
-
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };
@@ -72,15 +68,9 @@ const RegistryLogs = ({ apiUrl, downloadUrl }) => {
     const handleSearch = (e) => {
         e.preventDefault();
 
-        // Отладочный вывод для проверки значения searchTerm перед отправкой
-
-        const formData = new FormData();
-        formData.append('searchTerm', searchTerm);
-
-        fetchRegistryLog(formData);
+        // Вызываем fetchRegisrtyFile с новыми параметрами поиска
+        fetchRegisrtyFile();
     };
-
-
 
     const handleDownload = async (filename) => {
         try {
@@ -122,6 +112,7 @@ const RegistryLogs = ({ apiUrl, downloadUrl }) => {
         setPage(newPage); // Обновляем текущую страницу
     };
 
+
     const generatePaginationButtons = () => {
         const buttons = [];
         const half = Math.floor(maxButtons / 2);
@@ -149,7 +140,7 @@ const RegistryLogs = ({ apiUrl, downloadUrl }) => {
     };
 
     useEffect(() => {
-        fetchRegistryLog();
+        fetchRegisrtyFile();
     }, [page, searchTerm]); // Зависимость от page и searchTerm
 
     // Вызываем generatePaginationButtons после установки totalPages
@@ -185,31 +176,31 @@ const RegistryLogs = ({ apiUrl, downloadUrl }) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {Array.isArray(logFiles) && logFiles.length > 0 ? (
-                        logFiles.map((file) => (
-                            <tr key={file.name}>
-                                <td>
-                                    {file.name}
-                                </td>
-                                <td>
-                                    {formatFileSize(file.size)}
-                                </td>
-                                <td>
-                                    {formatDateTime(file.createdAt)}
-                                </td>
-                                <td>
-                                    <button onClick={() => handleDownload(file.name)} className="btn btn-purple ms-2">
-                                        <FontAwesomeIcon icon={faDownload} size="lg" />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="4">Нет доступных файлов.</td>
+                {Array.isArray(registryFiles) && registryFiles.length > 0 ? (
+                    registryFiles.map((file) => (
+                        <tr key={file.name}>
+                            <td>
+                                {file.name}
+                            </td>
+                            <td>
+                                <span className="status status-active">{formatFileSize(file.size)}</span>
+                            </td>
+                            <td>
+                                {formatDateTime(file.createdAt)}
+                            </td>
+                            <td>
+                                <button onClick={() => handleDownload(file.name)} className="btn btn-purple ms-2">
+                                    <FontAwesomeIcon icon={faDownload} size="lg" />
+                                </button>
+                            </td>
                         </tr>
-                    )}
-                    </tbody>
+                    ))
+                ) : (
+                    <tr>
+                        <td colSpan="4">Нет доступных файлов.</td>
+                    </tr>
+                )}
+                </tbody>
                 </table>
             </div>
             <div className="d-flex justify-content-center mt-5">
@@ -239,4 +230,4 @@ const RegistryLogs = ({ apiUrl, downloadUrl }) => {
     );
 };
 
-export default RegistryLogs;
+export default RegisrtyFiles;

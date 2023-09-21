@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
 import FormInput from '../../../components/FormInput';
 import { parseCookies } from 'nookies';
@@ -39,11 +39,15 @@ export default function CreateRegistry() {
         { isActive: false, field: 'id_apparat', tableHeader: 'ID терминала' },
     ]);
 
-
     const handleUpdateRows = (updatedRows) => {
         setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryTable
     };
 
+    const [selectedCheckboxCount, setSelectedCheckboxCount] = useState(0);
+
+    useEffect(() => {
+        setSelectedCheckboxCount(formData.formats.length);
+    }, [formData.formats]);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -56,17 +60,18 @@ export default function CreateRegistry() {
     // Обработчик изменения выбранных чекбоксов
     const handleCheckboxChange = (event) => {
         const { name, checked } = event.target;
-        if (checked) {
-            setFormData((prevFormData) => ({
+        setFormData((prevFormData) => {
+            const formats = [...prevFormData.formats];
+            if (checked && !formats.includes(name)) {
+                formats.push(name);
+            } else if (!checked && formats.includes(name)) {
+                formats.splice(formats.indexOf(name), 1);
+            }
+            return {
                 ...prevFormData,
-                formats: [...prevFormData.formats, name],
-            }));
-        } else {
-            setFormData((prevFormData) => ({
-                ...prevFormData,
-                formats: prevFormData.formats.filter((type) => type !== name),
-            }));
-        }
+                formats,
+            };
+        });
     };
 
     const handleSubmit = async (event) => {
@@ -195,12 +200,11 @@ export default function CreateRegistry() {
                                             name="xlsx"
                                             checked={formData.formats.includes('xlsx')}
                                             onChange={handleCheckboxChange}
+                                            required={selectedCheckboxCount === 0} // Делаем обязательным, если ничего не выбрано
                                         />
                                         <label
                                             className={`btn ${
-                                                formData.formats.includes('xlsx')
-                                                    ? 'btn-purple'
-                                                    : 'btn-grey'
+                                                formData.formats.includes('xlsx') ? 'btn-purple' : 'btn-grey'
                                             }`}
                                             htmlFor="btn-xlsx">
                                             XLSX
@@ -215,12 +219,11 @@ export default function CreateRegistry() {
                                             name="csv"
                                             checked={formData.formats.includes('csv')}
                                             onChange={handleCheckboxChange}
+                                            required={selectedCheckboxCount === 0} // Делаем обязательным, если ничего не выбрано
                                         />
                                         <label
                                             className={`btn ${
-                                                formData.formats.includes('csv')
-                                                    ? 'btn-purple'
-                                                    : 'btn-grey'
+                                                formData.formats.includes('csv') ? 'btn-purple' : 'btn-grey'
                                             }`}
                                             htmlFor="btn-csv">
                                             CSV
@@ -235,12 +238,11 @@ export default function CreateRegistry() {
                                             name="dbf"
                                             checked={formData.formats.includes('dbf')}
                                             onChange={handleCheckboxChange}
+                                            required={selectedCheckboxCount === 0} // Делаем обязательным, если ничего не выбрано
                                         />
                                         <label
                                             className={`btn ${
-                                                formData.formats.includes('dbf')
-                                                    ? 'btn-purple'
-                                                    : 'btn-grey'
+                                                formData.formats.includes('dbf') ? 'btn-purple' : 'btn-grey'
                                             }`}
                                             htmlFor="btn-dbf">
                                             DBF

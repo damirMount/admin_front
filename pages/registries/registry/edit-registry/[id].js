@@ -31,7 +31,7 @@ export default function EditRegistryFile() {
 
     const [getRows, setRows] = useState([
     ]);
-
+    const [selectedCheckboxCount, setSelectedCheckboxCount] = useState(0);
 
     const handleUpdateRows = (updatedRows) => {
         setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryTable
@@ -96,6 +96,11 @@ export default function EditRegistryFile() {
     };
 
 
+    useEffect(() => {
+        setSelectedCheckboxCount(formData.formats.length);
+    }, [formData.formats]);
+
+    // Функция для обработки изменений чекбоксов
     const handleCheckboxChange = (event) => {
         const { name, checked } = event.target;
         setFormData((prevFormData) => {
@@ -278,13 +283,13 @@ export default function EditRegistryFile() {
                                             name="xlsx"
                                             checked={formData.formats.includes('xlsx')}
                                             onChange={handleCheckboxChange}
+                                            required={selectedCheckboxCount === 0}
                                         />
                                         <label
                                             className={`btn ${
                                                 formData.formats.includes('xlsx') ? 'btn-purple' : 'btn-grey'
                                             }`}
-                                            htmlFor="btn-xlsx"
-                                        >
+                                            htmlFor="btn-xlsx">
                                             XLSX
                                         </label>
                                     </div>
@@ -297,13 +302,13 @@ export default function EditRegistryFile() {
                                             name="csv"
                                             checked={formData.formats.includes('csv')}
                                             onChange={handleCheckboxChange}
+                                            required={selectedCheckboxCount === 0}
                                         />
                                         <label
                                             className={`btn ${
                                                 formData.formats.includes('csv') ? 'btn-purple' : 'btn-grey'
                                             }`}
-                                            htmlFor="btn-csv"
-                                        >
+                                            htmlFor="btn-csv">
                                             CSV
                                         </label>
                                     </div>
@@ -316,13 +321,13 @@ export default function EditRegistryFile() {
                                             name="dbf"
                                             checked={formData.formats.includes('dbf')}
                                             onChange={handleCheckboxChange}
+                                            required={selectedCheckboxCount === 0}
                                         />
                                         <label
                                             className={`btn ${
                                                 formData.formats.includes('dbf') ? 'btn-purple' : 'btn-grey'
                                             }`}
-                                            htmlFor="btn-dbf"
-                                        >
+                                            htmlFor="btn-dbf">
                                             DBF
                                         </label>
                                     </div>
