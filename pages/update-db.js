@@ -108,7 +108,6 @@ export default function UpdateDBPage() {
                             name="paySumOrder"
                             value={formData.paySumOrder}
                             onChange={handleInputChange}
-                            required
                             className="input-field"
                         />
                     </div>
