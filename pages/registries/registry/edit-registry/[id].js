@@ -36,6 +36,8 @@ export default function EditRegistryFile() {
     const handleUpdateRows = (updatedRows) => {
         setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryTable
     };
+    const [createdAt, setCreatedAt] = useState('');
+    const [updatedAt, setUpdatedAt] = useState('');
 
     useEffect(() => {
         const fetchRegistryItem = async () => {
@@ -59,6 +61,9 @@ export default function EditRegistryFile() {
                         tableHeaders: data.table_headers,
                         is_blocked: data.is_blocked,
                     }));
+
+                    setCreatedAt(data.createdAt)
+                    setUpdatedAt(data.updatedAt)
 
                     const dataFieldArray = data.fields.split(',').map((item) => item.trim());
 
@@ -272,7 +277,7 @@ export default function EditRegistryFile() {
                                     defaultValue={Array.isArray(formData.servicesId) ? formData.servicesId : []}
                                 />
                             </div>
-                            <div className="form-group d-flex align-items-center flex-column">
+                            <div className="form-group d-flex align-items-center flex-column mt-3">
                                 <div className="d-flex justify-content-evenly w-75">
                                     <div>
                                         <input
@@ -332,6 +337,11 @@ export default function EditRegistryFile() {
                                         </label>
                                     </div>
                                 </div>
+
+                            </div>
+                            <div className="mt-4">
+                                <p>Дата создания: {createdAt}</p>
+                                <p>Дата изменения: {updatedAt}</p>
                             </div>
                         </div>
                         <div className="container w-75">

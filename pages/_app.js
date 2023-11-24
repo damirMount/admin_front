@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
 import { parseCookies, destroyCookie, setCookie } from 'nookies';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -33,8 +33,10 @@ function MyApp({ Component, pageProps }) {
                 router.pathname === '/recipient/create-recipient' ||
                 router.pathname === '/registry/index' ||
                 router.pathname === '/registry/create-registry' ||
+                router.pathname === '/registry-resend/index' ||
                 router.pathname === '/log/index' ||
-                router.pathname === '/backup/index'
+                router.pathname === '/backup/index' ||
+                router.pathname === '/acquiring/index'
             ) {
                 setCookie(null, 'authToken', JSON.stringify({ value, expiration }), {
                     maxAge: 43200, // Время жизни куки в секундах (12 часов)

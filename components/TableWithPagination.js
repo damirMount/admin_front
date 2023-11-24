@@ -259,7 +259,7 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
                                     {value === "id" && <td className="col">{row[value]}</td>}
                                     {value === "name" && <td className="col-8">{row[value]}</td>}
                                     {value === "formats" && (
-                                        <td className="col-auto action-table-buttons flex-nowrap">
+                                        <td className="col-auto action-table-buttons flex-nowrap d-flex">
                                             {row[value].map((format, index) => (
                                                 <span key={index} className="status status-formats ms-1 me-1">{format}</span>
                                             ))}
@@ -283,6 +283,8 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
                                         <span className={`status ${formatBooleanValue(row[value]) === 'АКТИВЕН' ? 'status-active' : 'status-blocked'}`}>{formatBooleanValue(row[value])}
                                     </span>
                                     </td>}
+                                    {value === "updatedAt" && <td className="col-1">{row[value]} </td>}
+                                    {value === "createdAt" && <td className="col-1">{row[value]} </td>}
                                 </React.Fragment>
                             ))}
                             <td className="action-table-buttons">

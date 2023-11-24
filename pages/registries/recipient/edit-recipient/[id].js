@@ -18,9 +18,13 @@ export default function EditRecipient() {
         emails: [''], // Начнем с одного поля по умолчанию
         is_blocked: '',
         registry_ids: '',
+        createdAt: '',
+        updatedAt: '',
     });
     const [isLoading, setIsLoading] = useState(true);
     const [selectedRegistryIds, setSelectedRegistryIds] = useState([]);
+    const [createdAt, setCreatedAt] = useState('');
+    const [updatedAt, setUpdatedAt] = useState('');
 
     const router = useRouter();
     const itemId = router.query.id;
@@ -48,6 +52,10 @@ export default function EditRecipient() {
                         is_blocked: data.is_blocked,
                         registry_ids: data.registry_ids.map((item) => item.id),
                     }));
+                    setCreatedAt(data.createdAt)
+                    setUpdatedAt(data.updatedAt)
+
+
                 } else {
                     console.error('Ошибка при загрузке данных с API');
                 }
@@ -110,14 +118,7 @@ export default function EditRecipient() {
         { value: 4, label: 'Ежегодный' },
     ];
 
-    const blockedOptions = [
-        { value: true, label: 'Да' },
-        { value: false, label: 'Нет' },
-    ];
 
-    const selectedBlockedOption = blockedOptions.find(
-        (option) => option.value === formData.is_blocked
-    );
     const selectedTypeOption = recipientTypes.find(
         (option) => option.value === formData.type
     );
@@ -187,7 +188,7 @@ export default function EditRecipient() {
                                     required
                                     name="type"
                                     defaultValue={selectedTypeOption}
-                                    selectedValue={[formData.type]}
+                                    selectedValue={selectedTypeOption}
                                     onSelectChange={(selectedValue) =>
                                         handleInputChange({ target: { name: 'type', value: selectedValue } })
                                     }
@@ -229,6 +230,10 @@ export default function EditRecipient() {
                                     }}
                                     name='is_blocked'
                                 />
+                            </div>
+                            <div>
+                                <p>Дата создания: {createdAt}</p>
+                                <p>Дата изменения: {updatedAt}</p>
                             </div>
                         </div>
                         <div className="form-group container w-75">

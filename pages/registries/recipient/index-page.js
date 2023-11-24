@@ -4,8 +4,8 @@ import Footer from "../../../components/Footer";
 
 export default function IndexPage() {
     const apiUrl = `${process.env.NEXT_PUBLIC_RECIPIENT_INDEX_URL}`;
-    const tableHeaders = ['ID','Name', 'Тип', 'Статус'];
-    const tableValues = ['id', 'name', 'type', 'is_blocked'];
+    const tableHeaders = ['ID','Name', 'Тип', 'Статус', 'Обновлено', 'Создано'];
+    const tableValues = ['id', 'name', 'type', 'is_blocked', 'updatedAt', 'createdAt'];
     const createRoute = `/registries/recipient/create-recipient`;
     const editRoute = `/registries/recipient/edit-recipient`;
     const deleteRoute = `${process.env.NEXT_PUBLIC_RECIPIENT_DELETE_URL}`;

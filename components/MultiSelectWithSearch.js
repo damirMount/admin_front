@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { parseCookies } from 'nookies';
 import Select from 'react-select';
 
-const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectChange, className, defaultValue = [] }) => {
+const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectChange, className, defaultValue = [], onlyDefaultValue = false, selectedRegistry, selectedLastRegistry = [], selectedValue = [] }) => {
     const [options, setOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -13,7 +13,16 @@ const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectCh
             try {
                 const cookies = parseCookies();
                 const authToken = JSON.parse(cookies.authToken).value;
-                const response = await fetch(apiUrl, {
+
+                // Construct the URL based on the onlyDefaultValue prop
+                let url = apiUrl;
+
+                if (onlyDefaultValue) {
+                    const queryParams = defaultValue.map((value) => `value[]=${encodeURIComponent(value)}`).join('&');
+                    url += `?column=id&${queryParams}`;
+                }
+
+                const response = await fetch(url, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
                     },
@@ -25,17 +34,22 @@ const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectCh
 
                 const data = await response.json();
 
-                const options = data.map((item) => ({
+                const formattedOptions = data.map((item) => ({
                     value: item.id,
                     label: item.name + '   ' + item.id,
                 }));
 
-                setOptions(options);
+                setOptions(formattedOptions);
                 setIsLoading(false);
 
                 // Initialize selectedOptions based on defaultValue
-                const defaultOptions = options.filter((option) => defaultValue.includes(option.value));
-                setSelectedOptions(defaultOptions);
+                if (selectedRegistry === selectedLastRegistry) {
+                    const defaultOptions = formattedOptions.filter((option) => selectedValue.includes(option.value));
+                    setSelectedOptions(defaultOptions);
+                } else {
+                    const defaultOptions = formattedOptions.filter((option) => defaultValue.includes(option.value));
+                    setSelectedOptions(defaultOptions);
+                }
             } catch (error) {
                 setError(error.message);
                 setIsLoading(false);
@@ -43,12 +57,14 @@ const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectCh
         };
 
         fetchOptions();
-    }, [apiUrl, defaultValue]);
+    }, [apiUrl, defaultValue, onlyDefaultValue]);
+
 
     const handleSelectChange = (selectedOptions) => {
         setSelectedOptions(selectedOptions);
-        const selectedValues = selectedOptions.map((option) => option.value);
-        onSelectChange(selectedValues);
+
+            const selectedValues = selectedOptions.map((option) => option.value);
+            onSelectChange(selectedValues);
     };
 
     if (error) {
@@ -75,6 +91,5 @@ const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectCh
         </div>
     );
 };
-
 
 export default MultiSelectWithSearch;
