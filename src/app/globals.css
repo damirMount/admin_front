@@ -164,9 +164,9 @@ h1 {
 }
 
 .action-table-buttons {
-  display: flex;
   margin-left: -1px;
   margin-right: -1px;
+  white-space: nowrap;
 }
 
 .row-underline {
@@ -271,7 +271,9 @@ input:disabled {
   border-radius: 15px;
   text-align: center;
   display: flex;
-  width: max-content;
+  width: 100%;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .status-active {
@@ -284,16 +286,19 @@ input:disabled {
   color: #532C59;
   border: #532C59 2px solid;
   inline-size: max-content;
+  white-space: nowrap;
   display: flex;
+  width: 100%;
 }
 
 .status-formats{
+
   color: #FFFFFF;
   background-color: #532C59;
-  font-size: 15px;
+  font-size: 12px;
   border: #532C59 2px solid;
   border-radius: 10px;
-  padding: 7px 12px 7px 12px;
+  padding: 10px 15px;
   text-transform: uppercase;
 }
 
@@ -330,3 +335,169 @@ input:disabled {
 .icon-not-found {
   font-size: 50px;
 }
+
+.input__wrapper {
+  width: 100%;
+  position: relative;
+  margin: 15px 0;
+  text-align: center;
+}
+
+.input__file {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+}
+
+.input__file-icon-wrapper {
+  height: 60px;
+  width: 60px;
+  margin-right: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border-right: 1px solid #fff;
+}
+
+.input__file-button-text {
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.input__file-button {
+  width: 100%;
+  max-width: 355px;
+  height: 200px;
+  background-color: #f6f7f9;
+  color: #c9cbcd;
+  border: #E2E8F0 2px solid;
+  font-size: 1.125rem;
+  font-weight: 700;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  border-radius: 3px;
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.input__file-button:focus {
+  background-color: #f6f7f9;
+  color: #532C59;
+  border: #E2E8F0 2px solid;
+}
+
+.input__wrapper-file-selected .input__file-button {
+  background-color: #f6f7f9;
+  color: #532C59;
+  border: #E2E8F0 2px solid;
+}
+
+
+.input_icon_acquiring {
+  font-size: 30px;
+  border-bottom: 2px solid;
+  width: 85%;
+  padding: 25px;
+  margin: 0px 28px;
+}
+
+.w-0 {
+  width: 0%;
+}
+
+svg.tea {
+  --secondary: #3f3f41;
+  transform: scale(2);
+}
+
+#teabag {
+  transform-origin: top center;
+  transform: rotate(3deg);
+  animation: swing 2s infinite;
+}
+
+#steamL {
+  stroke-dasharray: 13;
+  stroke-dashoffset: 13;
+  animation: steamLarge 2s infinite;
+}
+
+#steamR {
+  stroke-dasharray: 9;
+  stroke-dashoffset: 9;
+  animation: steamSmall 2s infinite;
+}
+
+@keyframes swing {
+  50% {
+    transform: rotate(-3deg);
+  }
+}
+
+@keyframes steamLarge {
+  0% {
+    stroke-dashoffset: 13;
+    opacity: 0.6;
+  }
+  100% {
+    stroke-dashoffset: 39;
+    opacity: 0;
+  }
+}
+
+@keyframes steamSmall {
+  10% {
+    stroke-dashoffset: 9;
+    opacity: 0.6;
+  }
+  80% {
+    stroke-dashoffset: 27;
+    opacity: 0;
+  }
+  100% {
+    stroke-dashoffset: 27;
+    opacity: 0;
+  }
+}
+
+.input-form {
+  border: #A9C9DD 1px solid;
+  border-radius: 5px;
+  height: 40px;
+  width: 100%;
+}
+
+.selector-choice [class*="css-"][class*="-control"] {
+  padding: 2px;
+  background-color: #532C59 !important;
+  color: #FFFFFF;
+  left: 1px;
+}
+.selector-choice [class*="css-"][class*="-placeholder"] {
+  color: #FFFFFF;
+}
+
+ /*Стили для выбранного значения*/
+.selector-choice [class*="css-"][class*="-singleValue"] {
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+[class*="css-"][class*="-MultiValueGeneric"] {
+  white-space: inherit;
+}
+
+

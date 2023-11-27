@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { parseCookies } from 'nookies';
 
-const SelectWithSearch = ({ apiUrl, required, name, onSelectChange, defaultValue }) => {
+const SelectWithSearch = ({ apiUrl, options: staticOptions, required, name, onSelectChange, defaultValue }) => {
     const [options, setOptions] = useState([]);
     const [selectedOption, setSelectedOption] = useState(null);
     const [error, setError] = useState('');
@@ -11,27 +11,32 @@ const SelectWithSearch = ({ apiUrl, required, name, onSelectChange, defaultValue
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const cookies = parseCookies();
-                const authToken = JSON.parse(cookies.authToken).value;
-                const response = await fetch(apiUrl, {
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
-                });
+                if (staticOptions && apiUrl && staticOptions.length > 0) {
+                    setOptions(staticOptions);
+                    setIsLoading(false);
+                } else {
+                    const cookies = parseCookies();
+                    const authToken = JSON.parse(cookies.authToken).value;
+                    const response = await fetch(apiUrl, {
+                        headers: {
+                            Authorization: `Bearer ${authToken}`,
+                        },
+                    });
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch options');
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch options');
+                    }
+
+                    const data = await response.json();
+
+                    const options = data.map((item) => ({
+                        value: item.id,
+                        label: item.name + '   ' + item.id,
+                    }));
+
+                    setOptions(options);
+                    setIsLoading(false);
                 }
-
-                const data = await response.json();
-
-                const options = data.map((item) => ({
-                    value: item.id,
-                    label: item.name + '   ' + item.id,
-                }));
-
-                setOptions(options);
-                setIsLoading(false);
             } catch (error) {
                 setError(error.message);
                 setIsLoading(false);
@@ -39,7 +44,7 @@ const SelectWithSearch = ({ apiUrl, required, name, onSelectChange, defaultValue
         };
 
         fetchOptions();
-    }, [apiUrl]);
+    }, [apiUrl, staticOptions]);
 
     const handleSelectChange = (selectedOption) => {
         setSelectedOption(selectedOption);
@@ -58,7 +63,6 @@ const SelectWithSearch = ({ apiUrl, required, name, onSelectChange, defaultValue
 
     return (
         <Select
-            // value={selectedDefaultValue}
             value={selectedDefaultValue}
             onChange={handleSelectChange}
             options={options}

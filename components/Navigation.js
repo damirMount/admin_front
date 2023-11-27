@@ -32,6 +32,11 @@ const Navigation = () => {
                                 Реестры
                             </Link>
                         </li>
+                        {/*<li className="nav-item">*/}
+                        {/*    <Link href="/acquiring/index-page" className={`nav-link ${router.pathname === '/create-registries' ? 'active' : ''}`}>*/}
+                        {/*        Эквайринг*/}
+                        {/*    </Link>*/}
+                        {/*</li>*/}
                     </ul>
                 </div>
         </div>
