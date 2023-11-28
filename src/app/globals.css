@@ -501,5 +501,5 @@ svg.tea {
 /*}*/
 
 [class*="css-"] {
-  white-space: inherit; !important;
+  white-space: inherit !important;
 }
