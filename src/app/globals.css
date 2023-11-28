@@ -496,8 +496,10 @@ svg.tea {
   font-weight: 500;
 }
 
-[class*="css-"][class*="-MultiValueGeneric"] {
+/*[class*="css-"][class*="-MultiValueGeneric"] {*/
+/*  white-space: inherit;*/
+/*}*/
+
+[class*="css-"] {
   white-space: inherit;
 }
-
-
