@@ -36,7 +36,8 @@ function MyApp({ Component, pageProps }) {
                 router.pathname === '/registry-resend/index' ||
                 router.pathname === '/log/index' ||
                 router.pathname === '/backup/index' ||
-                router.pathname === '/acquiring/index'
+                router.pathname === '/acquiring/index' ||
+                router.pathname === '/dealer/reports/export'
             ) {
                 setCookie(null, 'authToken', JSON.stringify({ value, expiration }), {
                     maxAge: 43200, // Время жизни куки в секундах (12 часов)
