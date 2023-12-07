@@ -3,7 +3,7 @@ const Preloader = () => {
 
 
     return (
-        <div id="preloader" className="w-100 d-flex flex-column align-items-center justify-content-center mt-5 ">
+        <div id="preloader" className="w-100 d-flex flex-column align-items-center justify-content-center mt-5 preloader">
             <svg className="tea" width="37" height="48" viewBox="0 0 37 48" fill="none"
                  xmlns="http://www.w3.org/2000/svg">
                 <path

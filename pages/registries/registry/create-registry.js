@@ -145,7 +145,6 @@ export default function CreateRegistry() {
                                         { value: '1', label: 'Файл реестра отключён' },
                                     ]}
                                     required
-                                    className="input-with-padding"
                                     onSelectChange={(selectedValue) => {
                                         setFormData((prevFormData) => ({
                                             ...prevFormData,

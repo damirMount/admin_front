@@ -9,7 +9,6 @@ const Navigation = () => {
         <div>
             <nav className="navbar navbar-expand-lg ">
                 <div className="container-fluid">
-
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Переключатель навигации">
@@ -21,26 +20,32 @@ const Navigation = () => {
                                 <Link href="https://kg.quickpay.kg/idx.php/news" className={`nav-link`}>
                                 Админ зона
                             </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link href="/update-db" className={`nav-link $router.pathname === '/update-db' ? 'active' : ''}`}>
-                                Обновить БД
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link href="/registries/recipient/index-page" className={`nav-link ${router.pathname === '/create-registries' ? 'active' : ''}`}>
-                                Реестры
-                            </Link>
-                        </li>
-                        {/*<li className="nav-item">*/}
-                        {/*    <Link href="/acquiring/index-page" className={`nav-link ${router.pathname === '/create-registries' ? 'active' : ''}`}>*/}
-                        {/*        Эквайринг*/}
-                        {/*    </Link>*/}
-                        {/*</li>*/}
-                    </ul>
+                            </li>
+                            <li className="nav-item">
+                                <Link href="/update-db" className={`nav-link $router.pathname === '/update-db' ? 'active' : ''}`}>
+                                    Обновить БД
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link href="/registries/recipient/index-page" className={`nav-link ${router.pathname === '/create-registries' ? 'active' : ''}`}>
+                                    Реестры
+                                </Link>
+                            </li>
+
+                            <li className="nav-item">
+                                <Link href="/dealer/reports/export" className={`nav-link ${router.pathname === '/create-registries' ? 'active' : ''}`}>
+                                    Отчёт по истории счётов
+                                </Link>
+                            </li>
+                            {/*<li className="nav-item">*/}
+                            {/*    <Link href="/acquiring/index-page" className={`nav-link ${router.pathname === '/create-registries' ? 'active' : ''}`}>*/}
+                            {/*        Эквайринг*/}
+                            {/*    </Link>*/}
+                            {/*</li>*/}
+                        </ul>
+                    </div>
                 </div>
-        </div>
-</nav>
+            </nav>
         </div>
     );
 }

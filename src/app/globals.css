@@ -503,3 +503,7 @@ svg.tea {
 [class*="css-"] {
   white-space: inherit !important;
 }
+
+.preloader {
+  height: 50vh;
+}

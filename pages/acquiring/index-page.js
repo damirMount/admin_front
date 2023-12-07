@@ -65,6 +65,7 @@ export default function IndexPage() {
         formData.append("textFile", registryFile);
 
 
+
         console.log(formData)
         try {
             const response = await fetch(apiUrl, {
