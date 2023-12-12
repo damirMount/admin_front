@@ -312,6 +312,19 @@ export default function IndexPage() {
         }
     };
 
+    const getCurrentDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        let month = today.getMonth() + 1;
+        let day = today.getDate();
+
+        // Добавляем ведущий ноль, если месяц или день меньше 10
+        month = month < 10 ? `0${month}` : month;
+        day = day < 10 ? `0${day}` : day;
+
+        return `${year}-${month}-${day}`;
+    };
+
     const handleStartDateChange = (e) => {
         const newStartDate = e.target.value;
         setStartDate(newStartDate);
@@ -475,6 +488,7 @@ export default function IndexPage() {
                                                     id="startDate"
                                                     name="startDate"
                                                     value={startDate}
+                                                    max={getCurrentDate()}
                                                     onChange={handleStartDateChange}
                                                     required
                                                 />
@@ -487,6 +501,7 @@ export default function IndexPage() {
                                                     id="endDate"
                                                     name="endDate"
                                                     value={endDate}
+                                                    max={getCurrentDate()}
                                                     onChange={handleEndDateChange}
                                                     required
                                                 />

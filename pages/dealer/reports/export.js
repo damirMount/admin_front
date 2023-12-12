@@ -8,6 +8,8 @@ import Alert from "../../../components/Alert";
 import Preloader from "../../../components/Preloader";
 import { formatDistanceToNow } from 'date-fns';
 import ruLocale from 'date-fns/locale/ru';
+import RegistryTabs from "../../../components/RegistryTabs";
+import ReportsTabs from "../../../components/ReportsTabs";
 
 
 export default function IndexPage() {
@@ -23,6 +25,19 @@ export default function IndexPage() {
 
     const clearAlertMessage = () => {
         setAlertMessage({ type: "", text: "" });
+    };
+
+    const getCurrentDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        let month = today.getMonth() + 1;
+        let day = today.getDate();
+
+        // Добавляем ведущий ноль, если месяц или день меньше 10
+        month = month < 10 ? `0${month}` : month;
+        day = day < 10 ? `0${day}` : day;
+
+        return `${year}-${month}-${day}`;
     };
 
     const handleStartDateChange = (e) => {
@@ -42,20 +57,6 @@ export default function IndexPage() {
             endDate: newEndDate,
         }));
     };
-
-    const getCurrentDate = () => {
-        const today = new Date();
-        const year = today.getFullYear();
-        let month = today.getMonth() + 1;
-        let day = today.getDate();
-
-        // Добавляем ведущий ноль, если месяц или день меньше 10
-        month = month < 10 ? `0${month}` : month;
-        day = day < 10 ? `0${day}` : day;
-
-        return `${year}-${month}-${day}`;
-    };
-
 
     useEffect(() => {
         const yesterday = new Date();
@@ -132,13 +133,15 @@ export default function IndexPage() {
     return (
         <div>
             <div>
-                <Navigation></Navigation>
+                <Navigation />
             </div>
             <div>
                 <Alert alertMessage={alertMessage} clearAlertMessage={clearAlertMessage} />
             </div>
             <div className="container body-container mt-5">
                 <h1>Выгрузка отчета по истории счетов</h1>
+
+                <ReportsTabs />
                 {processingLoader ? (
                     <Preloader />
                 ) : (
@@ -172,7 +175,7 @@ export default function IndexPage() {
                                                 options={[
                                                     { value: 0, label: 'Проведения платежа' },
                                                 ]}
-                                                selectedValue={{ value: 0, label: 'Проведения платежа' }}
+                                                selectedValue={{ value: 0, label: 'Проведения' }}
                                                 required
                                                 className="selector-choice"
                                                 name="isTestEmailEnabled"
@@ -256,8 +259,7 @@ export default function IndexPage() {
                                         <thead>
                                         <tr>
                                             <th className="col-3">Название файла</th>
-                                            <th className="col-auto">Параметры отчёта</th>
-                                            <th className="col-1"> </th>
+                                            <th className="col-auto" colSpan="2">Параметры отчёта</th>
                                         </tr>
                                         </thead>
                                         <tbody>
