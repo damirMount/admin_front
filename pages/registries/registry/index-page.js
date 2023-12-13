@@ -2,6 +2,7 @@ import TableWithPagination from '../../../components/TableWithPagination';
 import Navigation from "../../../components/Navigation";
 import Footer from "../../../components/Footer";
 import {REGISTRY_DELETE_URL, REGISTRY_INDEX_URL} from "../../../routes/api";
+import Head from "next/head";
 
 export default function IndexPage() {
     const apiUrl = `${REGISTRY_INDEX_URL}`;
@@ -13,11 +14,14 @@ export default function IndexPage() {
 
     return (
         <div>
+            <Head>
+                <title>Список реестров | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
             <div>
                 <Navigation></Navigation>
             </div>
             <div className="container body-container mt-5">
-                <h1>Список файлов реестров</h1>
+                <h1>Список реестров</h1>
                 <TableWithPagination
                     apiUrl={apiUrl}
                     tableHeaders={tableHeaders}

@@ -1,9 +1,10 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
 import { parseCookies, destroyCookie, setCookie } from 'nookies';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../src/app/globals.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import Head from "next/head";
 
 function MyApp({ Component, pageProps }) {
     const router = useRouter();
@@ -47,7 +48,12 @@ function MyApp({ Component, pageProps }) {
         }
     }, [router]);
 
-    return <Component {...pageProps} />;
+    return <div>
+        <Head>
+            <title>{process.env.NEXT_PUBLIC_APP_NAME}</title>
+        </Head>
+    <Component {...pageProps} />
+    </div>;
 }
 
 export default MyApp;

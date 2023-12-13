@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navigation from "../../components/Navigation";
 import Footer from "../../components/Footer";
@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { parseCookies } from "nookies";
 import {ACQUIRING_COMPARISON_URL} from "../../routes/api";
+import Head from "next/head";
 
 export default function IndexPage() {
     const router = useRouter();
@@ -91,6 +92,9 @@ export default function IndexPage() {
 
     return (
         <div>
+            <Head>
+                <title>Сверка эквайринга | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
             <Navigation />
 
             <div className="container body-container mt-5">

@@ -19,6 +19,7 @@ import {
     REGISTRY_SHOW_URL,
     REGISTRY_UPDATE_URL
 } from "../../../../routes/api";
+import Head from "next/head";
 
 export default function EditRegistryFile() {
     const [formData, setFormData] = useState({
@@ -45,6 +46,8 @@ export default function EditRegistryFile() {
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
 
+    const [registryName, setRegistryName] = useState('');
+
     useEffect(() => {
         const fetchRegistryItem = async () => {
             try {
@@ -70,6 +73,8 @@ export default function EditRegistryFile() {
 
                     setCreatedAt(data.createdAt)
                     setUpdatedAt(data.updatedAt)
+
+                    setRegistryName(data.name)
 
                     const dataFieldArray = data.fields.split(',').map((item) => item.trim());
 
@@ -205,6 +210,9 @@ export default function EditRegistryFile() {
 
     return (
         <div>
+            <Head>
+                <title>{registryName} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
             <div>
                 <Navigation />
             </div>

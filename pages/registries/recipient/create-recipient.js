@@ -12,6 +12,7 @@ import Footer from '../../../components/Footer';
 import {
     RECIPIENT_CREATE_URL,
     GET_REGISTRYS_URL} from '../../../routes/api'
+import Head from "next/head";
 
 export default function CreateRecipient() {
     const [formData, setFormData] = useState({
@@ -108,6 +109,9 @@ export default function CreateRecipient() {
 
     return (
         <div>
+            <Head>
+                <title>Создать получателя | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
             <div>
                 <Navigation />
             </div>

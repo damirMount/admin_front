@@ -11,6 +11,7 @@ import ruLocale from 'date-fns/locale/ru';
 import RegistryTabs from "../../../components/RegistryTabs";
 import ReportsTabs from "../../../components/ReportsTabs";
 import {DEALER_REPORTS_EXPORT_URL} from "../../../routes/api";
+import Head from "next/head";
 
 
 export default function IndexPage() {
@@ -133,6 +134,9 @@ export default function IndexPage() {
 
     return (
         <div>
+            <Head>
+                <title>Отчёты по истории счётов | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
             <div>
                 <Navigation />
             </div>

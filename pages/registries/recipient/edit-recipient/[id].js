@@ -11,6 +11,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import Footer from "../../../../components/Footer";
 import {GET_REGISTRYS_URL, RECIPIENT_SHOW_URL, RECIPIENT_UPDATE_URL} from "../../../../routes/api";
+import Head from "next/head";
 
 export default function EditRecipient() {
     const [formData, setFormData] = useState({
@@ -26,6 +27,7 @@ export default function EditRecipient() {
     const [selectedRegistryIds, setSelectedRegistryIds] = useState([]);
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
+    const [recipientName, setRecipientName] = useState('');
 
     const router = useRouter();
     const itemId = router.query.id;
@@ -43,6 +45,8 @@ export default function EditRecipient() {
                 });
                 if (response.ok) {
                     const data = await response.json();
+
+                    setRecipientName(data.name)
                     console.log('data get');
                     setSelectedRegistryIds(data.registry_ids);
                     setFormData((prevFormData) => ({
@@ -161,6 +165,11 @@ export default function EditRecipient() {
 
     return (
         <div>
+
+            <Head>
+                <title>{recipientName} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
+
             <div>
                 <Navigation />
             </div>

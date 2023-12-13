@@ -20,6 +20,7 @@ import {
     GET_REGISTRYS_URL,
     REGISTRY_RESEND_URL
 } from "../../../routes/api";
+import Head from "next/head";
 
 
 export default function IndexPage() {
@@ -372,6 +373,9 @@ export default function IndexPage() {
 
     return (
         <div>
+            <Head>
+                <title>Перезапуск реестра | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
             <div>
                 <Navigation></Navigation>
             </div>

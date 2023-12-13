@@ -8,6 +8,7 @@ import FormInput from "../../../components/FormInput";
 import Alert from "../../../components/Alert";
 import { parseCookies } from "nookies";
 import {DEALER_REPORTS_GET_TSJ_DEALER_URL, DEALER_REPORTS_UPDATE_TSJ_DEALER_URL} from "../../../routes/api";
+import Head from "next/head";
 
 export default function IndexPage() {
     const [processingLoader, setProcessingLoader] = useState(false);
@@ -81,6 +82,9 @@ export default function IndexPage() {
 
     return (
         <div>
+            <Head>
+                <title>Список диллеров ТСЖ| {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
             <Navigation />
             <Alert alertMessage={alertMessage} clearAlertMessage={clearAlertMessage} />
             <div className="container body-container mt-5">

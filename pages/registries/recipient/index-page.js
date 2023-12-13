@@ -4,6 +4,7 @@ import Footer from "../../../components/Footer";
 import {
     RECIPIENT_INDEX_URL,
     RECIPIENT_DELETE_URL } from '../../../routes/api'
+import Head from "next/head";
 
 export default function IndexPage() {
     const apiUrl = `${RECIPIENT_INDEX_URL}`;
@@ -15,6 +16,11 @@ export default function IndexPage() {
 
     return (
         <div>
+
+            <Head>
+                <title>Список получателей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
+
             <div>
                 <Navigation></Navigation>
             </div>

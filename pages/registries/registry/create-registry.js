@@ -19,6 +19,7 @@ import Footer from '../../../components/Footer';
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import RegistryTable from "../../../components/RegistryTable";
 import {GET_LIST_SERVERS_URL, GET_LIST_SERVICES_URL, REGISTRY_CREATE_URL} from "../../../routes/api";
+import Head from "next/head";
 
 library.add(faCheck, faTag, faGripVertical, faPlus);
 
@@ -116,6 +117,9 @@ export default function CreateRegistry() {
 
     return (
         <div>
+            <Head>
+                <title>Создать реестр | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
             <div>
                 <Navigation></Navigation>
             </div>
