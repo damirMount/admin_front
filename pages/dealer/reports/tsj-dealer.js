@@ -41,8 +41,7 @@ export default function IndexPage() {
 
     useEffect(() => {
         fetchDataFromServer(); // Вызовите функцию при монтировании компонента
-        console.log(tableData)
-    }, []);
+    }, [tableData]);
 
     const handleFileUpload = (event) => {
         const fileInput = event.target.files[0];

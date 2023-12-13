@@ -353,8 +353,6 @@ export default function IndexPage() {
 
 
     useEffect(() => {
-        console.log(isTestEmailEnabled)
-
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         const yesterdayString = yesterday.toISOString().substr(0, 10);
@@ -369,7 +367,7 @@ export default function IndexPage() {
             startDate: startOfDay,
             endDate: endOfDay,
         }));
-    }, []);
+    }, [isTestEmailEnabled]);
 
     return (
         <div>

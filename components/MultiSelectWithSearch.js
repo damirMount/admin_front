@@ -57,7 +57,7 @@ const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectCh
         };
 
         fetchOptions();
-    }, [apiUrl, defaultValue, onlyDefaultValue]);
+    }, [apiUrl, defaultValue, onlyDefaultValue, selectedLastRegistry, selectedRegistry, selectedValue]);
 
 
     const handleSelectChange = (selectedOptions) => {
