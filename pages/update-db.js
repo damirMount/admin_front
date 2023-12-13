@@ -5,6 +5,9 @@ import FormInput from '../components/FormInput';
 import { parseCookies } from 'nookies';
 import Navigation from '../components/Navigation';
 import Footer from "../components/Footer";
+import {
+    POST_ABONENT_SERVICE_URL,
+    GET_LIST_SERVICES_URL} from '../routes/api'
 
 export default function UpdateDBPage() {
     const [formData, setFormData] = useState({
@@ -44,7 +47,7 @@ export default function UpdateDBPage() {
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = process.env.NEXT_PUBLIC_POST_ABONENT_SERVICE_URL;
+            const apiUrl = `${POST_ABONENT_SERVICE_URL}`;
             // Отправка данных формы на API
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -78,7 +81,7 @@ export default function UpdateDBPage() {
                     <div className="form-group">
                         <label htmlFor="service_id">Сервис</label>
                         <SelectWithSearch
-                            apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVICES_URL}`}
+                            apiUrl={`${GET_LIST_SERVICES_URL}`}
                             required
                             name="serviceId"
                             onSelectChange={(selectedValue) =>

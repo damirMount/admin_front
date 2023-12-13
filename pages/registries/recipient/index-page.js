@@ -1,14 +1,17 @@
 import TableWithPagination from '../../../components/TableWithPagination';
 import Navigation from "../../../components/Navigation";
 import Footer from "../../../components/Footer";
+import {
+    RECIPIENT_INDEX_URL,
+    RECIPIENT_DELETE_URL } from '../../../routes/api'
 
 export default function IndexPage() {
-    const apiUrl = `${process.env.NEXT_PUBLIC_RECIPIENT_INDEX_URL}`;
+    const apiUrl = `${RECIPIENT_INDEX_URL}`;
     const tableHeaders = ['ID','Name', 'Тип', 'Статус', 'Обновлено', 'Создано'];
     const tableValues = ['id', 'name', 'type', 'is_blocked', 'updatedAt', 'createdAt'];
     const createRoute = `/registries/recipient/create-recipient`;
     const editRoute = `/registries/recipient/edit-recipient`;
-    const deleteRoute = `${process.env.NEXT_PUBLIC_RECIPIENT_DELETE_URL}`;
+    const deleteRoute = `${RECIPIENT_DELETE_URL}`;
 
     return (
         <div>

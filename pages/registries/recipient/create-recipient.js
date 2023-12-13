@@ -9,6 +9,9 @@ import { faEnvelope, faXmarkCircle} from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import Footer from '../../../components/Footer';
+import {
+    RECIPIENT_CREATE_URL,
+    GET_REGISTRYS_URL} from '../../../routes/api'
 
 export default function CreateRecipient() {
     const [formData, setFormData] = useState({
@@ -74,7 +77,7 @@ export default function CreateRecipient() {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
 
-            const apiUrl = process.env.NEXT_PUBLIC_RECIPIENT_CREATE_URL;
+            const apiUrl = RECIPIENT_CREATE_URL;
 
             // Формируем данные для отправки на сервер, включая данные emails
             const dataToSend = {
@@ -164,7 +167,7 @@ export default function CreateRecipient() {
                         <label htmlFor="registry_ids">Файлы реестров</label>
 
                         <MultiSelectWithSearch
-                            apiUrl={`${process.env.NEXT_PUBLIC_GET_REGISTRYS_URL}`}
+                            apiUrl={`${GET_REGISTRYS_URL}`}
                             required
                             name="registry_ids"
                             placeholder="Выберете фаил для отправки"

@@ -10,6 +10,7 @@ import { formatDistanceToNow } from 'date-fns';
 import ruLocale from 'date-fns/locale/ru';
 import RegistryTabs from "../../../components/RegistryTabs";
 import ReportsTabs from "../../../components/ReportsTabs";
+import {DEALER_REPORTS_EXPORT_URL} from "../../../routes/api";
 
 
 export default function IndexPage() {
@@ -83,7 +84,7 @@ export default function IndexPage() {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
 
-            const sendRegistryApiUrl = `${process.env.NEXT_PUBLIC_DEALER_REPORTS_EXPORT_URL}`;
+            const sendRegistryApiUrl = `${DEALER_REPORTS_EXPORT_URL}`;
 
             setProcessingLoader(true);
 

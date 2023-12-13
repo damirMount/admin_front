@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { setCookie } from 'nookies'; // Подключение библиотеки nookies для работы с куками
+import {POST_LOGIN_URL} from '../routes/api'
 
 export default function LoginPage() {
     const [username, setUsername] = useState('');
@@ -9,7 +10,7 @@ export default function LoginPage() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const apiUrl = `${process.env.NEXT_PUBLIC_POST_LOGIN_URL}`;
+        const apiUrl = `${POST_LOGIN_URL}`;
         // Проверка учетных данных и генерация токена аутентификации
         try {
             const response = await fetch(apiUrl, {

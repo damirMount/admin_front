@@ -9,6 +9,7 @@ import {
     faArrowRightArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { parseCookies } from "nookies";
+import {ACQUIRING_COMPARISON_URL} from "../../routes/api";
 
 export default function IndexPage() {
     const router = useRouter();
@@ -16,7 +17,7 @@ export default function IndexPage() {
     const [excelFile, setExcelFile] = useState(null);
     const [registryFile, setRegistryFile] = useState(null);
     const [comparisonResult, setComparisonResult] = useState(null);
-    const apiUrl = `${process.env.NEXT_PUBLIC_ACQUIRING_COMPARISON_URL}`;
+    const apiUrl = `${ACQUIRING_COMPARISON_URL}`;
 
     useEffect(() => {
         const cookies = parseCookies();

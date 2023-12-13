@@ -18,6 +18,7 @@ import SelectWithSearch from '../../../components/SelectWithSearch';
 import Footer from '../../../components/Footer';
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import RegistryTable from "../../../components/RegistryTable";
+import {GET_LIST_SERVERS_URL, GET_LIST_SERVICES_URL, REGISTRY_CREATE_URL} from "../../../routes/api";
 
 library.add(faCheck, faTag, faGripVertical, faPlus);
 
@@ -79,7 +80,7 @@ export default function CreateRegistry() {
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_CREATE_URL;
+            const apiUrl = REGISTRY_CREATE_URL;
 
             const activeRows = getRows.filter((row) => row.isActive);
             const activeFields = activeRows.map((row) => row.field);
@@ -157,7 +158,7 @@ export default function CreateRegistry() {
                             <div className="form-group">
                                 <label htmlFor="serverId">Сервер</label>
                                 <SelectWithSearch
-                                    apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVERS_URL}`}
+                                    apiUrl={`${GET_LIST_SERVERS_URL}`}
                                     required
                                     name="serverId"
                                     onSelectChange={(selectedValue) =>
@@ -170,7 +171,7 @@ export default function CreateRegistry() {
                             <div className="form-group">
                                 <label htmlFor="servicesId">Сервисы</label>
                                 <MultiSelectWithSearch
-                                    apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVICES_URL}`}
+                                    apiUrl={`${GET_LIST_SERVICES_URL}`}
                                     required
                                     name="servicesId"
                                     multi={true}

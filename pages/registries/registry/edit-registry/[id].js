@@ -13,6 +13,12 @@ import Link from 'next/link';
 import Footer from '../../../../components/Footer';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import RegistryTable from "../../../../components/RegistryTable";
+import {
+    GET_LIST_SERVERS_URL,
+    GET_LIST_SERVICES_URL,
+    REGISTRY_SHOW_URL,
+    REGISTRY_UPDATE_URL
+} from "../../../../routes/api";
 
 export default function EditRegistryFile() {
     const [formData, setFormData] = useState({
@@ -44,7 +50,7 @@ export default function EditRegistryFile() {
             try {
                 const cookies = parseCookies();
                 const authToken = JSON.parse(cookies.authToken).value;
-                const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_SHOW_URL + '/' + itemId;
+                const apiUrl = REGISTRY_SHOW_URL + '/' + itemId;
                 const response = await fetch(apiUrl, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -161,7 +167,7 @@ export default function EditRegistryFile() {
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = process.env.NEXT_PUBLIC_REGISTRY_UPDATE_URL + '/' + itemId;
+            const apiUrl = REGISTRY_UPDATE_URL + '/' + itemId;
 
             const activeRows = getRows.filter((row) => row.isActive);
             const activeFields = activeRows.map((row) => row.field);
@@ -245,7 +251,7 @@ export default function EditRegistryFile() {
                             <div className="form-group">
                                 <label htmlFor="serverId">Сервер</label>
                                 <SelectWithSearch
-                                    apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVERS_URL}`}
+                                    apiUrl={`${GET_LIST_SERVERS_URL}`}
                                     required
                                     name="serverId"
                                     defaultValue={formData.serverId ? formData.serverId : []}
@@ -262,7 +268,7 @@ export default function EditRegistryFile() {
                             <div className="form-group">
                                 <label htmlFor="serverId">Сервисы</label>
                                 <MultiSelectWithSearch
-                                    apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVICES_URL}`}
+                                    apiUrl={`${GET_LIST_SERVICES_URL}`}
                                     required
                                     name="servicesId"
                                     multi={true}

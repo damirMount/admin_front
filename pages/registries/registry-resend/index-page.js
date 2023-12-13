@@ -13,6 +13,13 @@ import Preloader from "../../../components/Preloader";
 import Alert from "../../../components/Alert";
 import {faEnvelope, faXmarkCircle} from "@fortawesome/free-regular-svg-icons";
 import CustomSelect from "../../../components/CustomSelect";
+import {
+    GET_LIST_SERVICES_URL,
+    GET_PAYMENTS_URL,
+    GET_RECIPIENTS_URL,
+    GET_REGISTRYS_URL,
+    REGISTRY_RESEND_URL
+} from "../../../routes/api";
 
 
 export default function IndexPage() {
@@ -103,7 +110,7 @@ export default function IndexPage() {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
 
-            const getRegistryApiUrl = `${process.env.NEXT_PUBLIC_GET_REGISTRYS_URL}`;
+            const getRegistryApiUrl = `${GET_REGISTRYS_URL}`;
             const encodedValue = encodeURIComponent(selectedValue);
             const column = 'recipient_id';
 
@@ -145,7 +152,7 @@ export default function IndexPage() {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
 
-            const getServicesByRegistryApiUrl = `${process.env.NEXT_PUBLIC_GET_LIST_SERVICES_URL}`;
+            const getServicesByRegistryApiUrl = `${GET_LIST_SERVICES_URL}`;
             // const column = 'id';
             const queryParams = services.map((serviceId) => `value[]=${encodeURIComponent(serviceId)}`).join('&');
             const queryString = `column=id&${queryParams}`;
@@ -213,7 +220,7 @@ export default function IndexPage() {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
 
-            const getPaymentApi = `${process.env.NEXT_PUBLIC_GET_PAYMENTS_URL}`;
+            const getPaymentApi = `${GET_PAYMENTS_URL}`;
 
             const dataToSend = {
                 paymentId: paymentId,
@@ -283,7 +290,7 @@ export default function IndexPage() {
                 const cookies = parseCookies();
                 const authToken = JSON.parse(cookies.authToken).value;
 
-                const sendRegistryApiUrl = `${process.env.NEXT_PUBLIC_REGISTRY_RESEND_URL}`;
+                const sendRegistryApiUrl = `${REGISTRY_RESEND_URL}`;
 
                 setProcessingLoader(true); // Показать прелоадер
 
@@ -425,7 +432,7 @@ export default function IndexPage() {
                             <div className="form-group">
                                 <label htmlFor="recipientId">Получатель</label>
                                 <SelectWithSearch
-                                    apiUrl={`${process.env.NEXT_PUBLIC_GET_RECIPIENTS_URL}`}
+                                    apiUrl={`${GET_RECIPIENTS_URL}`}
                                     required
                                     name="recipientId"
                                     onSelectChange={handleRecipientChange}
@@ -439,7 +446,7 @@ export default function IndexPage() {
                                     <div className="form-group">
                                         <label htmlFor="registryId">Реестр</label>
                                         <SelectWithSearch
-                                            apiUrl={`${process.env.NEXT_PUBLIC_GET_REGISTRYS_URL}`}
+                                            apiUrl={`${GET_REGISTRYS_URL}`}
                                             options={registries.map((item) => ({
                                                 value: item.id,
                                                 label: item.name,
@@ -453,7 +460,7 @@ export default function IndexPage() {
                                         <div className="form-group">
                                             <label htmlFor="serverId">Сервисы</label>
                                             <MultiSelectWithSearch
-                                                apiUrl={`${process.env.NEXT_PUBLIC_GET_LIST_SERVICES_URL}`}
+                                                apiUrl={`${GET_LIST_SERVICES_URL}`}
                                                 required
                                                 name="services_id"
                                                 multi={true}

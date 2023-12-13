@@ -1,10 +1,12 @@
 import RegistryBackups from '../../../components/RegistryFilesList';
 import Navigation from "../../../components/Navigation";
 import Footer from "../../../components/Footer";
-
+import {
+    REGISTRY_LOG_INDEX_URL,
+    REGISTRY_LOG_DOWNLOAD_URL} from '../../../routes/api'
 export default function IndexPage() {
-    const apiUrl = `${process.env.NEXT_PUBLIC_REGISTRY_LOG_INDEX_URL}`;
-    const downloadUrl = `${process.env.NEXT_PUBLIC_REGISTRY_LOG_DOWNLOAD_URL}`;
+    const apiUrl = `${REGISTRY_LOG_INDEX_URL}`;
+    const downloadUrl = `${REGISTRY_LOG_DOWNLOAD_URL}`;
 
     return (
         <div>

@@ -10,6 +10,7 @@ import {faEnvelope, faXmarkCircle} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import Footer from "../../../../components/Footer";
+import {GET_REGISTRYS_URL, RECIPIENT_SHOW_URL, RECIPIENT_UPDATE_URL} from "../../../../routes/api";
 
 export default function EditRecipient() {
     const [formData, setFormData] = useState({
@@ -34,7 +35,7 @@ export default function EditRecipient() {
             try {
                 const cookies = parseCookies();
                 const authToken = JSON.parse(cookies.authToken).value;
-                const apiUrl = process.env.NEXT_PUBLIC_RECIPIENT_SHOW_URL + '/' + itemId;
+                const apiUrl = RECIPIENT_SHOW_URL + '/' + itemId;
                 const response = await fetch(apiUrl, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -85,7 +86,7 @@ export default function EditRecipient() {
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = `${process.env.NEXT_PUBLIC_RECIPIENT_UPDATE_URL}/${itemId}`;
+            const apiUrl = `${RECIPIENT_UPDATE_URL}/${itemId}`;
             const dataToSend = {
                 ...formData,
                 emails: formData.emails,
@@ -198,7 +199,7 @@ export default function EditRecipient() {
                                 <label htmlFor="registry_ids">Файлы реестров</label>
                                 {!isLoading && (
                                     <MultiSelectWithSearch
-                                        apiUrl={`${process.env.NEXT_PUBLIC_GET_REGISTRYS_URL}`}
+                                        apiUrl={`${GET_REGISTRYS_URL}`}
                                         required
                                         name="registry_ids"
                                         multi={true}

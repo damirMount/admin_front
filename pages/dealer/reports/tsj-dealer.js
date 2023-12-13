@@ -7,6 +7,7 @@ import Preloader from "../../../components/Preloader";
 import FormInput from "../../../components/FormInput";
 import Alert from "../../../components/Alert";
 import { parseCookies } from "nookies";
+import {DEALER_REPORTS_GET_TSJ_DEALER_URL, DEALER_REPORTS_UPDATE_TSJ_DEALER_URL} from "../../../routes/api";
 
 export default function IndexPage() {
     const [processingLoader, setProcessingLoader] = useState(false);
@@ -22,7 +23,7 @@ export default function IndexPage() {
         try {
         const cookies = parseCookies();
         const authToken = JSON.parse(cookies.authToken).value;
-        const fetchDataUrl = `${process.env.NEXT_PUBLIC_DEALER_REPORTS_GET_TSJ_DEALER_URL}`;
+        const fetchDataUrl = `${DEALER_REPORTS_GET_TSJ_DEALER_URL}`;
         const response = await fetch(fetchDataUrl, {
             method: 'get',
             headers: {
@@ -53,7 +54,7 @@ export default function IndexPage() {
 
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const updateTSJDealerApiUrl = `${process.env.NEXT_PUBLIC_DEALER_REPORTS_UPDATE_TSJ_DEALER_URL}`;
+            const updateTSJDealerApiUrl = `${DEALER_REPORTS_UPDATE_TSJ_DEALER_URL}`;
             const response = await fetch(updateTSJDealerApiUrl, {
                 method: 'POST',
                 headers: {
