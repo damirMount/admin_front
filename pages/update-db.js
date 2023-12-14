@@ -61,7 +61,8 @@ export default function UpdateDBPage() {
             if (response.ok) {
                 console.log('Данные успешно отправлены на API');
                 // Перенаправление на другую страницу после успешной отправки
-                router.push('/update-db');
+                window.alert('Данные успешно записаны!');
+                window.location.reload();
             } else {
                 console.error('Ошибка при отправке данных на API');
             }
