@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faGripVertical, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
-function RegistryTable(props) {
+function RegistryFieldsTable(props) {
     const { getRows, onUpdateData } = props;  // Получаем переданные данные из props
 
     const [rows, setRows] = useState(getRows);
@@ -169,4 +169,4 @@ function RegistryTable(props) {
     );
 }
 
-export default RegistryTable;
+export default RegistryFieldsTable;

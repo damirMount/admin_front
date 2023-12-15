@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import TableWithPagination from '../../../components/main/TableWithPagination';
 import Navigation from "../../../components/main/Navigation";
 import Footer from "../../../components/main/Footer";
-import ReportsTabs from "../../../components/report/ReportsTabs";
+import ReportsNavigationTabs from "../../../components/report/ReportsNavigationTabs";
 import Preloader from "../../../components/main/Preloader";
-import FormInput from "../../../components/main/FormInput";
+import FormInput from "../../../components/input/FormInput";
 import Alert from "../../../components/main/Alert";
 import { parseCookies } from "nookies";
 import {DEALER_REPORTS_GET_TSJ_DEALER_URL, DEALER_REPORTS_UPDATE_TSJ_DEALER_URL} from "../../../routes/api";
@@ -88,7 +87,7 @@ export default function IndexPage() {
             <Alert alertMessage={alertMessage} clearAlertMessage={clearAlertMessage} />
             <div className="container body-container mt-5">
                 <h1>Список дилеров ТСЖ</h1>
-                <ReportsTabs />
+                <ReportsNavigationTabs />
 
                 {processingLoader ? (
                     <Preloader />

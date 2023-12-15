@@ -1,7 +1,7 @@
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 
-const RegistryTabs = () => {
+const RegistryNavigationTabs = () => {
     const router = useRouter();
 
     return (
@@ -35,4 +35,4 @@ const RegistryTabs = () => {
         </div>
     )
 }
-export default RegistryTabs;
+export default RegistryNavigationTabs;

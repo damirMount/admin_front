@@ -22,23 +22,23 @@ const Navigation = () => {
                             </Link>
                             </li>
                             <li className="nav-item">
-                                <Link href="/update-db" className={`nav-link $router.pathname === '/update-db' ? 'active' : ''}`}>
+                                <Link href="/update-db" className={`nav-link`}>
                                     Обновить БД
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link href="/registries/recipient/index-page" className={`nav-link ${router.pathname === '/create-registries' ? 'active' : ''}`}>
+                                <Link href="/registries/recipient/index-page" className={`nav-link`}>
                                     Реестры
                                 </Link>
                             </li>
 
                             <li className="nav-item">
-                                <Link href="/dealer/reports/export" className={`nav-link ${router.pathname === '/create-registries' ? 'active' : ''}`}>
+                                <Link href="/dealer/reports/export" className={`nav-link`}>
                                     Отчёт по истории счётов
                                 </Link>
                             </li>
                             {/*<li className="nav-item">*/}
-                            {/*    <Link href="/acquiring/index-page" className={`nav-link ${router.pathname === '/create-registries' ? 'active' : ''}`}>*/}
+                            {/*    <Link href="/acquiring/index-page" className={`nav-link`}>*/}
                             {/*        Эквайринг*/}
                             {/*    </Link>*/}
                             {/*</li>*/}

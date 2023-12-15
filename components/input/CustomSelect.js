@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 
 const CustomSelect = ({ options, required, name, onSelectChange, defaultValue, selectedValue, className }) => {
-    const [selectedOption, setSelectedOption] = useState(null);
     useEffect(() => {
         if (selectedValue) {
-            const option = options.find((option) => option.value === selectedValue.value);
-            setSelectedOption(option);
+            options.find((option) => option.value === selectedValue.value);
         }
     }, [selectedValue, options]);
 

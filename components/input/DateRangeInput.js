@@ -1,7 +1,5 @@
-// DateRangeInput.js
 import React, { useEffect, useState } from "react";
 import { format } from 'date-fns';
-
 
 const DateRangeInput = ({ initialStartDate, initialEndDate, onDateChange }) => {
     const [startDate, setStartDate] = useState(initialStartDate || "");
@@ -11,17 +9,6 @@ const DateRangeInput = ({ initialStartDate, initialEndDate, onDateChange }) => {
         const today = new Date();
         return format(today, 'yyyy-MM-dd');
     };
-
-    useEffect(() => {
-        if (!initialStartDate || !initialEndDate) {
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayString = yesterday.toISOString().substr(0, 10);
-            setStartDate(initialStartDate || yesterdayString);
-            setEndDate(initialEndDate || yesterdayString);
-            onDateChange(initialStartDate || yesterdayString, initialEndDate || yesterdayString);
-        }
-    }, [initialStartDate, initialEndDate]);
 
     const handleStartDateChange = (e) => {
         const newStartDate = e.target.value;
@@ -34,6 +21,17 @@ const DateRangeInput = ({ initialStartDate, initialEndDate, onDateChange }) => {
         setEndDate(newEndDate);
         onDateChange(startDate, newEndDate);
     };
+
+    useEffect(() => {
+        if (!initialStartDate || !initialEndDate) {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayString = yesterday.toISOString().substr(0, 10);
+            setStartDate(initialStartDate || yesterdayString);
+            setEndDate(initialEndDate || yesterdayString);
+            onDateChange(initialStartDate || yesterdayString, initialEndDate || yesterdayString);
+        }
+    }, [initialStartDate, initialEndDate]);
 
     return (
         <div className="d-flex w-100 justify-content-between">

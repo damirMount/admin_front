@@ -13,7 +13,7 @@ export default function IndexPage() {
     return (
         <div>
             <Head>
-                <title>Резервные копии  реестров| {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                <title>Резервные копии реестров | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <div>
                 <Navigation></Navigation>

@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import SelectWithSearch from '../../../../components/main/SelectWithSearch';
-import FormInput from '../../../../components/main/FormInput';
+import SelectWithSearch from '../../../../components/input/SelectWithSearch';
+import FormInput from '../../../../components/input/FormInput';
 import { parseCookies } from 'nookies';
 import Navigation from '../../../../components/main/Navigation';
-import FormTextarea from '../../../../components/notUsed/FormTextarea';
-import CustomSelect from '../../../../components/main/CustomSelect';
-import MultiSelectWithSearch from '../../../../components/main/MultiSelectWithSearch';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faGripVertical } from '@fortawesome/free-solid-svg-icons';
+import CustomSelect from '../../../../components/input/CustomSelect';
+import MultiSelectWithSearch from '../../../../components/input/MultiSelectWithSearch';
 import Link from 'next/link';
 import Footer from '../../../../components/main/Footer';
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import RegistryTable from "../../../../components/registry/RegistryTable";
+import RegistryFieldsTable from "../../../../components/registry/RegistryFieldsTable";
 import {
     GET_LIST_SERVERS_URL,
     GET_LIST_SERVICES_URL,
@@ -20,6 +16,7 @@ import {
     REGISTRY_UPDATE_URL
 } from "../../../../routes/api";
 import Head from "next/head";
+import RegistryFileFormat from "../../../../components/registry/RegistryFileFormat";
 
 export default function EditRegistryFile() {
     const [formData, setFormData] = useState({
@@ -38,69 +35,14 @@ export default function EditRegistryFile() {
 
     const [getRows, setRows] = useState([
     ]);
-    const [selectedCheckboxCount, setSelectedCheckboxCount] = useState(0);
 
     const handleUpdateRows = (updatedRows) => {
-        setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryTable
+        setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryFieldsTable
     };
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
 
     const [registryName, setRegistryName] = useState('');
-
-    useEffect(() => {
-        const fetchRegistryItem = async () => {
-            try {
-                const cookies = parseCookies();
-                const authToken = JSON.parse(cookies.authToken).value;
-                const apiUrl = REGISTRY_SHOW_URL + '/' + itemId;
-                const response = await fetch(apiUrl, {
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        name: data.name,
-                        servicesId: data.services_id,
-                        serverId: data.server_id,
-                        tableHeaders: data.table_headers,
-                        is_blocked: data.is_blocked,
-                    }));
-
-                    setCreatedAt(data.createdAt)
-                    setUpdatedAt(data.updatedAt)
-
-                    setRegistryName(data.name)
-
-                    const dataFieldArray = data.fields.split(',').map((item) => item.trim());
-
-                    const dataHeadersArray = data.table_headers.split(',').map((item) => item.trim());
-                    const combinedData = combineDataFromDatabase(dataFieldArray, dataHeadersArray);
-                    setRows(combinedData);
-
-                    const selectedFormats = data.formats; // предположим, что это уже массив форматов
-                    setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        formats: selectedFormats,
-                    }));
-                } else {
-                    console.error('Ошибка при загрузке данных с API');
-                }
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setIsLoading(false); // Устанавливаем isLoading в false после завершения загрузки
-            }
-        };
-
-        if (itemId) {
-            fetchRegistryItem();
-        }
-    }, [itemId]);
 
 
     const handleInputChange = (event) => {
@@ -110,29 +52,6 @@ export default function EditRegistryFile() {
             [name]: value,
         }));
     };
-
-
-    useEffect(() => {
-        setSelectedCheckboxCount(formData.formats.length);
-    }, [formData.formats]);
-
-    // Функция для обработки изменений чекбоксов
-    const handleCheckboxChange = (event) => {
-        const { name, checked } = event.target;
-        setFormData((prevFormData) => {
-            const formats = [...prevFormData.formats];
-            if (checked && !formats.includes(name)) {
-                formats.push(name);
-            } else if (!checked && formats.includes(name)) {
-                formats.splice(formats.indexOf(name), 1);
-            }
-            return {
-                ...prevFormData,
-                formats,
-            };
-        });
-    };
-
 
     function combineDataFromDatabase(databaseFields, databaseHeaders) {
         const combinedData = [];
@@ -203,6 +122,61 @@ export default function EditRegistryFile() {
             console.error(error);
         }
     };
+
+    useEffect(() => {
+        const fetchRegistryItem = async () => {
+            try {
+                const cookies = parseCookies();
+                const authToken = JSON.parse(cookies.authToken).value;
+                const apiUrl = REGISTRY_SHOW_URL + '/' + itemId;
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        name: data.name,
+                        servicesId: data.services_id,
+                        serverId: data.server_id,
+                        tableHeaders: data.table_headers,
+                        is_blocked: data.is_blocked,
+                    }));
+
+                    setCreatedAt(data.createdAt)
+                    setUpdatedAt(data.updatedAt)
+
+                    setRegistryName(data.name)
+
+                    const dataFieldArray = data.fields.split(',').map((item) => item.trim());
+
+                    const dataHeadersArray = data.table_headers.split(',').map((item) => item.trim());
+                    const combinedData = combineDataFromDatabase(dataFieldArray, dataHeadersArray);
+                    setRows(combinedData);
+
+                    const selectedFormats = data.formats; // предположим, что это уже массив форматов
+                    setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        formats: selectedFormats,
+                    }));
+                } else {
+                    console.error('Ошибка при загрузке данных с API');
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setIsLoading(false); // Устанавливаем isLoading в false после завершения загрузки
+            }
+        };
+
+        if (itemId) {
+            fetchRegistryItem();
+        }
+    }, [itemId]);
+
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -292,66 +266,10 @@ export default function EditRegistryFile() {
                                 />
                             </div>
                             <div className="form-group d-flex align-items-center flex-column mt-3">
-                                <div className="d-flex justify-content-evenly w-75">
-                                    <div>
-                                        <input
-                                            autoComplete="off"
-                                            id="btn-xlsx"
-                                            className="btn-checked btn-grey"
-                                            type="checkbox"
-                                            name="xlsx"
-                                            checked={formData.formats.includes('xlsx')}
-                                            onChange={handleCheckboxChange}
-                                            required={selectedCheckboxCount === 0}
-                                        />
-                                        <label
-                                            className={`btn ${
-                                                formData.formats.includes('xlsx') ? 'btn-purple' : 'btn-grey'
-                                            }`}
-                                            htmlFor="btn-xlsx">
-                                            XLSX
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <input
-                                            autoComplete="off"
-                                            id="btn-csv"
-                                            className="btn-checked btn-grey"
-                                            type="checkbox"
-                                            name="csv"
-                                            checked={formData.formats.includes('csv')}
-                                            onChange={handleCheckboxChange}
-                                            required={selectedCheckboxCount === 0}
-                                        />
-                                        <label
-                                            className={`btn ${
-                                                formData.formats.includes('csv') ? 'btn-purple' : 'btn-grey'
-                                            }`}
-                                            htmlFor="btn-csv">
-                                            CSV
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <input
-                                            autoComplete="off"
-                                            id="btn-dbf"
-                                            className="btn-checked btn-grey"
-                                            type="checkbox"
-                                            name="dbf"
-                                            checked={formData.formats.includes('dbf')}
-                                            onChange={handleCheckboxChange}
-                                            required={selectedCheckboxCount === 0}
-                                        />
-                                        <label
-                                            className={`btn ${
-                                                formData.formats.includes('dbf') ? 'btn-purple' : 'btn-grey'
-                                            }`}
-                                            htmlFor="btn-dbf">
-                                            DBF
-                                        </label>
-                                    </div>
-                                </div>
-
+                                <RegistryFileFormat
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                />
                             </div>
                             <div className="mt-4">
                                 <p>Дата создания: {createdAt}</p>
@@ -359,7 +277,7 @@ export default function EditRegistryFile() {
                             </div>
                         </div>
                         <div className="container w-75">
-                            <RegistryTable
+                            <RegistryFieldsTable
                                 getRows={getRows}
                                 onUpdateData={handleUpdateRows}
                             />

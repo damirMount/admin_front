@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { parseCookies } from 'nookies';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faPenToSquare, faTrashAlt } from "@fortawesome/free-regular-svg-icons";
-import { faSearch, faFileCircleXmark, faAnglesLeft, faAnglesRight } from "@fortawesome/free-solid-svg-icons";
-import RegistryTabs from "../registry/RegistryTabs";
+import { faSearch, faFileCircleXmark} from "@fortawesome/free-solid-svg-icons";
+import RegistryNavigationTabs from "./RegistryNavigationTabs";
+import Pagination from "../main/Pagination";
 
 
-const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, editRoute, deleteRoute }) => {
+const RegistryListTable = ({ apiUrl, tableHeaders, tableValues, createRoute, editRoute, deleteRoute }) => {
     const [data, setData] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -15,7 +16,6 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
 
     const [searchTerm, setSearchTerm] = useState('');
     const [showMessage, setShowMessage] = useState(false); // Добавляем состояние showMessage
-    const maxButtons = 5; // Максимальное количество отображаемых кнопок
 
     const fetchData = async (newPage = page) => {
         try {
@@ -49,8 +49,6 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
     };
 
 
-
-
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     const handleSort = (key) => {
@@ -66,10 +64,6 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
 
         setSortConfig({ key, direction });
     };
-
-    useEffect(() => {
-        fetchData();
-    }, [page, sortConfig]);
 
     const handlePageChange = async (newPage) => {
         await fetchData(newPage);
@@ -165,38 +159,14 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
         return answer;
     }
 
-    const generatePaginationButtons = () => {
-        const buttons = [];
-        const half = Math.floor(maxButtons / 2);
-
-        for (let i = 1; i <= totalPages; i++) {
-            if (i === 1 || i === totalPages || (i >= page - half && i <= page + half)) {
-                buttons.push(i);
-            }
-        }
-
-        const paginationButtons = [];
-        let lastButton = 0;
-
-        buttons.forEach((button) => {
-            if (button - lastButton === 2) {
-                paginationButtons.push('...');
-            } else if (button - lastButton !== 1) {
-                paginationButtons.push('...');
-            }
-            paginationButtons.push(button);
-            lastButton = button;
-        });
-
-        return paginationButtons;
-    };
-
-    const paginationButtons = generatePaginationButtons();
+    useEffect(() => {
+        fetchData();
+    }, [page, sortConfig]);
 
     return (
         <div>
             <div className="create-button d-flex justify-content-center mb-5">
-                <RegistryTabs />
+                <RegistryNavigationTabs />
             </div>
             <div className="create-button d-flex justify-content-between">
                 <div className="d-flex flex-row">
@@ -298,27 +268,13 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
                 </table>
             )}
 
-            <div className="d-flex justify-content-center mt-5">
-                {page > 1 && (
-                    <button onClick={async () => await handlePageChange(page - 1)} className="btn btn-grey me-3">
-                        <FontAwesomeIcon icon={faAnglesLeft} /> Назад</button>
-                )}
-                {paginationButtons.map((button, index) => (
-                    <React.Fragment key={index}>
-                        {button === '...' ? (
-                            <span className="mx-1 align-self-end">...</span>
-                        ) : (
-                            <button onClick={async () => await handlePageChange(button)} className={`ms-1 me-1 btn ${button === page ? 'btn-purple' : 'btn-grey'}`}>
-                                {button}
-                            </button>
-                        )}
-                    </React.Fragment>
-                ))}
-                {page < totalPages && (
-                    <button onClick={async () => await handlePageChange(page + 1)} className="btn btn-grey ms-3">
-                        Вперёд <FontAwesomeIcon icon={faAnglesRight} /> </button>
-                )}
-            </div>
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
+
+
             {showModal && (
                 <div className="modal-overlay">
                     <div className="delete-modal modal-dialog">
@@ -343,4 +299,4 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
     );
 };
 
-export default TableWithPagination;
+export default RegistryListTable;

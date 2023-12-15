@@ -1,18 +1,16 @@
-import RegistryBackups from '../../../components/registry/RegistryFilesList';
 import Navigation from "../../../components/main/Navigation";
 import Footer from "../../../components/main/Footer";
 import React, { useEffect, useState } from "react";
-import CustomSelect from "../../../components/main/CustomSelect";
+import CustomSelect from "../../../components/input/CustomSelect";
 import { parseCookies } from "nookies";
 import Alert from "../../../components/main/Alert";
 import Preloader from "../../../components/main/Preloader";
 import { formatDistanceToNow } from 'date-fns';
 import ruLocale from 'date-fns/locale/ru';
-import RegistryTabs from "../../../components/registry/RegistryTabs";
-import ReportsTabs from "../../../components/report/ReportsTabs";
+import ReportsNavigationTabs from "../../../components/report/ReportsNavigationTabs";
 import {DEALER_REPORTS_EXPORT_URL} from "../../../routes/api";
 import Head from "next/head";
-import DateRangeInput from "../../../components/main/DateRangeInput";
+import DateRangeInput from "../../../components/input/DateRangeInput";
 
 
 export default function IndexPage() {
@@ -113,7 +111,7 @@ export default function IndexPage() {
             <div className="container body-container mt-5">
                 <h1>Выгрузка отчета по истории счетов</h1>
 
-                <ReportsTabs />
+                <ReportsNavigationTabs />
                 {processingLoader ? (
                     <Preloader />
                 ) : (

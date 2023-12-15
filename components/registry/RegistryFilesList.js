@@ -4,14 +4,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAnglesLeft, faAnglesRight, faDownload, faSearch } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import RegistryTabs from "./RegistryTabs";
+import RegistryNavigationTabs from "./RegistryNavigationTabs";
+import Pagination from "../main/Pagination";
 
 const RegisrtyFiles = ({ apiUrl, downloadUrl }) => {
     const [registryFiles, setRegisrtyFile] = useState([]);
     const [page, setPage] = useState(1); // Текущая страница
     const [totalPages, setTotalPages] = useState(0);
-    const maxButtons = 5; // Максимальное количество отображаемых кнопок
-    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
 
 
@@ -113,43 +112,16 @@ const RegisrtyFiles = ({ apiUrl, downloadUrl }) => {
     };
 
 
-    const generatePaginationButtons = () => {
-        const buttons = [];
-        const half = Math.floor(maxButtons / 2);
-
-        for (let i = 1; i <= totalPages; i++) {
-            if (i === 1 || i === totalPages || (i >= page - half && i <= page + half)) {
-                buttons.push(i);
-            }
-        }
-
-        const paginationButtonsArr = [];
-        let lastButton = 0;
-
-        buttons.forEach((button) => {
-            if (button - lastButton === 2) {
-                paginationButtonsArr.push('...');
-            } else if (button - lastButton !== 1) {
-                paginationButtonsArr.push('...');
-            }
-            paginationButtonsArr.push(button);
-            lastButton = button;
-        });
-
-        return paginationButtonsArr;
-    };
 
     useEffect(() => {
         fetchRegisrtyFile();
     }, [page, searchTerm]); // Зависимость от page и searchTerm
 
-    // Вызываем generatePaginationButtons после установки totalPages
-    const paginationButtonsArr = generatePaginationButtons();
 
     return (
         <div>
             <div className="create-button d-flex justify-content-center mb-5">
-                <RegistryTabs />
+                <RegistryNavigationTabs />
             </div>
             <div className="d-flex flex-row">
                 <form onSubmit={handleSearch} className="d-flex justify-content-end">
@@ -203,29 +175,11 @@ const RegisrtyFiles = ({ apiUrl, downloadUrl }) => {
                 </tbody>
                 </table>
             </div>
-            <div className="d-flex justify-content-center mt-5">
-                {page > 1 && (
-                    <button onClick={() => handlePageChange(page - 1)} className="btn btn-grey me-3">
-                        <FontAwesomeIcon icon={faAnglesLeft} /> Назад
-                    </button>
-                )}
-                {paginationButtonsArr.map((button, index) => (
-                    <React.Fragment key={index}>
-                        {button === '...' ? (
-                            <span className="mx-1 align-self-end">...</span>
-                        ) : (
-                            <button onClick={() => handlePageChange(button)} className={`ms-1 me-1 btn ${button === page ? 'btn-purple' : 'btn-grey'}`}>
-                                {button}
-                            </button>
-                        )}
-                    </React.Fragment>
-                ))}
-                {page < totalPages && (
-                    <button onClick={() => handlePageChange(page + 1)} className="btn btn-grey ms-3">
-                        Вперёд <FontAwesomeIcon icon={faAnglesRight} />{' '}
-                    </button>
-                )}
-            </div>
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 };

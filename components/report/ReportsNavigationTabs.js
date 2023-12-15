@@ -1,7 +1,7 @@
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 
-const ReportsTabs = () => {
+const ReportsNavigationTabs = () => {
     const router = useRouter();
 
     return (
@@ -19,4 +19,4 @@ const ReportsTabs = () => {
         </div>
     )
 }
-export default ReportsTabs;
+export default ReportsNavigationTabs;

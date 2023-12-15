@@ -1,11 +1,10 @@
-import TableWithPagination from '../../../components/main/TableWithPagination';
+import RegistryListTable from '../../../components/registry/RegistryListTable';
 import Navigation from "../../../components/main/Navigation";
 import Footer from "../../../components/main/Footer";
 import {
     RECIPIENT_INDEX_URL,
     RECIPIENT_DELETE_URL } from '../../../routes/api'
 import Head from "next/head";
-import BooleanSelect from "../../../components/notUsed/SelectBoolean";
 
 export default function IndexPage() {
     const apiUrl = `${RECIPIENT_INDEX_URL}`;
@@ -26,7 +25,7 @@ export default function IndexPage() {
             </div>
             <div className="container body-container mt-5">
                 <h1>Список получателей</h1>
-                <TableWithPagination
+                <RegistryListTable
                     apiUrl={apiUrl}
                     tableHeaders={tableHeaders}
                     tableValues={tableValues}

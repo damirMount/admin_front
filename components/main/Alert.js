@@ -6,12 +6,10 @@ const Alert = ({ alertMessage, clearAlertMessage }) => {
     const messageType = alertMessage.type === "success" ? alertMessage.type : 'danger';
 
     useEffect(() => {
-        // Устанавливаем таймер для автоматической очистки через 10 секунд
         const timer = setTimeout(() => {
             clearAlertMessage();
         }, 30000);
 
-        // Очищаем таймер при размонтировании компонента или изменении статуса
         return () => clearTimeout(timer);
     }, [alertMessage, clearAlertMessage]);
 

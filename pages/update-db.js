@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import SelectWithSearch from '../components/main/SelectWithSearch';
-import FormInput from '../components/main/FormInput';
+import SelectWithSearch from '../components/input/SelectWithSearch';
+import FormInput from '../components/input/FormInput';
 import { parseCookies } from 'nookies';
 import Navigation from '../components/main/Navigation';
 import Footer from "../components/main/Footer";

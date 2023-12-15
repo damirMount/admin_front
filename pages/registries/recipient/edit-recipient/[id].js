@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import FormInput from '../../../../components/main/FormInput';
+import FormInput from '../../../../components/input/FormInput';
 import { parseCookies } from 'nookies';
 import Navigation from '../../../../components/main/Navigation';
-import CustomSelect from '../../../../components/main/CustomSelect';
-import MultiSelectWithSearch from '../../../../components/main/MultiSelectWithSearch';
+import CustomSelect from '../../../../components/input/CustomSelect';
+import MultiSelectWithSearch from '../../../../components/input/MultiSelectWithSearch';
 import {faEnvelope, faXmarkCircle} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";

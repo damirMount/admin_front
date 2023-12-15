@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FormInput = ({type, id, name, placeholder, value, onChange, accept, required, className, field_signature,form_signature,visibility_annotation}) => {
+const FormInput = ({type, id, name, placeholder, value, onChange, accept, required, className}) => {
     return (
         <div>
             <input

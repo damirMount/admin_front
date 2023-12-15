@@ -4,7 +4,6 @@ import { parseCookies } from 'nookies';
 
 const SelectWithSearch = ({ apiUrl, options: staticOptions, required, name, onSelectChange, defaultValue }) => {
     const [options, setOptions] = useState([]);
-    const [selectedOption, setSelectedOption] = useState(null);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(true);
 
@@ -47,7 +46,6 @@ const SelectWithSearch = ({ apiUrl, options: staticOptions, required, name, onSe
     }, [apiUrl, staticOptions]);
 
     const handleSelectChange = (selectedOption) => {
-        setSelectedOption(selectedOption);
         onSelectChange(selectedOption ? selectedOption.value : '');
     };
 
