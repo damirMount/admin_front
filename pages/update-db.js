@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import SelectWithSearch from '../components/SelectWithSearch';
-import FormInput from '../components/FormInput';
+import SelectWithSearch from '../components/main/SelectWithSearch';
+import FormInput from '../components/main/FormInput';
 import { parseCookies } from 'nookies';
-import Navigation from '../components/Navigation';
-import Footer from "../components/Footer";
+import Navigation from '../components/main/Navigation';
+import Footer from "../components/main/Footer";
 import {
     POST_ABONENT_SERVICE_URL,
     GET_LIST_SERVICES_URL} from '../routes/api'
