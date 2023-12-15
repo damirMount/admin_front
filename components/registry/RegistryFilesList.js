@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { parseCookies } from 'nookies';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAnglesLeft, faAnglesRight, faDownload, faSearch } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import {faDownload, faSearch } from "@fortawesome/free-solid-svg-icons";
 import RegistryNavigationTabs from "./RegistryNavigationTabs";
 import Pagination from "../main/Pagination";
 
-const RegisrtyFiles = ({ apiUrl, downloadUrl }) => {
-    const [registryFiles, setRegisrtyFile] = useState([]);
+const RegistryFiles = ({ apiUrl, downloadUrl }) => {
+    const [registryFiles, setRegistryFile] = useState([]);
     const [page, setPage] = useState(1); // Текущая страница
     const [totalPages, setTotalPages] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState(' ');
 
 
-    const fetchRegisrtyFile = async () => {
+    const fetchRegistryFile = async () => {
         // Создайте объект с параметрами запроса, включая поиск
         const queryParams = {
             page,
@@ -41,7 +39,7 @@ const RegisrtyFiles = ({ apiUrl, downloadUrl }) => {
             }
 
             const data = await response.json();
-            setRegisrtyFile(data.data);
+            setRegistryFile(data.data);
             setTotalPages(data.last_page);
         } catch (error) {
             console.error('Error fetching registry files:', error);
@@ -67,8 +65,8 @@ const RegisrtyFiles = ({ apiUrl, downloadUrl }) => {
     const handleSearch = (e) => {
         e.preventDefault();
 
-        // Вызываем fetchRegisrtyFile с новыми параметрами поиска
-        fetchRegisrtyFile();
+        // Вызываем fetchRegistryFile с новыми параметрами поиска
+        fetchRegistryFile();
     };
 
     const handleDownload = async (filename) => {
@@ -114,7 +112,7 @@ const RegisrtyFiles = ({ apiUrl, downloadUrl }) => {
 
 
     useEffect(() => {
-        fetchRegisrtyFile();
+        fetchRegistryFile();
     }, [page, searchTerm]); // Зависимость от page и searchTerm
 
 
@@ -184,4 +182,4 @@ const RegisrtyFiles = ({ apiUrl, downloadUrl }) => {
     );
 };
 
-export default RegisrtyFiles;
+export default RegistryFiles;
