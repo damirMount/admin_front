@@ -9,7 +9,7 @@ const RegistryFiles = ({ apiUrl, downloadUrl }) => {
     const [registryFiles, setRegistryFile] = useState([]);
     const [page, setPage] = useState(1); // Текущая страница
     const [totalPages, setTotalPages] = useState(0);
-    const [searchTerm, setSearchTerm] = useState(' ');
+    const [searchTerm, setSearchTerm] = useState('');
 
 
     const fetchRegistryFile = async () => {
@@ -20,8 +20,8 @@ const RegistryFiles = ({ apiUrl, downloadUrl }) => {
         };
 
         const queryString = new URLSearchParams(queryParams).toString(); // Преобразуйте параметры в строку
-
         const controllerApiUrl = `${apiUrl}?${queryString}`;
+        console.log(controllerApiUrl)
         const cookies = parseCookies();
         const authToken = JSON.parse(cookies.authToken).value;
 
@@ -64,7 +64,6 @@ const RegistryFiles = ({ apiUrl, downloadUrl }) => {
 
     const handleSearch = (e) => {
         e.preventDefault();
-
         // Вызываем fetchRegistryFile с новыми параметрами поиска
         fetchRegistryFile();
     };
