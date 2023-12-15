@@ -3,9 +3,7 @@ import { parseCookies } from 'nookies';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faPenToSquare, faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 import { faSearch, faFileCircleXmark, faAnglesLeft, faAnglesRight } from "@fortawesome/free-solid-svg-icons";
-import Link from 'next/link';
-import { useRouter } from "next/router";
-import RegistryTabs from "./RegistryTabs";
+import RegistryTabs from "../registry/RegistryTabs";
 
 
 const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, editRoute, deleteRoute }) => {
@@ -18,7 +16,6 @@ const TableWithPagination = ({ apiUrl, tableHeaders, tableValues, createRoute, e
     const [searchTerm, setSearchTerm] = useState('');
     const [showMessage, setShowMessage] = useState(false); // Добавляем состояние showMessage
     const maxButtons = 5; // Максимальное количество отображаемых кнопок
-    const router = useRouter();
 
     const fetchData = async (newPage = page) => {
         try {

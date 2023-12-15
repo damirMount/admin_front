@@ -1,6 +1,6 @@
-import RegistryBackups from '../../../components/RegistryFilesList';
-import Navigation from "../../../components/Navigation";
-import Footer from "../../../components/Footer";
+import RegistryBackups from '../../../components/registry/RegistryFilesList';
+import Navigation from "../../../components/main/Navigation";
+import Footer from "../../../components/main/Footer";
 import {
     REGISTRY_LOG_INDEX_URL,
     REGISTRY_LOG_DOWNLOAD_URL} from '../../../routes/api'

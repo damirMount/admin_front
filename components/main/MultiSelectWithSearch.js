@@ -8,6 +8,13 @@ const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectCh
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
 
+    const handleSelectChange = (selectedOptions) => {
+        setSelectedOptions(selectedOptions);
+
+            const selectedValues = selectedOptions.map((option) => option.value);
+            onSelectChange(selectedValues);
+    };
+
     useEffect(() => {
         const fetchOptions = async () => {
             try {
@@ -57,15 +64,9 @@ const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectCh
         };
 
         fetchOptions();
-    }, [apiUrl, defaultValue, onlyDefaultValue, selectedLastRegistry, selectedRegistry, selectedValue]);
+    }, [apiUrl, defaultValue, onlyDefaultValue]);
 
 
-    const handleSelectChange = (selectedOptions) => {
-        setSelectedOptions(selectedOptions);
-
-            const selectedValues = selectedOptions.map((option) => option.value);
-            onSelectChange(selectedValues);
-    };
 
     if (error) {
         return <div>Error: {error}</div>;

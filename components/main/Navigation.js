@@ -22,7 +22,7 @@ const Navigation = () => {
                             </Link>
                             </li>
                             <li className="nav-item">
-                                <Link href="/update-db" className={`nav-link $router.pathname === '/update-db' ? 'active' : ''}`}>
+                                <Link href="/admin_front/pages/update-db" className={`nav-link $router.pathname === '/update-db' ? 'active' : ''}`}>
                                     Обновить БД
                                 </Link>
                             </li>

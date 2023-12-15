@@ -39,7 +39,7 @@ export default function LoginPage() {
                     path: '/', // Путь, на котором куки будет доступно
                 });
 
-                router.push('/update-db');
+                await router.push('/update-db');
             } else {
                 const errorData = await response.json();
 

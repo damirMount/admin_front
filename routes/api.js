@@ -13,7 +13,7 @@ export const RECIPIENT_UPDATE_URL=`${baseURL}/api/recipient`
 export const RECIPIENT_DELETE_URL=`${baseURL}/api/recipient`
 
 export const REGISTRY_INDEX_URL=`${baseURL}/api/registry/index`
-export const GET_REGISTRYS_URL=`${baseURL}/api/registry/all`
+export const GET_REGISTRIES_URL=`${baseURL}/api/registry/all`
 export const REGISTRY_CREATE_URL=`${baseURL}/api/registry`
 export const REGISTRY_SHOW_URL=`${baseURL}/api/registry`
 export const REGISTRY_UPDATE_URL=`${baseURL}/api/registry`

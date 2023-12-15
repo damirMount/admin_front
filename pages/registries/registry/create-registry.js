@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
-import FormInput from '../../../components/FormInput';
+import FormInput from '../../../components/main/FormInput';
 import { parseCookies } from 'nookies';
-import Navigation from '../../../components/Navigation';
-import CustomSelect from '../../../components/CustomSelect';
-import MultiSelectWithSearch from '../../../components/MultiSelectWithSearch';
+import Navigation from '../../../components/main/Navigation';
+import CustomSelect from '../../../components/main/CustomSelect';
+import MultiSelectWithSearch from '../../../components/main/MultiSelectWithSearch';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCheck,
@@ -14,10 +14,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import Link from 'next/link';
-import SelectWithSearch from '../../../components/SelectWithSearch';
-import Footer from '../../../components/Footer';
+import SelectWithSearch from '../../../components/main/SelectWithSearch';
+import Footer from '../../../components/main/Footer';
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import RegistryTable from "../../../components/RegistryTable";
+import RegistryTable from "../../../components/registry/RegistryTable";
 import {GET_LIST_SERVERS_URL, GET_LIST_SERVICES_URL, REGISTRY_CREATE_URL} from "../../../routes/api";
 import Head from "next/head";
 
@@ -46,10 +46,6 @@ export default function CreateRegistry() {
     };
 
     const [selectedCheckboxCount, setSelectedCheckboxCount] = useState(0);
-
-    useEffect(() => {
-        setSelectedCheckboxCount(formData.formats.length);
-    }, [formData.formats]);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -114,7 +110,9 @@ export default function CreateRegistry() {
             console.error(error);
         }
     };
-
+    useEffect(() => {
+        setSelectedCheckboxCount(formData.formats.length);
+    }, [formData.formats]);
     return (
         <div>
             <Head>

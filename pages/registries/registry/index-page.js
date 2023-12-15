@@ -1,6 +1,6 @@
-import TableWithPagination from '../../../components/TableWithPagination';
-import Navigation from "../../../components/Navigation";
-import Footer from "../../../components/Footer";
+import TableWithPagination from '../../../components/main/TableWithPagination';
+import Navigation from "../../../components/main/Navigation";
+import Footer from "../../../components/main/Footer";
 import {REGISTRY_DELETE_URL, REGISTRY_INDEX_URL} from "../../../routes/api";
 import Head from "next/head";
 

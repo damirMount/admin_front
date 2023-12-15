@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import FormInput from '../../../components/FormInput';
+import FormInput from '../../../components/main/FormInput';
 import { parseCookies } from 'nookies';
-import Navigation from '../../../components/Navigation';
-import CustomSelect from '../../../components/CustomSelect';
-import MultiSelectWithSearch from '../../../components/MultiSelectWithSearch';
+import Navigation from '../../../components/main/Navigation';
+import CustomSelect from '../../../components/main/CustomSelect';
+import MultiSelectWithSearch from '../../../components/main/MultiSelectWithSearch';
 import { faEnvelope, faXmarkCircle} from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
-import Footer from '../../../components/Footer';
+import Footer from '../../../components/main/Footer';
 import {
     RECIPIENT_CREATE_URL,
-    GET_REGISTRYS_URL} from '../../../routes/api'
+    GET_REGISTRIES_URL} from '../../../routes/api'
 import Head from "next/head";
 
 export default function CreateRecipient() {
@@ -98,7 +98,7 @@ export default function CreateRecipient() {
             if (response.ok) {
                 console.log('Данные успешно отправлены на API');
                 // Перенаправление на другую страницу после успешной отправки
-                router.push('/registries/recipient/index-page');
+                await router.push('/registries/recipient/index-page');
             } else {
                 console.error('Ошибка при отправке данных на API');
             }
@@ -171,7 +171,7 @@ export default function CreateRecipient() {
                         <label htmlFor="registry_ids">Файлы реестров</label>
 
                         <MultiSelectWithSearch
-                            apiUrl={`${GET_REGISTRYS_URL}`}
+                            apiUrl={`${GET_REGISTRIES_URL}`}
                             required
                             name="registry_ids"
                             placeholder="Выберете фаил для отправки"

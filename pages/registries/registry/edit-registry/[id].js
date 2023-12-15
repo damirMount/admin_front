@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import SelectWithSearch from '../../../../components/SelectWithSearch';
-import FormInput from '../../../../components/FormInput';
+import SelectWithSearch from '../../../../components/main/SelectWithSearch';
+import FormInput from '../../../../components/main/FormInput';
 import { parseCookies } from 'nookies';
-import Navigation from '../../../../components/Navigation';
-import FormTextarea from '../../../../components/FormTextarea';
-import CustomSelect from '../../../../components/CustomSelect';
-import MultiSelectWithSearch from '../../../../components/MultiSelectWithSearch';
+import Navigation from '../../../../components/main/Navigation';
+import FormTextarea from '../../../../components/notUsed/FormTextarea';
+import CustomSelect from '../../../../components/main/CustomSelect';
+import MultiSelectWithSearch from '../../../../components/main/MultiSelectWithSearch';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faGripVertical } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
-import Footer from '../../../../components/Footer';
+import Footer from '../../../../components/main/Footer';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import RegistryTable from "../../../../components/RegistryTable";
+import RegistryTable from "../../../../components/registry/RegistryTable";
 import {
     GET_LIST_SERVERS_URL,
     GET_LIST_SERVICES_URL,

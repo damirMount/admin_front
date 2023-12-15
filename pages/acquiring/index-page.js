@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Navigation from "../../components/Navigation";
-import Footer from "../../components/Footer";
+import Navigation from "../../components/main/Navigation";
+import Footer from "../../components/main/Footer";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-    faArrowRight,
     faFileExcel,
     faArrowRightArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
@@ -13,25 +11,11 @@ import {ACQUIRING_COMPARISON_URL} from "../../routes/api";
 import Head from "next/head";
 
 export default function IndexPage() {
-    const router = useRouter();
     const [authToken, setAuthToken] = useState(null);
     const [excelFile, setExcelFile] = useState(null);
     const [registryFile, setRegistryFile] = useState(null);
     const [comparisonResult, setComparisonResult] = useState(null);
     const apiUrl = `${ACQUIRING_COMPARISON_URL}`;
-
-    useEffect(() => {
-        const cookies = parseCookies();
-        const authTokenCookie = cookies.authToken;
-        if (authTokenCookie) {
-            try {
-                const authTokenValue = JSON.parse(authTokenCookie).value;
-                setAuthToken(authTokenValue);
-            } catch (error) {
-                console.error('Error parsing authToken cookie:', error);
-            }
-        }
-    }, []);
 
     const handleExcelFileChange = (e) => {
         setExcelFile(e.target.files[0]);
@@ -75,7 +59,7 @@ export default function IndexPage() {
                 headers: {
                     Authorization: `Bearer ${authToken}`,
                 },
-                body: formData, // Не сериализуем formData в JSON
+                body: formData,
             });
 
             if (response.ok) {
@@ -88,7 +72,18 @@ export default function IndexPage() {
             console.error("Error comparing data:", error);
         }
     };
-
+    useEffect(() => {
+        const cookies = parseCookies();
+        const authTokenCookie = cookies.authToken;
+        if (authTokenCookie) {
+            try {
+                const authTokenValue = JSON.parse(authTokenCookie).value;
+                setAuthToken(authTokenValue);
+            } catch (error) {
+                console.error('Error parsing authToken cookie:', error);
+            }
+        }
+    }, []);
 
     return (
         <div>

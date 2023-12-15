@@ -4,7 +4,6 @@ import Select from 'react-select';
 const CustomSelect = ({ options, required, name, onSelectChange, defaultValue, selectedValue, className }) => {
     const [selectedOption, setSelectedOption] = useState(null);
     useEffect(() => {
-        // Обновляем выбранное значение в зависимости от переданного selectedValue
         if (selectedValue) {
             const option = options.find((option) => option.value === selectedValue.value);
             setSelectedOption(option);
@@ -18,7 +17,7 @@ const CustomSelect = ({ options, required, name, onSelectChange, defaultValue, s
     return (
         <Select
             defaultValue={defaultValue}
-            value={selectedValue}  // Используйте selectedValue вместо selectedOption
+            value={selectedValue}
             onChange={handleSelectChange}
             options={options}
             isSearchable={false}

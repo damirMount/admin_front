@@ -1,10 +1,11 @@
-import TableWithPagination from '../../../components/TableWithPagination';
-import Navigation from "../../../components/Navigation";
-import Footer from "../../../components/Footer";
+import TableWithPagination from '../../../components/main/TableWithPagination';
+import Navigation from "../../../components/main/Navigation";
+import Footer from "../../../components/main/Footer";
 import {
     RECIPIENT_INDEX_URL,
     RECIPIENT_DELETE_URL } from '../../../routes/api'
 import Head from "next/head";
+import BooleanSelect from "../../../components/notUsed/SelectBoolean";
 
 export default function IndexPage() {
     const apiUrl = `${RECIPIENT_INDEX_URL}`;
@@ -20,7 +21,6 @@ export default function IndexPage() {
             <Head>
                 <title>Список получателей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-
             <div>
                 <Navigation></Navigation>
             </div>

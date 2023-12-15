@@ -38,7 +38,7 @@ const Alert = ({ alertMessage, clearAlertMessage }) => {
                                 className="btn btn-sm text-white d-flex close-alert"
                                 data-bs-dismiss="toast"
                                 aria-label="Close"
-                                onClick={clearAlertMessage} // Используйте функцию для очистки сообщения
+                                onClick={clearAlertMessage}
                             >
                                 <FontAwesomeIcon className="fs-5 " icon={faXmark} size="xl" />
                             </button>
