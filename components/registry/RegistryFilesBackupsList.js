@@ -21,7 +21,6 @@ const RegistryFiles = ({ apiUrl, downloadUrl }) => {
 
         const queryString = new URLSearchParams(queryParams).toString(); // Преобразуйте параметры в строку
         const controllerApiUrl = `${apiUrl}?${queryString}`;
-        console.log(controllerApiUrl)
         const cookies = parseCookies();
         const authToken = JSON.parse(cookies.authToken).value;
 

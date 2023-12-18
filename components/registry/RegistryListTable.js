@@ -223,7 +223,7 @@ const RegistryListTable = ({ apiUrl, tableHeaders, tableValues, createRoute, edi
                         <tr key={index}>
                             {tableValues.map((value, index) => (
                                 <React.Fragment key={index}>
-                                    {value === "id" && <td className="col">{row[value]}</td>}
+                                    {value === "id" && <td className="col w-0">{row[value]}</td>}
                                     {value === "name" && <td className="col-8">{row[value]}</td>}
                                     {value === "formats" && (
                                         <td className="col-auto action-table-buttons flex-nowrap d-flex">
@@ -250,11 +250,11 @@ const RegistryListTable = ({ apiUrl, tableHeaders, tableValues, createRoute, edi
                                         <span className={`status ${formatBooleanValue(row[value]) === 'АКТИВЕН' ? 'status-active' : 'status-blocked'}`}>{formatBooleanValue(row[value])}
                                     </span>
                                     </td>}
-                                    {value === "updatedAt" && <td className="col-1">{row[value]} </td>}
-                                    {value === "createdAt" && <td className="col-1">{row[value]} </td>}
+                                    {value === "updatedAt" && <td className="col-1 date-column">{row[value]} </td>}
+                                    {value === "createdAt" && <td className="col-1 date-column">{row[value]} </td>}
                                 </React.Fragment>
                             ))}
-                            <td className="action-table-buttons">
+                            <td className="action-table-buttons col-1 w-0">
                                 {editRoute && (
                                     <a href={`${editRoute}/${row.id}`} className="btn btn-purple me-2"><FontAwesomeIcon icon={faPenToSquare} size="xl" /></a>
                                 )}
