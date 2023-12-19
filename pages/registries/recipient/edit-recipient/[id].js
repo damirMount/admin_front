@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import FormInput from '../../../../components/FormInput';
+import FormInput from '../../../../components/input/FormInput';
 import { parseCookies } from 'nookies';
-import Navigation from '../../../../components/Navigation';
-import FormTextarea from '../../../../components/FormTextarea';
-import CustomSelect from '../../../../components/CustomSelect';
-import MultiSelectWithSearch from '../../../../components/MultiSelectWithSearch';
+import Navigation from '../../../../components/main/Navigation';
+import CustomSelect from '../../../../components/input/CustomSelect';
+import MultiSelectWithSearch from '../../../../components/input/MultiSelectWithSearch';
 import {faEnvelope, faXmarkCircle} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import Footer from "../../../../components/Footer";
-import {GET_REGISTRYS_URL, RECIPIENT_SHOW_URL, RECIPIENT_UPDATE_URL} from "../../../../routes/api";
+import Footer from "../../../../components/main/Footer";
+import {GET_REGISTRIES_URL, RECIPIENT_SHOW_URL, RECIPIENT_UPDATE_URL} from "../../../../routes/api";
 import Head from "next/head";
 
 export default function EditRecipient() {
@@ -24,57 +23,13 @@ export default function EditRecipient() {
         updatedAt: '',
     });
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedRegistryIds, setSelectedRegistryIds] = useState([]);
+    // const [selectedRegistryIds, setSelectedRegistryIds] = useState([]);
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
     const [recipientName, setRecipientName] = useState('');
 
     const router = useRouter();
     const itemId = router.query.id;
-
-    useEffect(() => {
-        const fetchRecipientItem = async () => {
-            try {
-                const cookies = parseCookies();
-                const authToken = JSON.parse(cookies.authToken).value;
-                const apiUrl = RECIPIENT_SHOW_URL + '/' + itemId;
-                const response = await fetch(apiUrl, {
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-
-                    setRecipientName(data.name)
-                    console.log('data get');
-                    setSelectedRegistryIds(data.registry_ids);
-                    setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        name: data.name,
-                        type: data.type,
-                        emails: data.emails.split(',').map(email => email.trim()),
-                        is_blocked: data.is_blocked,
-                        registry_ids: data.registry_ids.map((item) => item.id),
-                    }));
-                    setCreatedAt(data.createdAt)
-                    setUpdatedAt(data.updatedAt)
-
-
-                } else {
-                    console.error('Ошибка при загрузке данных с API');
-                }
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        if (itemId) {
-            fetchRecipientItem();
-        }
-    }, [itemId]);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -83,7 +38,7 @@ export default function EditRecipient() {
             [name]: value,
         }));
     };
-    console.log(formData)
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -107,7 +62,7 @@ export default function EditRecipient() {
 
             if (response.ok) {
                 console.log('Данные успешно отправлены на API');
-                router.push('/registries/recipient/index-page');
+                await router.push('/registries/recipient/index-page');
             } else {
                 console.error('Ошибка при отправке данных на API');
             }
@@ -158,6 +113,48 @@ export default function EditRecipient() {
         }));
     };
 
+    useEffect(() => {
+        const fetchRecipientItem = async () => {
+            try {
+                const cookies = parseCookies();
+                const authToken = JSON.parse(cookies.authToken).value;
+                const apiUrl = RECIPIENT_SHOW_URL + '/' + itemId;
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+
+                    setRecipientName(data.name)
+                    // setSelectedRegistryIds(data.registry_ids);
+                    setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        name: data.name,
+                        type: data.type,
+                        emails: data.emails.split(',').map(email => email.trim()),
+                        is_blocked: data.is_blocked,
+                        registry_ids: data.registry_ids.map((item) => item.id),
+                    }));
+                    setCreatedAt(data.createdAt)
+                    setUpdatedAt(data.updatedAt)
+
+
+                } else {
+                    console.error('Ошибка при загрузке данных с API');
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (itemId) {
+            fetchRecipientItem();
+        }
+    }, [itemId]);
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -208,7 +205,7 @@ export default function EditRecipient() {
                                 <label htmlFor="registry_ids">Файлы реестров</label>
                                 {!isLoading && (
                                     <MultiSelectWithSearch
-                                        apiUrl={`${GET_REGISTRYS_URL}`}
+                                        apiUrl={`${GET_REGISTRIES_URL}`}
                                         required
                                         name="registry_ids"
                                         multi={true}

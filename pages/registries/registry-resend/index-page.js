@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faTrashAlt, faSearch, faToggleOff, faToggleOn} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt, faSearch} from "@fortawesome/free-solid-svg-icons";
 import { parseCookies } from "nookies";
 
-import Navigation from "../../../components/Navigation";
-import RegistryTabs from "../../../components/RegistryTabs";
-import SelectWithSearch from "../../../components/SelectWithSearch";
-import MultiSelectWithSearch from "../../../components/MultiSelectWithSearch";
-import FormInput from "../../../components/FormInput";
-import Footer from "../../../components/Footer";
-import Preloader from "../../../components/Preloader";
-import Alert from "../../../components/Alert";
-import {faEnvelope, faXmarkCircle} from "@fortawesome/free-regular-svg-icons";
-import CustomSelect from "../../../components/CustomSelect";
+import Navigation from "../../../components/main/Navigation";
+import RegistryNavigationTabs from "../../../components/registry/RegistryNavigationTabs";
+import SelectWithSearch from "../../../components/input/SelectWithSearch";
+import MultiSelectWithSearch from "../../../components/input/MultiSelectWithSearch";
+import FormInput from "../../../components/input/FormInput";
+import Footer from "../../../components/main/Footer";
+import Preloader from "../../../components/main/Preloader";
+import Alert from "../../../components/main/Alert";
+import {faEnvelope} from "@fortawesome/free-regular-svg-icons";
+import CustomSelect from "../../../components/input/CustomSelect";
 import {
     GET_LIST_SERVICES_URL,
     GET_PAYMENTS_URL,
     GET_RECIPIENTS_URL,
-    GET_REGISTRYS_URL,
+    GET_REGISTRIES_URL,
     REGISTRY_RESEND_URL
 } from "../../../routes/api";
 import Head from "next/head";
+import DateRangeInput from "../../../components/input/DateRangeInput";
+import RegistryFileFormat from "../../../components/registry/RegistryFileFormat";
 
 
 export default function IndexPage() {
@@ -30,16 +32,15 @@ export default function IndexPage() {
     const [selectedLastRegistry, setSelectedLastRegistry] = useState('');
     const [defaultServicesId, setDefaultServicesId] = useState([]);
     const [showRegistry, setShowRegistry] = useState(false);
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [selectedCheckboxCount, setSelectedCheckboxCount] = useState(0);
     const [processingLoader, setProcessingLoader] = useState(false);
     const [alertMessage, setAlertMessage] = useState({ type: "", text: "" });
     const [paymentId, setPaymentId] = useState('');
     const [testEmail, setTestEmail] = useState('');
     const [isTestEmailEnabled, setTestEmailEnabled] = useState(false);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
-    // Функция для обновления состояния при изменении инпута
+
     const handleChange = (event) => {
         setPaymentId(event.target.value);
     };
@@ -86,22 +87,6 @@ export default function IndexPage() {
             testEmail: newTestEmail,
         }));
     };
-    const handleCheckboxChange = (event) => {
-        const { name, checked } = event.target;
-        setFormData((prevFormData) => {
-            const formats = [...prevFormData.formats];
-            if (checked && !formats.includes(name)) {
-                formats.push(name);
-            } else if (!checked && formats.includes(name)) {
-                formats.splice(formats.indexOf(name), 1);
-            }
-            return {
-                ...prevFormData,
-                formats,
-            };
-        });
-    };
-
     const handleRecipientChange = async (selectedValue) => {
         setSelectedLastRegistry(' ')
         try {
@@ -111,7 +96,7 @@ export default function IndexPage() {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
 
-            const getRegistryApiUrl = `${GET_REGISTRYS_URL}`;
+            const getRegistryApiUrl = `${GET_REGISTRIES_URL}`;
             const encodedValue = encodeURIComponent(selectedValue);
             const column = 'recipient_id';
 
@@ -229,7 +214,6 @@ export default function IndexPage() {
                 paymentsList: rows
             }
 
-            console.log(dataToSend)
             try {
                 // Исправление: передача paymentId как объекта вместо строки
                 const response = await fetch(getPaymentApi, {
@@ -319,55 +303,18 @@ export default function IndexPage() {
             }
         }
     };
-
-    const getCurrentDate = () => {
-        const today = new Date();
-        const year = today.getFullYear();
-        let month = today.getMonth() + 1;
-        let day = today.getDate();
-
-        // Добавляем ведущий ноль, если месяц или день меньше 10
-        month = month < 10 ? `0${month}` : month;
-        day = day < 10 ? `0${day}` : day;
-
-        return `${year}-${month}-${day}`;
-    };
-
-    const handleStartDateChange = (e) => {
-        const newStartDate = e.target.value;
+    const handleDateChange = (newStartDate, newEndDate) => {
         setStartDate(newStartDate);
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            startDate: newStartDate,
-        }));
-    };
-
-    const handleEndDateChange = (e) => {
-        const newEndDate = e.target.value;
         setEndDate(newEndDate);
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            endDate: newEndDate,
-        }));
     };
-
 
     useEffect(() => {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayString = yesterday.toISOString().substr(0, 10);
-        const startOfDay = `${yesterdayString}`;
-        const endOfDay = `${yesterdayString}`;
-
-        setStartDate(startOfDay);
-        setEndDate(endOfDay);
-
         setFormData((prevFormData) => ({
             ...prevFormData,
-            startDate: startOfDay,
-            endDate: endOfDay,
+            startDate: startDate,
+            endDate: endDate,
         }));
-    }, [isTestEmailEnabled]);
+    }, [startDate, endDate]);
 
     return (
         <div>
@@ -383,7 +330,7 @@ export default function IndexPage() {
             <div className="d-flex flex-column align-items-center">
                 <div className="container d-flex flex-column align-items-center body-container mt-5">
                     <h1>Перезапуск реестра</h1>
-                    <RegistryTabs />
+                    <RegistryNavigationTabs />
 
                     <div className="d-flex flex-row w-100 mt-5">
                         {processingLoader ? (
@@ -448,7 +395,7 @@ export default function IndexPage() {
                                     <div className="form-group">
                                         <label htmlFor="registryId">Реестр</label>
                                         <SelectWithSearch
-                                            apiUrl={`${GET_REGISTRYS_URL}`}
+                                            apiUrl={`${GET_REGISTRIES_URL}`}
                                             options={registries.map((item) => ({
                                                 value: item.id,
                                                 label: item.name,
@@ -488,103 +435,20 @@ export default function IndexPage() {
                                                 selectedLastRegistry = {selectedLastRegistry}
                                             />
                                         </div>
-                                        <div className="d-flex w-100 justify-content-between">
-                                            <div className="form-group me-3">
-                                                <label htmlFor="startDate">Дата начала</label>
-                                                <input
-                                                    type="date"
-                                                    className="input-field pe-2"
-                                                    id="startDate"
-                                                    name="startDate"
-                                                    value={startDate}
-                                                    max={getCurrentDate()}
-                                                    onChange={handleStartDateChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="form-group ms-3">
-                                                <label htmlFor="endDate">Дата конца</label>
-                                                <input
-                                                    type="date"
-                                                    className="input-field pe-2"
-                                                    id="endDate"
-                                                    name="endDate"
-                                                    value={endDate}
-                                                    max={getCurrentDate()}
-                                                    onChange={handleEndDateChange}
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
+
+
+                                        <DateRangeInput
+                                            initialStartDate={startDate}
+                                            initialEndDate={endDate}
+                                            onDateChange={handleDateChange}
+                                        />
+
+
                                         <div className="form-group d-flex align-items-center flex-column mt-4">
-                                            <div className="d-flex justify-content-evenly w-50">
-                                                <div>
-                                                    <input
-                                                        autoComplete="off"
-                                                        id="btn-xlsx"
-                                                        className="btn-checked btn-grey"
-                                                        type="checkbox"
-                                                        name="xlsx"
-                                                        checked={formData.formats.includes('xlsx')}
-                                                        onChange={handleCheckboxChange}
-                                                        required={selectedCheckboxCount === 0}
-                                                    />
-                                                    <label
-                                                        className={`btn ${
-                                                            formData.formats.includes('xlsx')
-                                                                ? 'btn-purple'
-                                                                : 'btn-grey'
-                                                        }`}
-                                                        htmlFor="btn-xlsx"
-                                                    >
-                                                        XLSX
-                                                    </label>
-                                                </div>
-                                                <div>
-                                                    <input
-                                                        autoComplete="off"
-                                                        id="btn-csv"
-                                                        className="btn-checked btn-grey"
-                                                        type="checkbox"
-                                                        name="csv"
-                                                        checked={formData.formats.includes('csv')}
-                                                        onChange={handleCheckboxChange}
-                                                        required={selectedCheckboxCount === 0}
-                                                    />
-                                                    <label
-                                                        className={`btn ${
-                                                            formData.formats.includes('csv')
-                                                                ? 'btn-purple'
-                                                                : 'btn-grey'
-                                                        }`}
-                                                        htmlFor="btn-csv"
-                                                    >
-                                                        CSV
-                                                    </label>
-                                                </div>
-                                                <div>
-                                                    <input
-                                                        autoComplete="off"
-                                                        id="btn-dbf"
-                                                        className="btn-checked btn-grey"
-                                                        type="checkbox"
-                                                        name="dbf"
-                                                        checked={formData.formats.includes('dbf')}
-                                                        onChange={handleCheckboxChange}
-                                                        required={selectedCheckboxCount === 0}
-                                                    />
-                                                    <label
-                                                        className={`btn ${
-                                                            formData.formats.includes('dbf')
-                                                                ? 'btn-purple'
-                                                                : 'btn-grey'
-                                                        }`}
-                                                        htmlFor="btn-dbf"
-                                                    >
-                                                        DBF
-                                                    </label>
-                                                </div>
-                                            </div>
+                                            <RegistryFileFormat
+                                                formData={formData}
+                                                setFormData={setFormData}
+                                            />
                                         </div>
                                     </div>
                                 </div>

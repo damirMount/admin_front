@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import { useRouter } from 'next/router';
-import FormInput from '../../../components/FormInput';
+import FormInput from '../../../components/input/FormInput';
 import { parseCookies } from 'nookies';
-import Navigation from '../../../components/Navigation';
-import CustomSelect from '../../../components/CustomSelect';
-import MultiSelectWithSearch from '../../../components/MultiSelectWithSearch';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Navigation from '../../../components/main/Navigation';
+import CustomSelect from '../../../components/input/CustomSelect';
+import MultiSelectWithSearch from '../../../components/input/MultiSelectWithSearch';
 import {
     faCheck,
     faTag,
@@ -14,12 +13,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import Link from 'next/link';
-import SelectWithSearch from '../../../components/SelectWithSearch';
-import Footer from '../../../components/Footer';
-import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import RegistryTable from "../../../components/RegistryTable";
+import SelectWithSearch from '../../../components/input/SelectWithSearch';
+import Footer from '../../../components/main/Footer';
+import RegistryFieldsTable from "../../../components/registry/RegistryFieldsTable";
 import {GET_LIST_SERVERS_URL, GET_LIST_SERVICES_URL, REGISTRY_CREATE_URL} from "../../../routes/api";
 import Head from "next/head";
+import RegistryFileFormat from "../../../components/registry/RegistryFileFormat";
 
 library.add(faCheck, faTag, faGripVertical, faPlus);
 
@@ -42,14 +41,10 @@ export default function CreateRegistry() {
     ]);
 
     const handleUpdateRows = (updatedRows) => {
-        setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryTable
+        setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryFieldsTable
     };
 
-    const [selectedCheckboxCount, setSelectedCheckboxCount] = useState(0);
 
-    useEffect(() => {
-        setSelectedCheckboxCount(formData.formats.length);
-    }, [formData.formats]);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -59,25 +54,10 @@ export default function CreateRegistry() {
         }));
     };
 
-    // Обработчик изменения выбранных чекбоксов
-    const handleCheckboxChange = (event) => {
-        const { name, checked } = event.target;
-        setFormData((prevFormData) => {
-            const formats = [...prevFormData.formats];
-            if (checked && !formats.includes(name)) {
-                formats.push(name);
-            } else if (!checked && formats.includes(name)) {
-                formats.splice(formats.indexOf(name), 1);
-            }
-            return {
-                ...prevFormData,
-                formats,
-            };
-        });
-    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
@@ -194,70 +174,15 @@ export default function CreateRegistry() {
                                 />
                             </div>
                             <div className="form-group d-flex align-items-center flex-column mt-4">
-                                <div className="d-flex justify-content-evenly w-75">
-                                    <div>
-                                        <input
-                                            autoComplete="off"
-                                            id="btn-xlsx"
-                                            className="btn-checked btn-grey"
-                                            type="checkbox"
-                                            name="xlsx"
-                                            checked={formData.formats.includes('xlsx')}
-                                            onChange={handleCheckboxChange}
-                                            required={selectedCheckboxCount === 0} // Делаем обязательным, если ничего не выбрано
-                                        />
-                                        <label
-                                            className={`btn ${
-                                                formData.formats.includes('xlsx') ? 'btn-purple' : 'btn-grey'
-                                            }`}
-                                            htmlFor="btn-xlsx">
-                                            XLSX
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <input
-                                            autoComplete="off"
-                                            id="btn-csv"
-                                            className="btn-checked btn-grey"
-                                            type="checkbox"
-                                            name="csv"
-                                            checked={formData.formats.includes('csv')}
-                                            onChange={handleCheckboxChange}
-                                            required={selectedCheckboxCount === 0} // Делаем обязательным, если ничего не выбрано
-                                        />
-                                        <label
-                                            className={`btn ${
-                                                formData.formats.includes('csv') ? 'btn-purple' : 'btn-grey'
-                                            }`}
-                                            htmlFor="btn-csv">
-                                            CSV
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <input
-                                            autoComplete="off"
-                                            id="btn-dbf"
-                                            className="btn-checked btn-grey"
-                                            type="checkbox"
-                                            name="dbf"
-                                            checked={formData.formats.includes('dbf')}
-                                            onChange={handleCheckboxChange}
-                                            required={selectedCheckboxCount === 0} // Делаем обязательным, если ничего не выбрано
-                                        />
-                                        <label
-                                            className={`btn ${
-                                                formData.formats.includes('dbf') ? 'btn-purple' : 'btn-grey'
-                                            }`}
-                                            htmlFor="btn-dbf">
-                                            DBF
-                                        </label>
-                                    </div>
-                                </div>
+                                <RegistryFileFormat
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                />
                             </div>
                         </div>
 
                         <div className="container w-75">
-                            <RegistryTable
+                            <RegistryFieldsTable
                                 getRows={getRows}
                                 onUpdateData={handleUpdateRows}
                             />

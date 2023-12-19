@@ -169,6 +169,10 @@ h1 {
   white-space: nowrap;
 }
 
+.date-column {
+  min-width: 105px;
+}
+
 .row-underline {
   border-bottom: 2px solid #532C59;
 }

@@ -1,6 +1,6 @@
-import TableWithPagination from '../../../components/TableWithPagination';
-import Navigation from "../../../components/Navigation";
-import Footer from "../../../components/Footer";
+import RegistryListTable from '../../../components/registry/RegistryListTable';
+import Navigation from "../../../components/main/Navigation";
+import Footer from "../../../components/main/Footer";
 import {REGISTRY_DELETE_URL, REGISTRY_INDEX_URL} from "../../../routes/api";
 import Head from "next/head";
 
@@ -22,7 +22,7 @@ export default function IndexPage() {
             </div>
             <div className="container body-container mt-5">
                 <h1>Список реестров</h1>
-                <TableWithPagination
+                <RegistryListTable
                     apiUrl={apiUrl}
                     tableHeaders={tableHeaders}
                     tableValues={tableValues}
@@ -33,6 +33,5 @@ export default function IndexPage() {
             </div>
             <Footer></Footer>
         </div>
-
-);
+    );
 };

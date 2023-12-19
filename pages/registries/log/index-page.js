@@ -1,6 +1,6 @@
-import RegistryBackups from '../../../components/RegistryFilesList';
-import Navigation from "../../../components/Navigation";
-import Footer from "../../../components/Footer";
+import RegistryFiles from '../../../components/registry/RegistryFilesBackupsList';
+import Navigation from "../../../components/main/Navigation";
+import Footer from "../../../components/main/Footer";
 import {
     REGISTRY_LOG_INDEX_URL,
     REGISTRY_LOG_DOWNLOAD_URL} from '../../../routes/api'
@@ -21,7 +21,7 @@ export default function IndexPage() {
 
             <div className="container body-container mt-5">
                 <h1>Логи реестров</h1>
-                <RegistryBackups
+                <RegistryFiles
                     apiUrl={apiUrl}
                     downloadUrl={downloadUrl}
                 />

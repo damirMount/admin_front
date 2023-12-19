@@ -1,6 +1,6 @@
-import TableWithPagination from '../../../components/TableWithPagination';
-import Navigation from "../../../components/Navigation";
-import Footer from "../../../components/Footer";
+import RegistryListTable from '../../../components/registry/RegistryListTable';
+import Navigation from "../../../components/main/Navigation";
+import Footer from "../../../components/main/Footer";
 import {
     RECIPIENT_INDEX_URL,
     RECIPIENT_DELETE_URL } from '../../../routes/api'
@@ -20,13 +20,12 @@ export default function IndexPage() {
             <Head>
                 <title>Список получателей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-
             <div>
                 <Navigation></Navigation>
             </div>
             <div className="container body-container mt-5">
                 <h1>Список получателей</h1>
-                <TableWithPagination
+                <RegistryListTable
                     apiUrl={apiUrl}
                     tableHeaders={tableHeaders}
                     tableValues={tableValues}

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import TableWithPagination from '../../../components/TableWithPagination';
-import Navigation from "../../../components/Navigation";
-import Footer from "../../../components/Footer";
-import ReportsTabs from "../../../components/ReportsTabs";
-import Preloader from "../../../components/Preloader";
-import FormInput from "../../../components/FormInput";
-import Alert from "../../../components/Alert";
+import Navigation from "../../../components/main/Navigation";
+import Footer from "../../../components/main/Footer";
+import ReportsNavigationTabs from "../../../components/report/ReportsNavigationTabs";
+import Preloader from "../../../components/main/Preloader";
+import FormInput from "../../../components/input/FormInput";
+import Alert from "../../../components/main/Alert";
 import { parseCookies } from "nookies";
 import {DEALER_REPORTS_GET_TSJ_DEALER_URL, DEALER_REPORTS_UPDATE_TSJ_DEALER_URL} from "../../../routes/api";
 import Head from "next/head";
@@ -39,10 +38,6 @@ export default function IndexPage() {
         }
     };
 
-    useEffect(() => {
-        fetchDataFromServer(); // Вызовите функцию при монтировании компонента
-    }, [tableData]);
-
     const handleFileUpload = (event) => {
         const fileInput = event.target.files[0];
         formData.append('dialerUploadFile', fileInput);
@@ -75,20 +70,24 @@ export default function IndexPage() {
             setAlertMessage({ type: "error", text: "Внутренняя ошибка сервера." });
         } finally {
             setProcessingLoader(false);
-            fetchDataFromServer();
+            await fetchDataFromServer();
         }
     };
+
+    useEffect(() => {
+        fetchDataFromServer(); // Вызовите функцию при монтировании компонента
+    }, []);
 
     return (
         <div>
             <Head>
-                <title>Список диллеров ТСЖ| {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                <title>Список дилеров ТСЖ| {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <Navigation />
             <Alert alertMessage={alertMessage} clearAlertMessage={clearAlertMessage} />
             <div className="container body-container mt-5">
                 <h1>Список дилеров ТСЖ</h1>
-                <ReportsTabs />
+                <ReportsNavigationTabs />
 
                 {processingLoader ? (
                     <Preloader />

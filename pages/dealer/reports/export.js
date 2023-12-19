@@ -1,17 +1,16 @@
-import RegistryBackups from '../../../components/RegistryFilesList';
-import Navigation from "../../../components/Navigation";
-import Footer from "../../../components/Footer";
+import Navigation from "../../../components/main/Navigation";
+import Footer from "../../../components/main/Footer";
 import React, { useEffect, useState } from "react";
-import CustomSelect from "../../../components/CustomSelect";
+import CustomSelect from "../../../components/input/CustomSelect";
 import { parseCookies } from "nookies";
-import Alert from "../../../components/Alert";
-import Preloader from "../../../components/Preloader";
+import Alert from "../../../components/main/Alert";
+import Preloader from "../../../components/main/Preloader";
 import { formatDistanceToNow } from 'date-fns';
 import ruLocale from 'date-fns/locale/ru';
-import RegistryTabs from "../../../components/RegistryTabs";
-import ReportsTabs from "../../../components/ReportsTabs";
+import ReportsNavigationTabs from "../../../components/report/ReportsNavigationTabs";
 import {DEALER_REPORTS_EXPORT_URL} from "../../../routes/api";
 import Head from "next/head";
+import DateRangeInput from "../../../components/input/DateRangeInput";
 
 
 export default function IndexPage() {
@@ -21,61 +20,19 @@ export default function IndexPage() {
     const [alertMessage, setAlertMessage] = useState({ type: "", text: "" });
     const [fileDownloaded, setFileDownloaded] = useState([]);
     const [formData, setFormData] = useState({
-        startDate: '',
-        endDate: '',
+        startDate: null,
+        endDate: null,
     });
 
     const clearAlertMessage = () => {
         setAlertMessage({ type: "", text: "" });
     };
 
-    const getCurrentDate = () => {
-        const today = new Date();
-        const year = today.getFullYear();
-        let month = today.getMonth() + 1;
-        let day = today.getDate();
 
-        // Добавляем ведущий ноль, если месяц или день меньше 10
-        month = month < 10 ? `0${month}` : month;
-        day = day < 10 ? `0${day}` : day;
-
-        return `${year}-${month}-${day}`;
-    };
-
-    const handleStartDateChange = (e) => {
-        const newStartDate = e.target.value;
+    const handleDateChange = (newStartDate, newEndDate) => {
         setStartDate(newStartDate);
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            startDate: newStartDate,
-        }));
-    };
-
-    const handleEndDateChange = (e) => {
-        const newEndDate = e.target.value;
         setEndDate(newEndDate);
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            endDate: newEndDate,
-        }));
     };
-
-    useEffect(() => {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate());
-        const yesterdayString = yesterday.toISOString().substr(0, 10);
-        const startOfDay = `${yesterdayString}`;
-        const endOfDay = `${yesterdayString}`;
-
-        setStartDate(startOfDay);
-        setEndDate(endOfDay);
-
-        setFormData({
-            startDate: startOfDay,
-            endDate: endOfDay,
-        });
-
-    }, []);
 
     const handleCreateReport = async () => {
         try {
@@ -132,6 +89,14 @@ export default function IndexPage() {
         document.body.removeChild(link);
     };
 
+    useEffect(() => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            startDate: startDate,
+            endDate: endDate,
+        }));
+    }, [startDate, endDate]);
+
     return (
         <div>
             <Head>
@@ -146,7 +111,7 @@ export default function IndexPage() {
             <div className="container body-container mt-5">
                 <h1>Выгрузка отчета по истории счетов</h1>
 
-                <ReportsTabs />
+                <ReportsNavigationTabs />
                 {processingLoader ? (
                     <Preloader />
                 ) : (
@@ -221,34 +186,14 @@ export default function IndexPage() {
                                             name="is_blocked"
                                         />
                                     </div>
-                                    <div className="d-flex flex-row justify-content-center">
-                                        <div className="form-group me-3">
-                                            <label htmlFor="startDate">Дата начала</label>
-                                            <input
-                                                type="date"
-                                                className="input-field pe-2"
-                                                id="startDate"
-                                                name="startDate"
-                                                max={getCurrentDate()}
-                                                value={startDate}
-                                                onChange={handleStartDateChange}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="form-group ms-3">
-                                            <label htmlFor="endDate">Дата конца</label>
-                                            <input
-                                                type="date"
-                                                className="input-field pe-2"
-                                                id="endDate"
-                                                name="endDate"
-                                                max={getCurrentDate()}
-                                                value={endDate}
-                                                onChange={handleEndDateChange}
-                                                required
-                                            />
-                                        </div>
-                                    </div>
+
+
+                                    <DateRangeInput
+                                        initialStartDate={startDate}
+                                        initialEndDate={endDate}
+                                        onDateChange={handleDateChange}
+                                    />
+
                                 </div>
                                 <div className="d-flex justify-content-center">
                                     <button type="button" className="btn btn-purple mt-5" onClick={handleCreateReport}>
