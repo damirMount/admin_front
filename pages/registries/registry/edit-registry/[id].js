@@ -32,7 +32,7 @@ export default function EditRegistryFile() {
 
     const router = useRouter();
     const itemId = router.query.id;
-
+    const [registryStatus, setRegistryStatus] = useState('');
     const [getRows, setRows] = useState([
     ]);
 
@@ -148,7 +148,7 @@ export default function EditRegistryFile() {
 
                     setCreatedAt(data.createdAt)
                     setUpdatedAt(data.updatedAt)
-
+                    setRegistryStatus(data.is_blocked)
                     setRegistryName(data.name)
 
                     const dataFieldArray = data.fields.split(',').map((item) => item.trim());
@@ -212,22 +212,18 @@ export default function EditRegistryFile() {
                                 <label htmlFor="is_blocked">Статус реестра</label>
                                 <CustomSelect
                                     options={[
-                                        { value: '0', label: 'Файл реестра активен' },
-                                        { value: '1', label: 'Файл реестра отключён' },
+                                        { value: false, label: 'Реестр активен' },
+                                        { value: true, label: 'Реестр отключён' },
                                     ]}
                                     required
-                                    defaultValue={
-                                        formData.is_blocked
-                                            ? { value: '1', label: 'Файл реестра отключён' }
-                                            : { value: '0', label: 'Файл реестра активен' }
-                                    }
+                                    selectedValue={registryStatus}
                                     onSelectChange={(selectedValue) => {
                                         setFormData((prevFormData) => ({
                                             ...prevFormData,
                                             is_blocked: selectedValue,
                                         }));
                                     }}
-                                    name="is_blocked"
+                                    name='is_blocked'
                                 />
                             </div>
                             <div className="form-group">

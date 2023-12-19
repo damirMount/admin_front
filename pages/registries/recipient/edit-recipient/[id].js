@@ -27,6 +27,7 @@ export default function EditRecipient() {
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
     const [recipientName, setRecipientName] = useState('');
+    const [recipientValue, setRecipientValue] = useState('');
 
     const router = useRouter();
     const itemId = router.query.id;
@@ -78,10 +79,12 @@ export default function EditRecipient() {
         { value: 4, label: 'Ежегодный' },
     ];
 
-
-    const selectedTypeOption = recipientTypes.find(
-        (option) => option.value === formData.type
-    );
+    //
+    // const selectedTypeOption = recipientTypes.find(
+    //     (option) => option.value === formData.type
+    //
+    //
+    // );
 
     const handleAddEmailInput = () => {
         setFormData((prevFormData) => ({
@@ -140,7 +143,7 @@ export default function EditRecipient() {
                     setCreatedAt(data.createdAt)
                     setUpdatedAt(data.updatedAt)
 
-
+                    setRecipientValue(data.is_blocked)
                 } else {
                     console.error('Ошибка при загрузке данных с API');
                 }
@@ -155,7 +158,7 @@ export default function EditRecipient() {
             fetchRecipientItem();
         }
     }, [itemId]);
-
+    // console.log(selectedTypeOption);
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -194,8 +197,7 @@ export default function EditRecipient() {
                                     options={recipientTypes}
                                     required
                                     name="type"
-                                    defaultValue={selectedTypeOption}
-                                    selectedValue={selectedTypeOption}
+                                    selectedValue={formData.type}
                                     onSelectChange={(selectedValue) =>
                                         handleInputChange({ target: { name: 'type', value: selectedValue } })
                                     }
@@ -221,14 +223,14 @@ export default function EditRecipient() {
                                 )}
                             </div>
                             <div className="form-group">
-                                <label htmlFor="is_blocked">Статус реестра</label>
+                                <label htmlFor="is_blocked">Статус отправки письма</label>
                                 <CustomSelect
                                     options={[
-                                        { value: '0', label: 'Реестр активен' },
-                                        { value: '1', label: 'Реестр отключён' },
+                                        { value: false, label: 'Отправка письма активна' },
+                                        { value: true, label: 'Отправка письма отключена' },
                                     ]}
                                     required
-                                    defaultValue={formData.is_blocked ? { value: '1', label: 'Реестр отключён' } : { value: '0', label: 'Реестр активен' }}
+                                    selectedValue={recipientValue}
                                     onSelectChange={(selectedValue) => {
                                         setFormData((prevFormData) => ({
                                             ...prevFormData,
@@ -237,6 +239,8 @@ export default function EditRecipient() {
                                     }}
                                     name='is_blocked'
                                 />
+
+
                             </div>
                             <div>
                                 <p>Дата создания: {createdAt}</p>

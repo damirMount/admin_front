@@ -349,8 +349,6 @@ export default function IndexPage() {
                                             { value: false, label: 'Обычная отправка' },
                                             { value: true, label: 'Тестовая отправка' },
                                         ]}
-                                        defaultValue={{ value: false, label: 'Обычная отправка' }}
-                                        selectedValue={isTestEmailEnabled ? { value: true, label: 'Тестовая отправка' } : { value: false, label: 'Обычная отправка' }}
                                         required
                                         onSelectChange={(selectedOption) =>
                                             setTestEmailEnabled(selectedOption)
@@ -393,15 +391,14 @@ export default function IndexPage() {
 
                                 <div>
                                     <div className="form-group">
-                                        <label htmlFor="registryId">Реестр</label>
-                                        <SelectWithSearch
-                                            apiUrl={`${GET_REGISTRIES_URL}`}
+                                        <label htmlFor="registryId">Реестр </label>
+                                        <CustomSelect
                                             options={registries.map((item) => ({
                                                 value: item.id,
-                                                label: item.name,
+                                                label: `${item.name} ${selectedRegistry.toString()}`
                                             }))}
                                             onSelectChange={handleRegistryChange}
-                                            defaultValue={selectedRegistry}
+                                            selectedValue={selectedRegistry}
                                         />
                                     </div>
 

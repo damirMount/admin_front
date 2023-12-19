@@ -88,12 +88,12 @@ export default function IndexPage() {
     return (
         <div>
             <Head>
-                <title>Сверка эквайринга | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                <title>Сверка платежей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <Navigation />
 
             <div className="container body-container mt-5">
-                <h1>Сравнить Эквайринг</h1>
+                <h1>Сверка платежей</h1>
                 <div className="d-flex flex-column align-items-center w-100">
                     <div className="d-flex flex-row align-items-center w-100 mt-5">
                         <div className="input__wrapper">

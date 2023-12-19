@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 
-const CustomSelect = ({ options, required, name, onSelectChange, defaultValue, className }) => {
+const CustomSelect = ({ options, required, name, onSelectChange, selectedValue, className }) => {
     const [currentSelectedValue, setCurrentSelectedValue] = useState(null);
-
+    console.log( '3r23r',selectedValue)
     useEffect(() => {
-        if (defaultValue) {
-            // Если есть defaultValue, устанавливаем его в качестве выбранного значения
-            const option = options.find((opt) => opt.value === defaultValue);
+        // При появлении селектора устанавливаем выбранное значение
+        if (selectedValue !== null && selectedValue !== undefined) {
+            const option = options.find((opt) => opt.value === selectedValue);
             setCurrentSelectedValue(option || null);
-        } else if (!currentSelectedValue && options.length > 0) {
-            // Если defaultValue не задан, устанавливаем первое значение в статус selected при загрузке
-            setCurrentSelectedValue(options[0]);
-            onSelectChange(options[0].value);
         }
-    }, [options, currentSelectedValue, onSelectChange, defaultValue]);
+    }, [options, selectedValue]);
 
     const handleSelectChange = (selectedOption) => {
         setCurrentSelectedValue(selectedOption);
-        onSelectChange(selectedOption ? selectedOption.value : '');
+        onSelectChange(selectedOption.value);
     };
 
     return (
