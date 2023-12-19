@@ -3,14 +3,18 @@ import Select from 'react-select';
 
 const CustomSelect = ({ options, required, name, onSelectChange, selectedValue, className }) => {
     const [currentSelectedValue, setCurrentSelectedValue] = useState(null);
-    console.log( '3r23r',selectedValue)
+
     useEffect(() => {
         // При появлении селектора устанавливаем выбранное значение
         if (selectedValue !== null && selectedValue !== undefined) {
             const option = options.find((opt) => opt.value === selectedValue);
             setCurrentSelectedValue(option || null);
+        } else if (!currentSelectedValue && options.length > 0) {
+            // Если selectedValue не задан и текущее выбранное значение отсутствует, устанавливаем первый элемент options
+            setCurrentSelectedValue(options[0]);
+            onSelectChange(options[0].value);
         }
-    }, [options, selectedValue]);
+    }, [options, selectedValue, currentSelectedValue, onSelectChange]);
 
     const handleSelectChange = (selectedOption) => {
         setCurrentSelectedValue(selectedOption);

@@ -126,7 +126,7 @@ export default function IndexPage() {
                                             options={[
                                                 { value: '0', label: 'Проведенные платежи' }
                                             ]}
-                                            selectedValue={[{ value: '0', label: 'Проведенные платежи' }]}
+                                            // selectedValue={[{ value: '0', label: 'Проведенные платежи' }]}
                                             required
                                             onSelectChange={(selectedValue) => {
                                                 // setFormData((prevFormData) => ({
@@ -145,7 +145,13 @@ export default function IndexPage() {
                                                 options={[
                                                     { value: 0, label: 'Проведения платежа' },
                                                 ]}
-                                                selectedValue={{ value: 0, label: 'Проведения' }}
+                                                // selectedValue={{ value: 0, label: 'Проведения' }}
+                                                onSelectChange={(selectedValue) => {
+                                                    // setFormData((prevFormData) => ({
+                                                    //     ...prevFormData,
+                                                    //     is_blocked: selectedValue,
+                                                    // }));
+                                                }}
                                                 required
                                                 className="selector-choice"
                                                 name="isTestEmailEnabled"
@@ -158,7 +164,7 @@ export default function IndexPage() {
                                             options={[
                                                 { value: '0', label: 'По всем дилерам' }
                                             ]}
-                                            selectedValue={[{ value: '0', label: 'По всем дилерам' }]}
+                                            // selectedValue={[{ value: '0', label: 'По всем дилерам' }]}
                                             required
                                             onSelectChange={(selectedValue) => {
                                                 // setFormData((prevFormData) => ({
@@ -175,7 +181,7 @@ export default function IndexPage() {
                                             options={[
                                                 { value: '0', label: 'По всем поставщикам' }
                                             ]}
-                                            selectedValue={[{ value: '0', label: 'По всем поставщикам' }]}
+                                            // selectedValue={[{ value: '0', label: 'По всем поставщикам' }]}
                                             required
                                             onSelectChange={(selectedValue) => {
                                                 // setFormData((prevFormData) => ({
