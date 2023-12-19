@@ -232,6 +232,7 @@ export default function EditRecipient() {
                                     required
                                     selectedValue={recipientValue}
                                     onSelectChange={(selectedValue) => {
+                                        setRecipientValue(selectedValue)
                                         setFormData((prevFormData) => ({
                                             ...prevFormData,
                                             is_blocked: selectedValue,

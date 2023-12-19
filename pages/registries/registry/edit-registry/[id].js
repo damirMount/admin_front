@@ -218,6 +218,7 @@ export default function EditRegistryFile() {
                                     required
                                     selectedValue={registryStatus}
                                     onSelectChange={(selectedValue) => {
+                                        setRegistryStatus(selectedValue)
                                         setFormData((prevFormData) => ({
                                             ...prevFormData,
                                             is_blocked: selectedValue,
