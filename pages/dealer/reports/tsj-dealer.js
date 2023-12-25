@@ -81,7 +81,7 @@ export default function IndexPage() {
     return (
         <div>
             <Head>
-                <title>Список дилеров ТСЖ| {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                <title>Список дилеров ТСЖ | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <Navigation />
             <Alert alertMessage={alertMessage} clearAlertMessage={clearAlertMessage} />

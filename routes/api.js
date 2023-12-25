@@ -1,5 +1,8 @@
 const baseURL = process.env.NEXT_PUBLIC_URL
 
+export const GET_DATA_FROM_DB_URL=`${baseURL}/api/getDataFromDB`
+
+
 export const GET_LIST_SERVICES_URL=`${baseURL}/api/listServices`
 export const POST_ABONENT_SERVICE_URL=`${baseURL}/api/abonent-service/store`
 export const GET_LIST_SERVERS_URL=`${baseURL}/api/listServers`

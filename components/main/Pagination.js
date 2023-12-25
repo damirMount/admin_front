@@ -4,6 +4,7 @@ import { faAnglesLeft, faAnglesRight } from "@fortawesome/free-solid-svg-icons";
 
 const Pagination = ({ page, totalPages, onPageChange }) => {
     const maxButtons = 5;
+    let lastButton = 0;
 
     const handlePageChange = async (newPage) => {
         onPageChange(newPage);
@@ -18,9 +19,7 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
                 buttons.push(i);
             }
         }
-
         const paginationButtons = [];
-        let lastButton = 0;
 
         buttons.forEach((button) => {
             if (button - lastButton === 2) {

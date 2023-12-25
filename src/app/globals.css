@@ -160,7 +160,7 @@ h1 {
 .table-sort-button:hover {
   cursor: pointer;
   background-color: #F3F3F3;
-  text-decoration: underline;
+  /*text-decoration: underline;*/
 }
 
 .action-table-buttons {

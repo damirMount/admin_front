@@ -201,7 +201,7 @@ const RegistryListTable = ({ apiUrl, tableHeaders, tableValues, createRoute, edi
                     </div>
                 </div>
             ) : (
-                <table className="table table-bordered mt-4">
+                <table className="table table-hover table-bordered mt-4">
                     <thead>
                     <tr>
                         {tableHeaders.map((header, index) => (
@@ -226,10 +226,12 @@ const RegistryListTable = ({ apiUrl, tableHeaders, tableValues, createRoute, edi
                                     {value === "id" && <td className="col w-0">{row[value]}</td>}
                                     {value === "name" && <td className="col-8">{row[value]}</td>}
                                     {value === "formats" && (
-                                        <td className="col-auto action-table-buttons flex-nowrap d-flex">
+                                        <td>
+                                            <div className="col-auto action-table-buttons flex-nowrap d-flex">
                                             {row[value].map((format, index) => (
                                                 <span key={index} className="status status-formats ms-1 me-1">{format}</span>
                                             ))}
+                                            </div>
                                         </td>
                                     )}
                                     {value === "server_id" && <td className="col-1">
@@ -250,17 +252,19 @@ const RegistryListTable = ({ apiUrl, tableHeaders, tableValues, createRoute, edi
                                         <span className={`status ${formatBooleanValue(row[value]) === 'АКТИВЕН' ? 'status-active' : 'status-blocked'}`}>{formatBooleanValue(row[value])}
                                     </span>
                                     </td>}
-                                    {value === "updatedAt" && <td className="col-1 date-column">{row[value]} </td>}
-                                    {value === "createdAt" && <td className="col-1 date-column">{row[value]} </td>}
+                                    {value === "updatedAt" && <td className="col-1 date-column">{row[value]}</td>}
+                                    {value === "createdAt" && <td className="col-1 date-column">{row[value]}</td>}
                                 </React.Fragment>
                             ))}
-                            <td className="action-table-buttons col-1 w-0">
+                            <td>
+                                <div className="action-table-buttons col-1 w-0">
                                 {editRoute && (
                                     <a href={`${editRoute}/${row.id}`} className="btn btn-purple me-2"><FontAwesomeIcon icon={faPenToSquare} size="xl" /></a>
                                 )}
                                 {deleteRoute && (
                                     <button onClick={() => handleDeleteConfirmation(row.id)} className="btn btn-purple ms-2"><FontAwesomeIcon icon={faTrashAlt} size="xl" /></button>
                                 )}
+                                </div>
                             </td>
                         </tr>
                     ))}

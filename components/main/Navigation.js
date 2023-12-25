@@ -37,6 +37,11 @@ const Navigation = () => {
                                     Отчёт по истории счётов
                                 </Link>
                             </li>
+                            <li className="nav-item">
+                                <Link href="/test" className={`nav-link`}>
+                                    TEST ZONE
+                                </Link>
+                            </li>
                             {/*<li className="nav-item">*/}
                             {/*    <Link href="/acquiring/index-page" className={`nav-link`}>*/}
                             {/*        Эквайринг*/}
