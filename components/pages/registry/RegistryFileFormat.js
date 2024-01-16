@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import React, {useEffect, useState} from "react";
 
-const RegistryFileFormat = ({ formData, setFormData }) => {
+const RegistryFileFormat = ({formData, setFormData}) => {
     const [selectedCheckboxCount, setSelectedCheckboxCount] = useState(0);
 
     // Обработчик изменения выбранных чекбоксов
     const handleCheckboxChange = (event) => {
-        const { name, checked } = event.target;
+        const {name, checked} = event.target;
         setFormData((prevFormData) => {
             const formats = [...prevFormData.formats];
             if (checked && !formats.includes(name)) {

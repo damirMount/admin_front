@@ -1,7 +1,7 @@
 // DataFetcher.js
 
-import { GET_DATA_FROM_DB_URL } from "../../routes/api";
-import { parseCookies } from "nookies";
+import {GET_DATA_FROM_DB_URL} from "../../routes/api";
+import {parseCookies} from "nookies";
 
 const fetchData = async (model, filters, attributes, sort, limit, offset, setAlertMessage) => {
     try {
@@ -11,12 +11,12 @@ const fetchData = async (model, filters, attributes, sort, limit, offset, setAle
 
 
         const params = new URLSearchParams({
-            model: model, //'ModelName' - REQUIRED!!!
-            filters: filters ? JSON.stringify(filters) : undefined,    // const filters = {column1: 'value', column2: 'value'};
-            attributes: attributes || undefined,
-            sort: sort || undefined,
-            limit: limit || undefined,
-            offset: offset || undefined,
+            model: model,                                               //'ModelName' - REQUIRED!!!
+            filters: filters ? JSON.stringify(filters) : undefined,     // filters = { column1: 'value', column2: 'value' };
+            attributes: attributes || undefined,                        // attributes = 'name,fio'
+            sort: sort || undefined,                                    // sort = { column: name, direction: asc }
+            limit: limit || undefined,                                  // limit = 10
+            offset: offset || undefined,                                // offset = 5
         });
 
         const response = await fetch(`${fetchDataUrl}?${params.toString()}`, {
@@ -36,9 +36,7 @@ const fetchData = async (model, filters, attributes, sort, limit, offset, setAle
         return data;
     } catch (error) {
         console.error('Ошибка при получении данных:', error);
-
-        // Устанавливаем сообщение об ошибке в состояние
-        setAlertMessage({ type: "error", text: 'Ошибка при получении данных: ' + error.message });
+        setAlertMessage({type: "error", text: 'Ошибка при получении данных: ' + error.message});
 
         return null;
     }

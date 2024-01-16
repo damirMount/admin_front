@@ -1,8 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { parseCookies } from 'nookies';
+import React, {useEffect, useState} from 'react';
+import {parseCookies} from 'nookies';
 import Select from 'react-select';
 
-const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectChange, className, defaultValue = [], onlyDefaultValue = false, selectedRegistry, selectedLastRegistry = [], selectedValue = [] }) => {
+const MultiSelectWithSearch = ({
+                                   apiUrl,
+                                   placeholder,
+                                   required,
+                                   name,
+                                   onSelectChange,
+                                   className,
+                                   defaultValue = [],
+                                   onlyDefaultValue = false,
+                                   selectedRegistry,
+                                   selectedLastRegistry = [],
+                                   selectedValue = []
+                               }) => {
     const [options, setOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -11,8 +23,8 @@ const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectCh
     const handleSelectChange = (selectedOptions) => {
         setSelectedOptions(selectedOptions);
 
-            const selectedValues = selectedOptions.map((option) => option.value);
-            onSelectChange(selectedValues);
+        const selectedValues = selectedOptions.map((option) => option.value);
+        onSelectChange(selectedValues);
     };
 
     useEffect(() => {
@@ -65,7 +77,6 @@ const MultiSelectWithSearch = ({ apiUrl, placeholder, required, name, onSelectCh
 
         fetchOptions();
     }, [apiUrl, defaultValue, onlyDefaultValue]);
-
 
 
     if (error) {
