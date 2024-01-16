@@ -1,13 +1,11 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import SelectWithSearch from '../components/input/SelectWithSearch';
-import FormInput from '../components/input/FormInput';
-import { parseCookies } from 'nookies';
-import Navigation from '../components/main/Navigation';
+import {useState} from 'react';
+import {useRouter} from 'next/router';
+import SelectWithSearch from '../components/main/input/SelectWithSearch';
+import FormInput from '../components/main/input/FormInput';
+import {parseCookies} from 'nookies';
+
 import Footer from "../components/main/Footer";
-import {
-    POST_ABONENT_SERVICE_URL,
-    GET_LIST_SERVICES_URL} from '../routes/api'
+import {GET_LIST_SERVICES_URL, POST_ABONENT_SERVICE_URL} from '../routes/api'
 
 export default function UpdateDBPage() {
     const [formData, setFormData] = useState({
@@ -19,7 +17,7 @@ export default function UpdateDBPage() {
     const router = useRouter();
 
     const handleInputChange = (event) => {
-        const { name, value, type, files } = event.target;
+        const {name, value, type, files} = event.target;
 
         if (type === 'file' && files.length) {
             const file = files[0];
@@ -74,7 +72,7 @@ export default function UpdateDBPage() {
     return (
         <div>
             <div>
-                <Navigation></Navigation>
+
             </div>
             <div className="container body-container">
                 <h1>Страница обновления БД</h1>
@@ -87,7 +85,7 @@ export default function UpdateDBPage() {
                             name="serviceId"
                             onSelectChange={(selectedValue) =>
                                 handleInputChange({
-                                    target: { name: 'serviceId', value: selectedValue },
+                                    target: {name: 'serviceId', value: selectedValue},
                                 })
                             }
                         />

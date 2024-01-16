@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import React, {useEffect, useState} from "react";
+import {format} from 'date-fns';
 
-const DateRangeInput = ({ initialStartDate, initialEndDate, onDateChange }) => {
+const DateRangeInput = ({initialStartDate, initialEndDate, onDateChange}) => {
     const [startDate, setStartDate] = useState(initialStartDate || "");
     const [endDate, setEndDate] = useState(initialEndDate || "");
 

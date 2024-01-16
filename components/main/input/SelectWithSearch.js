@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Select from 'react-select';
-import { parseCookies } from 'nookies';
+import {parseCookies} from 'nookies';
 
-const SelectWithSearch = ({ apiUrl, options: staticOptions, required, name, onSelectChange, defaultValue }) => {
+const SelectWithSearch = ({apiUrl, options: staticOptions, required, name, onSelectChange, defaultValue}) => {
     const [options, setOptions] = useState([]);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(true);

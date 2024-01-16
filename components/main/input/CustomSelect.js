@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Select from 'react-select';
 
-const CustomSelect = ({ options, required, name, onSelectChange, selectedValue, className }) => {
+const CustomSelect = ({options, required, name, onSelectChange, selectedValue, className}) => {
     const [currentSelectedValue, setCurrentSelectedValue] = useState(null);
 
     useEffect(() => {

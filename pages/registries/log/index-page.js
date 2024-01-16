@@ -1,11 +1,9 @@
-import RegistryFiles from '../../../components/registry/RegistryFilesBackupsList';
-import Navigation from "../../../components/main/Navigation";
+import RegistryFiles from '../../../components/pages/registry/RegistryFilesBackupsList';
 import Footer from "../../../components/main/Footer";
-import {
-    REGISTRY_LOG_INDEX_URL,
-    REGISTRY_LOG_DOWNLOAD_URL} from '../../../routes/api'
+import {REGISTRY_LOG_DOWNLOAD_URL, REGISTRY_LOG_INDEX_URL} from '../../../routes/api'
 import Head from "next/head";
 import React from "react";
+
 export default function IndexPage() {
     const apiUrl = `${REGISTRY_LOG_INDEX_URL}`;
     const downloadUrl = `${REGISTRY_LOG_DOWNLOAD_URL}`;
@@ -16,7 +14,7 @@ export default function IndexPage() {
                 <title>Логи реестров | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <div>
-                <Navigation></Navigation>
+
             </div>
 
             <div className="container body-container mt-5">

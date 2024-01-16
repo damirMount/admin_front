@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
-const BooleanSelect = ({ selectedValue, name }) => {
+const BooleanSelect = ({selectedValue, name}) => {
     const [value, setValue] = useState(selectedValue);
 
     const handleSelection = (newValue) => {

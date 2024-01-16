@@ -18,8 +18,8 @@ const Navigation = () => {
                         <ul className="navbar-nav me-auto align-items-center justify-content-center w-100 d-flex mb-2 mb-lg-0">
                             <li className="nav-item">
                                 <Link href="https://kg.quickpay.kg/idx.php/news" className={`nav-link`}>
-                                Админ зона
-                            </Link>
+                                    Админ зона
+                                </Link>
                             </li>
                             <li className="nav-item">
                                 <Link href="/update-db" className={`nav-link`}>
@@ -37,6 +37,11 @@ const Navigation = () => {
                                     Отчёт по истории счётов
                                 </Link>
                             </li>
+                            {/*<li className="nav-item">*/}
+                            {/*    <Link href="/test" className={`nav-link`}>*/}
+                            {/*        TEST ZONE*/}
+                            {/*    </Link>*/}
+                            {/*</li>*/}
                             {/*<li className="nav-item">*/}
                             {/*    <Link href="/acquiring/index-page" className={`nav-link`}>*/}
                             {/*        Эквайринг*/}

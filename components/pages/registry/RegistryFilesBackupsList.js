@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { parseCookies } from 'nookies';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faDownload, faSearch } from "@fortawesome/free-solid-svg-icons";
+import React, {useEffect, useState} from 'react';
+import {parseCookies} from 'nookies';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faDownload, faSearch} from "@fortawesome/free-solid-svg-icons";
 import RegistryNavigationTabs from "./RegistryNavigationTabs";
-import Pagination from "../main/Pagination";
+import Pagination from "../../main/Pagination";
 
-const RegistryFiles = ({ apiUrl, downloadUrl }) => {
+const RegistryFiles = ({apiUrl, downloadUrl}) => {
     const [registryFiles, setRegistryFile] = useState([]);
     const [page, setPage] = useState(1); // Текущая страница
     const [totalPages, setTotalPages] = useState(0);
@@ -53,7 +53,14 @@ const RegistryFiles = ({ apiUrl, downloadUrl }) => {
     };
 
     const formatDateTime = (dateTimeString) => {
-        const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
         return new Date(dateTimeString).toLocaleDateString('ru-RU', options);
     };
 
@@ -77,7 +84,7 @@ const RegistryFiles = ({ apiUrl, downloadUrl }) => {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${authToken}`,
                 },
-                body: JSON.stringify({ filename }),
+                body: JSON.stringify({filename}),
             });
             if (!response.ok) {
                 throw new Error(`Fetch error: ${response.status} ${response.statusText}`);
@@ -108,7 +115,6 @@ const RegistryFiles = ({ apiUrl, downloadUrl }) => {
     };
 
 
-
     useEffect(() => {
         fetchRegistryFile();
     }, [page, searchTerm]); // Зависимость от page и searchTerm
@@ -117,7 +123,7 @@ const RegistryFiles = ({ apiUrl, downloadUrl }) => {
     return (
         <div>
             <div className="create-button d-flex justify-content-center mb-5">
-                <RegistryNavigationTabs />
+                <RegistryNavigationTabs/>
             </div>
             <div className="d-flex flex-row">
                 <form onSubmit={handleSearch} className="d-flex justify-content-end">
@@ -129,7 +135,7 @@ const RegistryFiles = ({ apiUrl, downloadUrl }) => {
                         onChange={handleSearchChange}
                     />
                     <button className="btn btn-grey d-flex position-absolute" type="submit">
-                        <FontAwesomeIcon icon={faSearch} className="icon-search" />
+                        <FontAwesomeIcon icon={faSearch} className="input-btn"/>
                     </button>
                 </form>
             </div>
@@ -144,31 +150,31 @@ const RegistryFiles = ({ apiUrl, downloadUrl }) => {
                     </tr>
                     </thead>
                     <tbody>
-                {Array.isArray(registryFiles) && registryFiles.length > 0 ? (
-                    registryFiles.map((file) => (
-                        <tr key={file.name}>
-                            <td>
-                                {file.name}
-                            </td>
-                            <td>
-                                <span className="status status-active">{formatFileSize(file.size)}</span>
-                            </td>
-                            <td>
-                                {formatDateTime(file.createdAt)}
-                            </td>
-                            <td>
-                                <button onClick={() => handleDownload(file.name)} className="btn btn-purple ms-2">
-                                    <FontAwesomeIcon icon={faDownload} size="lg" />
-                                </button>
-                            </td>
+                    {Array.isArray(registryFiles) && registryFiles.length > 0 ? (
+                        registryFiles.map((file) => (
+                            <tr key={file.name}>
+                                <td>
+                                    {file.name}
+                                </td>
+                                <td>
+                                    <span className="status status-active">{formatFileSize(file.size)}</span>
+                                </td>
+                                <td>
+                                    {formatDateTime(file.createdAt)}
+                                </td>
+                                <td>
+                                    <button onClick={() => handleDownload(file.name)} className="btn btn-purple ms-2">
+                                        <FontAwesomeIcon icon={faDownload} size="lg"/>
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="4">Нет доступных файлов.</td>
                         </tr>
-                    ))
-                ) : (
-                    <tr>
-                        <td colSpan="4">Нет доступных файлов.</td>
-                    </tr>
-                )}
-                </tbody>
+                    )}
+                    </tbody>
                 </table>
             </div>
             <Pagination

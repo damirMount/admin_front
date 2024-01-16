@@ -1,11 +1,10 @@
 // pages/index.js
 import React from 'react';
-import Footer from '../../../components/main/Footer';
+import Footer from '../components/main/Footer';
 import Head from 'next/head';
-import DatabaseTable from "../../../components/main/table/DatabaseTable";
-import {REGISTRY_DELETE_URL} from "../../../routes/api";
-import ServiceStatusIndicator from "../../../components/main/table/cell/ServiceStatusIndicator";
-import RegistryNavigationTabs from "../../../components/pages/registry/RegistryNavigationTabs";
+import DatabaseTable from "../components/main/table/DatabaseTable";
+import {REGISTRY_DELETE_URL} from "../routes/api";
+import ServiceStatusIndicator from "../components/main/table/cell/ServiceStatusIndicator";
 
 const IndexPage = () => {
     const createRoute = '/registries/registry/create-registry';
@@ -74,7 +73,6 @@ const IndexPage = () => {
         {key: 'updatedAt', label: 'Дата изменения'},
         {key: 'createdAt', label: 'Дата создания'},
     ];
-
     const actionButtonsLinks = {
         editRoute: {label: 'Изменить запись', link: '/registries/registry/edit-registry', useId: true},
         deleteRoute: {label: 'Удалить', link: `${REGISTRY_DELETE_URL}`, useId: true},
@@ -82,20 +80,27 @@ const IndexPage = () => {
 
     const configTable = [
         {key: 'actionButtons', links: actionButtonsLinks},
-        {key: 'selectRowsPerPage'}
+        {key: 'selectRowsPerPage'},
     ];
+    // actionButtons
+    // headerFixed
+    // rowsCount
+    // columnSelect
+    // columnVisible
+    // columnOrder
+    // rowSelect
+    // rowOrder
+    // rowsPerPage
+
 
     return (
         <div>
             <Head>
-                <title>Список реестров | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                <title>TEST ZONE | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <div className="container body-container mt-5 ">
-                <h1>Список реестров</h1>
+                <h1>TEST ZONE</h1>
 
-                <div className="create-button d-flex justify-content-center">
-                    <RegistryNavigationTabs/>
-                </div>
 
                 <DatabaseTable
                     model='Registry'

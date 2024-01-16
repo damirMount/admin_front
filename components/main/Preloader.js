@@ -1,6 +1,7 @@
 const Preloader = () => {
     return (
-        <div id="preloader" className="w-100 d-flex flex-column align-items-center justify-content-center mt-5 preloader">
+        <div id="preloader"
+             className="w-100 d-flex flex-column align-items-center justify-content-center mt-5 preloader">
             <svg className="tea" width="37" height="48" viewBox="0 0 37 48" fill="none"
                  xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -17,7 +18,7 @@ const Preloader = () => {
                       stroke="var(--secondary)" strokeWidth="2" strokeLinecap="round"
                       strokeLinejoin="round"></path>
             </svg>
-            <h5 className="mt-5">Идёт обработка данных. Пожалуйста подождите...</h5>
+            <h5 className="mt-5">Идёт обработка данных. Пожалуйста, подождите...</h5>
         </div>
     );
 };

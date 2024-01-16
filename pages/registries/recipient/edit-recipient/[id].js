@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import FormInput from '../../../../components/input/FormInput';
-import { parseCookies } from 'nookies';
-import Navigation from '../../../../components/main/Navigation';
-import CustomSelect from '../../../../components/input/CustomSelect';
-import MultiSelectWithSearch from '../../../../components/input/MultiSelectWithSearch';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/router';
+import FormInput from '../../../../components/main/input/FormInput';
+import {parseCookies} from 'nookies';
+import CustomSelect from '../../../../components/main/input/CustomSelect';
+import MultiSelectWithSearch from '../../../../components/main/input/MultiSelectWithSearch';
 import {faEnvelope, faXmarkCircle} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
@@ -33,7 +32,7 @@ export default function EditRecipient() {
     const itemId = router.query.id;
 
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: value,
@@ -73,10 +72,10 @@ export default function EditRecipient() {
     };
 
     const recipientTypes = [
-        { value: 1, label: 'Ежедневный' },
-        { value: 2, label: 'Еженедельный' },
-        { value: 3, label: 'Ежемесячный' },
-        { value: 4, label: 'Ежегодный' },
+        {value: 1, label: 'Ежедневный'},
+        {value: 2, label: 'Еженедельный'},
+        {value: 3, label: 'Ежемесячный'},
+        {value: 4, label: 'Ежегодный'},
     ];
 
     //
@@ -171,7 +170,7 @@ export default function EditRecipient() {
             </Head>
 
             <div>
-                <Navigation />
+
             </div>
             <div className="container body-container mt-5">
                 <h1>Редактировать получателя</h1>
@@ -199,7 +198,7 @@ export default function EditRecipient() {
                                     name="type"
                                     selectedValue={formData.type}
                                     onSelectChange={(selectedValue) =>
-                                        handleInputChange({ target: { name: 'type', value: selectedValue } })
+                                        handleInputChange({target: {name: 'type', value: selectedValue}})
                                     }
                                 />
                             </div>
@@ -226,8 +225,8 @@ export default function EditRecipient() {
                                 <label htmlFor="is_blocked">Статус отправки письма</label>
                                 <CustomSelect
                                     options={[
-                                        { value: false, label: 'Отправка письма активна' },
-                                        { value: true, label: 'Отправка письма отключена' },
+                                        {value: false, label: 'Отправка письма активна'},
+                                        {value: true, label: 'Отправка письма отключена'},
                                     ]}
                                     required
                                     selectedValue={recipientValue}
@@ -253,7 +252,7 @@ export default function EditRecipient() {
                             <div className="d-flex flex-row flex-wrap justify-content-between">
                                 {formData.emails.map((email, index) => (
                                     <div key={index} className="form-group d-flex w-50">
-                                        <FontAwesomeIcon className='input-icon' icon={faEnvelope} size='lg' />
+                                        <FontAwesomeIcon className='input-icon' icon={faEnvelope} size='lg'/>
                                         <FormInput
                                             required
                                             type="email"
@@ -265,10 +264,10 @@ export default function EditRecipient() {
                                         />
                                         <button
                                             type="button"
-                                            className="btn input-btn"
+                                            className="btn input-btn-close"
                                             onClick={() => handleRemoveEmailInput(index)}
                                         >
-                                            <FontAwesomeIcon icon={faXmarkCircle} size="lg" />
+                                            <FontAwesomeIcon icon={faXmarkCircle} size="lg"/>
                                         </button>
                                     </div>
                                 ))}
@@ -282,7 +281,8 @@ export default function EditRecipient() {
                     </div>
                     <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
                         <button className="btn btn-purple me-2" type="submit">Сохранить</button>
-                        <Link href="/registries/recipient/index-page" className="btn btn-cancel ms-2" type="button">Отмена</Link>
+                        <Link href="/registries/recipient/index-page" className="btn btn-cancel ms-2"
+                              type="button">Отмена</Link>
                     </div>
                 </form>
             </div>
