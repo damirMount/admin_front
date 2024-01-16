@@ -75,7 +75,7 @@ const Table = ({data, configTable = null, tableHeaders, onSort}) => {
             {tableHeaders.map(({key, label, sortable = true, headerClass}) => (
                 <th
                     key={key}
-                    className={`${sortable ? 'user-select-none table-sort-button' : ''} ${headerClass ? headerClass : ''}${!/(^|\s)col-\S+/.test(headerClass) ? ' w-0' : ''}`}
+                    className={`${sortable ? 'user-select-none table-sort-button' : ''} ${headerClass ? headerClass : ''}${!/(^|\s)col-\S+/.test(headerClass) ? ' ' : ''}`}
                     onClick={() => sortable && requestSort(key)}>
 
                     <div className="w-100 small d-flex justify-content-between flex-nowrap align-items-center">

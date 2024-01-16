@@ -36,7 +36,7 @@ const ActionButtons = ({buttonsLinks = null, props}) => {
     }
 
     return (
-        <div className="action-table-buttons col-auto w-0">
+        <div className="action-table-buttons col-auto ">
             <div className="dropdown">
                 <button
                     className="btn btn-purple p-0 ps-2 pe-2 rounded-3"
