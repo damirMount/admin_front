@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import SelectWithSearch from '../../../../components/input/SelectWithSearch';
-import FormInput from '../../../../components/input/FormInput';
-import { parseCookies } from 'nookies';
-import Navigation from '../../../../components/main/Navigation';
-import CustomSelect from '../../../../components/input/CustomSelect';
-import MultiSelectWithSearch from '../../../../components/input/MultiSelectWithSearch';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/router';
+import SelectWithSearch from '../../../../components/main/input/SelectWithSearch';
+import FormInput from '../../../../components/main/input/FormInput';
+import {parseCookies} from 'nookies';
+import CustomSelect from '../../../../components/main/input/CustomSelect';
+import MultiSelectWithSearch from '../../../../components/main/input/MultiSelectWithSearch';
 import Link from 'next/link';
 import Footer from '../../../../components/main/Footer';
-import RegistryFieldsTable from "../../../../components/registry/RegistryFieldsTable";
+import RegistryFieldsTable from "../../../../components/pages/registry/RegistryFieldsTable";
 import {
     GET_LIST_SERVERS_URL,
     GET_LIST_SERVICES_URL,
@@ -16,7 +15,7 @@ import {
     REGISTRY_UPDATE_URL
 } from "../../../../routes/api";
 import Head from "next/head";
-import RegistryFileFormat from "../../../../components/registry/RegistryFileFormat";
+import RegistryFileFormat from "../../../../components/pages/registry/RegistryFileFormat";
 
 export default function EditRegistryFile() {
     const [formData, setFormData] = useState({
@@ -33,8 +32,7 @@ export default function EditRegistryFile() {
     const router = useRouter();
     const itemId = router.query.id;
     const [registryStatus, setRegistryStatus] = useState('');
-    const [getRows, setRows] = useState([
-    ]);
+    const [getRows, setRows] = useState([]);
 
     const handleUpdateRows = (updatedRows) => {
         setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryFieldsTable
@@ -46,7 +44,7 @@ export default function EditRegistryFile() {
 
 
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: value,
@@ -187,9 +185,6 @@ export default function EditRegistryFile() {
             <Head>
                 <title>{registryName} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div>
-                <Navigation />
-            </div>
             <div className="container body-container mt-5">
                 <h1>Страница редактирования файла реестров</h1>
                 <form onSubmit={handleSubmit}>
@@ -212,8 +207,8 @@ export default function EditRegistryFile() {
                                 <label htmlFor="is_blocked">Статус реестра</label>
                                 <CustomSelect
                                     options={[
-                                        { value: false, label: 'Реестр активен' },
-                                        { value: true, label: 'Реестр отключён' },
+                                        {value: false, label: 'Реестр активен'},
+                                        {value: true, label: 'Реестр отключён'},
                                     ]}
                                     required
                                     selectedValue={registryStatus}
@@ -290,7 +285,7 @@ export default function EditRegistryFile() {
                     </div>
                 </form>
             </div>
-            <Footer />
+            <Footer/>
         </div>
     );
 }

@@ -1,13 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import { useRouter } from 'next/router';
-import { parseCookies, destroyCookie, setCookie } from 'nookies';
+import React, {useEffect} from 'react';
+import {useRouter} from 'next/router';
+import {destroyCookie, parseCookies, setCookie} from 'nookies';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../src/app/globals.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import Head from "next/head";
+import {AlertProvider} from "../contexts/AlertContext";
+import Alert from "../components/main/Alert";
+import Navigation from "../components/main/Navigation";
+import {NextUIProvider} from "@nextui-org/react";
 
-function MyApp({ Component, pageProps }) {
+function MyApp({Component, pageProps}) {
     const router = useRouter();
+
 
     useEffect(() => {
         const cookies = parseCookies();
@@ -18,7 +23,7 @@ function MyApp({ Component, pageProps }) {
             // Если нет токена и не на странице логина, перенаправляем на страницу логина
             router.replace('/login');
         } else if (authToken) {
-            const { value, expiration } = authToken;
+            const {value, expiration} = authToken;
 
             if (expiration <= currentTime) {
                 destroyCookie(null, 'authToken'); // Удаляем токен
@@ -40,7 +45,7 @@ function MyApp({ Component, pageProps }) {
                 router.pathname === '/acquiring/index' ||
                 router.pathname === '/dealer/reports/export'
             ) {
-                setCookie(null, 'authToken', JSON.stringify({ value, expiration }), {
+                setCookie(null, 'authToken', JSON.stringify({value, expiration}), {
                     maxAge: 43200, // Время жизни куки в секундах (12 часов)
                     path: '/', // Путь, на котором куки будет доступно
                 });
@@ -51,8 +56,19 @@ function MyApp({ Component, pageProps }) {
     return <div>
         <Head>
             <title>{process.env.NEXT_PUBLIC_APP_NAME}</title>
+            {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+                    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+                    crossOrigin="anonymous"></script>
         </Head>
-    <Component {...pageProps} />
+        <NextUIProvider>
+            <AlertProvider>
+                <Navigation/>
+                <Component {...pageProps} />
+                <Alert/>
+            </AlertProvider>
+        </NextUIProvider>
+
     </div>;
 }
 

@@ -1,42 +1,58 @@
-import React, { useState, useEffect } from "react";
-import Navigation from "../../../components/main/Navigation";
+import React, {useState} from "react";
 import Footer from "../../../components/main/Footer";
-import ReportsNavigationTabs from "../../../components/report/ReportsNavigationTabs";
+import ReportsNavigationTabs from "../../../components/pages/report/ReportsNavigationTabs";
 import Preloader from "../../../components/main/Preloader";
-import FormInput from "../../../components/input/FormInput";
-import Alert from "../../../components/main/Alert";
-import { parseCookies } from "nookies";
-import {DEALER_REPORTS_GET_TSJ_DEALER_URL, DEALER_REPORTS_UPDATE_TSJ_DEALER_URL} from "../../../routes/api";
+import FormInput from "../../../components/main/input/FormInput";
+import {parseCookies} from "nookies";
+import {DEALER_REPORTS_UPDATE_TSJ_DEALER_URL} from "../../../routes/api";
 import Head from "next/head";
+import {useAlert} from "../../../contexts/AlertContext";
+import DatabaseTable from "../../../components/main/table/DatabaseTable";
+
 
 export default function IndexPage() {
     const [processingLoader, setProcessingLoader] = useState(false);
-    const [alertMessage, setAlertMessage] = useState({ type: "", text: "" });
-    const [tableData, setTableData] = useState([]);
     const formData = new FormData();
+    const {clearAlertMessage, showAlertMessage} = useAlert();
 
-    const clearAlertMessage = () => {
-        setAlertMessage({ type: "", text: "" });
-    };
+    const tableHeaders = [
+        {key: 'code', label: 'Код*', isSearchable: true},
+        {key: 'name', label: 'Название дилера*', isSearchable: true},
+        {key: 'fio', label: 'ФИО*', isSearchable: true},
+        {key: 'bank', label: 'Банк*', isSearchable: true},
+        {key: 'bik', label: 'Бик*', isSearchable: true},
+        {key: 'accountant', label: 'Бухгалтер', isSearchable: true}
+    ];
 
-    const fetchDataFromServer = async () => {
-        try {
-        const cookies = parseCookies();
-        const authToken = JSON.parse(cookies.authToken).value;
-        const fetchDataUrl = `${DEALER_REPORTS_GET_TSJ_DEALER_URL}`;
-        const response = await fetch(fetchDataUrl, {
-            method: 'get',
-            headers: {
-                Authorization: `Bearer ${authToken}`
-            },
-        });
-        const data = await response.json();
-        setTableData(data);
-        } catch (error) {
-            console.error('Error uploading file:', error);
-            setAlertMessage({ type: "error", text: "Внутренняя ошибка сервера." });
-        }
-    };
+    const configTable = [
+        {key: 'selectRowsPerPage'},
+    ];
+
+    function UpdateDealerList() {
+
+        return (
+            <form className="d-flex justify-content-between align-items-center align-content-center">
+                <div className="form-group">
+                    <FormInput
+                        type="file"
+                        className="form-control input-search"
+                        id="excelFile"
+                        name="excelFile"
+                        onChange={handleFileUpload}
+                        required
+                    />
+                </div>
+                <button
+                    type="button"
+                    className="btn btn-purple btn-search"
+                    onClick={handleUpdateDealer}
+                >
+                    Обновить список
+                </button>
+            </form>
+        );
+    }
+
 
     const handleFileUpload = (event) => {
         const fileInput = event.target.files[0];
@@ -61,88 +77,40 @@ export default function IndexPage() {
             const responseData = await response.json();
 
             if (response.ok) {
-                setAlertMessage({type: "success", text: responseData.message});
+                showAlertMessage({type: "success", text: responseData.message});
             } else {
-                setAlertMessage({type: "error", text: responseData.message});
+                showAlertMessage({type: "error", text: responseData.message});
             }
         } catch (error) {
             console.error('Error uploading file:', error);
-            setAlertMessage({ type: "error", text: "Внутренняя ошибка сервера." });
+            showAlertMessage({type: "error", text: "Внутренняя ошибка сервера."});
         } finally {
             setProcessingLoader(false);
-            await fetchDataFromServer();
         }
     };
-
-    useEffect(() => {
-        fetchDataFromServer(); // Вызовите функцию при монтировании компонента
-    }, []);
 
     return (
         <div>
             <Head>
                 <title>Список дилеров ТСЖ | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <Navigation />
-            <Alert alertMessage={alertMessage} clearAlertMessage={clearAlertMessage} />
             <div className="container body-container mt-5">
                 <h1>Список дилеров ТСЖ</h1>
-                <ReportsNavigationTabs />
+                <ReportsNavigationTabs/>
 
                 {processingLoader ? (
-                    <Preloader />
+                    <Preloader/>
                 ) : (
-                    <div>
-                        <div className="w-100">
-                            <form className="d-flex justify-content-between align-items-center align-content-center mb-4">
-                                <div className="form-group">
-                                    <FormInput
-                                        type="file"
-                                        className="form-control"
-                                        id="excelFile"
-                                        name="excelFile"
-                                        onChange={handleFileUpload}
-                                        required
-                                    />
-                                </div>
-                                <button
-                                    type="button"
-                                    className="btn btn-purple btn-"
-                                    onClick={handleUpdateDealer}
-                                >
-                                    Обновить список дилеров ТСЖ
-                                </button>
-                            </form>
-                        </div>
-
-                        <table className="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th>Код*</th>
-                                <th>Название дилера*</th>
-                                <th>ФИО*</th>
-                                <th>Банк*</th>
-                                <th>Бик*</th>
-                                <th>Бухгалтер</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {tableData.map((row, index) => (
-                                <tr key={index}>
-                                    <td>{row.code}</td>
-                                    <td>{row.name}</td>
-                                    <td>{row.fio}</td>
-                                    <td>{row.bank}</td>
-                                    <td>{row.bik}</td>
-                                    <td>{row.accountant}</td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <DatabaseTable
+                        model='TSJDealer'
+                        tableHeaders={tableHeaders}
+                        configTable={configTable}
+                        additionalElement={UpdateDealerList}
+                    />
                 )}
+
             </div>
-            <Footer />
+            <Footer/>
         </div>
     );
 }

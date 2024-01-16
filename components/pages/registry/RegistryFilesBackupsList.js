@@ -3,7 +3,7 @@ import {parseCookies} from 'nookies';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faSearch} from "@fortawesome/free-solid-svg-icons";
 import RegistryNavigationTabs from "./RegistryNavigationTabs";
-import Pagination from "../main/Pagination";
+import Pagination from "../../main/Pagination";
 
 const RegistryFiles = ({apiUrl, downloadUrl}) => {
     const [registryFiles, setRegistryFile] = useState([]);

@@ -1,23 +1,22 @@
-import Navigation from "../../../components/main/Navigation";
 import Footer from "../../../components/main/Footer";
-import React, { useEffect, useState } from "react";
-import CustomSelect from "../../../components/input/CustomSelect";
-import { parseCookies } from "nookies";
+import React, {useEffect, useState} from "react";
+import CustomSelect from "../../../components/main/input/CustomSelect";
+import {parseCookies} from "nookies";
 import Alert from "../../../components/main/Alert";
 import Preloader from "../../../components/main/Preloader";
-import { formatDistanceToNow } from 'date-fns';
+import {formatDistanceToNow} from 'date-fns';
 import ruLocale from 'date-fns/locale/ru';
-import ReportsNavigationTabs from "../../../components/report/ReportsNavigationTabs";
+import ReportsNavigationTabs from "../../../components/pages/report/ReportsNavigationTabs";
 import {DEALER_REPORTS_EXPORT_URL} from "../../../routes/api";
 import Head from "next/head";
-import DateRangeInput from "../../../components/input/DateRangeInput";
+import DateRangeInput from "../../../components/main/input/DateRangeInput";
 
 
 export default function IndexPage() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [processingLoader, setProcessingLoader] = useState(false);
-    const [alertMessage, setAlertMessage] = useState({ type: "", text: "" });
+    const [alertMessage, setAlertMessage] = useState({type: "", text: ""});
     const [fileDownloaded, setFileDownloaded] = useState([]);
     const [formData, setFormData] = useState({
         startDate: null,
@@ -25,7 +24,7 @@ export default function IndexPage() {
     });
 
     const clearAlertMessage = () => {
-        setAlertMessage({ type: "", text: "" });
+        setAlertMessage({type: "", text: ""});
     };
 
 
@@ -62,17 +61,23 @@ export default function IndexPage() {
                 const createdAt = new Date();
                 const fileName = `Отчёт за ${startDate} по ${endDate}.xlsx`;
 
-                setAlertMessage({ type: "success", text: "Отчет успешно создан." });
-                setFileDownloaded((prevFileDownloaded) => [...prevFileDownloaded, { fileName, startDate, endDate, created: createdAt, url }]);
+                setAlertMessage({type: "success", text: "Отчет успешно создан."});
+                setFileDownloaded((prevFileDownloaded) => [...prevFileDownloaded, {
+                    fileName,
+                    startDate,
+                    endDate,
+                    created: createdAt,
+                    url
+                }]);
                 handleDownloadReport(url, fileName);
 
             } else {
                 const responseData = await response.json();
-                setAlertMessage({ type: "error", text: responseData.message });
+                setAlertMessage({type: "error", text: responseData.message});
             }
         } catch (error) {
             console.error('Ошибка при отправке реестра:', error);
-            setAlertMessage({ type: "error", text: "Произошла ошибка при создании отчета" });
+            setAlertMessage({type: "error", text: "Произошла ошибка при создании отчета"});
         } finally {
             setProcessingLoader(false);
         }
@@ -103,17 +108,14 @@ export default function IndexPage() {
                 <title>Отчёты по истории счётов | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <div>
-                <Navigation />
-            </div>
-            <div>
-                <Alert alertMessage={alertMessage} clearAlertMessage={clearAlertMessage} />
+                <Alert alertMessage={alertMessage} clearAlertMessage={clearAlertMessage}/>
             </div>
             <div className="container body-container mt-5">
                 <h1>Выгрузка отчета по истории счетов</h1>
 
-                <ReportsNavigationTabs />
+                <ReportsNavigationTabs/>
                 {processingLoader ? (
-                    <Preloader />
+                    <Preloader/>
                 ) : (
                     <div className="d-flex flex-column">
                         <div className="d-flex flex-row w-100 justify-content-center">
@@ -124,7 +126,7 @@ export default function IndexPage() {
                                         <label htmlFor="is_blocked">Выберите отчет</label>
                                         <CustomSelect
                                             options={[
-                                                { value: '0', label: 'Проведенные платежи' }
+                                                {value: '0', label: 'Проведенные платежи'}
                                             ]}
                                             required
                                             onSelectChange={(selectedValue) => {
@@ -138,11 +140,12 @@ export default function IndexPage() {
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="is_blocked">По времени</label>
-                                        <div className="ps-3 input-form d-flex justify-content-between bg-white align-items-center">
+                                        <div
+                                            className="ps-3 input-form d-flex justify-content-between bg-white align-items-center">
                                             <label htmlFor="">Выберите опцию</label>
                                             <CustomSelect
                                                 options={[
-                                                    { value: 0, label: 'Проведения платежа' },
+                                                    {value: 0, label: 'Проведения платежа'},
                                                 ]}
                                                 onSelectChange={(selectedValue) => {
                                                     // setFormData((prevFormData) => ({
@@ -160,7 +163,7 @@ export default function IndexPage() {
                                         <label htmlFor="is_blocked">Дилер</label>
                                         <CustomSelect
                                             options={[
-                                                { value: '0', label: 'По всем дилерам' }
+                                                {value: '0', label: 'По всем дилерам'}
                                             ]}
                                             required
                                             onSelectChange={(selectedValue) => {
@@ -176,7 +179,7 @@ export default function IndexPage() {
                                         <label htmlFor="is_blocked">Поставщик</label>
                                         <CustomSelect
                                             options={[
-                                                { value: '0', label: 'По всем поставщикам' }
+                                                {value: '0', label: 'По всем поставщикам'}
                                             ]}
                                             required
                                             onSelectChange={(selectedValue) => {
@@ -206,7 +209,8 @@ export default function IndexPage() {
 
                             {fileDownloaded.length > 0 && (
                                 <div className="mt-2 w-75 ms-5">
-                                    <label htmlFor="reportsDownload" className="w-100 text-nowrap text-end ">Скачать предыдущие отчёты</label>
+                                    <label htmlFor="reportsDownload" className="w-100 text-nowrap text-end ">Скачать
+                                        предыдущие отчёты</label>
                                     <table id="reportsDownload" className="table table-bordered">
                                         <thead>
                                         <tr>
@@ -219,11 +223,13 @@ export default function IndexPage() {
                                             <tr key={index}>
                                                 <td>
                                                     <div>
-                                                        <span className="justify-content-start fs-6 flex-wrap p-0">{file.fileName}</span>
+                                                        <span
+                                                            className="justify-content-start fs-6 flex-wrap p-0">{file.fileName}</span>
                                                     </div>
                                                     <div className="d-flex justify-content-between mt-3 flex-column">
-                                                        <span className="status status-blocked">{formatDistanceToNow(new Date(file.created),
-                                                            { addSuffix: true, includeSeconds: true, locale: ruLocale  })}
+                                                        <span
+                                                            className="status status-dashed">{formatDistanceToNow(new Date(file.created),
+                                                            {addSuffix: true, includeSeconds: true, locale: ruLocale})}
                                                         </span>
                                                     </div>
                                                 </td>
@@ -231,23 +237,33 @@ export default function IndexPage() {
                                                     <div className="d-flex align-items-center justify-content-between">
                                                         <div className="d-flex flex-column me-2">
                                                             <div className="d-flex justify-content-between flex-column">
-                                                                <span className="justify-content-start fs-6 flex-wrap p-0">Тип отчёта:</span>
-                                                                <span className="status justify-content-start p-0 align-items-center">Проведённые платежи</span>
+                                                                <span
+                                                                    className="justify-content-start fs-6 flex-wrap p-0">Тип отчёта:</span>
+                                                                <span
+                                                                    className="status justify-content-start p-0 align-items-center">Проведённые платежи</span>
                                                             </div>
-                                                            <div className="d-flex justify-content-between mt-3 flex-column">
-                                                                <span className="justify-content-start fs-6 flex-wrap p-0">По времени:</span>
-                                                                <span className="status justify-content-start p-0 align-items-center">Проведения платежа</span>
+                                                            <div
+                                                                className="d-flex justify-content-between mt-3 flex-column">
+                                                                <span
+                                                                    className="justify-content-start fs-6 flex-wrap p-0">По времени:</span>
+                                                                <span
+                                                                    className="status justify-content-start p-0 align-items-center">Проведения платежа</span>
                                                             </div>
                                                         </div>
 
                                                         <div className="d-flex flex-column ms-2">
                                                             <div className="d-flex justify-content-between flex-column">
-                                                                <span className="justify-content-start fs-6 flex-wrap p-0">Дилер:</span>
-                                                                <span className="status justify-content-start p-0 align-items-center">По всем дилерам</span>
+                                                                <span
+                                                                    className="justify-content-start fs-6 flex-wrap p-0">Дилер:</span>
+                                                                <span
+                                                                    className="status justify-content-start p-0 align-items-center">По всем дилерам</span>
                                                             </div>
-                                                            <div className="d-flex justify-content-between mt-3 flex-column">
-                                                                <span className="justify-content-start fs-6 flex-wrap p-0">Поставщик:</span>
-                                                                <span className="status justify-content-start p-0 align-items-center">По всем поставщикам</span>
+                                                            <div
+                                                                className="d-flex justify-content-between mt-3 flex-column">
+                                                                <span
+                                                                    className="justify-content-start fs-6 flex-wrap p-0">Поставщик:</span>
+                                                                <span
+                                                                    className="status justify-content-start p-0 align-items-center">По всем поставщикам</span>
                                                             </div>
                                                         </div>
                                                     </div>

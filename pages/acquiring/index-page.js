@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import Navigation from "../../components/main/Navigation";
+import React, {useEffect, useState} from 'react';
 import Footer from "../../components/main/Footer";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faFileExcel,
-    faArrowRightArrowLeft,
-} from "@fortawesome/free-solid-svg-icons";
-import { parseCookies } from "nookies";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faArrowRightArrowLeft, faFileExcel,} from "@fortawesome/free-solid-svg-icons";
+import {parseCookies} from "nookies";
 import {ACQUIRING_COMPARISON_URL} from "../../routes/api";
 import Head from "next/head";
 
@@ -51,7 +47,6 @@ export default function IndexPage() {
         formData.append("textFile", registryFile);
 
 
-
         console.log(formData)
         try {
             const response = await fetch(apiUrl, {
@@ -90,7 +85,7 @@ export default function IndexPage() {
             <Head>
                 <title>Сверка платежей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <Navigation />
+
 
             <div className="container body-container mt-5">
                 <h1>Сверка платежей</h1>
@@ -107,7 +102,7 @@ export default function IndexPage() {
                             <label htmlFor="input__file-excel" className="input__file-button">
                                 <div className="d-flex flex-column w-100 justify-content-center">
                                     <span className="mb-3 input_icon_acquiring">
-                                        <FontAwesomeIcon icon={faFileExcel} size="xl" />
+                                        <FontAwesomeIcon icon={faFileExcel} size="xl"/>
                                     </span>
                                     <span className="input__file-button-text">
                                         {excelFile
@@ -117,8 +112,9 @@ export default function IndexPage() {
                                 </div>
                             </label>
                         </div>
-                        <div className="h-100 d-flex icon-not-found flex-column align-items-center justify-content-center">
-                            <FontAwesomeIcon icon={faArrowRightArrowLeft} size="xl" />
+                        <div
+                            className="h-100 d-flex icon-not-found flex-column align-items-center justify-content-center">
+                            <FontAwesomeIcon icon={faArrowRightArrowLeft} size="xl"/>
                         </div>
                         <div className="input__wrapper">
                             <input
@@ -131,7 +127,7 @@ export default function IndexPage() {
                             <label htmlFor="input__file-registry" className="input__file-button">
                                 <div className="d-flex flex-column w-100 justify-content-center">
                                     <span className="mb-3 input_icon_acquiring">
-                                        <FontAwesomeIcon icon={faFileExcel} size="xl" />
+                                        <FontAwesomeIcon icon={faFileExcel} size="xl"/>
                                     </span>
                                     <span className="input__file-button-text">
                                         {registryFile
@@ -157,7 +153,7 @@ export default function IndexPage() {
                 )}
             </div>
 
-            <Footer />
+            <Footer/>
         </div>
     );
 }

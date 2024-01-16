@@ -1,32 +1,40 @@
 import Table from "./Table";
 import Pagination from "../Pagination";
-import React, { useEffect, useImperativeHandle, useState, useRef } from "react";
-import fetchData from "../DataFetcher";
-import SearchInput from "../../input/SearchInput";
+import React, {useEffect, useState} from "react";
+import fetchData from "../database/DataFetcher";
+import SearchInput from "../input/SearchInput";
 import Preloader from "../Preloader";
-
+import CustomSelect from "../input/CustomSelect";
+import {useAlert} from "../../../contexts/AlertContext";
 
 // eslint-disable-next-line react/display-name
-const DatabaseTable = React.forwardRef(({ model, columnHeaders, addedButton }, ref) => {
+const DatabaseTable = ({model, tableHeaders, configTable = null, additionalElement}) => {
     const [processingLoader, setProcessingLoader] = useState(false);
-    const [alertMessage, setAlertMessage] = useState({ type: '', text: '' });
+    const {clearAlertMessage, showAlertMessage} = useAlert();
     const [dataFromDB, setDataFromDB] = useState([]);
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
     const [searchTerm, setSearchTerm] = useState('');
     const [sortColumn, setSortColumn] = useState('');
-    const pageSize = 50;
+    const [pageSize, setPageSize] = useState(50);
+    const [totalRecords, SetTotalRecords] = useState(0);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    let [selectRowsPerPage, setSelectRowsPerPage] = useState(null);
 
-    const fetchDataFromDBRef = useRef();
+    useEffect(() => {
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (configTable) {
+            setSelectRowsPerPage(configTable.find(item => item.key === 'selectRowsPerPage'));
+        }
+
+    }, [configTable]);
+
     const fetchDataFromDB = async () => {
-        let loadingTimeout;
 
+        let loadingTimeout;
         const searchObject = {};
 
-        columnHeaders
-            .filter(column => column.searchable)
+        tableHeaders
+            .filter(column => column.isSearchable)
             .forEach(column => {
                 const searchValue = searchTerm;
                 if (searchValue !== undefined && searchValue !== '') {
@@ -46,15 +54,13 @@ const DatabaseTable = React.forwardRef(({ model, columnHeaders, addedButton }, r
                 JSON.stringify(sortColumn),
                 pageSize,
                 (page - 1) * pageSize,
-                setAlertMessage
             );
-
-            const { count, data } = response;
+            const {count, data} = response;
             setDataFromDB(data);
             setTotalPages(Math.ceil(count / pageSize));
+            SetTotalRecords(count)
         } catch (error) {
-            console.error('Ошибка при получении данных:', error);
-            setAlertMessage({
+            showAlertMessage({
                 type: 'error', text: 'Ошибка при получении данных: ' + error.message,
             });
         } finally {
@@ -64,12 +70,15 @@ const DatabaseTable = React.forwardRef(({ model, columnHeaders, addedButton }, r
     };
 
     useEffect(() => {
-        fetchDataFromDBRef.current = fetchDataFromDB;
-    }, [fetchDataFromDB]);
+        const fetchDataAfterUpdate = async () => {
+            await fetchDataFromDB();
+        };
+
+        fetchDataAfterUpdate();
+    }, [page, searchTerm, sortColumn, pageSize]);
 
     const handlePageChange = async (newPage) => {
         setPage(newPage);
-        await fetchDataFromDBRef.current();
     };
 
     const handleSort = (sortConfig) => {
@@ -77,34 +86,34 @@ const DatabaseTable = React.forwardRef(({ model, columnHeaders, addedButton }, r
         setSortColumn((prevSortConfig) => ({
             column: sortConfig.column, direction: sortConfig.direction, count: prevSortConfig.count + 1,
         }));
-        fetchDataFromDBRef.current();
     };
 
     const handleSearchSubmit = async (search) => {
         setSearchTerm(search);
         setPage(1);
-        await fetchDataFromDBRef.current();
     };
 
-    useEffect(() => {
-        fetchDataFromDBRef.current();
-    }, [page, searchTerm, sortColumn]);
+    const handleRowsPerPage = (selectedValue) => {
+        const newTotalPages = (Math.ceil(totalRecords / selectedValue));
 
-    useImperativeHandle(ref, () => ({
-        fetchDataFromDB: fetchDataFromDBRef.current,
-    }));
+        if (page > newTotalPages) {
+            setPage(newTotalPages)
+        }
+
+        setPageSize(selectedValue);
+    };
 
     return (
         <div>
             <div className="create-button d-flex justify-content-between align-items-end mb-3">
                 <div className="d-flex flex-row mt-5">
-                    {columnHeaders && columnHeaders.filter(column => column.searchable).length > 0 && (
+                    {tableHeaders && tableHeaders.filter(column => column.isSearchable).length > 0 && (
                         <SearchInput onSearchSubmit={handleSearchSubmit}/>
                     )}
                 </div>
                 <div className="d-flex flex-row mt-5">
-                    {addedButton && (
-                        addedButton()
+                    {additionalElement && (
+                        additionalElement()
                     )}
                 </div>
             </div>
@@ -112,12 +121,37 @@ const DatabaseTable = React.forwardRef(({ model, columnHeaders, addedButton }, r
                 <Preloader/>
             ) : (
                 <div>
-                    <Table data={dataFromDB} columnHeaders={columnHeaders} onSort={handleSort}/>
-                    <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
+                    <Table data={dataFromDB} tableHeaders={tableHeaders} configTable={configTable} onSort={handleSort}/>
+
+                    {(selectRowsPerPage && totalRecords > 0) && (
+                        <div className="d-flex justify-content-between align-items-end w-100 mt-2">
+
+                            <div className="d-flex flex-column">
+                                <small>Всего записей: <b>{totalRecords}</b></small>
+                                <small className="me-3">На странице: <b>{dataFromDB.length}</b></small>
+                            </div>
+
+                            <div className="d-flex align-items-center">
+                                <small className="me-3">Показать:</small>
+                                <CustomSelect
+                                    options={[
+                                        {value: 50, label: '50 записей'},
+                                        {value: 75, label: '75 записей'},
+                                        {value: 100, label: '100 записей'},
+                                    ]}
+                                    required
+                                    onSelectChange={(selectedValue) => handleRowsPerPage(selectedValue)}
+                                ></CustomSelect>
+                            </div>
+                        </div>
+                    )}
+
+                    <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange}/>
+
                 </div>
             )}
         </div>
     );
-});
+}
 
 export default DatabaseTable;

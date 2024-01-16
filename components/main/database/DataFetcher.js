@@ -1,9 +1,10 @@
 // DataFetcher.js
 
-import {GET_DATA_FROM_DB_URL} from "../../routes/api";
+import {GET_DATA_FROM_DB_URL} from "../../../routes/api";
 import {parseCookies} from "nookies";
 
-const fetchData = async (model, filters, attributes, sort, limit, offset, setAlertMessage) => {
+const fetchData = async (model, filters, attributes, sort, limit, offset) => {
+
     try {
         const cookies = parseCookies();
         const authToken = JSON.parse(cookies.authToken).value;
@@ -36,9 +37,7 @@ const fetchData = async (model, filters, attributes, sort, limit, offset, setAle
         return data;
     } catch (error) {
         console.error('Ошибка при получении данных:', error);
-        setAlertMessage({type: "error", text: 'Ошибка при получении данных: ' + error.message});
-
-        return null;
+        throw (error);
     }
 };
 

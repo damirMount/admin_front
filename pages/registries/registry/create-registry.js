@@ -1,24 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import { useRouter } from 'next/router';
-import FormInput from '../../../components/input/FormInput';
-import { parseCookies } from 'nookies';
-import Navigation from '../../../components/main/Navigation';
-import CustomSelect from '../../../components/input/CustomSelect';
-import MultiSelectWithSearch from '../../../components/input/MultiSelectWithSearch';
-import {
-    faCheck,
-    faTag,
-    faGripVertical,
-    faPlus,
-} from '@fortawesome/free-solid-svg-icons';
-import { library } from '@fortawesome/fontawesome-svg-core';
+import React, {useState} from 'react';
+import {useRouter} from 'next/router';
+import FormInput from '../../../components/main/input/FormInput';
+import {parseCookies} from 'nookies';
+import CustomSelect from '../../../components/main/input/CustomSelect';
+import MultiSelectWithSearch from '../../../components/main/input/MultiSelectWithSearch';
+import {faCheck, faGripVertical, faPlus, faTag,} from '@fortawesome/free-solid-svg-icons';
+import {library} from '@fortawesome/fontawesome-svg-core';
 import Link from 'next/link';
-import SelectWithSearch from '../../../components/input/SelectWithSearch';
+import SelectWithSearch from '../../../components/main/input/SelectWithSearch';
 import Footer from '../../../components/main/Footer';
-import RegistryFieldsTable from "../../../components/registry/RegistryFieldsTable";
+import RegistryFieldsTable from "../../../components/pages/registry/RegistryFieldsTable";
 import {GET_LIST_SERVERS_URL, GET_LIST_SERVICES_URL, REGISTRY_CREATE_URL} from "../../../routes/api";
 import Head from "next/head";
-import RegistryFileFormat from "../../../components/registry/RegistryFileFormat";
+import RegistryFileFormat from "../../../components/pages/registry/RegistryFileFormat";
 
 library.add(faCheck, faTag, faGripVertical, faPlus);
 
@@ -31,13 +25,13 @@ export default function CreateRegistry() {
     const router = useRouter();
 
     const [getRows, setRows] = useState([
-        { isActive: true, field: 'identifier', tableHeader: 'Лицевой счёт' },
-        { isActive: true, field: 'real_pay', tableHeader: 'Сумма платежа' },
-        { isActive: true, field: 'time_proc', tableHeader: 'Дата оплаты' },
-        { isActive: false, field: 'id', tableHeader: 'Номер платежа' },
-        { isActive: false, field: 'account.fio', tableHeader: 'ФИО' },
-        { isActive: false, field: 'id_trans', tableHeader: 'Номер чека' },
-        { isActive: false, field: 'id_apparat', tableHeader: 'ID терминала' },
+        {isActive: true, field: 'identifier', tableHeader: 'Лицевой счёт'},
+        {isActive: true, field: 'real_pay', tableHeader: 'Сумма платежа'},
+        {isActive: true, field: 'time_proc', tableHeader: 'Дата оплаты'},
+        {isActive: false, field: 'id', tableHeader: 'Номер платежа'},
+        {isActive: false, field: 'account.fio', tableHeader: 'ФИО'},
+        {isActive: false, field: 'id_trans', tableHeader: 'Номер чека'},
+        {isActive: false, field: 'id_apparat', tableHeader: 'ID терминала'},
     ]);
 
     const handleUpdateRows = (updatedRows) => {
@@ -45,9 +39,8 @@ export default function CreateRegistry() {
     };
 
 
-
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: value,
@@ -101,7 +94,7 @@ export default function CreateRegistry() {
                 <title>Создать реестр | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <div>
-                <Navigation></Navigation>
+
             </div>
             <div className="container body-container mt-5">
                 <h1>Страница создания файла реестров</h1>
@@ -126,8 +119,8 @@ export default function CreateRegistry() {
                                 <label htmlFor="is_blocked">Статус реестра</label>
                                 <CustomSelect
                                     options={[
-                                        { value: '0', label: 'Файл реестра активен' },
-                                        { value: '1', label: 'Файл реестра отключён' },
+                                        {value: '0', label: 'Файл реестра активен'},
+                                        {value: '1', label: 'Файл реестра отключён'},
                                     ]}
                                     required
                                     onSelectChange={(selectedValue) => {
@@ -147,7 +140,7 @@ export default function CreateRegistry() {
                                     name="serverId"
                                     onSelectChange={(selectedValue) =>
                                         handleInputChange({
-                                            target: { name: 'serverId', value: selectedValue },
+                                            target: {name: 'serverId', value: selectedValue},
                                         })
                                     }
                                 />

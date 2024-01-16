@@ -1,17 +1,14 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import FormInput from '../../../components/input/FormInput';
-import { parseCookies } from 'nookies';
-import Navigation from '../../../components/main/Navigation';
-import CustomSelect from '../../../components/input/CustomSelect';
-import MultiSelectWithSearch from '../../../components/input/MultiSelectWithSearch';
-import { faEnvelope, faXmarkCircle} from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, {useState} from 'react';
+import {useRouter} from 'next/router';
+import FormInput from '../../../components/main/input/FormInput';
+import {parseCookies} from 'nookies';
+import CustomSelect from '../../../components/main/input/CustomSelect';
+import MultiSelectWithSearch from '../../../components/main/input/MultiSelectWithSearch';
+import {faEnvelope, faXmarkCircle} from '@fortawesome/free-regular-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import Footer from '../../../components/main/Footer';
-import {
-    RECIPIENT_CREATE_URL,
-    GET_REGISTRIES_URL} from '../../../routes/api'
+import {GET_REGISTRIES_URL, RECIPIENT_CREATE_URL} from '../../../routes/api'
 import Head from "next/head";
 
 export default function CreateRecipient() {
@@ -25,10 +22,10 @@ export default function CreateRecipient() {
     const router = useRouter();
 
     const RecipientTypes = [
-        { value: '1', label: 'Ежедневный' },
-        { value: '2', label: 'Еженедельный' },
-        { value: '3', label: 'Ежемесячный' },
-        { value: '4', label: 'Ежегодный' },
+        {value: '1', label: 'Ежедневный'},
+        {value: '2', label: 'Еженедельный'},
+        {value: '3', label: 'Ежемесячный'},
+        {value: '4', label: 'Ежегодный'},
     ];
 
     const handleEmailChange = (index, value) => {
@@ -64,7 +61,7 @@ export default function CreateRecipient() {
     };
 
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: value,
@@ -113,7 +110,7 @@ export default function CreateRecipient() {
                 <title>Создать получателя | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <div>
-                <Navigation />
+
             </div>
             <div className="container body-container w-50 mt-5">
                 <h1>Страница создания получателя</h1>
@@ -153,8 +150,8 @@ export default function CreateRecipient() {
                         <label htmlFor="is_blocked">Статус реестра</label>
                         <CustomSelect
                             options={[
-                                { value: '0', label: 'Реестр активен' },
-                                { value: '1', label: 'Реестр отключён' },
+                                {value: '0', label: 'Реестр активен'},
+                                {value: '1', label: 'Реестр отключён'},
                             ]}
                             required
                             onSelectChange={(selectedValue) =>
@@ -193,7 +190,7 @@ export default function CreateRecipient() {
                         <div className="d-flex flex-row flex-wrap justify-content-between">
                             {formData.emails.map((email, index) => (
                                 <div key={index} className="form-group d-flex w-50">
-                                    <FontAwesomeIcon className="input-icon" icon={faEnvelope} size="lg" />
+                                    <FontAwesomeIcon className="input-icon" icon={faEnvelope} size="lg"/>
                                     <FormInput
                                         required
                                         type="email"
@@ -205,10 +202,10 @@ export default function CreateRecipient() {
                                     />
                                     <button
                                         type="button"
-                                        className="btn input-btn"
+                                        className="btn input-btn-close"
                                         onClick={() => handleRemoveEmailInput(index)}
                                     >
-                                        <FontAwesomeIcon icon={faXmarkCircle} size="lg" />
+                                        <FontAwesomeIcon icon={faXmarkCircle} size="lg"/>
                                     </button>
                                 </div>
                             ))}
@@ -229,7 +226,7 @@ export default function CreateRecipient() {
                     </div>
                 </form>
             </div>
-            <Footer />
+            <Footer/>
         </div>
     );
 }

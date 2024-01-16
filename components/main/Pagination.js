@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAnglesLeft, faAnglesRight } from "@fortawesome/free-solid-svg-icons";
+import React from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faAngleLeft, faAngleRight} from "@fortawesome/free-solid-svg-icons";
 
-const Pagination = ({ page, totalPages, onPageChange }) => {
+const Pagination = ({page, totalPages, onPageChange}) => {
     const maxButtons = 5;
     let lastButton = 0;
 
@@ -33,20 +33,30 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
 
         return paginationButtons;
     };
+
     const paginationButtons = generatePaginationButtons();
+
+    if (totalPages <= 1) {
+        // Если всего одна страница или вообще нет страниц, не отображаем пагинацию
+        return null;
+    }
 
     return (
         <div className="d-flex justify-content-center mt-5">
             {page > 1 && (
                 <button onClick={async () => await handlePageChange(page - 1)} className="btn btn-grey me-3">
-                    <FontAwesomeIcon icon={faAnglesLeft} /> Назад</button>
+                    <FontAwesomeIcon icon={faAngleLeft}/> Назад
+                </button>
             )}
             {paginationButtons.map((button, index) => (
                 <React.Fragment key={index}>
                     {button === '...' ? (
                         <span className="mx-1 align-self-end">...</span>
                     ) : (
-                        <button onClick={async () => await handlePageChange(button)} className={`ms-1 me-1 btn ${button === page ? 'btn-purple' : 'btn-grey'}`}>
+                        <button
+                            onClick={async () => await handlePageChange(button)}
+                            className={`ms-1 me-1 btn ${button === page ? 'btn-purple' : 'btn-grey'}`}
+                        >
                             {button}
                         </button>
                     )}
@@ -54,7 +64,8 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
             ))}
             {page < totalPages && (
                 <button onClick={async () => await handlePageChange(page + 1)} className="btn btn-grey ms-3">
-                    Вперёд <FontAwesomeIcon icon={faAnglesRight} /> </button>
+                    Вперёд <FontAwesomeIcon icon={faAngleRight}/>
+                </button>
             )}
         </div>
     );

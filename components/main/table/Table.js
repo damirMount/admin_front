@@ -1,11 +1,40 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {faSortDown, faSortUp} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ActionButtons from "./ActionButtons";
+import debounce from 'lodash/debounce';
 
-const Table = ({data, columnHeaders, onSort}) => {
+
+const Table = ({data, configTable = null, tableHeaders, onSort}) => {
     const [sortConfig, setSortConfig] = useState('');
+    const debouncedSort = debounce(onSort, 100);
 
-    const requestSort = async (column) => {
+    let [actionButtonsConfig, setActionButtonsConfig] = useState(null);
+
+    useEffect(() => {
+        if (configTable) {
+            setActionButtonsConfig(configTable.find(item => item.key === 'actionButtons'));
+        }
+    }, [configTable]);
+
+    if (actionButtonsConfig) {
+        const newTableHeader = {key: 'action_buttons', body: ActionsButtonsCell, sortable: false};
+        const existingHeader = tableHeaders.find(header => header.key === newTableHeader.key);
+        if (!existingHeader) {
+            tableHeaders.push(newTableHeader);
+        }
+
+        function ActionsButtonsCell(props) {
+
+            const actionButtonsConfig = configTable.find(item => item.key === 'actionButtons');
+
+            return (
+                <ActionButtons buttonsLinks={actionButtonsConfig.links} props={props}/>
+
+            );
+        }
+    }
+    const requestSort = (column) => {
         let direction = 'asc';
 
         if (sortConfig.column === column) {
@@ -21,17 +50,18 @@ const Table = ({data, columnHeaders, onSort}) => {
                 setSortConfig({column, direction, count});
             }
         } else {
-            console.log(column)
+            console.log(column);
             setSortConfig({column, direction: 'asc', count: 1});
         }
 
-        await onSort({column, direction});
+        debouncedSort({column, direction});
     };
+
 
     // Функция для отображения строки в таблице
     const renderRow = (rowData, index) => (
         <tr key={index}>
-            {columnHeaders.map(({key, body}) => (
+            {tableHeaders.map(({key, body}) => (
                 <td key={key}>
                     {body ? (typeof body === 'function' ? body(rowData) : body) : (rowData[key])}
                 </td>
@@ -40,13 +70,12 @@ const Table = ({data, columnHeaders, onSort}) => {
 
 
     // Функция для отображения заголовка таблицы
-    const renderColumnHeaders = () => (
+    const renderTableHeaders = () => (
         <tr>
-            {columnHeaders.map(({key, label, sortable, headerClass}) => (
+            {tableHeaders.map(({key, label, sortable = true, headerClass}) => (
                 <th
                     key={key}
-                    className={`${sortable ? 'user-select-none table-sort-button ' : ''}${headerClass ? headerClass : ''}`}
-
+                    className={`${sortable ? 'user-select-none table-sort-button' : ''} ${headerClass ? headerClass : ''}${!/(^|\s)col-\S+/.test(headerClass) ? ' w-0' : ''}`}
                     onClick={() => sortable && requestSort(key)}>
 
                     <div className="w-100 small d-flex justify-content-between flex-nowrap align-items-center">
@@ -82,6 +111,8 @@ const Table = ({data, columnHeaders, onSort}) => {
                 {renderIcon(faSortUp, true)}
                 {renderIcon(faSortDown, true)}
             </div>);
+
+
     };
 
 
@@ -89,7 +120,7 @@ const Table = ({data, columnHeaders, onSort}) => {
         <div className="border">
             <table className="table table-bordered m-0 ">
                 <thead>
-                {renderColumnHeaders()}
+                {renderTableHeaders()}
                 </thead>
                 {data && data.length > 0 ? (
                     <tbody>
@@ -107,7 +138,7 @@ const Table = ({data, columnHeaders, onSort}) => {
                 ) : (
                     <tbody>
                     <tr>
-                        <td colSpan={columnHeaders.length} className="text-center">
+                        <td colSpan={tableHeaders.length} className="text-center">
                             Нет данных
                         </td>
                     </tr>

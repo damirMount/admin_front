@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { setCookie } from 'nookies'; // Подключение библиотеки nookies для работы с куками
+import {useState} from 'react';
+import {useRouter} from 'next/router';
+import {setCookie} from 'nookies'; // Подключение библиотеки nookies для работы с куками
 import {POST_LOGIN_URL} from '../routes/api'
 
 export default function LoginPage() {
@@ -18,11 +18,11 @@ export default function LoginPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({username, password}),
             });
 
             if (response.ok) {
-                const { token } = await response.json();
+                const {token} = await response.json();
 
                 // Вычисление времени истечения токена (12 часов)
                 const expirationTime = new Date();
@@ -52,34 +52,34 @@ export default function LoginPage() {
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <form onSubmit={handleSubmit} style={{ maxWidth: '400px', fontFamily: 'sans-serif' }}>
-                <h1 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '1.5rem' }}>Вход</h1>
-                <div style={{ marginBottom: '1rem' }}>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+            <form onSubmit={handleSubmit} style={{maxWidth: '400px', fontFamily: 'sans-serif'}}>
+                <h1 style={{textAlign: 'center', marginBottom: '2rem', fontSize: '1.5rem'}}>Вход</h1>
+                <div style={{marginBottom: '1rem'}}>
                     <label htmlFor="username">Логин:</label>
                     <input
                         type="text"
                         id="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+                        style={{width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc'}}
                     />
                 </div>
-                <div style={{ marginBottom: '1rem' }}>
+                <div style={{marginBottom: '1rem'}}>
                     <label htmlFor="password">Пароль:</label>
                     <input
                         type="password"
                         id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+                        style={{width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc'}}
                     />
                 </div>
                 <div className="d-flex justify-content-center">
-                <button
-                    type="submit" className="btn btn-purple">
-                    Войти
-                </button>
+                    <button
+                        type="submit" className="btn btn-purple">
+                        Войти
+                    </button>
                 </div>
             </form>
         </div>
