@@ -18,7 +18,7 @@ const Table = ({data, configTable = null, tableHeaders, onSort}) => {
     }, [configTable]);
 
     if (actionButtonsConfig) {
-        const newTableHeader = {key: 'action_buttons', body: ActionsButtonsCell, sortable: false};
+        const newTableHeader = {key: 'action_buttons', body: ActionsButtonsCell, sortable: false, headerClass: 'col-auto'};
         const existingHeader = tableHeaders.find(header => header.key === newTableHeader.key);
         if (!existingHeader) {
             tableHeaders.push(newTableHeader);
@@ -75,7 +75,7 @@ const Table = ({data, configTable = null, tableHeaders, onSort}) => {
             {tableHeaders.map(({key, label, sortable = true, headerClass}) => (
                 <th
                     key={key}
-                    className={`${sortable ? 'user-select-none table-sort-button' : ''} ${headerClass ? headerClass : ''}${!/(^|\s)col-\S+/.test(headerClass) ? ' ' : ''}`}
+                    className={`${sortable ? 'user-select-none table-sort-button' : ''} ${headerClass ? headerClass : ''}${!/(^|\s)col-\S+/.test(headerClass) ? ' w-0' : ''}`}
                     onClick={() => sortable && requestSort(key)}>
 
                     <div className="w-100 small d-flex justify-content-between flex-nowrap align-items-center">
@@ -118,7 +118,7 @@ const Table = ({data, configTable = null, tableHeaders, onSort}) => {
 
     return (
         <div className="border">
-            <table className="table table-bordered m-0 ">
+            <table className="table table-bordered m-0">
                 <thead>
                 {renderTableHeaders()}
                 </thead>

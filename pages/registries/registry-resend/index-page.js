@@ -476,7 +476,7 @@ export default function IndexPage() {
                                                             <span key={index}
                                                                   className="status status-active w-100 d-flex justify-content-center">{row.id_service}</span>
                                                         </td>
-                                                        <td className="">
+                                                        <td className="w-0">
                                                             <button
                                                                 type="button"
                                                                 className="btn btn-purple"
