@@ -18,7 +18,7 @@ const Table = ({data, configTable = null, tableHeaders, onSort}) => {
     }, [configTable]);
 
     if (actionButtonsConfig) {
-        const newTableHeader = {key: 'action_buttons', body: ActionsButtonsCell, sortable: false, headerClass: 'col-auto'};
+        const newTableHeader = {key: 'action_buttons', body: ActionsButtonsCell, sortable: false};
         const existingHeader = tableHeaders.find(header => header.key === newTableHeader.key);
         if (!existingHeader) {
             tableHeaders.push(newTableHeader);
