@@ -157,9 +157,9 @@ export default function CreateRecipient() {
                             onSelectChange={handleSelectorChange}
                             required
                             isMulti
-                            isSearchable={false}
                             fetchDataConfig={{
                                 model: 'Registry',
+                                searchTerm: {is_blocked: false}
                             }}
                         />
                     </div>

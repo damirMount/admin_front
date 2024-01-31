@@ -5,16 +5,13 @@ export const GET_DATA_FROM_DB_URL = `${baseURL}/api/getDataFromDB`
 
 export const GET_LIST_SERVICES_URL = `${baseURL}/api/listServices`
 export const POST_ABONENT_SERVICE_URL = `${baseURL}/api/abonent-service/store`
-// export const GET_LIST_SERVERS_URL = `${baseURL}/api/listServers`,
 export const POST_LOGIN_URL = `${baseURL}/api/login`
 
-export const GET_RECIPIENTS_URL = `${baseURL}/api/recipient/all`
 export const RECIPIENT_CREATE_URL = `${baseURL}/api/recipient`
 export const RECIPIENT_SHOW_URL = `${baseURL}/api/recipient`
 export const RECIPIENT_UPDATE_URL = `${baseURL}/api/recipient`
 export const RECIPIENT_DELETE_URL = `${baseURL}/api/recipient`
 
-export const GET_REGISTRIES_URL = `${baseURL}/api/registry/all`
 export const REGISTRY_CREATE_URL = `${baseURL}/api/registry`
 export const REGISTRY_SHOW_URL = `${baseURL}/api/registry`
 export const REGISTRY_UPDATE_URL = `${baseURL}/api/registry`

@@ -208,9 +208,9 @@ export default function EditRecipient() {
                                     required
                                     isMulti
                                     selectedOptions={formData.registry_ids}
-                                    isSearchable={false}
                                     fetchDataConfig={{
                                         model: 'Registry',
+                                        searchTerm: {is_blocked: false}
                                     }}
                                 />
                             </div>

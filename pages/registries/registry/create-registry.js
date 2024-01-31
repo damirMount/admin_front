@@ -21,7 +21,7 @@ export default function CreateRegistry() {
         is_blocked: '',
     });
     const router = useRouter();
-
+    const [selectedServer, setSelectedServer] = useState(null)
     const [getRows, setRows] = useState([
         {isActive: true, field: 'identifier', tableHeader: 'Лицевой счёт'},
         {isActive: true, field: 'real_pay', tableHeader: 'Сумма платежа'},
@@ -46,6 +46,7 @@ export default function CreateRegistry() {
     };
 
     const handleSelectorChange = (valuesArray, name) => {
+        console.log(selectedServer)
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: valuesArray,
@@ -143,7 +144,10 @@ export default function CreateRegistry() {
                                     fetchDataConfig={{
                                         model: 'Server',
                                     }}
-                                    onSelectChange={handleSelectorChange}
+                                    onSelectChange={(selectedValue, name) => {
+                                        handleSelectorChange(selectedValue, name);
+                                        setSelectedServer(selectedValue);
+                                    }}
                                     required
                                 />
                             </div>
@@ -151,10 +155,12 @@ export default function CreateRegistry() {
                                 <label htmlFor="servicesId">Сервисы</label>
 
                                 <UniversalSelect
+                                    key={JSON.stringify(selectedServer)}
                                     name='servicesId'
                                         placeholder="Выберете сервисы"
                                     fetchDataConfig={{
                                         model: 'Service',
+                                        searchTerm: {id_bserver: selectedServer}
                                     }}
                                     onSelectChange={handleSelectorChange}
                                     required

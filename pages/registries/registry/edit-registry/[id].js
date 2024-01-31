@@ -29,6 +29,7 @@ export default function EditRegistryFile() {
     const itemId = router.query.id;
     const [registryStatus, setRegistryStatus] = useState('');
     const [getRows, setRows] = useState([]);
+    const [selectedServer, setSelectedServer] = useState(null)
 
     const handleUpdateRows = (updatedRows) => {
         setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryFieldsTable
@@ -232,17 +233,22 @@ export default function EditRegistryFile() {
                                     fetchDataConfig={{
                                         model: 'Server',
                                     }}
-                                    onSelectChange={handleSelectorChange}
+                                    onSelectChange={(selectedValue, name) => {
+                                        handleSelectorChange(selectedValue, name);
+                                        setSelectedServer(selectedValue);
+                                    }}
                                     required
                                 />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="serverId">Сервисы</label>
                                 <UniversalSelect
+                                    key={JSON.stringify(selectedServer)}
                                     name='servicesId'
                                     placeholder="Выберете сервисы"
                                     fetchDataConfig={{
                                         model: 'Service',
+                                        searchTerm: {id_bserver: selectedServer}
                                     }}
                                     selectedOptions={formData.servicesId}
                                     onSelectChange={handleSelectorChange}
