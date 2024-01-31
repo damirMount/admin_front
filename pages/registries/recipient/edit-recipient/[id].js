@@ -2,14 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
 import FormInput from '../../../../components/main/input/FormInput';
 import {parseCookies} from 'nookies';
-import CustomSelect from '../../../../components/main/input/CustomSelect';
-import MultiSelectWithSearch from '../../../../components/main/input/MultiSelectWithSearch';
 import {faEnvelope, faXmarkCircle} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import Footer from "../../../../components/main/Footer";
-import {GET_REGISTRIES_URL, RECIPIENT_SHOW_URL, RECIPIENT_UPDATE_URL} from "../../../../routes/api";
+import {RECIPIENT_SHOW_URL, RECIPIENT_UPDATE_URL} from "../../../../routes/api";
 import Head from "next/head";
+import UniversalSelect from "../../../../components/main/input/UniversalSelect";
 
 export default function EditRecipient() {
     const [formData, setFormData] = useState({
@@ -22,7 +21,6 @@ export default function EditRecipient() {
         updatedAt: '',
     });
     const [isLoading, setIsLoading] = useState(true);
-    // const [selectedRegistryIds, setSelectedRegistryIds] = useState([]);
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
     const [recipientName, setRecipientName] = useState('');
@@ -78,13 +76,6 @@ export default function EditRecipient() {
         {value: 4, label: 'Ежегодный'},
     ];
 
-    //
-    // const selectedTypeOption = recipientTypes.find(
-    //     (option) => option.value === formData.type
-    //
-    //
-    // );
-
     const handleAddEmailInput = () => {
         setFormData((prevFormData) => ({
             ...prevFormData,
@@ -98,6 +89,13 @@ export default function EditRecipient() {
         setFormData((prevFormData) => ({
             ...prevFormData,
             emails: newEmails,
+        }));
+    };
+
+    const handleSelectorChange = (valuesArray, name) => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: valuesArray,
         }));
     };
 
@@ -130,7 +128,6 @@ export default function EditRecipient() {
                     const data = await response.json();
 
                     setRecipientName(data.name)
-                    // setSelectedRegistryIds(data.registry_ids);
                     setFormData((prevFormData) => ({
                         ...prevFormData,
                         name: data.name,
@@ -157,7 +154,6 @@ export default function EditRecipient() {
             fetchRecipientItem();
         }
     }, [itemId]);
-    // console.log(selectedTypeOption);
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -192,54 +188,48 @@ export default function EditRecipient() {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="type">Тип реестра*</label>
-                                <CustomSelect
-                                    options={recipientTypes}
+                                <UniversalSelect
+                                    name='type'
+                                    placeholder="Выберете тип реестра"
+                                    onSelectChange={handleSelectorChange}
+                                    selectedOptions={[formData.type]}
+                                    firstOptionSelected
                                     required
-                                    name="type"
-                                    selectedValue={formData.type}
-                                    onSelectChange={(selectedValue) =>
-                                        handleInputChange({target: {name: 'type', value: selectedValue}})
-                                    }
+                                    isSearchable={false}
+                                    options={recipientTypes}
                                 />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="registry_ids">Файлы реестров</label>
-                                {!isLoading && (
-                                    <MultiSelectWithSearch
-                                        apiUrl={`${GET_REGISTRIES_URL}`}
-                                        required
-                                        name="registry_ids"
-                                        multi={true}
-                                        onSelectChange={(selectedValues) => handleInputChange({
-                                            target: {
-                                                name: 'registry_ids',
-                                                value: selectedValues,
-                                            }
-                                        })}
-                                        defaultValue={Array.isArray(formData.registry_ids) ? formData.registry_ids : []}
-
-                                    />
-                                )}
+                                <UniversalSelect
+                                    name='registry_ids'
+                                    placeholder="Выберете файлы реестров"
+                                    onSelectChange={handleSelectorChange}
+                                    required
+                                    isMulti
+                                    selectedOptions={formData.registry_ids}
+                                    isSearchable={false}
+                                    fetchDataConfig={{
+                                        model: 'Registry',
+                                    }}
+                                />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="is_blocked">Статус отправки письма</label>
-                                <CustomSelect
+
+                                <UniversalSelect
+                                    name='is_blocked'
+                                    placeholder="Укажите статус реестра"
+                                    onSelectChange={handleSelectorChange}
+                                    firstOptionSelected
+                                    required
+                                    selectedOptions={[formData.is_blocked]}
+                                    isSearchable={false}
                                     options={[
                                         {value: false, label: 'Отправка письма активна'},
                                         {value: true, label: 'Отправка письма отключена'},
                                     ]}
-                                    required
-                                    selectedValue={recipientValue}
-                                    onSelectChange={(selectedValue) => {
-                                        setRecipientValue(selectedValue)
-                                        setFormData((prevFormData) => ({
-                                            ...prevFormData,
-                                            is_blocked: selectedValue,
-                                        }));
-                                    }}
-                                    name='is_blocked'
                                 />
-
 
                             </div>
                             <div>

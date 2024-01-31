@@ -10,10 +10,10 @@ const fetchData = async (model, filters, attributes, sort, limit, offset) => {
         const authToken = JSON.parse(cookies.authToken).value;
         const fetchDataUrl = `${GET_DATA_FROM_DB_URL}`;
 
-
         const params = new URLSearchParams({
             model: model,                                               //'ModelName' - REQUIRED!!!
-            filters: filters ? JSON.stringify(filters) : undefined,     // filters = { column1: 'value', column2: 'value' };
+            filters: filters ? JSON.stringify(filters) : undefined,
+            // filters = { column1: 'value', column2: 'value', accurateSearch: true} accurateSearch: true - Включает точный поиск по всем аргументам, по стандарту false;
             attributes: attributes || undefined,                        // attributes = 'name,fio'
             sort: sort || undefined,                                    // sort = { column: name, direction: asc }
             limit: limit || undefined,                                  // limit = 10

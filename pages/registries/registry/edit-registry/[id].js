@@ -1,21 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
-import SelectWithSearch from '../../../../components/main/input/SelectWithSearch';
 import FormInput from '../../../../components/main/input/FormInput';
 import {parseCookies} from 'nookies';
-import CustomSelect from '../../../../components/main/input/CustomSelect';
-import MultiSelectWithSearch from '../../../../components/main/input/MultiSelectWithSearch';
 import Link from 'next/link';
 import Footer from '../../../../components/main/Footer';
 import RegistryFieldsTable from "../../../../components/pages/registry/RegistryFieldsTable";
 import {
-    GET_LIST_SERVERS_URL,
-    GET_LIST_SERVICES_URL,
     REGISTRY_SHOW_URL,
     REGISTRY_UPDATE_URL
 } from "../../../../routes/api";
 import Head from "next/head";
 import RegistryFileFormat from "../../../../components/pages/registry/RegistryFileFormat";
+import UniversalSelect from "../../../../components/main/input/UniversalSelect";
 
 export default function EditRegistryFile() {
     const [formData, setFormData] = useState({
@@ -48,6 +44,13 @@ export default function EditRegistryFile() {
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: value,
+        }));
+    };
+
+    const handleSelectorChange = (valuesArray, name) => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: valuesArray,
         }));
     };
 
@@ -170,6 +173,7 @@ export default function EditRegistryFile() {
             }
         };
 
+
         if (itemId) {
             fetchRegistryItem();
         }
@@ -205,56 +209,45 @@ export default function EditRegistryFile() {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="is_blocked">Статус реестра</label>
-                                <CustomSelect
-                                    options={[
-                                        {value: false, label: 'Реестр активен'},
-                                        {value: true, label: 'Реестр отключён'},
-                                    ]}
-                                    required
-                                    selectedValue={registryStatus}
-                                    onSelectChange={(selectedValue) => {
-                                        setRegistryStatus(selectedValue)
-                                        setFormData((prevFormData) => ({
-                                            ...prevFormData,
-                                            is_blocked: selectedValue,
-                                        }));
-                                    }}
+                                <UniversalSelect
                                     name='is_blocked'
+                                    placeholder="Укажите статус файла реестра"
+                                    onSelectChange={handleSelectorChange}
+                                    selectedOptions={[registryStatus]}
+                                    firstOptionSelected
+                                    required
+                                    isSearchable={false}
+                                    options={[
+                                        {value: false, label: 'Файл реестра активен'},
+                                        {value: true, label: 'Файл реестра отключён'},
+                                    ]}
                                 />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="serverId">Сервер</label>
-                                <SelectWithSearch
-                                    apiUrl={`${GET_LIST_SERVERS_URL}`}
+                                <UniversalSelect
+                                    name='serverId'
+                                    selectedOptions={[formData.serverId]}
+                                    placeholder="Выберете сервер"
+                                    fetchDataConfig={{
+                                        model: 'Server',
+                                    }}
+                                    onSelectChange={handleSelectorChange}
                                     required
-                                    name="serverId"
-                                    defaultValue={formData.serverId ? formData.serverId : []}
-                                    onSelectChange={(selectedValue) =>
-                                        handleInputChange({
-                                            target: {
-                                                name: 'serverId',
-                                                value: selectedValue,
-                                            },
-                                        })
-                                    }
                                 />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="serverId">Сервисы</label>
-                                <MultiSelectWithSearch
-                                    apiUrl={`${GET_LIST_SERVICES_URL}`}
+                                <UniversalSelect
+                                    name='servicesId'
+                                    placeholder="Выберете сервисы"
+                                    fetchDataConfig={{
+                                        model: 'Service',
+                                    }}
+                                    selectedOptions={formData.servicesId}
+                                    onSelectChange={handleSelectorChange}
                                     required
-                                    name="servicesId"
-                                    multi={true}
-                                    onSelectChange={(selectedValues) =>
-                                        handleInputChange({
-                                            target: {
-                                                name: 'servicesId',
-                                                value: selectedValues,
-                                            },
-                                        })
-                                    }
-                                    defaultValue={Array.isArray(formData.servicesId) ? formData.servicesId : []}
+                                    isMulti
                                 />
                             </div>
                             <div className="form-group d-flex align-items-center flex-column mt-3">

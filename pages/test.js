@@ -1,13 +1,20 @@
 // pages/index.js
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Footer from '../components/main/Footer';
 import Head from 'next/head';
 import DatabaseTable from "../components/main/table/DatabaseTable";
 import {REGISTRY_DELETE_URL} from "../routes/api";
 import ServiceStatusIndicator from "../components/main/table/cell/ServiceStatusIndicator";
+import UniversalSelect from "../components/main/input/UniversalSelect";
 
 const IndexPage = () => {
     const createRoute = '/registries/registry/create-registry';
+
+    const [formData, setFormData] = useState({
+        name: '',
+        formats: [],
+        is_blocked: '',
+    });
 
     function countServices(value) {
         const lastDigit = value.length % 10;
@@ -92,6 +99,25 @@ const IndexPage = () => {
     // rowOrder
     // rowsPerPage
 
+    const options = [
+        { value: 'chocolate', label: 'Chocolate', isSelectOne: true},
+        { value: 'strawberry', label: 'Strawberry'},
+        { value: 'vanilla', label: 'Vanilla' }
+    ]
+
+
+    const fetchDataConfig = {
+        model: 'Service',
+        // searchTerm: {is_blocked: false, accurateSearch: true},
+    };
+
+    const handleSelectorChange = (valuesArray, name) => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: valuesArray,
+        }));
+    };
+
 
     return (
         <div>
@@ -100,8 +126,16 @@ const IndexPage = () => {
             </Head>
             <div className="container body-container mt-5 ">
                 <h1>TEST ZONE</h1>
-
-
+                <UniversalSelect
+                    name='name1'
+                    selectedOptions ={['chocolate', 42, 43, 44, 45, 1, 5, 2, 3, 4, 4, 4,]}
+                    firstOptionSelected
+                    onSelectChange={handleSelectorChange}
+                    fetchDataConfig={fetchDataConfig}
+                    options={options}
+                    isMulti
+                    isSearchable
+                />
                 <DatabaseTable
                     model='Registry'
                     tableHeaders={tableHeaders}

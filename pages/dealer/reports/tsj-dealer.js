@@ -32,7 +32,7 @@ export default function IndexPage() {
 
         return (
             <form className="d-flex justify-content-between align-items-center align-content-center">
-                <div className="form-group">
+                <div>
                     <FormInput
                         type="file"
                         className="form-control input-search"
@@ -61,7 +61,6 @@ export default function IndexPage() {
 
     const handleUpdateDealer = async () => {
         try {
-            setProcessingLoader(true);
 
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
@@ -73,8 +72,9 @@ export default function IndexPage() {
                 },
                 body: formData,
             });
-
+            setProcessingLoader(true);
             const responseData = await response.json();
+            
 
             if (response.ok) {
                 showAlertMessage({type: "success", text: responseData.message});

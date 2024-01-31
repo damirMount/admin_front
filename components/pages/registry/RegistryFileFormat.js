@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 
-const RegistryFileFormat = ({formData, setFormData}) => {
+const RegistryFileFormat = ({formData = [], setFormData}) => {
     const [selectedCheckboxCount, setSelectedCheckboxCount] = useState(0);
 
     // Обработчик изменения выбранных чекбоксов

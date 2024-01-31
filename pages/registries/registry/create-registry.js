@@ -2,17 +2,15 @@ import React, {useState} from 'react';
 import {useRouter} from 'next/router';
 import FormInput from '../../../components/main/input/FormInput';
 import {parseCookies} from 'nookies';
-import CustomSelect from '../../../components/main/input/CustomSelect';
-import MultiSelectWithSearch from '../../../components/main/input/MultiSelectWithSearch';
 import {faCheck, faGripVertical, faPlus, faTag,} from '@fortawesome/free-solid-svg-icons';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import Link from 'next/link';
-import SelectWithSearch from '../../../components/main/input/SelectWithSearch';
 import Footer from '../../../components/main/Footer';
 import RegistryFieldsTable from "../../../components/pages/registry/RegistryFieldsTable";
-import {GET_LIST_SERVERS_URL, GET_LIST_SERVICES_URL, REGISTRY_CREATE_URL} from "../../../routes/api";
+import {REGISTRY_CREATE_URL} from "../../../routes/api";
 import Head from "next/head";
 import RegistryFileFormat from "../../../components/pages/registry/RegistryFileFormat";
+import UniversalSelect from "../../../components/main/input/UniversalSelect";
 
 library.add(faCheck, faTag, faGripVertical, faPlus);
 
@@ -44,6 +42,13 @@ export default function CreateRegistry() {
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: value,
+        }));
+    };
+
+    const handleSelectorChange = (valuesArray, name) => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: valuesArray,
         }));
     };
 
@@ -117,53 +122,43 @@ export default function CreateRegistry() {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="is_blocked">Статус реестра</label>
-                                <CustomSelect
-                                    options={[
-                                        {value: '0', label: 'Файл реестра активен'},
-                                        {value: '1', label: 'Файл реестра отключён'},
-                                    ]}
+                                <UniversalSelect
+                                    name='is_blocked'
+                                    placeholder="Укажите статус файла реестра"
+                                    onSelectChange={handleSelectorChange}
+                                    firstOptionSelected
                                     required
-                                    onSelectChange={(selectedValue) => {
-                                        setFormData((prevFormData) => ({
-                                            ...prevFormData,
-                                            is_blocked: selectedValue,
-                                        }));
-                                    }}
-                                    name="is_blocked"
+                                    isSearchable={false}
+                                    options={[
+                                        {value: false, label: 'Файл реестра активен'},
+                                        {value: true, label: 'Файл реестра отключён'},
+                                    ]}
                                 />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="serverId">Сервер</label>
-                                <SelectWithSearch
-                                    apiUrl={`${GET_LIST_SERVERS_URL}`}
+                                <UniversalSelect
+                                    name='serverId'
+                                    placeholder="Выберете сервер"
+                                    fetchDataConfig={{
+                                        model: 'Server',
+                                    }}
+                                    onSelectChange={handleSelectorChange}
                                     required
-                                    name="serverId"
-                                    onSelectChange={(selectedValue) =>
-                                        handleInputChange({
-                                            target: {name: 'serverId', value: selectedValue},
-                                        })
-                                    }
                                 />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="servicesId">Сервисы</label>
-                                <MultiSelectWithSearch
-                                    apiUrl={`${GET_LIST_SERVICES_URL}`}
+
+                                <UniversalSelect
+                                    name='servicesId'
+                                        placeholder="Выберете сервисы"
+                                    fetchDataConfig={{
+                                        model: 'Service',
+                                    }}
+                                    onSelectChange={handleSelectorChange}
                                     required
-                                    name="servicesId"
-                                    multi={true}
-                                    placeholder="Выберете сервис"
-                                    onSelectChange={(selectedValues) =>
-                                        handleInputChange({
-                                            target: {
-                                                name: 'servicesId',
-                                                value: selectedValues,
-                                            },
-                                        })
-                                    }
-                                    defaultValue={Array.isArray(formData.servicesId)
-                                        ? formData.servicesId
-                                        : []}
+                                    isMulti
                                 />
                             </div>
                             <div className="form-group d-flex align-items-center flex-column mt-4">

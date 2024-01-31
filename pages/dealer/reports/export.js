@@ -1,6 +1,5 @@
 import Footer from "../../../components/main/Footer";
 import React, {useEffect, useState} from "react";
-import CustomSelect from "../../../components/main/input/CustomSelect";
 import {parseCookies} from "nookies";
 import Alert from "../../../components/main/Alert";
 import Preloader from "../../../components/main/Preloader";
@@ -10,6 +9,7 @@ import ReportsNavigationTabs from "../../../components/pages/report/ReportsNavig
 import {DEALER_REPORTS_EXPORT_URL} from "../../../routes/api";
 import Head from "next/head";
 import DateRangeInput from "../../../components/main/input/DateRangeInput";
+import UniversalSelect from "../../../components/main/input/UniversalSelect";
 
 
 export default function IndexPage() {
@@ -124,7 +124,8 @@ export default function IndexPage() {
                                 <div>
                                     <div className="form-group">
                                         <label htmlFor="is_blocked">Выберите отчет</label>
-                                        <CustomSelect
+                                        <UniversalSelect
+                                            firstOptionSelected
                                             options={[
                                                 {value: '0', label: 'Проведенные платежи'}
                                             ]}
@@ -143,7 +144,8 @@ export default function IndexPage() {
                                         <div
                                             className="ps-3 input-form d-flex justify-content-between bg-white align-items-center">
                                             <label htmlFor="">Выберите опцию</label>
-                                            <CustomSelect
+                                            <UniversalSelect
+                                                firstOptionSelected
                                                 options={[
                                                     {value: 0, label: 'Проведения платежа'},
                                                 ]}
@@ -161,7 +163,8 @@ export default function IndexPage() {
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="is_blocked">Дилер</label>
-                                        <CustomSelect
+                                        <UniversalSelect
+                                            firstOptionSelected
                                             options={[
                                                 {value: '0', label: 'По всем дилерам'}
                                             ]}
@@ -177,7 +180,8 @@ export default function IndexPage() {
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="is_blocked">Поставщик</label>
-                                        <CustomSelect
+                                        <UniversalSelect
+                                            firstOptionSelected
                                             options={[
                                                 {value: '0', label: 'По всем поставщикам'}
                                             ]}

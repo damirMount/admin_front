@@ -5,7 +5,7 @@ export const GET_DATA_FROM_DB_URL = `${baseURL}/api/getDataFromDB`
 
 export const GET_LIST_SERVICES_URL = `${baseURL}/api/listServices`
 export const POST_ABONENT_SERVICE_URL = `${baseURL}/api/abonent-service/store`
-export const GET_LIST_SERVERS_URL = `${baseURL}/api/listServers`
+// export const GET_LIST_SERVERS_URL = `${baseURL}/api/listServers`,
 export const POST_LOGIN_URL = `${baseURL}/api/login`
 
 export const GET_RECIPIENTS_URL = `${baseURL}/api/recipient/all`

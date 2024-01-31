@@ -4,10 +4,9 @@ import React, {useEffect, useState} from "react";
 import fetchData from "../database/DataFetcher";
 import SearchInput from "../input/SearchInput";
 import Preloader from "../Preloader";
-import CustomSelect from "../input/CustomSelect";
 import {useAlert} from "../../../contexts/AlertContext";
+import UniversalSelect from "../input/UniversalSelect";
 
-// eslint-disable-next-line react/display-name
 const DatabaseTable = ({model, tableHeaders, configTable = null, additionalElement}) => {
     const [processingLoader, setProcessingLoader] = useState(false);
     const {clearAlertMessage, showAlertMessage} = useAlert();
@@ -121,7 +120,12 @@ const DatabaseTable = ({model, tableHeaders, configTable = null, additionalEleme
                 <Preloader/>
             ) : (
                 <div>
-                    <Table data={dataFromDB} tableHeaders={tableHeaders} configTable={configTable} onSort={handleSort}/>
+                    <Table
+                        data={dataFromDB}
+                        tableHeaders={tableHeaders}
+                        configTable={configTable}
+                        onSort={handleSort}
+                    />
 
                     {(selectRowsPerPage && totalRecords > 0) && (
                         <div className="d-flex justify-content-between align-items-end w-100 mt-2">
@@ -133,15 +137,15 @@ const DatabaseTable = ({model, tableHeaders, configTable = null, additionalEleme
 
                             <div className="d-flex align-items-center">
                                 <small className="me-3">Показать:</small>
-                                <CustomSelect
+                                <UniversalSelect
+                                    firstOptionSelected
+                                    onSelectChange={handleRowsPerPage}
                                     options={[
                                         {value: 50, label: '50 записей'},
                                         {value: 75, label: '75 записей'},
                                         {value: 100, label: '100 записей'},
                                     ]}
-                                    required
-                                    onSelectChange={(selectedValue) => handleRowsPerPage(selectedValue)}
-                                ></CustomSelect>
+                                />
                             </div>
                         </div>
                     )}
