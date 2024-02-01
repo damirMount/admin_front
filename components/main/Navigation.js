@@ -37,11 +37,11 @@ const Navigation = () => {
                                     Отчёт по истории счётов
                                 </Link>
                             </li>
-                            <li className="nav-item">
-                                <Link href="/gsfr/update" className={`nav-link`}>
-                                    ГСФР
-                                </Link>
-                            </li>
+                            {/*<li className="nav-item">*/}
+                            {/*    <Link href="/gsfr/update" className={`nav-link`}>*/}
+                            {/*        ГСФР*/}
+                            {/*    </Link>*/}
+                            {/*</li>*/}
                             {/*<li className="nav-item">*/}
                             {/*    <Link href="/test" className={`nav-link`}>*/}
                             {/*        TEST ZONE*/}
