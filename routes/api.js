@@ -31,3 +31,6 @@ export const ACQUIRING_COMPARISON_URL = `${baseURL}/api/acquiring/comparison`
 
 export const DEALER_REPORTS_EXPORT_URL = `${baseURL}/api/dealer/reports/createReport`
 export const DEALER_REPORTS_UPDATE_TSJ_DEALER_URL = `${baseURL}/api/dealer/reports/updateTSJDealer`
+
+
+export const GSFR_UPDATE_URL = `${baseURL}/api/GSFR/updateGFSR`
