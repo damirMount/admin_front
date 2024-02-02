@@ -65,11 +65,11 @@ const UniversalSelect = ({
         // Обедняем переданные опций из родительского класса, если такие есть, с массивом из базы данных
         if (Array.isArray(options) && options.length > 0) {
             mappedOptions.push(...options);
+            setValuesSet(true);
         }
 
         // Получившийся массив выставляем в качестве опций для селектора
         setOptionsList(mappedOptions);
-
         return () => {
             mounted = false;
         };
@@ -108,7 +108,6 @@ const UniversalSelect = ({
                 setIsMultiSelect(isMulti);
                 updatedValue = newValue;
             }
-
             setSelectedValue(updatedValue);
 
             // Если true возвращаем ответ в родительский класс, в виде массива со значениями value
@@ -121,9 +120,9 @@ const UniversalSelect = ({
                         ? updatedValue.map(item => item.value)
                         : [updatedValue.value];
                 } else {
-                    callBackValues = Array.isArray(updatedValue) ? updatedValue[0].value : updatedValue.value;
-                }
+                    callBackValues = Array.isArray(updatedValue) && updatedValue.length > 0 ? updatedValue[0].value : updatedValue.value;
 
+                }
 
                 onSelectChange(callBackValues, name);
             }
@@ -154,7 +153,7 @@ const UniversalSelect = ({
             setAndNotifyChange(initialValue);
         }
 
-    }, [valuesSet, optionsList]);
+    }, [valuesSet]);
 
     return (
         <Select

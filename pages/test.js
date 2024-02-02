@@ -100,7 +100,7 @@ const IndexPage = () => {
     // rowsPerPage
 
     const options = [
-        { value: 'chocolate', label: 'Chocolate', isSelectOne: true},
+        { value: '11001', label: 'Выбрать все записи', isSelectOne: true},
         { value: 'strawberry', label: 'Strawberry'},
         { value: 'vanilla', label: 'Vanilla' }
     ]
@@ -128,12 +128,12 @@ const IndexPage = () => {
                 <h1>TEST ZONE</h1>
                 <UniversalSelect
                     name='name1'
-                    selectedOptions ={['chocolate', 42, 43, 44, 45, 1, 5, 2, 3, 4, 4, 4,]}
+                    selectedOptions ={[4557]}
                     firstOptionSelected
                     onSelectChange={handleSelectorChange}
                     fetchDataConfig={fetchDataConfig}
-                    options={options}
-                    isMulti
+                    // options={options}
+                    // isMulti
                     isSearchable
                 />
                 <DatabaseTable
