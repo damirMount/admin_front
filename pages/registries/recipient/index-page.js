@@ -7,7 +7,7 @@ import {RECIPIENT_DELETE_URL} from "../../../routes/api";
 import ServiceStatusIndicator from "../../../components/main/table/cell/ServiceStatusIndicator";
 import RegistryNavigationTabs from "../../../components/pages/registry/RegistryNavigationTabs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendar} from "@fortawesome/free-regular-svg-icons";
+import {faCalendar, faEnvelope, faUser} from "@fortawesome/free-regular-svg-icons";
 
 const IndexPage = () => {
     const createRoute = '/registries/recipient/create-recipient';
@@ -21,28 +21,50 @@ const IndexPage = () => {
     function formatTypeValue(value) {
         let answer;
         if (value === 1) {
-            answer = 'Ежедневный';
+            answer = 'Каждый день';
         }
         if (value === 2) {
-            answer = 'Еженедельный';
+            answer = 'Раз в неделю';
         }
         if (value === 3) {
-            answer = 'Ежемесячный';
+            answer = 'Раз в месяц';
         }
         if (value === 4) {
-            answer = 'Ежегодный';
+            answer = 'Каждый год';
         }
         return answer;
     }
 
+    function countEmails(value) {
+        const lastDigit = value.length % 10;
+        const lastTwoDigits = value.length % 100;
+
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+            return `${value.length} Почт`;
+        } else if (lastDigit === 1) {
+            return `${value.length} Почта`;
+        } else if (lastDigit >= 2 && lastDigit <= 4) {
+            return `${value.length} Почты`;
+        } else {
+            return `${value.length} Почт`;
+        }
+    }
+
     function RecipientTypeCell(props) {
         const type = props ? props.type || '' : '';
+        const emailsCount = props ? props.emails.split(', ') || '' : '';
         return (
-            <div className="col-auto action-table-buttons flex-nowrap d-flex">
-                <div className="d-flex justify-content-start">
-                    <FontAwesomeIcon className="me-2" icon={faCalendar} size="xl"/>
-                    {formatTypeValue((type))}
-                </div>
+            <div className="col-auto action-table-buttons flex-nowrap d-flex flex-column">
+                <span className="status text-start status-dashed d-flex flex-column">
+                    <div>
+                        <FontAwesomeIcon className="me-2" icon={faCalendar} size="lg"/>
+                        {formatTypeValue((type))}
+                    </div>
+                    <div className="mt-1">
+                        <FontAwesomeIcon className="me-2" icon={faEnvelope} size="lg"/>
+                        {countEmails(emailsCount)}
+                    </div>
+                </span>
             </div>
         );
     }

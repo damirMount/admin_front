@@ -2,48 +2,62 @@ import React, {useCallback, useEffect, useState} from 'react';
 import Select from 'react-select';
 import fetchData from '../database/DataFetcher';
 import {useAlert} from '../../../contexts/AlertContext';
+import CreatableSelect from "react-select/creatable";
+import validator from 'validator';
+
 
 const UniversalSelect = ({
                              name,
                              isRequired,
                              placeholder,
                              className,
-                             options,
+                             options =[],
                              fetchDataConfig = false,
                              isMulti,
                              isSearchable,
                              selectedOptions = [],
                              firstOptionSelected,
                              onSelectChange,
+                             createNewValues,
+                             type
                          }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [optionsList, setOptionsList] = useState([]);
+    const [selectType, setSelectType]= useState('');
     const [closeMenuOnSelect, setCloseMenuOnSelect] = useState(!isMulti);
     const [isMultiSelect, setIsMultiSelect] = useState(false);
     const {showAlertMessage} = useAlert();
     const [selectedValue, setSelectedValue] = useState([]);
     const [valuesSet, setValuesSet] = useState(false);
+    const [errorMessage, setErrorMessage] = useState();
 
     useEffect(() => {
         let mounted = true;
+
+        // Флаги состояния для отслеживания завершения загрузки данных и получения опций
+        let dataLoaded = false;
+        let optionsLoaded = false;
+
+        // Массив для хранения всех опций
         let mappedOptions = [];
+
+        if (type) {
+            setSelectType(type)
+        }
 
         const fetchDataFromDB = async () => {
             setIsLoading(true);
+
             try {
-                const response = await fetchData(
-                    fetchDataConfig.model,
-                    fetchDataConfig.searchTerm
-                );
-
+                const response = await fetchData(fetchDataConfig);
                 // После ответа сервера формируем массив опций для селектора
-                mappedOptions.push(
-                    ...response.data.map((item) => ({
-                        value: item.id,
-                        label: `${item.name}   ${item.id}`,
-                    }))
-                );
+                mappedOptions = response.data.map((item) => ({
+                    value: item.id,
+                    label: `${item.name}   ${item.id}`,
+                }));
 
+                // Помечаем, что данные загружены
+                dataLoaded = true;
             } catch (error) {
                 showAlertMessage({
                     type: 'error',
@@ -52,35 +66,96 @@ const UniversalSelect = ({
             } finally {
                 if (mounted) {
                     setIsLoading(false);
-                    setValuesSet(true);
+                    // Вызываем функцию, которая обновляет опции, если данные из базы загружены и опции получены
+                    updateOptions();
                 }
+            }
+        };
+
+        const updateOptions = () => {
+            // Если данные из базы загружены и опции получены, объединяем их и устанавливаем в качестве опций для селектора
+            if (dataLoaded && optionsLoaded) {
+                const combinedOptions = [...options, ...mappedOptions].filter((option, index, self) =>
+                        index === self.findIndex((t) => (
+                            t.value === option.value && t.label === option.label
+                        ))
+                );
+                setOptionsList(combinedOptions);
+                setValuesSet(true);
             }
         };
 
         // Получаем записи с базы для массива опций
         if (fetchDataConfig) {
             fetchDataFromDB();
+        } else {
+            // Если нет данных для загрузки из базы, помечаем, что данные загружены
+            dataLoaded = true;
         }
 
-        // Обедняем переданные опций из родительского класса, если такие есть, с массивом из базы данных
+        // Обедняем переданные опции из родительского класса, если такие есть
         if (Array.isArray(options) && options.length > 0) {
             mappedOptions.push(...options);
-            setValuesSet(true);
+            optionsLoaded = true;
+            // Вызываем функцию обновления опций
+            updateOptions();
+        } else {
+            // Если опции еще не получены, помечаем, что данные загружены
+            optionsLoaded = true;
+            // Вызываем функцию обновления опций
+            updateOptions();
         }
 
-        // Получившийся массив выставляем в качестве опций для селектора
-        setOptionsList(mappedOptions);
         return () => {
             mounted = false;
         };
+    }, [fetchDataConfig]); // В зависимостях указываем fetchDataConfig и options
 
-    }, [valuesSet]);
 
 
     const setAndNotifyChange = useCallback(
         (newValue) => {
             let updatedValue;
             let optionsListArray = [];
+            setErrorMessage('')
+
+            const validateInput = (value) => {
+                // Если значение является массивом, проверяем каждый элемент массива
+                if (Array.isArray(value)) {
+                    return value.every(item => validateInput(item));
+                }
+
+                // Если значение является объектом, извлекаем его значение
+                if (typeof value === 'object' && value !== null) {
+                    value = value.value;
+                }
+
+                // Преобразуем значение к строке, чтобы убедиться, что оно всегда представлено строкой
+                const stringValue = String(value);
+
+                // Проверяем значение на валидность в зависимости от типа
+                switch (selectType) {
+                    case 'email':
+                        return validator.isEmail(stringValue);
+                    case 'url':
+                        return validator.isURL(stringValue);
+                    case 'number':
+                        return validator.isNumeric(stringValue);
+                    case 'alpha':
+                        return validator.isAlpha(stringValue);
+                    // Добавьте другие типы валидации, если необходимо
+                    default:
+                        console.log('Unknown type:', selectType);
+                        return false;
+                }
+            };
+
+            if (newValue && createNewValues && type && !validateInput(newValue)) {
+                return setErrorMessage(`Введенное значение не является ${type}`);
+            }
+
+
+
 
             // Проверка есть ли у полученного элемента значение isSelectOne == true. Если да то записываем в optionsListArray
             if (Array.isArray(newValue)) {
@@ -155,8 +230,11 @@ const UniversalSelect = ({
 
     }, [valuesSet]);
 
+    const Selector = createNewValues ? CreatableSelect : Select;
+
     return (
-        <Select
+        <div>
+        <Selector
             name={name}
             closeMenuOnSelect={closeMenuOnSelect}
             required={isRequired}
@@ -169,6 +247,13 @@ const UniversalSelect = ({
             value={selectedValue}
             onChange={(newValue) => setAndNotifyChange(newValue)}
         />
+            {createNewValues && type && (
+                <p className="text-danger">
+                    {errorMessage}
+                </p>
+            )}
+
+        </div>
     );
 };
 

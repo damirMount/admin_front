@@ -1,5 +1,5 @@
 // pages/index.js
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import Footer from '../components/main/Footer';
 import Head from 'next/head';
 import DatabaseTable from "../components/main/table/DatabaseTable";
@@ -128,14 +128,17 @@ const IndexPage = () => {
                 <h1>TEST ZONE</h1>
                 <UniversalSelect
                     name='name1'
-                    selectedOptions ={[4557]}
+                    selectedOptions ={['11001', 4447, 4553, ]}
                     firstOptionSelected
                     onSelectChange={handleSelectorChange}
                     fetchDataConfig={fetchDataConfig}
-                    // options={options}
-                    // isMulti
+                    options={options}
+                    isMulti
                     isSearchable
+                    createNewValues
+                    type='number'
                 />
+
                 <DatabaseTable
                     model='Registry'
                     tableHeaders={tableHeaders}

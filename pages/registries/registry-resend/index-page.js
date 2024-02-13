@@ -181,21 +181,6 @@ export default function IndexPage() {
         }
     };
 
-    const fetchDataFromDB = async (fetchDataConfig) => {
-        try {
-            return await fetchData(
-                fetchDataConfig.model,
-                fetchDataConfig.searchTerm
-            );
-        } catch (error) {
-            showAlertMessage({
-                type: 'error',
-                text: 'Ошибка при получении данных: ' + error.message,
-            });
-            return [];
-        }
-    };
-
     const handleRegistrySelect = () => {
         const selectedRegistry = Array.isArray(registryOptions)
             ? registryOptions.find(item => item.id === registry)
@@ -226,7 +211,7 @@ export default function IndexPage() {
 
         const fetchDataAndSetOptions = async () => {
             try {
-                const relationOptions = await fetchDataFromDB(fetchRegistryRelation);
+                const relationOptions = await fetchData(fetchRegistryRelation);
 
                 const fetchRegistry = {
                     model: 'Registry',
@@ -237,7 +222,7 @@ export default function IndexPage() {
                     }
                 };
 
-                const registryList = await fetchDataFromDB(fetchRegistry);
+                const registryList = await fetchData(fetchRegistry);
                 setRegistryOptions(registryList.data);
 
             } catch (error) {
@@ -343,7 +328,7 @@ export default function IndexPage() {
                                         placeholder="Выберете получателя"
                                         fetchDataConfig={{
                                             model: 'Recipient',
-                                            searchTerm: {is_blocked: false}
+                                            filters: {is_blocked: false}
                                         }}
                                         firstOptionSelected
                                         required
@@ -386,7 +371,7 @@ export default function IndexPage() {
                                                     name='services_id'
                                                     fetchDataConfig={{
                                                         model: 'Service',
-                                                        searchTerm: {id: services}
+                                                        filters: {id: services}
                                                     }}
                                                     placeholder="Выберете сервисы"
                                                     selectedOptions={services}

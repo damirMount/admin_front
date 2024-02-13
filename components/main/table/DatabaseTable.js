@@ -46,14 +46,16 @@ const DatabaseTable = ({model, tableHeaders, configTable = null, additionalEleme
                 setProcessingLoader(true);
             }, 1000);
 
-            const response = await fetchData(
-                model,
-                searchObject,
-                null,
-                JSON.stringify(sortColumn),
-                pageSize,
-                (page - 1) * pageSize,
-            );
+            const fetchDBConfig = {
+                model: model,
+                filters: searchObject,
+                sort: JSON.stringify(sortColumn),
+                limit: pageSize,
+                offset: (page - 1) * pageSize
+            };
+
+            const response = await fetchData(fetchDBConfig);
+
             const {count, data} = response;
             setDataFromDB(data);
             setTotalPages(Math.ceil(count / pageSize));

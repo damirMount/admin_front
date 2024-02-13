@@ -45,7 +45,7 @@ const ActionButtons = ({buttonsLinks = null, props}) => {
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                 >
-                    <FontAwesomeIcon icon={faEllipsis} size="xl"/>
+                    <FontAwesomeIcon icon={faEllipsis} size="lg"/>
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="moreActionsButton">
                     {buttons}

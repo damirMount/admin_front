@@ -12,6 +12,7 @@ import {
 import Head from "next/head";
 import RegistryFileFormat from "../../../../components/pages/registry/RegistryFileFormat";
 import UniversalSelect from "../../../../components/main/input/UniversalSelect";
+import Preloader from "../../../../components/main/Preloader";
 
 export default function EditRegistryFile() {
     const [formData, setFormData] = useState({
@@ -182,7 +183,9 @@ export default function EditRegistryFile() {
 
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <div>
+            <Preloader/>
+        </div>;
     }
 
     return (
@@ -248,7 +251,7 @@ export default function EditRegistryFile() {
                                     placeholder="Выберете сервисы"
                                     fetchDataConfig={{
                                         model: 'Service',
-                                        searchTerm: {id_bserver: selectedServer}
+                                        filters: {id_bserver: selectedServer}
                                     }}
                                     selectedOptions={formData.servicesId}
                                     onSelectChange={handleSelectorChange}

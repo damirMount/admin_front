@@ -55,9 +55,7 @@ const SelectWithSearch = ({apiUrl, options: staticOptions, required, name, onSel
         return <div>Error: {error}</div>;
     }
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
+
 
     return (
         <Select

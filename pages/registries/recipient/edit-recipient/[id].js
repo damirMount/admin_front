@@ -9,6 +9,7 @@ import Footer from "../../../../components/main/Footer";
 import {RECIPIENT_SHOW_URL, RECIPIENT_UPDATE_URL} from "../../../../routes/api";
 import Head from "next/head";
 import UniversalSelect from "../../../../components/main/input/UniversalSelect";
+import Preloader from "../../../../components/main/Preloader";
 
 export default function EditRecipient() {
     const [formData, setFormData] = useState({
@@ -70,10 +71,10 @@ export default function EditRecipient() {
     };
 
     const recipientTypes = [
-        {value: 1, label: 'Ежедневный'},
-        {value: 2, label: 'Еженедельный'},
-        {value: 3, label: 'Ежемесячный'},
-        {value: 4, label: 'Ежегодный'},
+        {value: 1, label: 'Каждый день'},
+        {value: 2, label: 'Раз в неделю'},
+        {value: 3, label: 'Раз в месяц'},
+        {value: 4, label: 'Раз в год'},
     ];
 
     const handleAddEmailInput = () => {
@@ -155,7 +156,9 @@ export default function EditRecipient() {
         }
     }, [itemId]);
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <div>
+            <Preloader/>
+        </div>;
     }
 
     return (
@@ -165,9 +168,6 @@ export default function EditRecipient() {
                 <title>{recipientName} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
 
-            <div>
-
-            </div>
             <div className="container body-container mt-5">
                 <h1>Редактировать получателя</h1>
                 <form onSubmit={handleSubmit}>
@@ -186,18 +186,37 @@ export default function EditRecipient() {
                                     required
                                 />
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="type">Тип реестра*</label>
-                                <UniversalSelect
-                                    name='type'
-                                    placeholder="Выберете тип реестра"
-                                    onSelectChange={handleSelectorChange}
-                                    selectedOptions={[formData.type]}
-                                    firstOptionSelected
-                                    required
-                                    isSearchable={false}
-                                    options={recipientTypes}
-                                />
+                            <div className="form-group d-flex justify-content-between align-items-center">
+                                <div className="form-group w-50">
+                                    <label htmlFor="name">Период отправки реестра</label>
+                                    <UniversalSelect
+                                        name='type'
+                                        placeholder="Выберете период"
+                                        onSelectChange={handleSelectorChange}
+                                        firstOptionSelected
+                                        selectedOptions={[formData.type]}
+                                        required
+                                        isSearchable={false}
+                                        options={recipientTypes}
+                                    />
+                                </div>
+                                <div className="form-group   text-nowrap">
+                                    <label htmlFor="is_blocked">Статус получателя</label>
+                                    <UniversalSelect
+                                        name='is_blocked'
+                                        placeholder="Укажите статус реестра"
+                                        onSelectChange={handleSelectorChange}
+                                        firstOptionSelected
+                                        className={"selector-choice"}
+                                        required
+                                        selectedOptions={[formData.is_blocked]}
+                                        isSearchable={false}
+                                        options={[
+                                            {value: false, label: 'Получатель Активен'},
+                                            {value: true, label: 'Получатель Отключен'},
+                                        ]}
+                                    />
+                                </div>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="registry_ids">Файлы реестров</label>
@@ -215,57 +234,27 @@ export default function EditRecipient() {
                                 />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="is_blocked">Статус отправки письма</label>
-
+                                <label htmlFor="registry_ids">Emails</label>
                                 <UniversalSelect
-                                    name='is_blocked'
-                                    placeholder="Укажите статус реестра"
+                                    name='emails'
+                                    placeholder="Введите почту получателя"
                                     onSelectChange={handleSelectorChange}
-                                    firstOptionSelected
                                     required
-                                    selectedOptions={[formData.is_blocked]}
-                                    isSearchable={false}
-                                    options={[
-                                        {value: false, label: 'Отправка письма активна'},
-                                        {value: true, label: 'Отправка письма отключена'},
-                                    ]}
+                                    isMulti
+                                    selectedOptions={formData.emails}
+                                    options={formData.emails && formData.emails.length > 0 ? (
+                                        formData.emails.map((item) => ({
+                                            value: item,
+                                            label: `${item}`
+                                        }))
+                                    ) : []}
+                                    createNewValues
                                 />
-
                             </div>
+
                             <div>
                                 <p>Дата создания: {createdAt}</p>
                                 <p>Дата изменения: {updatedAt}</p>
-                            </div>
-                        </div>
-                        <div className="form-group container w-75">
-                            <label htmlFor="emails">Email</label>
-                            <div className="d-flex flex-row flex-wrap justify-content-between">
-                                {formData.emails.map((email, index) => (
-                                    <div key={index} className="form-group d-flex w-50">
-                                        <FontAwesomeIcon className='input-icon' icon={faEnvelope} size='lg'/>
-                                        <FormInput
-                                            required
-                                            type="email"
-                                            className="mail-input input-with-padding"
-                                            placeholder="Укажите почту"
-                                            id={`email-${index}`}
-                                            value={email}
-                                            onChange={(e) => handleEmailChange(index, e.target.value)}
-                                        />
-                                        <button
-                                            type="button"
-                                            className="btn input-btn-close"
-                                            onClick={() => handleRemoveEmailInput(index)}
-                                        >
-                                            <FontAwesomeIcon icon={faXmarkCircle} size="lg"/>
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="d-flex justify-content-center mt-3">
-                                <button className="btn btn-grey" type="button" onClick={handleAddEmailInput}>
-                                    Добавить еще email
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -276,7 +265,7 @@ export default function EditRecipient() {
                     </div>
                 </form>
             </div>
-            <Footer></Footer>
+            <Footer />
         </div>
     );
 }
