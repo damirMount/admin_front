@@ -42,6 +42,7 @@ export default function LoginPage() {
                 await router.push('/update-db');
             } else {
                 const errorData = await response.json();
+                console.log('Произошла ошибка при переброса на страницу:', errorData);
 
                 // Обработка ошибки аутентификации
             }
