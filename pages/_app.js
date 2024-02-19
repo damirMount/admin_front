@@ -2,12 +2,12 @@ import React, {useEffect} from 'react';
 import {useRouter} from 'next/router';
 import {destroyCookie, parseCookies, setCookie} from 'nookies';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../src/app/globals.css';
+import '../src/css/globals.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import Head from "next/head";
 import {AlertProvider} from "../contexts/AlertContext";
 import Alert from "../components/main/Alert";
-import Navigation from "../components/main/navbar";
+import Navbar from "../components/main/navbar";
 import Script from "next/script";
 
 function MyApp({Component, pageProps}) {
@@ -40,7 +40,7 @@ function MyApp({Component, pageProps}) {
             <title>{process.env.NEXT_PUBLIC_APP_NAME}</title>
         </Head>
         <AlertProvider>
-            <Navigation/>
+            <Navbar/>
             <Component {...pageProps} />
             <Alert/>
         </AlertProvider>
