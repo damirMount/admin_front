@@ -29,7 +29,7 @@ function MyApp({ Component, pageProps }) {
             </Head>
             <AlertProvider>
                 <div className="d-flex w-100 overflow-hidden">
-                    {router.pathname !== LOGIN_PAGE_URL && <SidebarNavigation />}
+                    <SidebarNavigation />
                     <div className="w-100 overflow-hidden">
                         <Navbar />
                         <div className="container w-100 overflow-x-auto overflow-y-hidden mt-5" style={{ maxWidth: '100vw' }}>
