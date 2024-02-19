@@ -10,7 +10,7 @@ export default function LoginPage() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const apiUrl = `/api/login`;
+        const apiUrl = `${POST_LOGIN_API}`;
         // Проверка учетных данных и генерация токена аутентификации
         try {
             const response = await fetch(apiUrl, {
@@ -42,7 +42,6 @@ export default function LoginPage() {
                 await router.push('/update-db');
             } else {
                 const errorData = await response.json();
-                console.log('Произошла ошибка при переброса на страницу:', errorData);
 
                 // Обработка ошибки аутентификации
             }
