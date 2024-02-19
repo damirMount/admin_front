@@ -7,7 +7,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import Head from "next/head";
 import {AlertProvider} from "../contexts/AlertContext";
 import Alert from "../components/main/Alert";
-import Navigation from "../components/main/Navigation";
+import Navigation from "../components/main/navbar";
 import Script from "next/script";
 
 function MyApp({Component, pageProps}) {
