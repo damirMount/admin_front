@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { destroyCookie, parseCookies } from 'nookies';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../src/css/globals.css';
+import '../src/app/globals.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import Head from "next/head";
 import { AlertProvider } from "../contexts/AlertContext";
