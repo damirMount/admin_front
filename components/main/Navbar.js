@@ -10,10 +10,10 @@ const Navbar = () => {
             <div className="collapse navbar-collapse " id="navbarSupportedContent">
                 <ul className="navbar-nav me-auto align-items-center justify-content-center  w-100 d-flex">
                     <li className="nav-item">
-                        <Link className="navbar-brand d-flex align-items-center" href={MAIN_PAGE_URL}>
+                        <a className="navbar-brand d-flex align-items-center" href={MAIN_PAGE_URL}>
                             <Image src="/favicon.ico" width='32' height='32' className="me-2" alt='Логотип'/>
                             Mancho Admin
-                        </Link>
+                        </a>
                     </li>
                     {/*<li className="nav-item">*/}
                     {/*    <SearchInput onSearchSubmit={handleSearchSubmit}/>*/}
