@@ -46,4 +46,4 @@ function MyApp({ Component, pageProps }) {
     );
 }
 
-export default  authCheck(MyApp);
+export default MyApp;
