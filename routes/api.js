@@ -1,4 +1,4 @@
-const baseURL = process.env.NEXT_PUBLIC_URL
+const baseURL = process.env.NEXT_PUBLIC_API
 
 export const POST_LOGIN_API = `${baseURL}/api/login`
 

@@ -11,7 +11,7 @@ export default function LoginPage() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const apiUrl = `${POST_LOGIN_API}`;
-        // Проверка учетных данных и генерация токена аутентификации
+
         try {
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -22,9 +22,7 @@ export default function LoginPage() {
             });
 
             if (response.ok) {
-                const {token} = await response.json();
-
-                // Вычисление времени истечения токена (12 часов)
+                const { token } = await response.json();
                 const expirationTime = new Date();
                 expirationTime.setHours(expirationTime.getHours() + 12);
                 const tokenData = {
@@ -50,10 +48,10 @@ export default function LoginPage() {
     };
 
     return (
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
-            <form onSubmit={handleSubmit} style={{maxWidth: '400px', fontFamily: 'sans-serif'}}>
-                <h1 style={{textAlign: 'center', marginBottom: '2rem', fontSize: '1.5rem'}}>Вход</h1>
-                <div style={{marginBottom: '1rem'}}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+            <form onSubmit={handleSubmit} style={{ maxWidth: '400px', fontFamily: 'sans-serif' }}>
+                <h1 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '1.5rem' }}>Вход</h1>
+                <div style={{ marginBottom: '1rem' }}>
                     <label htmlFor="username">Логин:</label>
                     <input
                         type="text"

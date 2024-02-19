@@ -23,7 +23,7 @@ export default function Home() {
                 <h1>Главная страница</h1>
             </div>
             <div className='d-flex justify-content-between'>
-                <div className="w-100">
+                <div className="w-75">
                     {/*<h3>Новости</h3>*/}
                     <div className="row row-cols-1 row-cols-md-3 g-4">
                         <div className="col">
@@ -78,49 +78,49 @@ export default function Home() {
                     </div>
 
                 </div>
-                {/*<div className="w-25 ms-4">*/}
-                {/*    /!*<h3>Статистика</h3>*!/*/}
-                {/*    <div className="card">*/}
-                {/*        <div className="card-body">*/}
-                {/*            <div className="ms-2">*/}
-                {/*                <div className="d-flex align-items-center">*/}
-                {/*                    <FontAwesomeIcon icon={faHandHoldingDollar} size="2xl" className='color-purple'/>*/}
-                {/*                    <div className="ms-3 d-flex flex-column">*/}
-                {/*                        <h5 className="card-title text-secondary">Баланс дилеров</h5>*/}
-                {/*                        <h5 className="card-text">12314234 сом</h5>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*                <div className="d-flex align-items-center mt-4 ">*/}
-                {/*                    <FontAwesomeIcon icon={faLandmark} size="2xl" className='color-purple'/>*/}
-                {/*                    <div className="ms-3 d-flex flex-column">*/}
-                {/*                        <h5 className="card-title text-secondary">Долги дилеров</h5>*/}
-                {/*                        <h5 className="card-text">123 142 343,4 сом</h5>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="card mt-4">*/}
-                {/*        <div className="card-body">*/}
-                {/*            <div className="ms-2">*/}
-                {/*                <div className="d-flex align-items-center">*/}
-                {/*                    <FontAwesomeIcon icon={faMoneyBillTrendUp} size="2xl" className='color-purple'/>*/}
-                {/*                    <div className="ms-3 d-flex flex-column">*/}
-                {/*                        <h5 className="card-title text-secondary">За сегодня</h5>*/}
-                {/*                        <h5 className="card-text">12,314 платежей</h5>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*                <div className="d-flex align-items-center mt-4 ">*/}
-                {/*                    <FontAwesomeIcon icon={faSackDollar} size="2xl" className='color-purple'/>*/}
-                {/*                    <div className="ms-3 d-flex flex-column">*/}
-                {/*                        <h5 className="card-title text-secondary">Проведено</h5>*/}
-                {/*                        <h5 className="card-text">123 142 34 сом</h5>*/}
-                {/*                    </div>*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
+                <div className="w-25 ms-4">
+                    {/*<h3>Статистика</h3>*/}
+                    <div className="card">
+                        <div className="card-body">
+                            <div className="ms-2">
+                                <div className="d-flex align-items-center">
+                                    <FontAwesomeIcon icon={faHandHoldingDollar} size="2xl" className='color-purple'/>
+                                    <div className="ms-3 d-flex flex-column">
+                                        <h5 className="card-title text-secondary">Баланс дилеров</h5>
+                                        <h5 className="card-text">12314234 сом</h5>
+                                    </div>
+                                </div>
+                                <div className="d-flex align-items-center mt-4 ">
+                                    <FontAwesomeIcon icon={faLandmark} size="2xl" className='color-purple'/>
+                                    <div className="ms-3 d-flex flex-column">
+                                        <h5 className="card-title text-secondary">Долги дилеров</h5>
+                                        <h5 className="card-text">123 142 343,4 сом</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="card mt-4">
+                        <div className="card-body">
+                            <div className="ms-2">
+                                <div className="d-flex align-items-center">
+                                    <FontAwesomeIcon icon={faMoneyBillTrendUp} size="2xl" className='color-purple'/>
+                                    <div className="ms-3 d-flex flex-column">
+                                        <h5 className="card-title text-secondary">За сегодня</h5>
+                                        <h5 className="card-text">12,314 платежей</h5>
+                                    </div>
+                                </div>
+                                <div className="d-flex align-items-center mt-4 ">
+                                    <FontAwesomeIcon icon={faSackDollar} size="2xl" className='color-purple'/>
+                                    <div className="ms-3 d-flex flex-column">
+                                        <h5 className="card-title text-secondary">Проведено</h5>
+                                        <h5 className="card-text">123 142 34 сом</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>

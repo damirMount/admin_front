@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
-import {destroyCookie, parseCookies} from 'nookies';
+import {parseCookies} from 'nookies';
 import {LOGIN_PAGE_URL} from "../routes/web";
 
 const AuthCheck = (WrappedComponent) => {
@@ -11,20 +11,14 @@ const AuthCheck = (WrappedComponent) => {
         useEffect(() => {
             const cookies = parseCookies();
             const authToken = cookies.authToken ? JSON.parse(cookies.authToken) : null;
-            const currentTime = Math.floor(Date.now() / 1000); // Текущее время в секундах
+            setCheckToken(authToken)
+            const currentTime = Math.floor(Date.now() / 1000);
 
-            if (!authToken && router.pathname !== '/login') {
-                // Если нет токена и не на странице логина, перенаправляем на страницу логина
-                router.replace('/login');
-            } else if (authToken) {
-                const {value, expiration} = authToken;
-
-                if (expiration <= currentTime) {
-                    destroyCookie(null, 'authToken'); // Удаляем токен
-                    router.replace('/login'); // Перенаправляем на страницу логина
-                }
+            if (!authToken || authToken.expiration <= currentTime) {
+                // Перенаправляем на страницу входа, если пользователь не авторизован или токен истек
+                router.replace(LOGIN_PAGE_URL);
             }
-        }, [router]);
+        }, []);
 
         if (!checkToken && router.pathname !== LOGIN_PAGE_URL) {
             return null; // Возвращаем null, пока идет проверка аутентификации
