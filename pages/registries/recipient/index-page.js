@@ -3,18 +3,21 @@ import React from 'react';
 import Footer from '../../../components/main/Footer';
 import Head from 'next/head';
 import DatabaseTable from "../../../components/main/table/DatabaseTable";
-import {RECIPIENT_DELETE_URL} from "../../../routes/api";
+import {RECIPIENT_DELETE_API} from "../../../routes/api";
 import ServiceStatusIndicator from "../../../components/main/table/cell/ServiceStatusIndicator";
 import RegistryNavigationTabs from "../../../components/pages/registry/RegistryNavigationTabs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendar, faEnvelope, faUser} from "@fortawesome/free-regular-svg-icons";
+import {faClockRotateLeft} from "@fortawesome/free-solid-svg-icons";
+import {RECIPIENT_EDIT_URL} from "../../../routes/web";
+import Link from "next/link";
 
 const IndexPage = () => {
     const createRoute = '/registries/recipient/create-recipient';
 
     function CreateButton() {
         return (
-            <a href={createRoute} className="btn btn-purple">Добавить запись</a>
+            <Link href={createRoute} className="btn btn-purple">Добавить запись</Link>
         );
     }
 
@@ -57,7 +60,7 @@ const IndexPage = () => {
             <div className="col-auto action-table-buttons flex-nowrap d-flex flex-column">
                 <span className="status text-start status-dashed d-flex flex-column">
                     <div>
-                        <FontAwesomeIcon className="me-2" icon={faCalendar} size="lg"/>
+                        <FontAwesomeIcon className="me-2" icon={faClockRotateLeft} size="lg"/>
                         {formatTypeValue((type))}
                     </div>
                     <div className="mt-1">
@@ -86,8 +89,8 @@ const IndexPage = () => {
     ];
 
     const actionButtonsLinks = {
-        editRoute: {label: 'Изменить запись', link: '/registries/recipient/edit-recipient', useId: true},
-        deleteRoute: {label: 'Удалить', link: `${RECIPIENT_DELETE_URL}`, useId: true},
+        editRoute: {label: 'Изменить запись', link: `${RECIPIENT_EDIT_URL}`, useId: true},
+        deleteRoute: {label: 'Удалить', link: `${RECIPIENT_DELETE_API}`, useId: true},
     };
 
     const configTable = [
@@ -100,7 +103,7 @@ const IndexPage = () => {
             <Head>
                 <title>Список получателей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div className="container body-container mt-5 ">
+            <div>
                 <h1>Список получателей</h1>
 
                 <div className="create-button d-flex justify-content-center">
@@ -115,7 +118,7 @@ const IndexPage = () => {
                 />
 
             </div>
-            <Footer/>
+           
         </div>
     );
 };

@@ -43,6 +43,7 @@
 html, body {
     background-color: #FCFAFF;
     color: #532C59;
+    overflow-x: hidden;
 }
 
 tr, td {
@@ -50,9 +51,9 @@ tr, td {
 }
 
 footer {
+    width: -webkit-fill-available;
     border-top: #F8E0FB 1px solid;
     margin-top: 50px;
-    height: 100%;
 }
 
 .footer-container {
@@ -73,8 +74,12 @@ footer {
 }
 
 .navbar {
+    width: -webkit-fill-available;
+    position: fixed;
+    max-width: 100%;
     background-color: #FFFFFF;
     border-bottom: #F8E0FB 1px solid;
+    z-index: 999;
 }
 
 h1 {
@@ -88,7 +93,7 @@ h1 {
     background-color: #532C59;
     color: #FFFFFF;
     font-weight: bold;
-    border-radius: 10px;
+    border-radius: 7px;
     border: #532C59 2px solid;
 }
 
@@ -106,7 +111,7 @@ h1 {
     border: #532C59 2px solid;
     color: #532C59;
     background-color: #FFFFFF;
-    border-radius: 10px;
+    border-radius: 7px;
 }
 
 .btn-grey:hover {
@@ -538,4 +543,58 @@ svg.tea {
 
 [class*="css-"] {
     white-space: inherit !important;
+}
+.sideBar {
+    background-color: #ffffff !important;
+    color: #532C59;
+    opacity: 1;
+}
+::-webkit-scrollbar {
+    width: 7px; /* Ширина полосы прокрутки */
+    height: 8px;
+    position: fixed;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #c7c7c7;
+    border-radius: 35px
+}
+::-webkit-scrollbar-track {
+    background-color: #eae9e9;
+}
+
+.color-purple {
+    color: #532C59;
+}
+.card {
+    box-shadow: var(--bs-box-shadow-sm)!important;
+}
+
+[data-title] {
+    position: relative;
+}
+[data-title]:after {
+    content: attr(data-title);
+    color: #FFFFFF;
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 5px;
+    /*white-space: -moz-pre-wrap;*/
+    word-break: break-word;
+    margin: 10px;
+    z-index: 99999;
+    visibility: hidden;
+    position: absolute;
+    display: flex;
+    text-align: center;
+    left: 0%;
+    bottom: 80%;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+[data-title]:hover:after {
+    opacity: 1;
+    -webkit-transition: all 0.1s ease 0.3s;
+    transition: all 0.1s ease 0.3s;
+    visibility: visible;
 }

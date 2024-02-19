@@ -1,12 +1,12 @@
 import RegistryFiles from "../../../components/pages/registry/RegistryFilesBackupsList";
 import Footer from "../../../components/main/Footer";
-import {REGISTRY_BACKUP_DOWNLOAD_URL, REGISTRY_BACKUP_INDEX_URL} from '../../../routes/api'
+import {REGISTRY_BACKUP_DOWNLOAD_API, REGISTRY_BACKUP_INDEX_API} from '../../../routes/api'
 import Head from "next/head";
 import React from "react";
 
 export default function IndexPage() {
-    const apiUrl = `${REGISTRY_BACKUP_INDEX_URL}`;
-    const downloadUrl = `${REGISTRY_BACKUP_DOWNLOAD_URL}`;
+    const apiUrl = `${REGISTRY_BACKUP_INDEX_API}`;
+    const downloadUrl = `${REGISTRY_BACKUP_DOWNLOAD_API}`;
 
     return (
         <div>
@@ -16,14 +16,14 @@ export default function IndexPage() {
             <div>
 
             </div>
-            <div className="container body-container mt-5">
+            <div className=" mt-5">
                 <h1>Резервные копии</h1>
                 <RegistryFiles
                     apiUrl={apiUrl}
                     downloadUrl={downloadUrl}
                 />
             </div>
-            <Footer></Footer>
+           
         </div>
     );
 };

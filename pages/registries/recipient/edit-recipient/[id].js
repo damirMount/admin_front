@@ -6,7 +6,7 @@ import {faEnvelope, faXmarkCircle} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import Footer from "../../../../components/main/Footer";
-import {RECIPIENT_SHOW_URL, RECIPIENT_UPDATE_URL} from "../../../../routes/api";
+import {RECIPIENT_SHOW_API, RECIPIENT_UPDATE_API} from "../../../../routes/api";
 import Head from "next/head";
 import UniversalSelect from "../../../../components/main/input/UniversalSelect";
 import Preloader from "../../../../components/main/Preloader";
@@ -15,7 +15,7 @@ export default function EditRecipient() {
     const [formData, setFormData] = useState({
         name: '',
         type: '',
-        emails: [''], // Начнем с одного поля по умолчанию
+        emails: [], // Начнем с одного поля по умолчанию
         is_blocked: '',
         registry_ids: '',
         createdAt: '',
@@ -25,7 +25,6 @@ export default function EditRecipient() {
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
     const [recipientName, setRecipientName] = useState('');
-    const [recipientValue, setRecipientValue] = useState('');
 
     const router = useRouter();
     const itemId = router.query.id;
@@ -44,7 +43,7 @@ export default function EditRecipient() {
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = `${RECIPIENT_UPDATE_URL}/${itemId}`;
+            const apiUrl = `${RECIPIENT_UPDATE_API}/${itemId}`;
             const dataToSend = {
                 ...formData,
                 emails: formData.emails,
@@ -77,21 +76,6 @@ export default function EditRecipient() {
         {value: 4, label: 'Раз в год'},
     ];
 
-    const handleAddEmailInput = () => {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            emails: [...prevFormData.emails, ''],
-        }));
-    };
-
-    const handleEmailChange = (index, value) => {
-        const newEmails = [...formData.emails];
-        newEmails[index] = value;
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            emails: newEmails,
-        }));
-    };
 
     const handleSelectorChange = (valuesArray, name) => {
         setFormData((prevFormData) => ({
@@ -100,26 +84,12 @@ export default function EditRecipient() {
         }));
     };
 
-    const handleRemoveEmailInput = (index) => {
-        // Проверяем, есть ли еще адреса, которые можно удалить
-        if (formData.emails.length === 1) {
-            return;
-        }
-
-        const newEmails = [...formData.emails];
-        newEmails.splice(index, 1); // Удаляем элемент по индексу
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            emails: newEmails,
-        }));
-    };
-
     useEffect(() => {
         const fetchRecipientItem = async () => {
             try {
                 const cookies = parseCookies();
                 const authToken = JSON.parse(cookies.authToken).value;
-                const apiUrl = RECIPIENT_SHOW_URL + '/' + itemId;
+                const apiUrl = RECIPIENT_SHOW_API + '/' + itemId;
                 const response = await fetch(apiUrl, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -140,7 +110,6 @@ export default function EditRecipient() {
                     setCreatedAt(data.createdAt)
                     setUpdatedAt(data.updatedAt)
 
-                    setRecipientValue(data.is_blocked)
                 } else {
                     console.error('Ошибка при загрузке данных с API');
                 }
@@ -168,7 +137,7 @@ export default function EditRecipient() {
                 <title>{recipientName} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
 
-            <div className="container body-container mt-5">
+            <div className=" mt-5">
                 <h1>Редактировать получателя</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="container d-flex">
@@ -265,7 +234,7 @@ export default function EditRecipient() {
                     </div>
                 </form>
             </div>
-            <Footer />
+           
         </div>
     );
 }

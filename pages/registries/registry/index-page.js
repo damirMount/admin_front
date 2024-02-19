@@ -3,9 +3,11 @@ import React from 'react';
 import Footer from '../../../components/main/Footer';
 import Head from 'next/head';
 import DatabaseTable from "../../../components/main/table/DatabaseTable";
-import {REGISTRY_DELETE_URL} from "../../../routes/api";
+import {REGISTRY_DELETE_API} from "../../../routes/api";
 import ServiceStatusIndicator from "../../../components/main/table/cell/ServiceStatusIndicator";
 import RegistryNavigationTabs from "../../../components/pages/registry/RegistryNavigationTabs";
+import {RECIPIENT_EDIT_URL, REGISTRY_EDIT_URL} from "../../../routes/web";
+import Link from "next/link";
 
 const IndexPage = () => {
     const createRoute = '/registries/registry/create-registry';
@@ -27,7 +29,7 @@ const IndexPage = () => {
 
     function CreateButton() {
         return (
-            <a href={createRoute} className="btn btn-purple">Добавить запись</a>
+            <Link href={createRoute} className="btn btn-purple">Добавить запись</Link>
         );
     }
 
@@ -76,8 +78,8 @@ const IndexPage = () => {
     ];
 
     const actionButtonsLinks = {
-        editRoute: {label: 'Изменить запись', link: '/registries/registry/edit-registry', useId: true},
-        deleteRoute: {label: 'Удалить', link: `${REGISTRY_DELETE_URL}`, useId: true},
+        editRoute: {label: 'Изменить запись', link: `${REGISTRY_EDIT_URL}`, useId: true},
+        deleteRoute: {label: 'Удалить', link: `${REGISTRY_DELETE_API}`, useId: true},
     };
 
     const configTable = [
@@ -90,7 +92,7 @@ const IndexPage = () => {
             <Head>
                 <title>Список реестров | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div className="container body-container mt-5 ">
+            <div>
                 <h1>Список реестров</h1>
 
                 <div className="create-button d-flex justify-content-center">
@@ -105,7 +107,7 @@ const IndexPage = () => {
                 />
 
             </div>
-            <Footer/>
+           
         </div>
     );
 };

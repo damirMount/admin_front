@@ -4,7 +4,7 @@ import ReportsNavigationTabs from "../../../components/pages/report/ReportsNavig
 import Preloader from "../../../components/main/Preloader";
 import FormInput from "../../../components/main/input/FormInput";
 import {parseCookies} from "nookies";
-import {DEALER_REPORTS_UPDATE_TSJ_DEALER_URL} from "../../../routes/api";
+import {DEALER_REPORTS_UPDATE_TSJ_DEALER_API} from "../../../routes/api";
 import Head from "next/head";
 import {useAlert} from "../../../contexts/AlertContext";
 import DatabaseTable from "../../../components/main/table/DatabaseTable";
@@ -64,7 +64,7 @@ export default function IndexPage() {
 
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const updateTSJDealerApiUrl = `${DEALER_REPORTS_UPDATE_TSJ_DEALER_URL}`;
+            const updateTSJDealerApiUrl = `${DEALER_REPORTS_UPDATE_TSJ_DEALER_API}`;
             const response = await fetch(updateTSJDealerApiUrl, {
                 method: 'POST',
                 headers: {
@@ -94,7 +94,7 @@ export default function IndexPage() {
             <Head>
                 <title>Список дилеров ТСЖ | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div className="container body-container mt-5">
+            <div className=" mt-5">
                 <h1>Список дилеров ТСЖ</h1>
                 <ReportsNavigationTabs/>
 
@@ -110,7 +110,7 @@ export default function IndexPage() {
                 )}
 
             </div>
-            <Footer/>
+           
         </div>
     );
 }

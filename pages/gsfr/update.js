@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import Footer from "../../components/main/Footer";
 import Preloader from "../../components/main/Preloader";
 import {parseCookies} from "nookies";
-import {GSFR_UPDATE_URL} from "../../routes/api";
+import {GSFR_UPDATE_API} from "../../routes/api";
 import Head from "next/head";
 import {useAlert} from "../../contexts/AlertContext";
 
@@ -18,7 +18,7 @@ export default function IndexPage() {
 
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const updateGSFRApiUrl = `${GSFR_UPDATE_URL}`;
+            const updateGSFRApiUrl = `${GSFR_UPDATE_API}`;
             const response = await fetch(updateGSFRApiUrl, {
                 method: 'POST',
                 headers: {
@@ -48,7 +48,7 @@ export default function IndexPage() {
             <Head>
                 <title>Обновление ГСФР | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div className="container body-container mt-5">
+            <div className=" mt-5">
                 <h1>Обновление ГСФР</h1>
 
                 {processingLoader ? (
@@ -66,7 +66,7 @@ export default function IndexPage() {
                 )}
 
             </div>
-            <Footer/>
+           
         </div>
     );
 }

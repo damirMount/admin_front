@@ -3,7 +3,7 @@ import Footer from "../../components/main/Footer";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowRightArrowLeft, faFileExcel,} from "@fortawesome/free-solid-svg-icons";
 import {parseCookies} from "nookies";
-import {ACQUIRING_COMPARISON_URL} from "../../routes/api";
+import {ACQUIRING_COMPARISON_API} from "../../routes/api";
 import Head from "next/head";
 
 export default function IndexPage() {
@@ -11,7 +11,7 @@ export default function IndexPage() {
     const [excelFile, setExcelFile] = useState(null);
     const [registryFile, setRegistryFile] = useState(null);
     const [comparisonResult, setComparisonResult] = useState(null);
-    const apiUrl = `${ACQUIRING_COMPARISON_URL}`;
+    const apiUrl = `${ACQUIRING_COMPARISON_API}`;
 
     const handleExcelFileChange = (e) => {
         setExcelFile(e.target.files[0]);
@@ -87,7 +87,7 @@ export default function IndexPage() {
             </Head>
 
 
-            <div className="container body-container mt-5">
+            <div className=" mt-5">
                 <h1>Сверка платежей</h1>
                 <div className="d-flex flex-column align-items-center w-100">
                     <div className="d-flex flex-row align-items-center w-100 mt-5">
@@ -153,7 +153,7 @@ export default function IndexPage() {
                 )}
             </div>
 
-            <Footer/>
+           
         </div>
     );
 }

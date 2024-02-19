@@ -1,6 +1,6 @@
 // DataFetcher.js
 
-import {GET_DATA_FROM_DB_URL} from "../../../routes/api";
+import {GET_DATA_FROM_DB_API} from "../../../routes/api";
 import {parseCookies} from "nookies";
 
 const fetchData = async (config) => {
@@ -8,7 +8,7 @@ const fetchData = async (config) => {
     try {
         const cookies = parseCookies();
         const authToken = JSON.parse(cookies.authToken).value;
-        const fetchDataUrl = `${GET_DATA_FROM_DB_URL}`;
+        const fetchDataUrl = `${GET_DATA_FROM_DB_API}`;
         const params = new URLSearchParams({
             model: config.model,                                                    //'ModelName' - REQUIRED!!!
             filters: config.filters ? JSON.stringify(config.filters) : undefined,   // filters = { column1: 'value', column2: '[value1, value2]', accurateSearch: true} accurateSearch: true - Включает точный поиск по всем аргументам, по стандарту false;

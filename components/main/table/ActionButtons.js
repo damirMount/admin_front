@@ -2,6 +2,7 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEllipsis} from '@fortawesome/free-solid-svg-icons';
 import DataRemover from "../database/DataRemover";
+import Link from "next/link";
 
 const ActionButtons = ({buttonsLinks = null, props}) => {
     const id = props.id;
@@ -18,12 +19,12 @@ const ActionButtons = ({buttonsLinks = null, props}) => {
             const buttonLink = `${link}${useId ? `/${id}` : ''}`;
             buttons.push(
                 <li key={key}>
-                    <a
+                    <Link
                         href={buttonLink}
                         className="dropdown-item d-flex align-items-center"
                     >
                         {label}
-                    </a>
+                    </Link>
                 </li>
             );
         } else if (key === 'deleteRoute' && id) {

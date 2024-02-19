@@ -6,7 +6,7 @@ import Preloader from "../../../components/main/Preloader";
 import {formatDistanceToNow} from 'date-fns';
 import ruLocale from 'date-fns/locale/ru';
 import ReportsNavigationTabs from "../../../components/pages/report/ReportsNavigationTabs";
-import {DEALER_REPORTS_EXPORT_URL} from "../../../routes/api";
+import {DEALER_REPORTS_EXPORT_API} from "../../../routes/api";
 import Head from "next/head";
 import DateRangeInput from "../../../components/main/input/DateRangeInput";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
@@ -41,7 +41,7 @@ export default function IndexPage() {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
 
-            const sendRegistryApiUrl = `${DEALER_REPORTS_EXPORT_URL}`;
+            const sendRegistryApiUrl = `${DEALER_REPORTS_EXPORT_API}`;
 
             setProcessingLoader(true);
 
@@ -110,7 +110,7 @@ export default function IndexPage() {
             <div>
                 <Alert alertMessage={alertMessage} clearAlertMessage={clearAlertMessage}/>
             </div>
-            <div className="container body-container mt-5">
+            <div className=" mt-5">
                 <h1>Выгрузка отчета по истории счетов</h1>
 
                 <ReportsNavigationTabs/>
@@ -295,7 +295,7 @@ export default function IndexPage() {
                     </div>
                 )}
             </div>
-            <Footer></Footer>
+           
         </div>
     );
 };

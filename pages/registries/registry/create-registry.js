@@ -7,7 +7,7 @@ import {library} from '@fortawesome/fontawesome-svg-core';
 import Link from 'next/link';
 import Footer from '../../../components/main/Footer';
 import RegistryFieldsTable from "../../../components/pages/registry/RegistryFieldsTable";
-import {REGISTRY_CREATE_URL} from "../../../routes/api";
+import {REGISTRY_CREATE_API} from "../../../routes/api";
 import Head from "next/head";
 import RegistryFileFormat from "../../../components/pages/registry/RegistryFileFormat";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
@@ -60,7 +60,7 @@ export default function CreateRegistry() {
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = REGISTRY_CREATE_URL;
+            const apiUrl = REGISTRY_CREATE_API;
 
             const activeRows = getRows.filter((row) => row.isActive);
             const activeFields = activeRows.map((row) => row.field);
@@ -102,7 +102,7 @@ export default function CreateRegistry() {
             <div>
 
             </div>
-            <div className="container body-container mt-5">
+            <div className=" mt-5">
                 <h1>Страница создания файла реестров</h1>
 
                 <form onSubmit={handleSubmit}>
@@ -196,7 +196,7 @@ export default function CreateRegistry() {
                     </div>
                 </form>
             </div>
-            <Footer></Footer>
+           
         </div>
     );
 }

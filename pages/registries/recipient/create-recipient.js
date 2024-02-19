@@ -4,7 +4,7 @@ import FormInput from '../../../components/main/input/FormInput';
 import {parseCookies} from 'nookies';
 import Link from 'next/link';
 import Footer from '../../../components/main/Footer';
-import {RECIPIENT_CREATE_URL} from '../../../routes/api'
+import {RECIPIENT_CREATE_API} from '../../../routes/api'
 import Head from "next/head";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
 
@@ -37,39 +37,6 @@ export default function CreateRecipient() {
             ...prevFormData,
             [name]: valuesArray,
         }));
-        console.log(valuesArray)
-    };
-
-    const handleEmailChange = (index, value) => {
-        const newEmails = [...formData.emails];
-        newEmails[index] = value;
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            emails: newEmails,
-        }));
-    };
-
-    const handleAddEmailInput = () => {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            emails: [...prevFormData.emails, ''], // Добавляем новое пустое поле
-        }));
-
-    };
-
-    const handleRemoveEmailInput = (index) => {
-        // Проверяем, есть ли еще адреса, которые можно удалить
-        if (formData.emails.length === 1) {
-            return;
-        }
-
-        const newEmails = [...formData.emails];
-        newEmails.splice(index, 1); // Удаляем элемент по индексу
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            emails: newEmails,
-        }));
-
     };
 
 
@@ -80,7 +47,7 @@ export default function CreateRecipient() {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
 
-            const apiUrl = RECIPIENT_CREATE_URL;
+            const apiUrl = RECIPIENT_CREATE_API;
 
             // Формируем данные для отправки на сервер, включая данные emails
             const dataToSend = {
@@ -114,7 +81,7 @@ export default function CreateRecipient() {
             <Head>
                 <title>Создать получателя | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div className="container body-container mt-5">
+            <div className=" mt-5">
                 <h1>Создать получателя</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="container d-flex">
@@ -206,7 +173,7 @@ export default function CreateRecipient() {
                     </div>
                 </form>
             </div>
-            <Footer />
+           
         </div>
     );
 }

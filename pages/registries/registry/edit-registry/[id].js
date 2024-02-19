@@ -6,8 +6,8 @@ import Link from 'next/link';
 import Footer from '../../../../components/main/Footer';
 import RegistryFieldsTable from "../../../../components/pages/registry/RegistryFieldsTable";
 import {
-    REGISTRY_SHOW_URL,
-    REGISTRY_UPDATE_URL
+    REGISTRY_SHOW_API,
+    REGISTRY_UPDATE_API
 } from "../../../../routes/api";
 import Head from "next/head";
 import RegistryFileFormat from "../../../../components/pages/registry/RegistryFileFormat";
@@ -94,7 +94,7 @@ export default function EditRegistryFile() {
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = REGISTRY_UPDATE_URL + '/' + itemId;
+            const apiUrl = REGISTRY_UPDATE_API + '/' + itemId;
 
             const activeRows = getRows.filter((row) => row.isActive);
             const activeFields = activeRows.map((row) => row.field);
@@ -131,7 +131,7 @@ export default function EditRegistryFile() {
             try {
                 const cookies = parseCookies();
                 const authToken = JSON.parse(cookies.authToken).value;
-                const apiUrl = REGISTRY_SHOW_URL + '/' + itemId;
+                const apiUrl = REGISTRY_SHOW_API + '/' + itemId;
                 const response = await fetch(apiUrl, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -193,7 +193,7 @@ export default function EditRegistryFile() {
             <Head>
                 <title>{registryName} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div className="container body-container mt-5">
+            <div className=" mt-5">
                 <h1>Страница редактирования файла реестров</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="container d-flex">
@@ -287,7 +287,7 @@ export default function EditRegistryFile() {
                     </div>
                 </form>
             </div>
-            <Footer/>
+           
         </div>
     );
 }

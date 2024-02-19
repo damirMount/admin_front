@@ -20,7 +20,7 @@ const Alert = () => {
         <div id="alert">
             {alertMessage.text && (
                 <div>
-                    <div className={`toast d-block z-1 mb-3 position-fixed start-0 bottom-0 m-4`} role="alert">
+                    <div className={`toast d-block z-1 mb-3 position-fixed end-0 bottom-0 m-4`} role="alert">
                         <div
                             className={`w-100 d-flex justify-content-between toast-header bg-${messageType} text-white`}>
                             {messageType === 'success' ? (

@@ -7,7 +7,7 @@ import FormInput from "../../../components/main/input/FormInput";
 import Footer from "../../../components/main/Footer";
 import Preloader from "../../../components/main/Preloader";
 import {faEnvelope} from "@fortawesome/free-regular-svg-icons";
-import {GET_PAYMENTS_URL, REGISTRY_RESEND_URL} from "../../../routes/api";
+import {GET_PAYMENTS_API, REGISTRY_RESEND_API} from "../../../routes/api";
 import Head from "next/head";
 import DateRangeInput from "../../../components/main/input/DateRangeInput";
 import RegistryFileFormat from "../../../components/pages/registry/RegistryFileFormat";
@@ -92,7 +92,7 @@ export default function IndexPage() {
 
         const cookies = parseCookies();
         const authToken = JSON.parse(cookies.authToken).value;
-        const getPaymentApi = `${GET_PAYMENTS_URL}`;
+        const getPaymentApi = `${GET_PAYMENTS_API}`;
 
         const dataToSend = {
             paymentId: paymentId,
@@ -152,7 +152,7 @@ export default function IndexPage() {
                 const cookies = parseCookies();
                 const authToken = JSON.parse(cookies.authToken).value;
 
-                const sendRegistryApiUrl = `${REGISTRY_RESEND_URL}`;
+                const sendRegistryApiUrl = `${REGISTRY_RESEND_API}`;
 
                 setProcessingLoader(true); // Показать прелоадер
 
@@ -263,7 +263,7 @@ export default function IndexPage() {
 
             </div>
             <div className="d-flex flex-column align-items-center">
-                <div className="container d-flex flex-column align-items-center body-container mt-5">
+                <div className="container d-flex flex-column align-items-center body-container">
                     <h1>Перезапуск реестра</h1>
                     <RegistryNavigationTabs/>
 
@@ -479,7 +479,7 @@ export default function IndexPage() {
                 )}
 
             </div>
-            <Footer></Footer>
+
         </div>
     );
 }

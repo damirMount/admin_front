@@ -1,11 +1,12 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {useRouter} from 'next/router';
 import SelectWithSearch from '../components/main/input/SelectWithSearch';
 import FormInput from '../components/main/input/FormInput';
 import {parseCookies} from 'nookies';
 
 import Footer from "../components/main/Footer";
-import {GET_LIST_SERVICES_URL, POST_ABONENT_SERVICE_URL} from '../routes/api'
+import {GET_LIST_SERVICES_API, POST_ABONENT_SERVICE_API} from '../routes/api'
+import Head from "next/head";
 
 export default function UpdateDBPage() {
     const [formData, setFormData] = useState({
@@ -45,7 +46,7 @@ export default function UpdateDBPage() {
         try {
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
-            const apiUrl = `${POST_ABONENT_SERVICE_URL}`;
+            const apiUrl = `${POST_ABONENT_SERVICE_API}`;
             // Отправка данных формы на API
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -71,16 +72,16 @@ export default function UpdateDBPage() {
 
     return (
         <div>
-            <div>
-
-            </div>
-            <div className="container body-container">
+            <Head>
+                <title>Обновления БД | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
+            <div className="container">
                 <h1>Страница обновления БД</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="service_id">Сервис</label>
                         <SelectWithSearch
-                            apiUrl={`${GET_LIST_SERVICES_URL}`}
+                            apiUrl={`${GET_LIST_SERVICES_API}`}
                             required
                             name="serviceId"
                             onSelectChange={(selectedValue) =>
@@ -178,7 +179,7 @@ export default function UpdateDBPage() {
           }
         `}</style>
             </div>
-            <Footer></Footer>
+           
         </div>
     );
 }
