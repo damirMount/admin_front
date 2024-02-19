@@ -16,6 +16,14 @@ import {LOGIN_PAGE_URL} from "../routes/web";
 
 function MyApp({ Component, pageProps }) {
     const router = useRouter();
+    const [checkToken, setCheckToken] = useState(null); // Инициализация стейта
+
+    useEffect(() => {
+        const cookies = parseCookies();
+        const authToken = cookies.authToken ? JSON.parse(cookies.authToken) : null;
+        setCheckToken(authToken);
+
+    }, [router]);
 
     return (
         <div>

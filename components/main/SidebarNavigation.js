@@ -54,15 +54,15 @@ const SidebarNavigation = () => {
             ],
         },
 
-        // {EMPTY_ELEMENT: ''},
-        // {label: 'В Разработке', hideWhereCollapsed: true},
-        // {label: 'Разработка', icon: faCode,
-        //     subMenu: [
-        //         {label: 'TEST ZONE', link: `${TEST_ZONE_URL}`,},
-        //         {label: 'Обновление ГСФР', link: `${GSFR_UPDATE_URL}`},
-        //         {label: 'Эквайринг', link: `${ACQUIRING_URL}`,},
-        //     ]
-        // },
+        {EMPTY_ELEMENT: ''},
+        {label: 'В Разработке', hideWhereCollapsed: true},
+        {label: 'Разработка', icon: faCode,
+            subMenu: [
+                {label: 'TEST ZONE', link: `${TEST_ZONE_URL}`,},
+                {label: 'Обновление ГСФР', link: `${GSFR_UPDATE_URL}`},
+                {label: 'Эквайринг', link: `${ACQUIRING_URL}`,},
+            ]
+        },
     ];
 
 
