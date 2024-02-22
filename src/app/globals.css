@@ -598,3 +598,6 @@ svg.tea {
     transition: all 0.1s ease 0.3s;
     visibility: visible;
 }
+.toast {
+    background-color: #FFFFFF;
+}

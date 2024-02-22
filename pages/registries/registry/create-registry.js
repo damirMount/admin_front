@@ -11,6 +11,8 @@ import {REGISTRY_CREATE_API} from "../../../routes/api";
 import Head from "next/head";
 import RegistryFileFormat from "../../../components/pages/registry/RegistryFileFormat";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
+import {useAlert} from "../../../contexts/AlertContext";
+import {REGISTRY_INDEX_URL} from "../../../routes/web";
 
 library.add(faCheck, faTag, faGripVertical, faPlus);
 
@@ -21,6 +23,7 @@ export default function CreateRegistry() {
         is_blocked: '',
     });
     const router = useRouter();
+    const {clearAlertMessage, showAlertMessage} = useAlert();
     const [selectedServer, setSelectedServer] = useState(null)
     const [getRows, setRows] = useState([
         {isActive: true, field: 'identifier', tableHeader: 'Лицевой счёт'},
@@ -82,14 +85,15 @@ export default function CreateRegistry() {
                 body: JSON.stringify(activeFormData),
             });
 
+            const responseData = await response.json();
             if (response.ok) {
-                console.log('Данные успешно отправлены на API');
-                // Перенаправление на другую страницу после успешной отправки
-                await router.push('/registries/registry/index-page');
+                showAlertMessage({type: "success", text: responseData.message});
+                await router.push(REGISTRY_INDEX_URL);
             } else {
-                console.error('Ошибка при отправке данных на API');
+                showAlertMessage({type: "error", text: responseData.message});
             }
         } catch (error) {
+            showAlertMessage({type: "error", text: error.message});
             console.error(error);
         }
     };

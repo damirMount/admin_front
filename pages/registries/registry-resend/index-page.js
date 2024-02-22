@@ -328,7 +328,7 @@ export default function IndexPage() {
                                         placeholder="Выберете получателя"
                                         fetchDataConfig={{
                                             model: 'Recipient',
-                                            filters: {is_blocked: false}
+                                           searchTerm: {is_blocked: false}
                                         }}
                                         firstOptionSelected
                                         required
@@ -371,7 +371,7 @@ export default function IndexPage() {
                                                     name='services_id'
                                                     fetchDataConfig={{
                                                         model: 'Service',
-                                                        filters: {id: services}
+                                                       searchTerm: {id: services}
                                                     }}
                                                     placeholder="Выберете сервисы"
                                                     selectedOptions={services}

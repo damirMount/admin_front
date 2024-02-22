@@ -13,6 +13,8 @@ import Head from "next/head";
 import RegistryFileFormat from "../../../../components/pages/registry/RegistryFileFormat";
 import UniversalSelect from "../../../../components/main/input/UniversalSelect";
 import Preloader from "../../../../components/main/Preloader";
+import {useAlert} from "../../../../contexts/AlertContext";
+import {REGISTRY_INDEX_URL} from "../../../../routes/web";
 
 export default function EditRegistryFile() {
     const [formData, setFormData] = useState({
@@ -25,7 +27,7 @@ export default function EditRegistryFile() {
         sqlQuery: '',
     });
     const [isLoading, setIsLoading] = useState(true);
-
+    const {clearAlertMessage, showAlertMessage} = useAlert();
     const router = useRouter();
     const itemId = router.query.id;
     const [registryStatus, setRegistryStatus] = useState('');
@@ -115,13 +117,15 @@ export default function EditRegistryFile() {
                 body: JSON.stringify(activeFormData),
             });
 
+            const responseData = await response.json();
             if (response.ok) {
-                console.log('Данные успешно отправлены на API');
-                await router.push('/registries/registry/index-page');
+                showAlertMessage({type: "success", text: responseData.message});
+                await router.push(REGISTRY_INDEX_URL);
             } else {
-                console.error('Ошибка при отправке данных на API');
+                showAlertMessage({type: "error", text: responseData.message});
             }
         } catch (error) {
+            showAlertMessage({type: "error", text: error.message});
             console.error(error);
         }
     };
@@ -138,38 +142,40 @@ export default function EditRegistryFile() {
                     },
                 });
 
+                const responseData = await response.json();
                 if (response.ok) {
-                    const data = await response.json();
                     setFormData((prevFormData) => ({
                         ...prevFormData,
-                        name: data.name,
-                        servicesId: data.services_id,
-                        serverId: data.server_id,
-                        tableHeaders: data.table_headers,
-                        is_blocked: data.is_blocked,
+                        name: responseData.name,
+                        servicesId: responseData.services_id,
+                        serverId: responseData.server_id,
+                        tableHeaders: responseData.table_headers,
+                        is_blocked: responseData.is_blocked,
                     }));
 
-                    setCreatedAt(data.createdAt)
-                    setUpdatedAt(data.updatedAt)
-                    setRegistryStatus(data.is_blocked)
-                    setRegistryName(data.name)
+                    setCreatedAt(responseData.createdAt)
+                    setUpdatedAt(responseData.updatedAt)
+                    setRegistryStatus(responseData.is_blocked)
+                    setRegistryName(responseData.name)
 
-                    const dataFieldArray = data.fields.split(',').map((item) => item.trim());
+                    const dataFieldArray = responseData.fields.split(',').map((item) => item.trim());
 
-                    const dataHeadersArray = data.table_headers.split(',').map((item) => item.trim());
+                    const dataHeadersArray = responseData.table_headers.split(',').map((item) => item.trim());
                     const combinedData = combineDataFromDatabase(dataFieldArray, dataHeadersArray);
                     setRows(combinedData);
 
-                    const selectedFormats = data.formats; // предположим, что это уже массив форматов
+                    const selectedFormats = responseData.formats; // предположим, что это уже массив форматов
                     setFormData((prevFormData) => ({
                         ...prevFormData,
                         formats: selectedFormats,
                     }));
                 } else {
+                    showAlertMessage({type: "error", text: responseData.message});
                     console.error('Ошибка при загрузке данных с API');
                 }
             } catch (error) {
                 console.error(error);
+                showAlertMessage({type: "error", text: error.message});
             } finally {
                 setIsLoading(false); // Устанавливаем isLoading в false после завершения загрузки
             }
@@ -251,7 +257,7 @@ export default function EditRegistryFile() {
                                     placeholder="Выберете сервисы"
                                     fetchDataConfig={{
                                         model: 'Service',
-                                        filters: {id_bserver: selectedServer}
+                                        searchTerm: {id_bserver: selectedServer}
                                     }}
                                     selectedOptions={formData.servicesId}
                                     onSelectChange={handleSelectorChange}

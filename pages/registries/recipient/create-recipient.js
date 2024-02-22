@@ -7,6 +7,8 @@ import Footer from '../../../components/main/Footer';
 import {RECIPIENT_CREATE_API} from '../../../routes/api'
 import Head from "next/head";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
+import {RECIPIENT_INDEX_URL, REGISTRY_INDEX_URL} from "../../../routes/web";
+import {useAlert} from "../../../contexts/AlertContext";
 
 export default function CreateRecipient() {
     const [formData, setFormData] = useState({
@@ -17,7 +19,7 @@ export default function CreateRecipient() {
         emails: [], // Начнем с одного поля по умолчанию
     });
     const router = useRouter();
-
+    const {clearAlertMessage, showAlertMessage} = useAlert();
     const recipientTypes = [
         {value: 1, label: 'Каждый день'},
         {value: 2, label: 'Раз в неделю'},
@@ -64,14 +66,15 @@ export default function CreateRecipient() {
                 body: JSON.stringify(dataToSend),
             });
 
+            const responseData = await response.json();
             if (response.ok) {
-                console.log('Данные успешно отправлены на API');
-                // Перенаправление на другую страницу после успешной отправки
-                await router.push('/registries/recipient/index-page');
+                showAlertMessage({type: "success", text: responseData.message});
+                await router.push(RECIPIENT_INDEX_URL);
             } else {
-                console.error('Ошибка при отправке данных на API');
+                showAlertMessage({type: "error", text: responseData.message});
             }
         } catch (error) {
+            showAlertMessage({type: "error", text: error.message});
             console.error(error);
         }
     };

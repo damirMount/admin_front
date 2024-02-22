@@ -10,6 +10,8 @@ import {RECIPIENT_SHOW_API, RECIPIENT_UPDATE_API} from "../../../../routes/api";
 import Head from "next/head";
 import UniversalSelect from "../../../../components/main/input/UniversalSelect";
 import Preloader from "../../../../components/main/Preloader";
+import {RECIPIENT_INDEX_URL} from "../../../../routes/web";
+import {useAlert} from "../../../../contexts/AlertContext";
 
 export default function EditRecipient() {
     const [formData, setFormData] = useState({
@@ -21,6 +23,7 @@ export default function EditRecipient() {
         createdAt: '',
         updatedAt: '',
     });
+    const {clearAlertMessage, showAlertMessage} = useAlert();
     const [isLoading, setIsLoading] = useState(true);
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
@@ -58,13 +61,15 @@ export default function EditRecipient() {
                 body: JSON.stringify(dataToSend),
             });
 
+            const responseData = await response.json();
             if (response.ok) {
-                console.log('Данные успешно отправлены на API');
-                await router.push('/registries/recipient/index-page');
+                showAlertMessage({type: "success", text: responseData.message});
+                await router.push(RECIPIENT_INDEX_URL);
             } else {
-                console.error('Ошибка при отправке данных на API');
+                showAlertMessage({type: "error", text: responseData.message});
             }
         } catch (error) {
+            showAlertMessage({type: "error", text: error.message});
             console.error(error);
         }
     };
@@ -95,26 +100,27 @@ export default function EditRecipient() {
                         Authorization: `Bearer ${authToken}`,
                     },
                 });
+                const responseData = await response.json();
                 if (response.ok) {
-                    const data = await response.json();
-
-                    setRecipientName(data.name)
+                    setRecipientName(responseData.name)
                     setFormData((prevFormData) => ({
                         ...prevFormData,
-                        name: data.name,
-                        type: data.type,
-                        emails: data.emails.split(',').map(email => email.trim()),
-                        is_blocked: data.is_blocked,
-                        registry_ids: data.registry_ids.map((item) => item.id),
+                        name: responseData.name,
+                        type: responseData.type,
+                        emails: responseData.emails.split(',').map(email => email.trim()),
+                        is_blocked: responseData.is_blocked,
+                        registry_ids: responseData.registry_ids.map((item) => item.id),
                     }));
-                    setCreatedAt(data.createdAt)
-                    setUpdatedAt(data.updatedAt)
+                    setCreatedAt(responseData.createdAt)
+                    setUpdatedAt(responseData.updatedAt)
 
                 } else {
+                    showAlertMessage({type: "error", text: responseData.message});
                     console.error('Ошибка при загрузке данных с API');
                 }
             } catch (error) {
                 console.error(error);
+                showAlertMessage({type: "error", text: error.message});
             } finally {
                 setIsLoading(false);
             }
