@@ -1,7 +1,14 @@
 import React, {useState} from 'react';
 import {Menu, MenuItem, Sidebar, SubMenu} from 'react-pro-sidebar';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBars, faCode, faDisplay, faHome, faTimes} from "@fortawesome/free-solid-svg-icons";
+import {
+    faBars,
+    faCode,
+    faDisplay,
+    faHome,
+    faShieldHalved,
+    faTimes
+} from "@fortawesome/free-solid-svg-icons";
 import {faEnvelopeOpen, faFileLines, faFloppyDisk, faUser} from "@fortawesome/free-regular-svg-icons";
 import {
     ACQUIRING_URL,
@@ -33,7 +40,6 @@ const SidebarNavigation = () => {
         {label: 'Главная', link: `${MAIN_PAGE_URL}`, icon: faDisplay},
 
         {label: 'Навигация', hideWhereCollapsed: true},
-        {label: 'Обновление БД', link: `${DATABASE_UPDATE_INDEX_URL}`, icon: faFloppyDisk},
         {label: 'Реестры', icon: faEnvelopeOpen,
             subMenu: [
                 {label: 'Получатели', link: `${RECIPIENT_INDEX_URL}`},
@@ -53,8 +59,8 @@ const SidebarNavigation = () => {
                 },
             ],
         },
-
-        {EMPTY_ELEMENT: ''},
+        {label: 'Обновление БД', link: `${DATABASE_UPDATE_INDEX_URL}`, icon: faFloppyDisk},
+        // {label: 'Обновление ГСФР', link: `${GSFR_UPDATE_URL}`, icon: faShieldHalved},
         {label: 'В Разработке', hideWhereCollapsed: true},
         {label: 'Разработка', icon: faCode,
             subMenu: [
