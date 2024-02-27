@@ -11,7 +11,9 @@ export default function IndexPage() {
     const [processingLoader, setProcessingLoader] = useState(false);
 
     const {clearAlertMessage, showAlertMessage} = useAlert();
-    const [formData, setFormData] = useState({ urls: {} });
+    const [formData, setFormData] = useState({ urls: {
+        UN: 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
+        } });
 
     const handleInputChange = (event) => {
         const {name, value} = event.target;
