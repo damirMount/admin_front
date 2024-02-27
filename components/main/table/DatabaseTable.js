@@ -48,7 +48,7 @@ const DatabaseTable = ({model, tableHeaders, configTable = null, additionalEleme
 
             const fetchDBConfig = {
                 model: model,
-                filters: searchObject,
+                searchTerm: searchObject,
                 sort: JSON.stringify(sortColumn),
                 limit: pageSize,
                 offset: (page - 1) * pageSize
