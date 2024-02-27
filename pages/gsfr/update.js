@@ -25,7 +25,7 @@ export default function IndexPage() {
 
     const handleUpdate = async () => {
         try {
-
+            setProcessingLoader(true);
             const cookies = parseCookies();
             const authToken = JSON.parse(cookies.authToken).value;
             const updateGSFRApiUrl = `${GSFR_UPDATE_API}`;
@@ -37,7 +37,7 @@ export default function IndexPage() {
                 },
                 body:  JSON.stringify(formData),
             });
-            setProcessingLoader(true);
+
             const responseData = await response.json();
 
 
