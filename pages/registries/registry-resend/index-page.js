@@ -1,10 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
-import {parseCookies} from "nookies";
 import RegistryNavigationTabs from "../../../components/pages/registry/RegistryNavigationTabs";
 import FormInput from "../../../components/main/input/FormInput";
-import Footer from "../../../components/main/Footer";
 import Preloader from "../../../components/main/Preloader";
 import {faEnvelope} from "@fortawesome/free-regular-svg-icons";
 import {GET_PAYMENTS_API, REGISTRY_RESEND_API} from "../../../routes/api";
@@ -15,6 +13,7 @@ import {useAlert} from '../../../contexts/AlertContext';
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
 import fetchData from "../../../components/main/database/DataFetcher";
 import {value} from "lodash/seq";
+import {useSession} from "next-auth/react";
 
 
 export default function IndexPage() {
@@ -22,7 +21,7 @@ export default function IndexPage() {
     const [registry, setRegistry] = useState('');
     const [services, setServices] = useState('');
     const [registryOptions, setRegistryOptions] = useState('');
-
+    const { data: session } = useSession(); // Получаем сессию
     const [processingLoader, setProcessingLoader] = useState(false);
     const [paymentId, setPaymentId] = useState('');
     const [testEmail, setTestEmail] = useState('');
@@ -90,8 +89,6 @@ export default function IndexPage() {
     const handleAddColumn = async (event) => {
         event.preventDefault();
 
-        const cookies = parseCookies();
-        const authToken = JSON.parse(cookies.authToken).value;
         const getPaymentApi = `${GET_PAYMENTS_API}`;
 
         const dataToSend = {
@@ -105,7 +102,7 @@ export default function IndexPage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authToken}`,
+                    Authorization: `Bearer ${session.accessToken}`,
                 },
                 body: JSON.stringify({
                     dataToSend
@@ -149,8 +146,6 @@ export default function IndexPage() {
                     formData,
                     rows,
                 };
-                const cookies = parseCookies();
-                const authToken = JSON.parse(cookies.authToken).value;
 
                 const sendRegistryApiUrl = `${REGISTRY_RESEND_API}`;
 
@@ -160,7 +155,7 @@ export default function IndexPage() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${authToken}`,
+                        Authorization: `Bearer ${session.accessToken}`,
                     },
                     body: JSON.stringify(dataToSend),
                 });
@@ -211,7 +206,7 @@ export default function IndexPage() {
 
         const fetchDataAndSetOptions = async () => {
             try {
-                const relationOptions = await fetchData(fetchRegistryRelation);
+                const relationOptions = await fetchData(fetchRegistryRelation, session);
 
                 const fetchRegistry = {
                     model: 'Registry',
@@ -222,7 +217,7 @@ export default function IndexPage() {
                     }
                 };
 
-                const registryList = await fetchData(fetchRegistry);
+                const registryList = await fetchData(fetchRegistry, session);
                 setRegistryOptions(registryList.data);
 
             } catch (error) {

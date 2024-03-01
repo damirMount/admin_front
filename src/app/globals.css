@@ -73,6 +73,12 @@ footer {
     height: 100%;
 }
 
+.text-overflow {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .navbar {
     width: -webkit-fill-available;
     position: fixed;

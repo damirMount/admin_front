@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
 import FormInput from '../../../../components/main/input/FormInput';
-import {parseCookies} from 'nookies';
 import Link from 'next/link';
-import Footer from '../../../../components/main/Footer';
 import RegistryFieldsTable from "../../../../components/pages/registry/RegistryFieldsTable";
 import {
     REGISTRY_SHOW_API,
@@ -15,6 +13,7 @@ import UniversalSelect from "../../../../components/main/input/UniversalSelect";
 import Preloader from "../../../../components/main/Preloader";
 import {useAlert} from "../../../../contexts/AlertContext";
 import {REGISTRY_INDEX_URL} from "../../../../routes/web";
+import {useSession} from "next-auth/react";
 
 export default function EditRegistryFile() {
     const [formData, setFormData] = useState({
@@ -33,7 +32,7 @@ export default function EditRegistryFile() {
     const [registryStatus, setRegistryStatus] = useState('');
     const [getRows, setRows] = useState([]);
     const [selectedServer, setSelectedServer] = useState(null)
-
+    const { data: session } = useSession(); // Получаем сессию
     const handleUpdateRows = (updatedRows) => {
         setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryFieldsTable
     };
@@ -94,8 +93,6 @@ export default function EditRegistryFile() {
         event.preventDefault();
 
         try {
-            const cookies = parseCookies();
-            const authToken = JSON.parse(cookies.authToken).value;
             const apiUrl = REGISTRY_UPDATE_API + '/' + itemId;
 
             const activeRows = getRows.filter((row) => row.isActive);
@@ -112,7 +109,7 @@ export default function EditRegistryFile() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authToken}`,
+                    Authorization: `Bearer ${session.accessToken}`,
                 },
                 body: JSON.stringify(activeFormData),
             });
@@ -133,12 +130,10 @@ export default function EditRegistryFile() {
     useEffect(() => {
         const fetchRegistryItem = async () => {
             try {
-                const cookies = parseCookies();
-                const authToken = JSON.parse(cookies.authToken).value;
                 const apiUrl = REGISTRY_SHOW_API + '/' + itemId;
                 const response = await fetch(apiUrl, {
                     headers: {
-                        Authorization: `Bearer ${authToken}`,
+                        Authorization: `Bearer ${session.accessToken}`,
                     },
                 });
 

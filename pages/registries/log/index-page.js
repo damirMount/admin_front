@@ -1,5 +1,4 @@
 import RegistryFiles from '../../../components/pages/registry/RegistryFilesBackupsList';
-import Footer from "../../../components/main/Footer";
 import {REGISTRY_LOG_DOWNLOAD_API, REGISTRY_LOG_INDEX_API} from '../../../routes/api'
 import Head from "next/head";
 import React from "react";

@@ -10,11 +10,9 @@ const AuthCheck = (WrappedComponent) => {
 
         useEffect(() => {
             const cookies = parseCookies();
-            const authToken = cookies.authToken ? JSON.parse(cookies.authToken) : null;
+            const authToken = cookies.authToken;
             setCheckToken(authToken)
-            const currentTime = Math.floor(Date.now() / 1000);
-
-            if (!authToken || authToken.expiration <= currentTime) {
+            if (!authToken) {
                 // Перенаправляем на страницу входа, если пользователь не авторизован или токен истек
                 router.replace(LOGIN_PAGE_URL);
             }

@@ -1,26 +1,25 @@
 // DataFetcher.js
 
-import {GET_DATA_FROM_DB_API} from "../../../routes/api";
-import {parseCookies} from "nookies";
+import { GET_DATA_FROM_DB_API } from "../../../routes/api";
 
-const fetchData = async (config) => {
+const fetchData = async (config, session) => {
+
     try {
-        const cookies = parseCookies();
-        const authToken = JSON.parse(cookies.authToken).value;
         const fetchDataUrl = `${GET_DATA_FROM_DB_API}`;
         const params = new URLSearchParams({
-            model: config.model,                                                    //'ModelName' - REQUIRED!!!
-            filters: config.searchTerm ? JSON.stringify(config.searchTerm) : undefined,   // filters = { column1: 'value', column2: '[value1, value2]', accurateSearch: true} accurateSearch: true - Включает точный поиск по всем аргументам, по стандарту false;
-            attributes: config.attributes || undefined,                             // attributes = 'name,fio'
-            sort: config.sort || undefined,                                         // sort = { column: name, direction: asc }
-            limit: config.limit || undefined,                                       // limit = 10
-            offset: config.offset || undefined,                                     // offset = 5
+            model: config.model, // 'ModelName' - REQUIRED!!!
+            filters: config.searchTerm
+                ? JSON.stringify(config.searchTerm)
+                : undefined, // filters = { column1: 'value', column2: '[value1, value2]', accurateSearch: true} accurateSearch: true - Включает точный поиск по всем аргументам, по стандарту false;
+            attributes: config.attributes || undefined, // attributes = 'name,fio'
+            sort: config.sort || undefined, // sort = { column: name, direction: asc }
+            limit: config.limit || undefined, // limit = 10
+            offset: config.offset || undefined, // offset = 5
         });
-
         const response = await fetch(`${fetchDataUrl}?${params.toString()}`, {
-            method: 'GET',
+            method: "GET",
             headers: {
-                Authorization: `Bearer ${authToken}`
+                Authorization: `Bearer ${session.accessToken}`,
             },
         });
 
@@ -33,8 +32,8 @@ const fetchData = async (config) => {
 
         return data;
     } catch (error) {
-        console.error('Ошибка при получении данных:', error);
-        throw (error);
+        console.error("Ошибка при получении данных:", error);
+        throw error;
     }
 };
 

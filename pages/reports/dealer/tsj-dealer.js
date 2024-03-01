@@ -1,20 +1,19 @@
 import React, {useState} from "react";
-import Footer from "../../../components/main/Footer";
 import ReportsNavigationTabs from "../../../components/pages/report/ReportsNavigationTabs";
 import Preloader from "../../../components/main/Preloader";
 import FormInput from "../../../components/main/input/FormInput";
-import {parseCookies} from "nookies";
 import {DEALER_REPORTS_UPDATE_TSJ_DEALER_API} from "../../../routes/api";
 import Head from "next/head";
 import {useAlert} from "../../../contexts/AlertContext";
 import DatabaseTable from "../../../components/main/table/DatabaseTable";
+import {useSession} from "next-auth/react";
 
 
 export default function IndexPage() {
     const [processingLoader, setProcessingLoader] = useState(false);
     const formData = new FormData();
     const {clearAlertMessage, showAlertMessage} = useAlert();
-
+    const { data: session } = useSession(); // Получаем сессию
     const tableHeaders = [
         {key: 'code', label: 'Код*', isSearchable: true},
         {key: 'name', label: 'Название дилера*', isSearchable: true},
@@ -62,13 +61,11 @@ export default function IndexPage() {
     const handleUpdateDealer = async () => {
         try {
 
-            const cookies = parseCookies();
-            const authToken = JSON.parse(cookies.authToken).value;
             const updateTSJDealerApiUrl = `${DEALER_REPORTS_UPDATE_TSJ_DEALER_API}`;
             const response = await fetch(updateTSJDealerApiUrl, {
                 method: 'POST',
                 headers: {
-                    Authorization: `Bearer ${authToken}`,
+                    Authorization: `Bearer ${session.accessToken}`,
                 },
                 body: formData,
             });

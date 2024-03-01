@@ -1,13 +1,12 @@
 // pages/index.js
 import React from 'react';
-import Footer from '../../../components/main/Footer';
 import Head from 'next/head';
 import DatabaseTable from "../../../components/main/table/DatabaseTable";
 import {RECIPIENT_DELETE_API} from "../../../routes/api";
 import ServiceStatusIndicator from "../../../components/main/table/cell/ServiceStatusIndicator";
 import RegistryNavigationTabs from "../../../components/pages/registry/RegistryNavigationTabs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendar, faEnvelope, faUser} from "@fortawesome/free-regular-svg-icons";
+import {faEnvelope} from "@fortawesome/free-regular-svg-icons";
 import {faClockRotateLeft} from "@fortawesome/free-solid-svg-icons";
 import {RECIPIENT_EDIT_URL} from "../../../routes/web";
 import Link from "next/link";

@@ -1,23 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
 import FormInput from '../../../../components/main/input/FormInput';
-import {parseCookies} from 'nookies';
-import {faEnvelope, faXmarkCircle} from "@fortawesome/free-regular-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import Footer from "../../../../components/main/Footer";
 import {RECIPIENT_SHOW_API, RECIPIENT_UPDATE_API} from "../../../../routes/api";
 import Head from "next/head";
 import UniversalSelect from "../../../../components/main/input/UniversalSelect";
 import Preloader from "../../../../components/main/Preloader";
 import {RECIPIENT_INDEX_URL} from "../../../../routes/web";
 import {useAlert} from "../../../../contexts/AlertContext";
+import {useSession} from "next-auth/react";
 
 export default function EditRecipient() {
     const [formData, setFormData] = useState({
         name: '',
         type: '',
-        emails: [], // Начнем с одного поля по умолчанию
+        emails: '', // Начнем с одного поля по умолчанию
         is_blocked: '',
         registry_ids: '',
         createdAt: '',
@@ -28,9 +25,11 @@ export default function EditRecipient() {
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
     const [recipientName, setRecipientName] = useState('');
-
+    const { data: session } = useSession(); // Получаем сессию
     const router = useRouter();
     const itemId = router.query.id;
+
+
 
     const handleInputChange = (event) => {
         const {name, value} = event.target;
@@ -44,8 +43,6 @@ export default function EditRecipient() {
         event.preventDefault();
 
         try {
-            const cookies = parseCookies();
-            const authToken = JSON.parse(cookies.authToken).value;
             const apiUrl = `${RECIPIENT_UPDATE_API}/${itemId}`;
             const dataToSend = {
                 ...formData,
@@ -56,7 +53,7 @@ export default function EditRecipient() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authToken}`,
+                    Authorization: `Bearer ${session.accessToken}`,
                 },
                 body: JSON.stringify(dataToSend),
             });
@@ -92,12 +89,10 @@ export default function EditRecipient() {
     useEffect(() => {
         const fetchRecipientItem = async () => {
             try {
-                const cookies = parseCookies();
-                const authToken = JSON.parse(cookies.authToken).value;
                 const apiUrl = RECIPIENT_SHOW_API + '/' + itemId;
                 const response = await fetch(apiUrl, {
                     headers: {
-                        Authorization: `Bearer ${authToken}`,
+                        Authorization: `Bearer ${session.accessToken}`,
                     },
                 });
                 const responseData = await response.json();

@@ -4,12 +4,10 @@ import {faHandHoldingDollar, faLandmark, faMoneyBillTrendUp, faSackDollar} from 
 import Head from "next/head";
 import Link from "next/link";
 import {
-    DEALERS_ACCOUNT_HISTORY_REPORT_URL,
     OLD_ADMIN_URL,
     REGISTRY_INDEX_URL,
-    REGISTRY_RESEND_URL
+    REGISTRY_RESEND_URL, REPORT_DEALERS_ACCOUNT_HISTORY_URL
 } from "../routes/web";
-import {DEALER_REPORTS_EXPORT_API} from "../routes/api";
 
 
 export default function Home() {
@@ -46,7 +44,7 @@ export default function Home() {
                                         <h5 className="card-title">Отчёт по истории счётов дилеров</h5>
                                         <p>Возможность выгрузки истории счёта по всем дилерам</p>
                                     </div>
-                                    <Link className="btn btn-purple " href={DEALERS_ACCOUNT_HISTORY_REPORT_URL}>Перейти</Link>
+                                    <Link className="btn btn-purple " href={REPORT_DEALERS_ACCOUNT_HISTORY_URL}>Перейти</Link>
                                 </div>
                             </div>
                         </div>

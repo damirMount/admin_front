@@ -7,8 +7,8 @@ import Link from "next/link";
 import {
     ACQUIRING_URL,
     DATABASE_UPDATE_INDEX_URL,
-    DEALERS_ACCOUNT_HISTORY_REPORT_URL,
-    DEALERS_TSJ_URL,
+    REPORT_DEALERS_ACCOUNT_HISTORY_URL,
+    REPORT_DEALERS_TSJ_URL,
     GSFR_UPDATE_URL,
     MAIN_PAGE_URL,
     OLD_ADMIN_URL,
@@ -19,10 +19,11 @@ import {
     REGISTRY_RESEND_URL,
     TEST_ZONE_URL
 } from "../../routes/web";
+import {useSession} from "next-auth/react";
 
 const SidebarNavigation = () => {
     const [collapsed, setCollapsed] = useState(true);
-
+    const { data: session } = useSession(); // Получаем сессию
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
     };
@@ -41,8 +42,8 @@ const SidebarNavigation = () => {
             ] },
         { label: 'Отчёты', icon: faFileLines, showInSubMenu: true, subMenu: [
                 { label: 'Дилеры', subMenu: [
-                        { label: 'История счетов', link: `${DEALERS_ACCOUNT_HISTORY_REPORT_URL}` },
-                        { label: 'Дилеры ТСЖ', link: `${DEALERS_TSJ_URL}` }
+                        { label: 'История счетов', link: `${REPORT_DEALERS_ACCOUNT_HISTORY_URL}` },
+                        { label: 'Дилеры ТСЖ', link: `${REPORT_DEALERS_TSJ_URL}` }
                     ] }
             ] },
         { label: 'Обновления', icon: faRotate, showInSubMenu: true, subMenu: [
@@ -105,12 +106,13 @@ const SidebarNavigation = () => {
     };
 
     const renderUserDetails = () => {
+        console.log(session)
         if (!collapsed) {
             return (
-                <MenuItem className="mb-1" suffix={<FontAwesomeIcon icon={faUser} size="lg"/>}>
+                <MenuItem className='bottom-0 border-top'  suffix={<FontAwesomeIcon icon={faUser} size="lg"/>}>
                     <div className="d-flex flex-column">
-                        <span className="fw-bold">Nikita</span>
-                        <small className="text-nowrap"> Федеральный разработчик</small>
+                        <span className="fw-bold text-overflow">{session.user.name}</span>
+                        <small className="text-overflow">{session.user.role}</small>
                     </div>
                 </MenuItem>
             );
@@ -132,8 +134,8 @@ const SidebarNavigation = () => {
                         };
                 },
             }}>
-                <div className="overflow-auto d-flex flex-column justify-content-between align-content-between"
-                     style={{maxHeight: '100vh', minHeight: '100vh'}}>
+                <div className='d-flex flex-column justify-content-between' style={{maxHeight: '100vh', minHeight: '100vh'}}>
+                <div className="overflow-auto d-flex flex-column justify-content-between align-content-between">
                     <div className="h-100">
                         <MenuItem onClick={toggleCollapsed} title="Меню"
                                   icon={collapsed ? <FontAwesomeIcon icon={faBars} size="lg"/> :
@@ -142,6 +144,10 @@ const SidebarNavigation = () => {
                         </MenuItem>
                         {buildMenu(menuButtonList)}
                     </div>
+                </div>
+                <div style={{height:'10%'}}>
+                    {renderUserDetails()}
+                </div>
                 </div>
             </Menu>
         </Sidebar>

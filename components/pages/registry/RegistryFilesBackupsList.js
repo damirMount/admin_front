@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {parseCookies} from 'nookies';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faSearch} from "@fortawesome/free-solid-svg-icons";
 import RegistryNavigationTabs from "./RegistryNavigationTabs";
 import Pagination from "../../main/Pagination";
+import {useSession} from "next-auth/react";
 
 const RegistryFiles = ({apiUrl, downloadUrl}) => {
     const [registryFiles, setRegistryFile] = useState([]);
     const [page, setPage] = useState(1); // Текущая страница
     const [totalPages, setTotalPages] = useState(0);
     const [searchTerm, setSearchTerm] = useState('');
-
+    const { data: session } = useSession(); // Получаем сессию
 
     const fetchRegistryFile = async () => {
         // Создайте объект с параметрами запроса, включая поиск
@@ -21,15 +21,13 @@ const RegistryFiles = ({apiUrl, downloadUrl}) => {
 
         const queryString = new URLSearchParams(queryParams).toString(); // Преобразуйте параметры в строку
         const controllerApiUrl = `${apiUrl}?${queryString}`;
-        const cookies = parseCookies();
-        const authToken = JSON.parse(cookies.authToken).value;
 
         try {
             const response = await fetch(controllerApiUrl, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authToken}`,
+                    Authorization: `Bearer ${session.accessToken}`,
                 },
             });
 
@@ -76,13 +74,12 @@ const RegistryFiles = ({apiUrl, downloadUrl}) => {
 
     const handleDownload = async (filename) => {
         try {
-            const cookies = parseCookies();
-            const authToken = JSON.parse(cookies.authToken).value;
+
             const response = await fetch(`${downloadUrl}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authToken}`,
+                    Authorization: `Bearer ${session.accessToken}`,
                 },
                 body: JSON.stringify({filename}),
             });

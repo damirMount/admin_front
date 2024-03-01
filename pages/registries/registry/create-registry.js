@@ -1,11 +1,9 @@
 import React, {useState} from 'react';
 import {useRouter} from 'next/router';
 import FormInput from '../../../components/main/input/FormInput';
-import {parseCookies} from 'nookies';
 import {faCheck, faGripVertical, faPlus, faTag,} from '@fortawesome/free-solid-svg-icons';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import Link from 'next/link';
-import Footer from '../../../components/main/Footer';
 import RegistryFieldsTable from "../../../components/pages/registry/RegistryFieldsTable";
 import {REGISTRY_CREATE_API} from "../../../routes/api";
 import Head from "next/head";
@@ -13,6 +11,7 @@ import RegistryFileFormat from "../../../components/pages/registry/RegistryFileF
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
 import {useAlert} from "../../../contexts/AlertContext";
 import {REGISTRY_INDEX_URL} from "../../../routes/web";
+import {useSession} from "next-auth/react";
 
 library.add(faCheck, faTag, faGripVertical, faPlus);
 
@@ -25,6 +24,7 @@ export default function CreateRegistry() {
     const router = useRouter();
     const {clearAlertMessage, showAlertMessage} = useAlert();
     const [selectedServer, setSelectedServer] = useState(null)
+    const { data: session } = useSession(); // Получаем сессию
     const [getRows, setRows] = useState([
         {isActive: true, field: 'identifier', tableHeader: 'Лицевой счёт'},
         {isActive: true, field: 'real_pay', tableHeader: 'Сумма платежа'},
@@ -49,7 +49,6 @@ export default function CreateRegistry() {
     };
 
     const handleSelectorChange = (valuesArray, name) => {
-        console.log(selectedServer)
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: valuesArray,
@@ -61,8 +60,6 @@ export default function CreateRegistry() {
         event.preventDefault();
 
         try {
-            const cookies = parseCookies();
-            const authToken = JSON.parse(cookies.authToken).value;
             const apiUrl = REGISTRY_CREATE_API;
 
             const activeRows = getRows.filter((row) => row.isActive);
@@ -80,7 +77,7 @@ export default function CreateRegistry() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authToken}`,
+                    Authorization: `Bearer ${session.accessToken}`,
                 },
                 body: JSON.stringify(activeFormData),
             });

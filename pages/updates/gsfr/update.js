@@ -1,15 +1,15 @@
 import React, {useState} from "react";
-import Preloader from "../../components/main/Preloader";
-import {parseCookies} from "nookies";
-import {GSFR_UPDATE_API} from "../../routes/api";
+import Preloader from "../../../components/main/Preloader";
+import {GSFR_UPDATE_API} from "../../../routes/api";
 import Head from "next/head";
-import {useAlert} from "../../contexts/AlertContext";
-import FormInput from "../../components/main/input/FormInput";
+import {useAlert} from "../../../contexts/AlertContext";
+import FormInput from "../../../components/main/input/FormInput";
+import {useSession} from "next-auth/react";
 
 
 export default function IndexPage() {
     const [processingLoader, setProcessingLoader] = useState(false);
-
+    const { data: session } = useSession(); // Получаем сессию
     const {clearAlertMessage, showAlertMessage} = useAlert();
     const [formData, setFormData] = useState({ urls: {
         UN: 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
@@ -28,14 +28,12 @@ export default function IndexPage() {
     const handleUpdate = async () => {
         try {
             setProcessingLoader(true);
-            const cookies = parseCookies();
-            const authToken = JSON.parse(cookies.authToken).value;
             const updateGSFRApiUrl = `${GSFR_UPDATE_API}`;
             const response = await fetch(updateGSFRApiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authToken}`,
+                    Authorization: `Bearer ${session.accessToken}`,
                 },
                 body:  JSON.stringify(formData),
             });
@@ -138,6 +136,7 @@ export default function IndexPage() {
                                     required
                                 />
                             </div>
+                        </div>
                             <button
                                 type="button"
                                 className="btn btn-purple mt-5"
@@ -145,7 +144,7 @@ export default function IndexPage() {
                             >
                                 Обновить список
                             </button>
-                        </div>
+
                     </form>
                 </div>
 

@@ -1,12 +1,12 @@
 // DataRemover.js
 import React, {useState} from 'react';
 import ModalWindow from '../ModalWindow';
-import {parseCookies} from "nookies";
+import {useSession} from "next-auth/react";
 
 const DataRemover = ({id, deleteRoute}) => {
     const [modalData, setModalData] = useState(null);
     const [showModal, setShowModal] = useState(false);
-
+    const { data: session } = useSession(); // Получаем сессию
     const handleRemoveData = () => {
         const newModalData = {
             title: 'Подтвердите удаление',
@@ -22,12 +22,10 @@ const DataRemover = ({id, deleteRoute}) => {
     const handleDelete = async () => {
         if (modalData) {
             try {
-                const cookies = parseCookies();
-                const authToken = JSON.parse(cookies.authToken).value;
                 await fetch(`${deleteRoute}/${id}`, {
                     method: 'DELETE',
                     headers: {
-                        Authorization: `Bearer ${authToken}`,
+                        Authorization: `Bearer ${session.accessToken}`,
                     },
                 });
 

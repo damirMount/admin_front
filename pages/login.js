@@ -1,82 +1,76 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { setCookie } from 'nookies';
-import { POST_LOGIN_API } from '../routes/api';
-import { DATABASE_UPDATE_INDEX_URL, MAIN_PAGE_URL } from "../routes/web";
+import React, {useState} from 'react';
+import {MAIN_PAGE_URL} from "../routes/web";
+import {signIn} from "next-auth/react";
+import FormInput from "../components/main/input/FormInput";
+import Head from "next/head";
+import {useAlert} from "../contexts/AlertContext";
 
 export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const apiUrl = `${POST_LOGIN_API}`;
+    const {showAlertMessage} = useAlert();
+    const handleSubmit = async (e) => {
+        e.preventDefault()
 
         try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
-
-            if (response.ok) {
-                const { token } = await response.json();
-                const expirationTime = new Date();
-                expirationTime.setHours(expirationTime.getHours() + 12);
-                const tokenData = {
-                    value: token,
-                    expiration: expirationTime.getTime(),
-                };
-
-                setCookie(null, 'authToken', JSON.stringify(tokenData), {
-                    maxAge: 43200,
-                    path: MAIN_PAGE_URL,
-                });
-
-                // Перенаправление на другую страницу и перезагрузка текущей страницы
+            const responseData = await signIn('credentials', {
+                redirect: false,
+                username,
+                password,
+            })
+            if (responseData.ok) {
                 window.location.replace(MAIN_PAGE_URL);
             } else {
-                const errorData = await response.json();
-                // Обработка ошибки аутентификации
+                showAlertMessage({type: "error", text: responseData.error});
             }
         } catch (error) {
-            console.log('Произошла ошибка при отправке запроса:', error);
-            // Обработка ошибки при выполнении запроса
+            showAlertMessage({type: "error", text: error});
         }
-    };
+    }
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-            <form onSubmit={handleSubmit} style={{ maxWidth: '400px', fontFamily: 'sans-serif' }}>
-                <h1 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '1.5rem' }}>Вход</h1>
-                <div style={{ marginBottom: '1rem' }}>
-                    <label htmlFor="username">Логин:</label>
-                    <input
-                        type="text"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
-                    />
+        <div>
+            <Head>
+                <title>Вход в систему | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+            </Head>
+            <div className='d-flex justify-content-center align-items-center flex-column h-100 w-100 mt-5' style={{minHeight: '75vh'}}>
+            <div>
+                <h1>Вход в систему</h1>
+            </div>
+            <div className="w-25">
+                <div className="w-100">
+                    <form onSubmit={handleSubmit}>
+                        <div className='form-group'>
+                            <label htmlFor="username">Логин:</label>
+                            <FormInput
+                                type="text"
+                                placeholder='Логин'
+                                className="input-field"
+                                id="username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                        </div>
+                        <div className='form-group'>
+                            <label htmlFor="password">Пароль:</label>
+                            <FormInput
+                                type="password"
+                                placeholder='Пароль'
+                                className="input-field"
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+                        <div className="d-flex justify-content-center">
+                            <button type="submit" className="mt-4 btn btn-purple">
+                                Войти
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div style={{ marginBottom: '1rem' }}>
-                    <label htmlFor="password">Пароль:</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
-                    />
-                </div>
-                <div className="d-flex justify-content-center">
-                    <button type="submit" className="btn btn-purple">
-                        Войти
-                    </button>
-                </div>
-            </form>
+            </div>
+        </div>
         </div>
     );
 }
