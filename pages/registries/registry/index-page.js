@@ -1,12 +1,11 @@
 // pages/index.js
 import React from 'react';
-import Footer from '../../../components/main/Footer';
 import Head from 'next/head';
 import DatabaseTable from "../../../components/main/table/DatabaseTable";
 import {REGISTRY_DELETE_API} from "../../../routes/api";
 import ServiceStatusIndicator from "../../../components/main/table/cell/ServiceStatusIndicator";
 import RegistryNavigationTabs from "../../../components/pages/registry/RegistryNavigationTabs";
-import {RECIPIENT_EDIT_URL, REGISTRY_EDIT_URL} from "../../../routes/web";
+import {REGISTRY_EDIT_URL} from "../../../routes/web";
 import Link from "next/link";
 
 const IndexPage = () => {

@@ -1,6 +1,4 @@
-import Footer from "../../../components/main/Footer";
 import React, {useEffect, useState} from "react";
-import {parseCookies} from "nookies";
 import Alert from "../../../components/main/Alert";
 import Preloader from "../../../components/main/Preloader";
 import {formatDistanceToNow} from 'date-fns';
@@ -10,22 +8,22 @@ import {DEALER_REPORTS_EXPORT_API} from "../../../routes/api";
 import Head from "next/head";
 import DateRangeInput from "../../../components/main/input/DateRangeInput";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
+import {useSession} from "next-auth/react";
+import {useAlert} from "../../../contexts/AlertContext";
 
 
 export default function IndexPage() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [processingLoader, setProcessingLoader] = useState(false);
-    const [alertMessage, setAlertMessage] = useState({type: "", text: ""});
+    const {clearAlertMessage, showAlertMessage} = useAlert();
     const [fileDownloaded, setFileDownloaded] = useState([]);
     const [formData, setFormData] = useState({
         startDate: null,
         endDate: null,
     });
+    const { data: session } = useSession(); // Получаем сессию
 
-    const clearAlertMessage = () => {
-        setAlertMessage({type: "", text: ""});
-    };
 
 
     const handleDateChange = (newStartDate, newEndDate) => {
@@ -38,8 +36,6 @@ export default function IndexPage() {
             const dataToSend = {
                 formData,
             };
-            const cookies = parseCookies();
-            const authToken = JSON.parse(cookies.authToken).value;
 
             const sendRegistryApiUrl = `${DEALER_REPORTS_EXPORT_API}`;
 
@@ -49,7 +45,7 @@ export default function IndexPage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authToken}`,
+                    Authorization: `Bearer ${session.accessToken}`,
                 },
                 body: JSON.stringify(dataToSend),
             });
@@ -61,7 +57,7 @@ export default function IndexPage() {
                 const createdAt = new Date();
                 const fileName = `Отчёт за ${startDate} по ${endDate}.xlsx`;
 
-                setAlertMessage({type: "success", text: "Отчет успешно создан."});
+                showAlertMessage({type: "success", text: "Отчет успешно создан."});
                 setFileDownloaded((prevFileDownloaded) => [...prevFileDownloaded, {
                     fileName,
                     startDate,
@@ -73,11 +69,11 @@ export default function IndexPage() {
 
             } else {
                 const responseData = await response.json();
-                setAlertMessage({type: "error", text: responseData.message});
+                showAlertMessage({type: "error", text: responseData.message});
             }
         } catch (error) {
             console.error('Ошибка при отправке реестра:', error);
-            setAlertMessage({type: "error", text: "Произошла ошибка при создании отчета"});
+            showAlertMessage({type: "error", text: "Произошла ошибка при создании отчета"});
         } finally {
             setProcessingLoader(false);
         }
@@ -107,9 +103,6 @@ export default function IndexPage() {
             <Head>
                 <title>Отчёты по истории счётов | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div>
-                <Alert alertMessage={alertMessage} clearAlertMessage={clearAlertMessage}/>
-            </div>
             <div className=" mt-5">
                 <h1>Выгрузка отчета по истории счетов</h1>
 

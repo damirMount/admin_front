@@ -6,6 +6,7 @@ import SearchInput from "../input/SearchInput";
 import Preloader from "../Preloader";
 import {useAlert} from "../../../contexts/AlertContext";
 import UniversalSelect from "../input/UniversalSelect";
+import {useSession} from "next-auth/react";
 
 const DatabaseTable = ({model, tableHeaders, configTable = null, additionalElement}) => {
     const [processingLoader, setProcessingLoader] = useState(false);
@@ -18,7 +19,7 @@ const DatabaseTable = ({model, tableHeaders, configTable = null, additionalEleme
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     let [selectRowsPerPage, setSelectRowsPerPage] = useState(null);
-
+    const { data: session } = useSession(); // Получаем сессию
     useEffect(() => {
 
         if (configTable) {
@@ -54,7 +55,7 @@ const DatabaseTable = ({model, tableHeaders, configTable = null, additionalEleme
                 offset: (page - 1) * pageSize
             };
 
-            const response = await fetchData(fetchDBConfig);
+            const response = await fetchData(fetchDBConfig, session);
 
             const {count, data} = response;
             setDataFromDB(data);

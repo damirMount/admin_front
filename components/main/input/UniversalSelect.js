@@ -4,6 +4,7 @@ import fetchData from '../database/DataFetcher';
 import {useAlert} from '../../../contexts/AlertContext';
 import CreatableSelect from "react-select/creatable";
 import validator from 'validator';
+import {useSession} from "next-auth/react";
 
 
 const UniversalSelect = ({
@@ -30,7 +31,7 @@ const UniversalSelect = ({
     const [selectedValue, setSelectedValue] = useState([]);
     const [valuesSet, setValuesSet] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
-
+    const { data: session } = useSession(); // Получаем сессию
     useEffect(() => {
         let mounted = true;
 
@@ -49,7 +50,7 @@ const UniversalSelect = ({
             setIsLoading(true);
 
             try {
-                const response = await fetchData(fetchDataConfig);
+                const response = await fetchData(fetchDataConfig , session);
                 // После ответа сервера формируем массив опций для селектора
                 mappedOptions = response.data.map((item) => ({
                     value: item.id,

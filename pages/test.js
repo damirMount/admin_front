@@ -1,17 +1,17 @@
 // pages/index.js
 import React, {useState} from 'react';
-import Footer from '../components/main/Footer';
 import Head from 'next/head';
 import DatabaseTable from "../components/main/table/DatabaseTable";
 import {REGISTRY_DELETE_API} from "../routes/api";
 import ServiceStatusIndicator from "../components/main/table/cell/ServiceStatusIndicator";
 import UniversalSelect from "../components/main/input/UniversalSelect";
 import Link from "next/link";
+import {useSession} from "next-auth/react";
 
 
 const IndexPage = () => {
     const createRoute = '/registries/registry/create-registry';
-
+    const { data: session } = useSession(); // Получаем сессию
     const [formData, setFormData] = useState({
         name: '',
         formats: [],

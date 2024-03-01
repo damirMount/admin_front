@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { destroyCookie, parseCookies } from 'nookies';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../src/app/globals.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -13,17 +11,11 @@ import SidebarNavigation from "../components/main/SidebarNavigation";
 import Navbar from "../components/main/Navbar";
 import authCheck from "../middleware/authCheck";
 import {LOGIN_PAGE_URL} from "../routes/web";
+import {SessionProvider} from "next-auth/react";
 
 function MyApp({ Component, pageProps }) {
     const router = useRouter();
-    const [checkToken, setCheckToken] = useState(null); // Инициализация стейта
 
-    useEffect(() => {
-        const cookies = parseCookies();
-        const authToken = cookies.authToken ? JSON.parse(cookies.authToken) : null;
-        setCheckToken(authToken);
-
-    }, [router]);
 
     return (
         <div>
@@ -35,6 +27,8 @@ function MyApp({ Component, pageProps }) {
             <Head>
                 <title>{process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
+            <SessionProvider session={pageProps.session}>
+
             <AlertProvider>
                 <div className="d-flex w-100 overflow-hidden">
                     {router.pathname !== LOGIN_PAGE_URL && <SidebarNavigation />}
@@ -50,6 +44,7 @@ function MyApp({ Component, pageProps }) {
                 </div>
                 <Alert />
             </AlertProvider>
+            </SessionProvider>
         </div>
     );
 }

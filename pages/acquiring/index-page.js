@@ -1,18 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import Footer from "../../components/main/Footer";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowRightArrowLeft, faFileExcel,} from "@fortawesome/free-solid-svg-icons";
-import {parseCookies} from "nookies";
 import {ACQUIRING_COMPARISON_API} from "../../routes/api";
 import Head from "next/head";
+import {useSession} from "next-auth/react";
 
 export default function IndexPage() {
-    const [authToken, setAuthToken] = useState(null);
     const [excelFile, setExcelFile] = useState(null);
     const [registryFile, setRegistryFile] = useState(null);
     const [comparisonResult, setComparisonResult] = useState(null);
     const apiUrl = `${ACQUIRING_COMPARISON_API}`;
-
+    const { data: session } = useSession(); // Получаем сессию
     const handleExcelFileChange = (e) => {
         setExcelFile(e.target.files[0]);
 
@@ -32,10 +30,6 @@ export default function IndexPage() {
     };
 
     const handleCompareData = async () => {
-        if (!authToken) {
-            console.error('No authToken available.');
-            return;
-        }
 
         if (!excelFile || !registryFile) {
             alert("Please select both Excel and Registry files.");
@@ -52,7 +46,7 @@ export default function IndexPage() {
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
-                    Authorization: `Bearer ${authToken}`,
+                    Authorization: `Bearer ${session.accessToken}`,
                 },
                 body: formData,
             });
@@ -67,18 +61,7 @@ export default function IndexPage() {
             console.error("Error comparing data:", error);
         }
     };
-    useEffect(() => {
-        const cookies = parseCookies();
-        const authTokenCookie = cookies.authToken;
-        if (authTokenCookie) {
-            try {
-                const authTokenValue = JSON.parse(authTokenCookie).value;
-                setAuthToken(authTokenValue);
-            } catch (error) {
-                console.error('Error parsing authToken cookie:', error);
-            }
-        }
-    }, []);
+
 
     return (
         <div>
