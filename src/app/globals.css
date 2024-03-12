@@ -74,7 +74,7 @@ footer {
 
 }
 /*Table*/
-:where(.css-dev-only-do-not-override-1drr2mu)[class*=" ant-table"] [class^="ant-table"], :where(.css-dev-only-do-not-override-1drr2mu)[class*=" ant-table"] [class*=" ant-table"] {
+tr, td, table, tbody, th, thead, tfoot {
     border-color: #A9C9DD !important;
 }
 :where(.css-dev-only-do-not-override-1drr2mu).ant-table-wrapper .ant-table.ant-table-bordered >.ant-table-container {
