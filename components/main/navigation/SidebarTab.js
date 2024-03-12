@@ -60,18 +60,18 @@ const SidebarTab = () => {
                 {label: 'Список ГСФР', link: GSFR_UPDATE_URL}
             ]
         },
-        // {
-        //     label: 'Безопасность', icon: faShieldHalved, showInSubMenu: true, subMenu: [
-        //         {
-        //             label: 'Права доступа', subMenu: [
-        //                 {label: 'Список пользователей', link: SECURITY_ACCESS_USERS_LIST},
-        //                 {label: 'Список ролей', link: SECURITY_ACCESS_ROLES_INDEX},
-        //                 {label: 'Список прав', link: SECURITY_ACCESS_PERMISSION_INDEX},
-        //             ],
-        //         },
-        //         // {label: 'Журнал аудита', link: TEST_ZONE_URL},
-        //     ]
-        // },
+            // {
+            //     label: 'Безопасность', icon: faShieldHalved, showInSubMenu: true, subMenu: [
+            //         {
+            //             label: 'Права доступа', subMenu: [
+            //                 {label: 'Список пользователей', link: SECURITY_ACCESS_USERS_LIST},
+            //                 {label: 'Список ролей', link: SECURITY_ACCESS_ROLES_INDEX},
+            //                 {label: 'Список прав', link: SECURITY_ACCESS_PERMISSION_INDEX},
+            //             ],
+            //         },
+            //         // {label: 'Журнал аудита', link: TEST_ZONE_URL},
+            //     ]
+            // },
         {label: 'В Разработке', hideWhereCollapsed: true},
         {
             label: 'Разработка', icon: faCode, showInSubMenu: true, subMenu: [
