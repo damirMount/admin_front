@@ -25,7 +25,7 @@ const UniversalSelect = ({
     const [isLoading, setIsLoading] = useState(false);
     const [optionsList, setOptionsList] = useState([]);
     const [selectType, setSelectType]= useState('');
-    const [closeMenuOnSelect, setCloseMenuOnSelect] = useState(!isMulti);
+    const [closeMenuOnSelect] = useState(!isMulti);
     const [isMultiSelect, setIsMultiSelect] = useState(false);
     const {showAlertMessage} = useAlert();
     const [selectedValue, setSelectedValue] = useState([]);
@@ -110,7 +110,7 @@ const UniversalSelect = ({
         return () => {
             mounted = false;
         };
-    }, [fetchDataConfig]); // В зависимостях указываем fetchDataConfig и options
+    }, [fetchDataConfig && !valuesSet ]);
 
 
 

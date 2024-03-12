@@ -1,11 +1,11 @@
 // DataFetcher.js
 
 import { GET_DATA_FROM_DB_API } from "../../../routes/api";
+import {parseCookies} from "nookies";
 
 const fetchData = async (config, session) => {
-
     try {
-        const fetchDataUrl = `${GET_DATA_FROM_DB_API}`;
+        const fetchDataUrl = GET_DATA_FROM_DB_API;
         const params = new URLSearchParams({
             model: config.model, // 'ModelName' - REQUIRED!!!
             filters: config.searchTerm
@@ -16,6 +16,9 @@ const fetchData = async (config, session) => {
             limit: config.limit || undefined, // limit = 10
             offset: config.offset || undefined, // offset = 5
         });
+        // const cookies = parseCookies();
+        // console.log(cookies.authToken)
+        // const authToken = cookies.authToken;
         const response = await fetch(`${fetchDataUrl}?${params.toString()}`, {
             method: "GET",
             headers: {

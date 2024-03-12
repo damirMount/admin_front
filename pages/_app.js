@@ -1,21 +1,15 @@
-import { useRouter } from 'next/router';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../src/app/globals.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import Head from "next/head";
 import { AlertProvider } from "../contexts/AlertContext";
-import Alert from "../components/main/Alert";
 import Script from "next/script";
-import Footer from "../components/main/Footer";
-import SidebarNavigation from "../components/main/SidebarNavigation";
-import Navbar from "../components/main/Navbar";
-import authCheck from "../middleware/authCheck";
-import {LOGIN_PAGE_URL} from "../routes/web";
-import {SessionProvider} from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
+import { AuthProvider} from "../contexts/AccessContext";
+import authCheck from "../components/hocs/authCheck";
 
 function MyApp({ Component, pageProps }) {
-    const router = useRouter();
-
+    const AuthCheckedComponent = authCheck(Component);
 
     return (
         <div>
@@ -27,26 +21,15 @@ function MyApp({ Component, pageProps }) {
             <Head>
                 <title>{process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <SessionProvider session={pageProps.session}>
-
-            <AlertProvider>
-                <div className="d-flex w-100 overflow-hidden">
-                    {router.pathname !== LOGIN_PAGE_URL && <SidebarNavigation />}
-                    <div className="w-100 overflow-hidden">
-                        <Navbar />
-                        <div className="container w-100 overflow-x-auto overflow-y-hidden mt-5" style={{ maxWidth: '100vw' }}>
-                            <div className="container body-container mt-5">
-                                <Component {...pageProps} />
-                            </div>
-                            <Footer />
-                        </div>
-                    </div>
-                </div>
-                <Alert />
-            </AlertProvider>
+            <SessionProvider>
+                <AlertProvider>
+                    <AuthProvider>
+                        <AuthCheckedComponent {...pageProps} />
+                    </AuthProvider>
+                </AlertProvider>
             </SessionProvider>
         </div>
     );
 }
 
-export default  authCheck(MyApp);
+export default MyApp;

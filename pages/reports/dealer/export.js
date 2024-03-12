@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
-import Alert from "../../../components/main/Alert";
-import Preloader from "../../../components/main/Preloader";
+import Preloader from "../../../components/main/system/Preloader";
 import {formatDistanceToNow} from 'date-fns';
 import ruLocale from 'date-fns/locale/ru';
 import ReportsNavigationTabs from "../../../components/pages/report/ReportsNavigationTabs";
@@ -12,7 +11,7 @@ import {useSession} from "next-auth/react";
 import {useAlert} from "../../../contexts/AlertContext";
 
 
-export default function IndexPage() {
+export default function DealerExportPage() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [processingLoader, setProcessingLoader] = useState(false);
@@ -37,11 +36,9 @@ export default function IndexPage() {
                 formData,
             };
 
-            const sendRegistryApiUrl = `${DEALER_REPORTS_EXPORT_API}`;
-
             setProcessingLoader(true);
 
-            const response = await fetch(sendRegistryApiUrl, {
+            const response = await fetch(DEALER_REPORTS_EXPORT_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

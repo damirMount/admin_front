@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {format} from 'date-fns';
+import {DatePicker} from "antd";
+import dayjs from "dayjs";
 
 const DateRangeInput = ({initialStartDate, initialEndDate, onDateChange}) => {
     const [startDate, setStartDate] = useState(initialStartDate || "");
@@ -33,6 +35,23 @@ const DateRangeInput = ({initialStartDate, initialEndDate, onDateChange}) => {
         }
     }, [initialStartDate, initialEndDate]);
 
+    // const dateFormat = 'yyyy-MM-dd';
+    // const todayFormatted = format(new Date(), dateFormat);
+    //
+    // return (
+    //     <div className="d-flex  justify-content-center w-100  form-group">
+    //         <div className="d-flex flex-column w-100">
+    //             <label htmlFor="serverId">Период отправки</label>
+    //             <DatePicker.RangePicker
+    //                 size="large"
+    //                 maxDate={dayjs(todayFormatted)}
+    //                 onChange={(dates, dateStrings) => {
+    //                     console.log(dates, dateStrings);
+    //                 }}
+    //             />
+    //         </div>
+    //     </div>
+    // );
     return (
         <div className="d-flex w-100 justify-content-between">
             <div className="form-group me-3">

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import Preloader from "../../../components/main/Preloader";
+import Preloader from "../../../components/main/system/Preloader";
 import {GSFR_UPDATE_API} from "../../../routes/api";
 import Head from "next/head";
 import {useAlert} from "../../../contexts/AlertContext";
@@ -7,10 +7,10 @@ import FormInput from "../../../components/main/input/FormInput";
 import {useSession} from "next-auth/react";
 
 
-export default function IndexPage() {
+export default function GSFRUpdatePage() {
     const [processingLoader, setProcessingLoader] = useState(false);
     const { data: session } = useSession(); // Получаем сессию
-    const {clearAlertMessage, showAlertMessage} = useAlert();
+    const {showAlertMessage} = useAlert();
     const [formData, setFormData] = useState({ urls: {
         UN: 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
         } });
@@ -28,8 +28,7 @@ export default function IndexPage() {
     const handleUpdate = async () => {
         try {
             setProcessingLoader(true);
-            const updateGSFRApiUrl = `${GSFR_UPDATE_API}`;
-            const response = await fetch(updateGSFRApiUrl, {
+            const response = await fetch(GSFR_UPDATE_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

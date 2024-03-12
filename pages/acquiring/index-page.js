@@ -9,7 +9,6 @@ export default function IndexPage() {
     const [excelFile, setExcelFile] = useState(null);
     const [registryFile, setRegistryFile] = useState(null);
     const [comparisonResult, setComparisonResult] = useState(null);
-    const apiUrl = `${ACQUIRING_COMPARISON_API}`;
     const { data: session } = useSession(); // Получаем сессию
     const handleExcelFileChange = (e) => {
         setExcelFile(e.target.files[0]);
@@ -43,7 +42,7 @@ export default function IndexPage() {
 
         console.log(formData)
         try {
-            const response = await fetch(apiUrl, {
+            const response = await fetch(ACQUIRING_COMPARISON_API, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${session.accessToken}`,

@@ -1,6 +1,6 @@
 // DataRemover.js
 import React, {useState} from 'react';
-import ModalWindow from '../ModalWindow';
+import ModalWindow from '../system/ModalWindow';
 import {useSession} from "next-auth/react";
 
 const DataRemover = ({id, deleteRoute}) => {

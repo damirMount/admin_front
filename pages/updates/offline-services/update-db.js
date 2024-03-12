@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useRouter} from 'next/router';
 import FormInput from '../../../components/main/input/FormInput';
 
-import {GET_LIST_SERVICES_API, POST_ABONENT_SERVICE_API} from '../../../routes/api'
+import {POST_ABONENT_SERVICE_API} from '../../../routes/api'
 import Head from "next/head";
 import {useSession} from "next-auth/react";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
@@ -43,9 +43,7 @@ export default function UpdateDBPage() {
         event.preventDefault();
 
         try {
-            const apiUrl = `${POST_ABONENT_SERVICE_API}`;
-            // Отправка данных формы на API
-            const response = await fetch(apiUrl, {
+            const response = await fetch(POST_ABONENT_SERVICE_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

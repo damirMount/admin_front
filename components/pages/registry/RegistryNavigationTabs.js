@@ -12,8 +12,8 @@ const RegistryNavigationTabs = () => {
     const router = useRouter();
 
     return (
-        <div className="create-button d-flex justify-content-between w-100 mb-3 mt-3">
-            <div>
+        <div className="create-button d-flex justify-content-between w-100 mb-3 flex-nowrap mt-3">
+            <div className='d-flex align-items-start'>
                 <Link href={RECIPIENT_INDEX_URL}
                       className={`btn ${router.pathname === RECIPIENT_INDEX_URL ? 'btn-purple' : 'btn-grey'} me-2 `}>
                     Получатели
@@ -25,13 +25,13 @@ const RegistryNavigationTabs = () => {
             </div>
             <div>
                 <Link href={REGISTRY_RESEND_URL}
-                      className={`btn ${router.pathname === REGISTRY_RESEND_URL ? 'btn-purple' : 'btn-grey'} me-2 ms-2`}>
+                      className={`btn text-nowrap ${router.pathname === REGISTRY_RESEND_URL ? 'btn-purple' : 'btn-grey'} me-2 ms-2`}>
                     Перезапуск реестра
                 </Link>
             </div>
-            <div>
+            <div className="d-flex align-items-start">
                 <Link href={REGISTRY_BACKUP_URL}
-                      className={`btn ${router.pathname === REGISTRY_BACKUP_URL ? 'btn-purple' : 'btn-grey'} me-2 ms-2`}>
+                      className={`btn text-nowrap ${router.pathname === REGISTRY_BACKUP_URL ? 'btn-purple' : 'btn-grey'} me-2 ms-2`}>
                     Резервные копии
                 </Link>
                 <Link href={REGISTRY_LOGS_URL}

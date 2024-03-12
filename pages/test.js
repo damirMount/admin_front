@@ -1,116 +1,42 @@
 // pages/index.js
 import React, {useState} from 'react';
 import Head from 'next/head';
-import DatabaseTable from "../components/main/table/DatabaseTable";
 import {REGISTRY_DELETE_API} from "../routes/api";
-import ServiceStatusIndicator from "../components/main/table/cell/ServiceStatusIndicator";
+import StatusIndicator from "../components/main/table/cell/StatusIndicator";
 import UniversalSelect from "../components/main/input/UniversalSelect";
 import Link from "next/link";
 import {useSession} from "next-auth/react";
+import {REGISTRY_CREATE_URL, REGISTRY_EDIT_URL} from "../routes/web";
+import {DatePicker} from "antd";
+import ActionButtons from "../components/main/table/cell/ActionButtons";
+import FileFormats from "../components/main/table/cell/FileFormats";
+import ServerCell from "../components/main/table/cell/ServerCell";
+import SearchByColumn from "../components/main/table/cell/SearchByColumn";
+import SmartTable from "../components/main/table/SmartTable";
 
-
-const IndexPage = () => {
-    const createRoute = '/registries/registry/create-registry';
-    const { data: session } = useSession(); // Получаем сессию
+export default function TestPage() {
+    const {data: session} = useSession(); // Получаем сессию
     const [formData, setFormData] = useState({
         name: '',
         formats: [],
         is_blocked: '',
     });
 
-    function countServices(value) {
-        const lastDigit = value.length % 10;
-        const lastTwoDigits = value.length % 100;
-
-        if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
-            return `${value.length} СЕРВИСОВ`;
-        } else if (lastDigit === 1) {
-            return `${value.length} СЕРВИС`;
-        } else if (lastDigit >= 2 && lastDigit <= 4) {
-            return `${value.length} СЕРВИСА`;
-        } else {
-            return `${value.length} СЕРВИСОВ`;
-        }
-    }
-
-    function CreateButton() {
-        return (
-            <Link href={createRoute} className="btn btn-purple">Добавить запись</Link>
-        );
-    }
-
-    function RegistryFormatCell(props) {
-        const formats = props ? props.formats || [] : [];
-
-        return (
-            <div className="col-auto action-table-buttons flex-nowrap d-flex">
-                {formats.map((format, index) => (
-                    <span key={index} className="status  status-formats ms-1 me-1">{`${format}`}</span>
-                ))}
-            </div>
-        );
-    }
-
-    function ServerCell(props) {
-        const serverId = props ? props.server_id || '' : '';
-        const services = props ? props.services_id || '' : '';
-
-        return (
-            <div className="col-auto action-table-buttons flex-nowrap d-flex">
-                <span className="status status-dashed">
-                    ID {`${serverId}`}
-                    <br/>
-                    {`${countServices(services)}`}
-                </span>
-            </div>
-        );
-    }
-
-    function StatusCell(props) {
-        return (
-            ServiceStatusIndicator(props.is_blocked)
-        );
-    }
-
-
-    const tableHeaders = [
-        {key: 'id', label: 'ID', isSearchable: true},
-        {key: 'name', label: 'Название', isSearchable: true, headerClass: 'col-auto'},
-        {key: 'is_blocked', label: 'Статус', body: StatusCell},
-        {key: 'server_id', label: 'Сервер', body: ServerCell, isSearchable: true},
-        {key: 'formats', label: 'Формат', body: RegistryFormatCell},
-        {key: 'updatedAt', label: 'Дата изменения'},
-        {key: 'createdAt', label: 'Дата создания'},
-    ];
     const actionButtonsLinks = {
-        editRoute: {label: 'Изменить запись', link: '/registries/registry/edit-registry', useId: true},
-        deleteRoute: {label: 'Удалить', link: `${REGISTRY_DELETE_API}`, useId: true},
+        editRoute: {label: 'Изменить запись', link: REGISTRY_EDIT_URL, useId: true},
+        deleteRoute: {label: 'Удалить', link: REGISTRY_DELETE_API, useId: true},
     };
 
-    const configTable = [
-        {key: 'actionButtons', links: actionButtonsLinks},
-        {key: 'selectRowsPerPage'},
-    ];
-    // actionButtons
-    // headerFixed
-    // rowsCount
-    // columnSelect
-    // columnVisible
-    // columnOrder
-    // rowSelect
-    // rowOrder
-    // rowsPerPage
-
     const options = [
-        { value: '11001', label: 'Выбрать все записи', isSelectOne: true},
-        { value: 'strawberry', label: 'Strawberry'},
-        { value: 'vanilla', label: 'Vanilla' }
+        {value: '11001', label: 'Выбрать все записи', isSelectOne: true},
+        {value: 'strawberry', label: 'Strawberry'},
+        {value: 'vanilla', label: 'Vanilla'}
     ]
 
 
     const fetchDataConfig = {
-        model: 'Service',
-        // searchTerm: {is_blocked: false, accurateSearch: true},
+        model: 'Registry',
+        sort: '{"column":"id","direction":"desc"}',
     };
 
     const handleSelectorChange = (valuesArray, name) => {
@@ -121,37 +47,122 @@ const IndexPage = () => {
     };
 
 
+    const tableColumns = [
+        {
+            title: 'ID',
+            dataIndex: 'id',
+            sorter: (a, b) => a.id - b.id,
+            ...SearchByColumn('id'),
+        },
+        {
+            title: 'Название',
+            dataIndex: 'name',
+            className: 'col-10',
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            ...SearchByColumn('name'),
+        },
+        {
+            title: 'Статус',
+            dataIndex: 'is_blocked',
+            filters: [
+                {
+                    text: 'Активен',
+                    value: false,
+                },
+                {
+                    text: 'Отключён',
+                    value: true,
+                },
+            ],
+            onFilter: (value, record) => record.is_blocked === value,
+            render: (text) => StatusIndicator(text),
+        },
+        {
+            title: 'Сервер',
+            dataIndex: 'server_id',
+            className: 'col-2',
+            ...SearchByColumn('server_id'),
+            sorter: (a, b) => a.server_id - b.server_id,
+            render: (text, record) => ServerCell(record),
+        },
+        {
+            title: 'Формат',
+            dataIndex: 'formats',
+            filters: [
+                {
+                    text: 'XLSX',
+                    value: 'xlsx',
+                },
+                {
+                    text: 'CSV',
+                    value: 'csv',
+                },
+                {
+                    text: 'DBF',
+                    value: 'dbf',
+                },
+            ],
+            onFilter: (value, record) => record.formats.indexOf(value) === 0,
+            render: (text, record) => FileFormats(text),
+        },
+        {
+            title: 'Дата изменения',
+            dataIndex: 'updatedAt',
+            sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+            ...SearchByColumn('updatedAt'),
+        },
+        {
+            title: 'Дата создания',
+            dataIndex: 'createdAt',
+            sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+            ...SearchByColumn('createdAt'),
+        },
+        {
+            render: (text, record) => ActionButtons(actionButtonsLinks, record),
+        },
+
+    ];
+
+
     return (
+        // <ProtectedRoute allowedRoles={3}>
         <div>
-            <Head>
-                <title>TEST ZONE | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-            </Head>
-            <div >
-                <h1>TEST ZONE</h1>
-                <UniversalSelect
-                    name='name1'
-                    selectedOptions ={['11001', 4447, 4553, ]}
-                    firstOptionSelected
-                    onSelectChange={handleSelectorChange}
-                    fetchDataConfig={fetchDataConfig}
-                    options={options}
-                    isMulti
-                    isSearchable
-                    createNewValues
-                    type='number'
-                />
-
-                <DatabaseTable
-                    model='Registry'
-                    tableHeaders={tableHeaders}
-                    configTable={configTable}
-                    additionalElement={CreateButton}
-                />
-
+            <div>
+                <Head>
+                    <title>TEST ZONE | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                </Head>
+                <div>
+                    <h1>TEST ZONE</h1>
+                    <UniversalSelect
+                        name='name1'
+                        selectedOptions={['11001', 4447, 4553,]}
+                        firstOptionSelected
+                        onSelectChange={handleSelectorChange}
+                        fetchDataConfig={fetchDataConfig}
+                        options={options}
+                        isMulti
+                        isSearchable
+                        createNewValues
+                        // type='number'
+                    />
+                    <DatePicker.RangePicker
+                        size="large"
+                        locale="ru"
+                    />
+                    <div className='mt-2'>
+                        <div className="d-flex justify-content-end w-100">
+                            <Link href={REGISTRY_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
+                        </div>
+                        <SmartTable
+                            model='Registry'
+                            columns={tableColumns}
+                        />
+                    </div>
+                </div>
             </div>
-           
         </div>
+        // </ProtectedRoute>
     );
 };
 
-export default IndexPage;
+// export default TestPage;

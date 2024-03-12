@@ -8,6 +8,7 @@ import {
     REGISTRY_INDEX_URL,
     REGISTRY_RESEND_URL, REPORT_DEALERS_ACCOUNT_HISTORY_URL
 } from "../routes/web";
+import ProtectedRoute from "../components/main/system/ProtectedRoute";
 
 
 export default function Home() {
@@ -17,9 +18,11 @@ export default function Home() {
             <Head>
                 <title>Главная страница | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
+            {/*<ProtectedRoute allowedRoles={3} redirect={false}>*/}
             <div>
                 <h1>Главная страница</h1>
             </div>
+            {/*</ProtectedRoute>*/}
             <div className='d-flex justify-content-between'>
                 <div className="w-75">
                     {/*<h3>Новости</h3>*/}
