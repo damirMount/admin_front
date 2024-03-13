@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowRightArrowLeft, faFileExcel,} from "@fortawesome/free-solid-svg-icons";
 import {ACQUIRING_COMPARISON_API} from "../../routes/api";
@@ -9,7 +9,7 @@ export default function IndexPage() {
     const [excelFile, setExcelFile] = useState(null);
     const [registryFile, setRegistryFile] = useState(null);
     const [comparisonResult, setComparisonResult] = useState(null);
-    const { data: session } = useSession(); // Получаем сессию
+    const {data: session} = useSession(); // Получаем сессию
     const handleExcelFileChange = (e) => {
         setExcelFile(e.target.files[0]);
 
@@ -135,7 +135,7 @@ export default function IndexPage() {
                 )}
             </div>
 
-           
+
         </div>
     );
 }

@@ -15,7 +15,6 @@ import SmartTable from "../../../components/main/table/SmartTable";
 export default function RegistryPage() {
 
 
-
     const actionButtonsLinks = {
         editRoute: {label: 'Изменить запись', link: REGISTRY_EDIT_URL, useId: true},
         deleteRoute: {label: 'Удалить', link: REGISTRY_DELETE_API, useId: true},
@@ -118,9 +117,7 @@ export default function RegistryPage() {
                         columns={tableColumns}
                     />
                 </div>
-
             </div>
-
         </div>
     );
 };

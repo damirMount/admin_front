@@ -1,4 +1,3 @@
-import {useEffect} from 'react';
 import {useRouter} from 'next/router';
 import {LOGIN_PAGE_URL} from "../../routes/web";
 import SidebarTab from "../main/navigation/SidebarTab";

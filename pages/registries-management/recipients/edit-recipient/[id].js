@@ -25,10 +25,9 @@ export default function EditRecipient() {
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
     const [recipientName, setRecipientName] = useState('');
-    const { data: session } = useSession(); // Получаем сессию
+    const {data: session} = useSession(); // Получаем сессию
     const router = useRouter();
     const itemId = router.query.id;
-
 
 
     const handleInputChange = (event) => {
@@ -228,12 +227,12 @@ export default function EditRecipient() {
                     </div>
                     <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
                         <button className="btn btn-purple me-2" type="submit">Сохранить</button>
-                        <Link href={RECIPIENT_INDEX_URL}  className="btn btn-cancel ms-2"
+                        <Link href={RECIPIENT_INDEX_URL} className="btn btn-cancel ms-2"
                               type="button">Отмена</Link>
                     </div>
                 </form>
             </div>
-           
+
         </div>
     );
 }

@@ -6,7 +6,7 @@ import {useSession} from "next-auth/react";
 const DataRemover = ({id, deleteRoute}) => {
     const [modalData, setModalData] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const { data: session } = useSession(); // Получаем сессию
+    const {data: session} = useSession(); // Получаем сессию
     const handleRemoveData = () => {
         const newModalData = {
             title: 'Подтвердите удаление',

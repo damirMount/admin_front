@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { useAuth } from '../../../contexts/AccessContext';
+import React, {useEffect, useState} from 'react';
+import {useAuth} from '../../../contexts/AccessContext';
 
-const ProtectedRoute = ({ children, accessGranted }) => {
+const ProtectedRoute = ({children, accessGranted}) => {
     if (!accessGranted) {
         return null; // Можно отображать загрузочный индикатор здесь
     }
@@ -10,8 +9,8 @@ const ProtectedRoute = ({ children, accessGranted }) => {
     return children;
 };
 
-const ProtectedRouteContainer = ({ children, allowedRoles, redirect = true }) => {
-    const { session, checkAccess } = useAuth();
+const ProtectedRouteContainer = ({children, allowedRoles, redirect = true}) => {
+    const {session, checkAccess} = useAuth();
     const [accessGranted, setAccessGranted] = useState(false);
 
     useEffect(() => {

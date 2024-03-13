@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from "next/link";
 import Image from 'next/image'
 import {MAIN_PAGE_URL} from "../../../routes/web";
 

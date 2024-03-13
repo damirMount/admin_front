@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react';
-import { Button, Input, Space } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import React, {useRef, useState} from 'react';
+import {Button, Input, Space} from "antd";
+import {SearchOutlined} from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 
-const SearchByColumn = ( dataIndex ) => {
+const SearchByColumn = (dataIndex) => {
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
@@ -20,7 +20,7 @@ const SearchByColumn = ( dataIndex ) => {
     };
 
     const getColumnSearchProps = () => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}) => (
             <div
                 style={{
                     padding: 8,
@@ -42,7 +42,7 @@ const SearchByColumn = ( dataIndex ) => {
                     <Button
                         className="btn-purple fw-normal"
                         onClick={() => handleSearch(selectedKeys, confirm)}
-                        icon={<SearchOutlined />}
+                        icon={<SearchOutlined/>}
                         size="small"
                         style={{
                             width: 90,

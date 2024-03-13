@@ -21,8 +21,7 @@ export default function DealerExportPage() {
         startDate: null,
         endDate: null,
     });
-    const { data: session } = useSession(); // Получаем сессию
-
+    const {data: session} = useSession(); // Получаем сессию
 
 
     const handleDateChange = (newStartDate, newEndDate) => {
@@ -285,7 +284,7 @@ export default function DealerExportPage() {
                     </div>
                 )}
             </div>
-           
+
         </div>
     );
 };

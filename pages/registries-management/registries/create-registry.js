@@ -24,7 +24,7 @@ export default function CreateRegistry() {
     const router = useRouter();
     const {clearAlertMessage, showAlertMessage} = useAlert();
     const [selectedServer, setSelectedServer] = useState(null)
-    const { data: session } = useSession(); // Получаем сессию
+    const {data: session} = useSession(); // Получаем сессию
     const [getRows, setRows] = useState([
         {isActive: true, field: 'identifier', tableHeader: 'Лицевой счёт'},
         {isActive: true, field: 'real_pay', tableHeader: 'Сумма платежа'},
@@ -157,7 +157,7 @@ export default function CreateRegistry() {
                                 <UniversalSelect
                                     key={JSON.stringify(selectedServer)}
                                     name='servicesId'
-                                        placeholder="Выберете сервисы"
+                                    placeholder="Выберете сервисы"
                                     fetchDataConfig={{
                                         model: 'Service',
                                         searchTerm: {id_bserver: selectedServer}
@@ -196,7 +196,7 @@ export default function CreateRegistry() {
                     </div>
                 </form>
             </div>
-           
+
         </div>
     );
 }

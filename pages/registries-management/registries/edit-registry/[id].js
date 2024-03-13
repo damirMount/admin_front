@@ -3,10 +3,7 @@ import {useRouter} from 'next/router';
 import FormInput from '../../../../components/main/input/FormInput';
 import Link from 'next/link';
 import RegistryFieldsTable from "../../../../components/pages/registry/RegistryFieldsTable";
-import {
-    REGISTRY_SHOW_API,
-    REGISTRY_UPDATE_API
-} from "../../../../routes/api";
+import {REGISTRY_SHOW_API, REGISTRY_UPDATE_API} from "../../../../routes/api";
 import Head from "next/head";
 import RegistryFileFormat from "../../../../components/pages/registry/RegistryFileFormat";
 import UniversalSelect from "../../../../components/main/input/UniversalSelect";
@@ -32,7 +29,7 @@ export default function EditRegistryFile() {
     const [registryStatus, setRegistryStatus] = useState('');
     const [getRows, setRows] = useState([]);
     const [selectedServer, setSelectedServer] = useState(null)
-    const { data: session } = useSession(); // Получаем сессию
+    const {data: session} = useSession(); // Получаем сессию
     const handleUpdateRows = (updatedRows) => {
         setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryFieldsTable
     };
@@ -279,13 +276,13 @@ export default function EditRegistryFile() {
                         <button className="btn btn-purple me-2" type="submit">
                             Сохранить
                         </button>
-                        <Link  href={REGISTRY_INDEX_URL} className="btn btn-cancel ms-2" type="button">
+                        <Link href={REGISTRY_INDEX_URL} className="btn btn-cancel ms-2" type="button">
                             Отмена
                         </Link>
                     </div>
                 </form>
             </div>
-           
+
         </div>
     );
 }

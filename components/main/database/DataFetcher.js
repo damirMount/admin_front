@@ -1,7 +1,6 @@
 // DataFetcher.js
 
-import { GET_DATA_FROM_DB_API } from "../../../routes/api";
-import {parseCookies} from "nookies";
+import {GET_DATA_FROM_DB_API} from "../../../routes/api";
 
 const fetchData = async (config, session) => {
     try {

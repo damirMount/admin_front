@@ -9,11 +9,13 @@ import {useSession} from "next-auth/react";
 
 export default function GSFRUpdatePage() {
     const [processingLoader, setProcessingLoader] = useState(false);
-    const { data: session } = useSession(); // Получаем сессию
+    const {data: session} = useSession(); // Получаем сессию
     const {showAlertMessage} = useAlert();
-    const [formData, setFormData] = useState({ urls: {
-        UN: 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
-        } });
+    const [formData, setFormData] = useState({
+        urls: {
+            UN: 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
+        }
+    });
 
     const handleInputChange = (event) => {
         const {name, value} = event.target;
@@ -21,7 +23,8 @@ export default function GSFRUpdatePage() {
             ...prevFormData,
             urls: {
                 ...prevFormData.urls,
-                [name]: value}
+                [name]: value
+            }
         }));
     };
 
@@ -34,7 +37,7 @@ export default function GSFRUpdatePage() {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${session.accessToken}`,
                 },
-                body:  JSON.stringify(formData),
+                body: JSON.stringify(formData),
             });
 
             const responseData = await response.json();
@@ -136,13 +139,13 @@ export default function GSFRUpdatePage() {
                                 />
                             </div>
                         </div>
-                            <button
-                                type="button"
-                                className="btn btn-purple mt-5"
-                                onClick={handleUpdate}
-                            >
-                                Обновить список
-                            </button>
+                        <button
+                            type="button"
+                            className="btn btn-purple mt-5"
+                            onClick={handleUpdate}
+                        >
+                            Обновить список
+                        </button>
 
                     </form>
                 </div>

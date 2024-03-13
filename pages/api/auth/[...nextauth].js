@@ -1,14 +1,14 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from "next-auth/providers/credentials";
-import { POST_LOGIN_API } from "../../../routes/api";
+import {POST_LOGIN_API} from "../../../routes/api";
 
 export default NextAuth({
 
     providers: [
         CredentialsProvider({
             credentials: {
-                username: { label: "Username", type: "text" },
-                password: { label: "Password", type: "password" }
+                username: {label: "Username", type: "text"},
+                password: {label: "Password", type: "password"}
             },
             async authorize(credentials, req) {
                 try {
@@ -40,7 +40,7 @@ export default NextAuth({
 
     ],
     callbacks: {
-        async jwt({ token, user, account, profile, isNewUser }) {
+        async jwt({token, user, account, profile, isNewUser}) {
             if (user) {
                 token = user;
                 token.accessToken = user.accessToken;
@@ -49,7 +49,7 @@ export default NextAuth({
             return token;
         },
 
-        async session({ session, token }) {
+        async session({session, token}) {
             if (token.user) {
                 session.user = {
                     id: token.user.id,

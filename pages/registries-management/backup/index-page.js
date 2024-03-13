@@ -19,7 +19,7 @@ export default function RegistryFilesBackupsListPage() {
                     downloadUrl={REGISTRY_BACKUP_DOWNLOAD_API}
                 />
             </div>
-           
+
         </div>
     );
 };

@@ -1,9 +1,9 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEllipsis} from '@fortawesome/free-solid-svg-icons';
 import DataRemover from "../../database/DataRemover";
 import Link from "next/link";
-import { Dropdown, Menu } from "antd";
+import {Dropdown, Menu} from "antd";
 
 const ActionButtons = (buttonsLinks = null, props) => {
     const id = props.id;
@@ -14,7 +14,7 @@ const ActionButtons = (buttonsLinks = null, props) => {
     const buttons = [];
 
     for (const key in buttonsLinks) {
-        const { label, link, useId } = buttonsLinks[key];
+        const {label, link, useId} = buttonsLinks[key];
 
         if (key !== 'deleteRoute' && id) {
             const buttonLink = `${link}${useId ? `/${id}` : ''}`;
@@ -39,7 +39,7 @@ const ActionButtons = (buttonsLinks = null, props) => {
             {buttons}
             {(createdAt || updatedAt || deletedAt) && (
                 <>
-                    <Menu.Divider />
+                    <Menu.Divider/>
                     <Menu.Item className="d-flex fw-bold flex-column text-start">
                         {createdAt && (
                             <div className="d-flex flex-column justify-content-start">
@@ -66,11 +66,11 @@ const ActionButtons = (buttonsLinks = null, props) => {
     );
 
     return (
-                <Dropdown overlay={menu} placement="bottomRight" arrow trigger={['click']}>
-                    <div className="btn btn-purple p-0 ps-2 pe-2 rounded-3">
-                        <FontAwesomeIcon icon={faEllipsis} size="lg"/>
-                    </div>
-                </Dropdown>
+        <Dropdown overlay={menu} placement="bottomRight" arrow trigger={['click']}>
+            <div className="btn btn-purple p-0 ps-2 pe-2 rounded-3">
+                <FontAwesomeIcon icon={faEllipsis} size="lg"/>
+            </div>
+        </Dropdown>
     );
 };
 

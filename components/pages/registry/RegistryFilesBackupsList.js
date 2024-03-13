@@ -9,7 +9,7 @@ import SearchByColumn from "../../main/table/cell/SearchByColumn";
 
 const RegistryFiles = ({apiUrl, downloadUrl}) => {
     const [registryFiles, setRegistryFile] = useState([]);
-    const { data: session } = useSession(); // Получаем сессию
+    const {data: session} = useSession(); // Получаем сессию
 
     const fetchRegistryFile = async () => {
         try {
@@ -95,7 +95,8 @@ const RegistryFiles = ({apiUrl, downloadUrl}) => {
         },
         {
             title: 'Скачать',
-            render: (text, record) => <button onClick={() => handleDownload(record.name)} className="btn btn-purple ms-2">
+            render: (text, record) => <button onClick={() => handleDownload(record.name)}
+                                              className="btn btn-purple ms-2">
                 <FontAwesomeIcon icon={faDownload} size="lg"/>
             </button>,
         },
@@ -107,7 +108,7 @@ const RegistryFiles = ({apiUrl, downloadUrl}) => {
                 <RegistryNavigationTabs/>
             </div>
             <div>
-                <SmartTable data={registryFiles} columns={tableColumns} />
+                <SmartTable data={registryFiles} columns={tableColumns}/>
             </div>
         </div>
     );

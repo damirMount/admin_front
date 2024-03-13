@@ -12,7 +12,7 @@ const UniversalSelect = ({
                              isRequired,
                              placeholder,
                              className,
-                             options =[],
+                             options = [],
                              fetchDataConfig = false,
                              isMulti,
                              isSearchable,
@@ -24,14 +24,14 @@ const UniversalSelect = ({
                          }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [optionsList, setOptionsList] = useState([]);
-    const [selectType, setSelectType]= useState('');
+    const [selectType, setSelectType] = useState('');
     const [closeMenuOnSelect] = useState(!isMulti);
     const [isMultiSelect, setIsMultiSelect] = useState(false);
     const {showAlertMessage} = useAlert();
     const [selectedValue, setSelectedValue] = useState([]);
     const [valuesSet, setValuesSet] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
-    const { data: session } = useSession(); // Получаем сессию
+    const {data: session} = useSession(); // Получаем сессию
     useEffect(() => {
         let mounted = true;
 
@@ -50,7 +50,7 @@ const UniversalSelect = ({
             setIsLoading(true);
 
             try {
-                const response = await fetchData(fetchDataConfig , session);
+                const response = await fetchData(fetchDataConfig, session);
                 // После ответа сервера формируем массив опций для селектора
                 mappedOptions = response.data.map((item) => ({
                     value: item.id,
@@ -110,8 +110,7 @@ const UniversalSelect = ({
         return () => {
             mounted = false;
         };
-    }, [fetchDataConfig && !valuesSet ]);
-
+    }, [fetchDataConfig && !valuesSet]);
 
 
     const setAndNotifyChange = useCallback(
@@ -154,8 +153,6 @@ const UniversalSelect = ({
             if (newValue && createNewValues && type && !validateInput(newValue)) {
                 return setErrorMessage(`Введенное значение не является ${type}`);
             }
-
-
 
 
             // Проверка есть ли у полученного элемента значение isSelectOne == true. Если да то записываем в optionsListArray
@@ -235,19 +232,19 @@ const UniversalSelect = ({
 
     return (
         <div>
-        <Selector
-            name={name}
-            closeMenuOnSelect={closeMenuOnSelect}
-            required={isRequired}
-            placeholder={placeholder}
-            className={className}
-            options={optionsList}
-            isLoading={isLoading}
-            isMulti={isMultiSelect}
-            isSearchable={isSearchable}
-            value={selectedValue}
-            onChange={(newValue) => setAndNotifyChange(newValue)}
-        />
+            <Selector
+                name={name}
+                closeMenuOnSelect={closeMenuOnSelect}
+                required={isRequired}
+                placeholder={placeholder}
+                className={className}
+                options={optionsList}
+                isLoading={isLoading}
+                isMulti={isMultiSelect}
+                isSearchable={isSearchable}
+                value={selectedValue}
+                onChange={(newValue) => setAndNotifyChange(newValue)}
+            />
             {createNewValues && type && (
                 <p className="text-danger">
                     {errorMessage}

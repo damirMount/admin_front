@@ -4,7 +4,7 @@ import Head from 'next/head';
 import {RECIPIENT_DELETE_API} from "../../../routes/api";
 import StatusIndicator from "../../../components/main/table/cell/StatusIndicator";
 import RegistryNavigationTabs from "../../../components/pages/registry/RegistryNavigationTabs";
-import {RECIPIENT_CREATE_URL, RECIPIENT_EDIT_URL, REGISTRY_CREATE_URL} from "../../../routes/web";
+import {RECIPIENT_CREATE_URL, RECIPIENT_EDIT_URL} from "../../../routes/web";
 import Link from "next/link";
 import SmartTable from "../../../components/main/table/SmartTable";
 import SearchByColumn from "../../../components/main/table/cell/SearchByColumn";

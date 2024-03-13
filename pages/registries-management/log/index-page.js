@@ -20,7 +20,7 @@ export default function RegistryFilesBackupsListPage() {
                     downloadUrl={REGISTRY_LOG_DOWNLOAD_API}
                 />
             </div>
-           
+
         </div>
     );
 };

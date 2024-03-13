@@ -19,7 +19,7 @@ export default function CreateRecipient() {
     });
     const router = useRouter();
     const {clearAlertMessage, showAlertMessage} = useAlert();
-    const { data: session } = useSession(); // Получаем сессию
+    const {data: session} = useSession(); // Получаем сессию
     const recipientTypes = [
         {value: 1, label: 'Каждый день'},
         {value: 2, label: 'Раз в неделю'},
@@ -172,7 +172,7 @@ export default function CreateRecipient() {
                     </div>
                 </form>
             </div>
-           
+
         </div>
     );
 }

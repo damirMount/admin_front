@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {format} from 'date-fns';
-import {DatePicker} from "antd";
-import dayjs from "dayjs";
 
 const DateRangeInput = ({initialStartDate, initialEndDate, onDateChange}) => {
     const [startDate, setStartDate] = useState(initialStartDate || "");
