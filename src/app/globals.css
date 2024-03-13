@@ -166,7 +166,7 @@ tr, td, table, tbody, th, thead, tfoot {
     max-width: 100%;
     background-color: #FFFFFF;
     border-bottom: #F8E0FB 1px solid;
-    z-index: 999;
+    z-index: 2000;
 }
 
 h1 {

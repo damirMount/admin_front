@@ -16,7 +16,8 @@ import {
     REGISTRY_LOGS_URL,
     REGISTRY_RESEND_URL,
     REPORT_DEALERS_ACCOUNT_HISTORY_URL,
-    REPORT_DEALERS_TSJ_URL, SECURITY_ACCESS_PERMISSION_INDEX,
+    REPORT_DEALERS_TSJ_URL,
+    SECURITY_ACCESS_PERMISSION_INDEX,
     SECURITY_ACCESS_ROLES_INDEX,
     SECURITY_ACCESS_USERS_LIST,
     TEST_ZONE_URL
@@ -60,18 +61,18 @@ const SidebarTab = () => {
                 {label: 'Список ГСФР', link: GSFR_UPDATE_URL}
             ]
         },
-            // {
-            //     label: 'Безопасность', icon: faShieldHalved, showInSubMenu: true, subMenu: [
-            //         {
-            //             label: 'Права доступа', subMenu: [
-            //                 {label: 'Список пользователей', link: SECURITY_ACCESS_USERS_LIST},
-            //                 {label: 'Список ролей', link: SECURITY_ACCESS_ROLES_INDEX},
-            //                 {label: 'Список прав', link: SECURITY_ACCESS_PERMISSION_INDEX},
-            //             ],
-            //         },
-            //         // {label: 'Журнал аудита', link: TEST_ZONE_URL},
-            //     ]
-            // },
+        {
+            label: 'Безопасность', icon: faShieldHalved, showInSubMenu: true, subMenu: [
+                {
+                    label: 'Права доступа', subMenu: [
+                        {label: 'Список пользователей', link: SECURITY_ACCESS_USERS_LIST},
+                        {label: 'Список ролей', link: SECURITY_ACCESS_ROLES_INDEX},
+                        {label: 'Список прав', link: SECURITY_ACCESS_PERMISSION_INDEX},
+                    ],
+                },
+                // {label: 'Журнал аудита', link: TEST_ZONE_URL},
+            ]
+        },
         {label: 'В Разработке', hideWhereCollapsed: true},
         {
             label: 'Разработка', icon: faCode, showInSubMenu: true, subMenu: [
@@ -94,10 +95,14 @@ const SidebarTab = () => {
                 )}
                 {subMenuData.map((item, index) => (
                     item.subMenu ?
-                        buildSubMenu(item.subMenu, item.label, item.icon) :
-                        <MenuItem key={index} title={item.label}
-                                  icon={item.icon && <FontAwesomeIcon icon={item.icon} size="lg"/>}
-                                  component={<Link href={item.link || '#'}/>}>
+                        buildSubMenu(item.subMenu, item.label, item.icon, item.targetLink) :
+                        <MenuItem
+                            key={index}
+                            title={item.label}
+                            icon={item.icon && <FontAwesomeIcon icon={item.icon} size="lg"/>}
+                            component={
+                                item.link ? <Link href={item.link} target={item.targetLink || ''}/> : null
+                            }>
                             {item.label || ''}
                         </MenuItem>
                 ))}
@@ -115,7 +120,9 @@ const SidebarTab = () => {
                 <MenuItem
                     title={label && !hideWhereCollapsed ? label : ''}
                     icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}
-                    component={<Link target={targetLink || ''} href={link || '#'}/>}
+                    component={
+                        link ? <Link href={link} target={targetLink || ''}/> : null
+                    }
                     style={hideWhereCollapsed ? {opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px'} : {}}
                 >{label || ''}
                 </MenuItem>
@@ -147,9 +154,9 @@ const SidebarTab = () => {
 
     return (
         <Sidebar className='shadow user-select-none' backgroundColor="#ffffff" collapsed={collapsed}
-                 breakPoint="md" transitionDuration={0} onBackdropClick={toggleCollapsed} toggled={collapsed}
+                 breakPoint="none" transitionDuration={0} onBackdropClick={toggleCollapsed} toggled={collapsed}
                  collapsedWidth="80px">
-            <Menu className="position-fixed" style={{width: collapsed ? 80 : 249}} menuItemStyles={{
+            <Menu className="position-fixed " style={{width: collapsed ? 80 : 249}} menuItemStyles={{
                 button: ({level, active, disabled}) => {
                     if (level === 0)
                         return {

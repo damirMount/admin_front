@@ -24,7 +24,7 @@ const AuthCheck = (WrappedComponent) => {
                         {router.pathname !== LOGIN_PAGE_URL && <SidebarTab/>}
                         <div className="w-100 overflow-hidden">
                             <Navbar/>
-                            <div className="container w-100 overflow-x-auto overflow-y-hidden mt-5">
+                            <div className=" w-100 overflow-x-auto overflow-y-hidden mt-5">
                                 <div className="container body-container mt-5">
                                     <ConfigProvider locale={ruRU}>
                                         <WrappedComponent {...props}/>

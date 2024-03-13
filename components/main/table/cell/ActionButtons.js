@@ -1,8 +1,9 @@
 import React from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faEllipsis} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import DataRemover from "../../database/DataRemover";
 import Link from "next/link";
+import { Dropdown, Menu } from "antd";
 
 const ActionButtons = (buttonsLinks = null, props) => {
     const id = props.id;
@@ -13,73 +14,63 @@ const ActionButtons = (buttonsLinks = null, props) => {
     const buttons = [];
 
     for (const key in buttonsLinks) {
-        const {label, link, useId} = buttonsLinks[key];
+        const { label, link, useId } = buttonsLinks[key];
 
         if (key !== 'deleteRoute' && id) {
             const buttonLink = `${link}${useId ? `/${id}` : ''}`;
             buttons.push(
-                <li key={key}>
-                    <Link
-                        href={buttonLink}
-                        className="dropdown-item d-flex align-items-center"
-                    >
+                <Menu.Item key={key}>
+                    <Link href={buttonLink} className="dropdown-item d-flex align-items-center">
                         {label}
                     </Link>
-                </li>
+                </Menu.Item>
             );
         } else if (key === 'deleteRoute' && id) {
             buttons.push(
-                <li key={key}>
+                <Menu.Item key={key}>
                     <DataRemover id={id} deleteRoute={link}/>
-                </li>
+                </Menu.Item>
             );
         }
     }
 
+    const menu = (
+        <Menu>
+            {buttons}
+            {(createdAt || updatedAt || deletedAt) && (
+                <>
+                    <Menu.Divider />
+                    <Menu.Item className="d-flex fw-bold flex-column text-start">
+                        {createdAt && (
+                            <div className="d-flex flex-column justify-content-start">
+                                <small className="text-secondary">Создано:</small>
+                                <small>{createdAt}</small>
+                            </div>
+                        )}
+                        {updatedAt && (
+                            <div className="d-flex mt-2 flex-column justify-content-start">
+                                <small className="text-secondary">Последнее изменение:</small>
+                                <small>{updatedAt}</small>
+                            </div>
+                        )}
+                        {deletedAt && (
+                            <div className="d-flex mt-2 flex-column justify-content-start">
+                                <small className="text-secondary">Удалено:</small>
+                                <small>{deletedAt}</small>
+                            </div>
+                        )}
+                    </Menu.Item>
+                </>
+            )}
+        </Menu>
+    );
+
     return (
-        <div className="action-table-buttons col-auto">
-            <div className="dropdown">
-                <button
-                    className="btn btn-purple p-0 ps-2 pe-2 rounded-3"
-                    type="button"
-                    id="moreActionsButton"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                >
-                    <FontAwesomeIcon icon={faEllipsis} size="lg"/>
-                </button>
-                <ul className="dropdown-menu" aria-labelledby="moreActionsButton">
-                    {buttons}
-                    {(createdAt || updatedAt || deletedAt) && (
-                        <>
-                            <li>
-                                <hr className="dropdown-divider"/>
-                            </li>
-                            <li className="status d-flex flex-column text-start">
-                                {createdAt && (
-                                    <div className="d-flex flex-column justify-content-start">
-                                        <span className="me-2 text-secondary">Создано:</span>
-                                        <span>{createdAt}</span>
-                                    </div>
-                                )}
-                                {updatedAt && (
-                                    <div className="d-flex mt-2 flex-column justify-content-start">
-                                        <span className="me-2 text-secondary">Последнее изменение:</span>
-                                        <span>{updatedAt}</span>
-                                    </div>
-                                )}
-                                {deletedAt && (
-                                    <div className="d-flex mt-2 flex-column justify-content-start">
-                                        <span className="me-2 text-secondary">Удалено:</span>
-                                        <span>{deletedAt}</span>
-                                    </div>
-                                )}
-                            </li>
-                        </>
-                    )}
-                </ul>
-            </div>
-        </div>
+                <Dropdown overlay={menu} placement="bottomRight" arrow trigger={['click']}>
+                    <div className="btn btn-purple p-0 ps-2 pe-2 rounded-3">
+                        <FontAwesomeIcon icon={faEllipsis} size="lg"/>
+                    </div>
+                </Dropdown>
     );
 };
 
