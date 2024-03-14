@@ -22,7 +22,7 @@ export default function CreateRegistry() {
         is_blocked: '',
     });
     const router = useRouter();
-    const {clearAlertMessage, showAlertMessage} = useAlert();
+    const {openNotification} = useAlert();
     const [selectedServer, setSelectedServer] = useState(null)
     const {data: session} = useSession(); // Получаем сессию
     const [getRows, setRows] = useState([
@@ -83,13 +83,13 @@ export default function CreateRegistry() {
 
             const responseData = await response.json();
             if (response.ok) {
-                showAlertMessage({type: "success", text: responseData.message});
+                openNotification({type: "success", message: responseData.message});
                 await router.push(REGISTRY_INDEX_URL);
             } else {
-                showAlertMessage({type: "error", text: responseData.message});
+                openNotification({type: "error", message: responseData.message});
             }
         } catch (error) {
-            showAlertMessage({type: "error", text: error.message});
+            openNotification({type: "error", message: error.message});
             console.error(error);
         }
     };

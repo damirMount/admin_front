@@ -10,7 +10,7 @@ import {useSession} from "next-auth/react";
 export default function GSFRUpdatePage() {
     const [processingLoader, setProcessingLoader] = useState(false);
     const {data: session} = useSession(); // Получаем сессию
-    const {showAlertMessage} = useAlert();
+    const {openNotification} = useAlert();
     const [formData, setFormData] = useState({
         urls: {
             UN: 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
@@ -44,13 +44,13 @@ export default function GSFRUpdatePage() {
 
 
             if (response.ok) {
-                showAlertMessage({type: "success", text: responseData.message});
+                openNotification({type: "success", message: responseData.message});
             } else {
-                showAlertMessage({type: "error", text: responseData.message});
+                openNotification({type: "error", message: responseData.message});
             }
         } catch (error) {
             console.error('Error uploading file:', error);
-            showAlertMessage({type: "error", text: "Внутренняя ошибка сервера."});
+            openNotification({type: "error", message: "Внутренняя ошибка сервера."});
         } finally {
             setProcessingLoader(false);
         }

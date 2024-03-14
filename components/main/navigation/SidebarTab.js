@@ -23,6 +23,7 @@ import {
     TEST_ZONE_URL
 } from "../../../routes/web";
 import {useSession} from "next-auth/react";
+import {Tooltip} from "antd";
 
 const SidebarTab = () => {
     const [collapsed, setCollapsed] = useState(true);
@@ -86,27 +87,29 @@ const SidebarTab = () => {
         if (!subMenuData) return null;
 
         return (
-            <SubMenu label={label} title={label || ''} icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
-                {showInSubMenu && collapsed && (
-                    <MenuItem title={label} className='fw-bold border-bottom text-nowrap'
-                              icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
-                        {label || ''}
-                    </MenuItem>
-                )}
-                {subMenuData.map((item, index) => (
-                    item.subMenu ?
-                        buildSubMenu(item.subMenu, item.label, item.icon, item.targetLink) :
-                        <MenuItem
-                            key={index}
-                            title={item.label}
-                            icon={item.icon && <FontAwesomeIcon icon={item.icon} size="lg"/>}
-                            component={
-                                item.link ? <Link href={item.link} target={item.targetLink || ''}/> : null
-                            }>
-                            {item.label || ''}
+            <Tooltip placement="right" {...((label && collapsed && showInSubMenu) ? {title: label} : {})}>
+                <SubMenu label={label} icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
+                    {showInSubMenu && collapsed && (
+                        <MenuItem title={label} className='fw-bold border-bottom text-nowrap'
+                                  icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
+                            {label || ''}
                         </MenuItem>
-                ))}
-            </SubMenu>
+                    )}
+                    {subMenuData.map((item, index) => (
+                        item.subMenu ?
+                            buildSubMenu(item.subMenu, item.label, item.icon, item.targetLink) :
+                            <MenuItem
+                                key={index}
+                                title={item.label}
+                                icon={item.icon && <FontAwesomeIcon icon={item.icon} size="lg"/>}
+                                component={
+                                    item.link ? <Link href={item.link} target={item.targetLink || ''}/> : null
+                                }>
+                                {item.label || ''}
+                            </MenuItem>
+                    ))}
+                </SubMenu>
+            </Tooltip>
         );
     };
 
@@ -117,15 +120,16 @@ const SidebarTab = () => {
             return buildSubMenu(subMenu, label, icon, showInSubMenu);
         } else {
             return (
-                <MenuItem
-                    title={label && !hideWhereCollapsed ? label : ''}
-                    icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}
-                    component={
-                        link ? <Link href={link} target={targetLink || ''}/> : null
-                    }
-                    style={hideWhereCollapsed ? {opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px'} : {}}
-                >{label || ''}
-                </MenuItem>
+                <Tooltip placement="right" {...((label && collapsed && !hideWhereCollapsed) ? {title: label} : {})}>
+                    <MenuItem
+                        icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}
+                        component={
+                            link ? <Link href={link} target={targetLink || ''}/> : null
+                        }
+                        style={hideWhereCollapsed ? {opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px'} : {}}
+                    >{label || ''}
+                    </MenuItem>
+                </Tooltip>
             );
         }
     };
@@ -170,11 +174,11 @@ const SidebarTab = () => {
                      style={{maxHeight: '100vh', minHeight: '100vh'}}>
                     <div className="overflow-auto d-flex flex-column justify-content-between align-content-between">
                         <div className="h-100">
-                            <MenuItem onClick={toggleCollapsed} title="Меню"
-                                      icon={collapsed ? <FontAwesomeIcon icon={faBars} size="lg"/> :
-                                          <FontAwesomeIcon icon={faTimes} size="lg"/>}>
-                                Закрыть
-                            </MenuItem>
+                                <MenuItem onClick={toggleCollapsed}
+                                          icon={collapsed ? <FontAwesomeIcon icon={faBars} size="lg"/> :
+                                              <FontAwesomeIcon icon={faTimes} size="lg"/>}>
+                                    Закрыть
+                                </MenuItem>
                             {buildMenu(menuButtonList)}
                         </div>
                     </div>

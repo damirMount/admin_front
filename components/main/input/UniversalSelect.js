@@ -27,7 +27,7 @@ const UniversalSelect = ({
     const [selectType, setSelectType] = useState('');
     const [closeMenuOnSelect] = useState(!isMulti);
     const [isMultiSelect, setIsMultiSelect] = useState(false);
-    const {showAlertMessage} = useAlert();
+    const {openNotification} = useAlert();
     const [selectedValue, setSelectedValue] = useState([]);
     const [valuesSet, setValuesSet] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
@@ -60,9 +60,9 @@ const UniversalSelect = ({
                 // Помечаем, что данные загружены
                 dataLoaded = true;
             } catch (error) {
-                showAlertMessage({
+                openNotification({
                     type: 'error',
-                    text: 'Ошибка при получении данных: ' + error.message,
+                    message: 'Ошибка при получении данных: ' + error.message,
                 });
             } finally {
                 if (mounted) {

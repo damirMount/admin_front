@@ -15,19 +15,13 @@ export default function DealerExportPage() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [processingLoader, setProcessingLoader] = useState(false);
-    const {clearAlertMessage, showAlertMessage} = useAlert();
+    const {openNotification} = useAlert();
     const [fileDownloaded, setFileDownloaded] = useState([]);
     const [formData, setFormData] = useState({
         startDate: null,
         endDate: null,
     });
     const {data: session} = useSession(); // Получаем сессию
-
-
-    const handleDateChange = (newStartDate, newEndDate) => {
-        setStartDate(newStartDate);
-        setEndDate(newEndDate);
-    };
 
     const handleCreateReport = async () => {
         try {
@@ -53,7 +47,7 @@ export default function DealerExportPage() {
                 const createdAt = new Date();
                 const fileName = `Отчёт за ${startDate} по ${endDate}.xlsx`;
 
-                showAlertMessage({type: "success", text: "Отчет успешно создан."});
+                openNotification({type: "success", message: "Отчет успешно создан."});
                 setFileDownloaded((prevFileDownloaded) => [...prevFileDownloaded, {
                     fileName,
                     startDate,
@@ -65,11 +59,11 @@ export default function DealerExportPage() {
 
             } else {
                 const responseData = await response.json();
-                showAlertMessage({type: "error", text: responseData.message});
+                openNotification({type: "error", message: responseData.message});
             }
         } catch (error) {
             console.error('Ошибка при отправке реестра:', error);
-            showAlertMessage({type: "error", text: "Произошла ошибка при создании отчета"});
+            openNotification({type: "error", message: "Произошла ошибка при создании отчета"});
         } finally {
             setProcessingLoader(false);
         }
@@ -99,17 +93,16 @@ export default function DealerExportPage() {
             <Head>
                 <title>Отчёты по истории счётов | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div className=" mt-5">
+            <div className="w-100 mt-5">
                 <h1>Выгрузка отчета по истории счетов</h1>
 
                 <ReportsNavigationTabs/>
-                {processingLoader ? (
+                {processingLoader && (
                     <Preloader/>
-                ) : (
-                    <div className="d-flex flex-column">
+                )}
+                    <div className={`${processingLoader ? 'd-none' : 'd-flex'} w-100 flex-column`}>
                         <div className="d-flex flex-row w-100 justify-content-center">
-
-                            <div className="d-flex flex-column  align-items-center">
+                            <div className="d-flex flex-column w-75 align-items-center">
                                 <div>
                                     <div className="form-group">
                                         <label htmlFor="is_blocked">Выберите отчет</label>
@@ -187,9 +180,10 @@ export default function DealerExportPage() {
 
 
                                     <DateRangeInput
-                                        initialStartDate={startDate}
-                                        initialEndDate={endDate}
-                                        onDateChange={handleDateChange}
+                                        onDateChange={(dates) => {
+                                            setStartDate(dates[0]);
+                                            setEndDate(dates[1]);
+                                        }}
                                     />
 
                                 </div>
@@ -280,11 +274,8 @@ export default function DealerExportPage() {
                             )}
 
                         </div>
-
                     </div>
-                )}
-            </div>
-
+                </div>
         </div>
     );
 };

@@ -23,7 +23,7 @@ export default function EditRegistryFile() {
         sqlQuery: '',
     });
     const [isLoading, setIsLoading] = useState(true);
-    const {clearAlertMessage, showAlertMessage} = useAlert();
+    const {openNotification} = useAlert();
     const router = useRouter();
     const itemId = router.query.id;
     const [registryStatus, setRegistryStatus] = useState('');
@@ -111,13 +111,13 @@ export default function EditRegistryFile() {
 
             const responseData = await response.json();
             if (response.ok) {
-                showAlertMessage({type: "success", text: responseData.message});
+                openNotification({type: "success", message: responseData.message});
                 await router.push(REGISTRY_INDEX_URL);
             } else {
-                showAlertMessage({type: "error", text: responseData.message});
+                openNotification({type: "error", message: responseData.message});
             }
         } catch (error) {
-            showAlertMessage({type: "error", text: error.message});
+            openNotification({type: "error", message: error.message});
             console.error(error);
         }
     };
@@ -159,12 +159,12 @@ export default function EditRegistryFile() {
                         formats: selectedFormats,
                     }));
                 } else {
-                    showAlertMessage({type: "error", text: responseData.message});
+                    openNotification({type: "error", message: responseData.message});
                     console.error('Ошибка при загрузке данных с API');
                 }
             } catch (error) {
                 console.error(error);
-                showAlertMessage({type: "error", text: error.message});
+                openNotification({type: "error", message: error.message});
             } finally {
                 setIsLoading(false); // Устанавливаем isLoading в false после завершения загрузки
             }

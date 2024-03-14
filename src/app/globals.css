@@ -56,6 +56,23 @@ footer {
     margin-top: 50px;
 }
 
+/*tooltip*/
+.ant-tooltip {
+    z-index: 2;
+}
+
+.ant-notification .ant-notification-notice-wrapper .ant-notification-notice {
+     padding: 0;
+     width: fit-content;
+    height: fit-content;
+    max-width: calc(100vw - 48px);
+    overflow: hidden;
+    line-height: 1.5714285714285714;
+    word-wrap: break-word;
+}
+.ant-notification .ant-notification-notice-wrapper .ant-notification-notice-message {
+    margin-bottom: 0;
+}
 /*datePicker*/
 .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-range-start:not(.ant-picker-cell-disabled) .ant-picker-cell-inner {
     background: #532C59 !important;
@@ -179,7 +196,11 @@ tr, td, table, tbody, th, thead, tfoot {
     max-width: 100%;
     background-color: #FFFFFF;
     border-bottom: #F8E0FB 1px solid;
-    z-index: 2000;
+    z-index: 1050;
+}
+
+.modal {
+    z-index: 1051;
 }
 
 h1 {

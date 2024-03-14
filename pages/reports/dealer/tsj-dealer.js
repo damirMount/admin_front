@@ -13,7 +13,7 @@ import SearchByColumn from "../../../components/main/table/cell/SearchByColumn";
 export default function TSJDealerPage() {
     const [processingLoader, setProcessingLoader] = useState(false);
     const formData = new FormData();
-    const {showAlertMessage} = useAlert();
+    const {openNotification} = useAlert();
     const {data: session} = useSession(); // Получаем сессию
 
     const tableColumns = [
@@ -80,13 +80,13 @@ export default function TSJDealerPage() {
 
 
             if (response.ok) {
-                showAlertMessage({type: "success", text: responseData.message});
+                openNotification({type: "success", message: responseData.message});
             } else {
-                showAlertMessage({type: "error", text: responseData.message});
+                openNotification({type: "error", message: responseData.message});
             }
         } catch (error) {
             console.error('Error uploading file:', error);
-            showAlertMessage({type: "error", text: "Внутренняя ошибка сервера."});
+            openNotification({type: "error", message: "Внутренняя ошибка сервера."});
         } finally {
             setProcessingLoader(false);
         }

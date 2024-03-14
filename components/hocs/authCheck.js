@@ -5,7 +5,6 @@ import Navbar from "../main/navigation/Navbar";
 import {ConfigProvider} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import Footer from "../main/Footer";
-import Alert from "../main/system/Alert";
 import {useSession} from 'next-auth/react'; // Импортируем useSession здесь
 
 const AuthCheck = (WrappedComponent) => {
@@ -33,7 +32,6 @@ const AuthCheck = (WrappedComponent) => {
                             </div>
                         </div>
                     </div>
-                    <Alert/>
                 </div>
             );
         }

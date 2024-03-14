@@ -18,7 +18,7 @@ export default function CreateRecipient() {
         emails: '', // Начнем с одного поля по умолчанию
     });
     const router = useRouter();
-    const {clearAlertMessage, showAlertMessage} = useAlert();
+    const {openNotification} = useAlert();
     const {data: session} = useSession(); // Получаем сессию
     const recipientTypes = [
         {value: 1, label: 'Каждый день'},
@@ -64,13 +64,13 @@ export default function CreateRecipient() {
 
             const responseData = await response.json();
             if (response.ok) {
-                showAlertMessage({type: "success", text: responseData.message});
+                openNotification({type: "success", message: responseData.message});
                 await router.push(RECIPIENT_INDEX_URL);
             } else {
-                showAlertMessage({type: "error", text: responseData.message});
+                openNotification({type: "error", message: responseData.message});
             }
         } catch (error) {
-            showAlertMessage({type: "error", text: error.message});
+            openNotification({type: "error", message: error.message});
             console.error(error);
         }
     };

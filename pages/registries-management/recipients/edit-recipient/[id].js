@@ -20,7 +20,7 @@ export default function EditRecipient() {
         createdAt: '',
         updatedAt: '',
     });
-    const {clearAlertMessage, showAlertMessage} = useAlert();
+    const {openNotification} = useAlert();
     const [isLoading, setIsLoading] = useState(true);
     const [createdAt, setCreatedAt] = useState('');
     const [updatedAt, setUpdatedAt] = useState('');
@@ -58,13 +58,13 @@ export default function EditRecipient() {
 
             const responseData = await response.json();
             if (response.ok) {
-                showAlertMessage({type: "success", text: responseData.message});
+                openNotification({type: "success", message: responseData.message});
                 await router.push(RECIPIENT_INDEX_URL);
             } else {
-                showAlertMessage({type: "error", text: responseData.message});
+                openNotification({type: "error", message: responseData.message});
             }
         } catch (error) {
-            showAlertMessage({type: "error", text: error.message});
+            openNotification({type: "error", message: error.message});
             console.error(error);
         }
     };
@@ -107,12 +107,12 @@ export default function EditRecipient() {
                     setUpdatedAt(responseData.updatedAt)
 
                 } else {
-                    showAlertMessage({type: "error", text: responseData.message});
+                    openNotification({type: "error", message: responseData.message});
                     console.error('Ошибка при загрузке данных с API');
                 }
             } catch (error) {
                 console.error(error);
-                showAlertMessage({type: "error", text: error.message});
+                openNotification({type: "error", message: error.message});
             } finally {
                 setIsLoading(false);
             }

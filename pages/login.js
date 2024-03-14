@@ -8,7 +8,7 @@ import {useAlert} from "../contexts/AlertContext";
 export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const {showAlertMessage} = useAlert();
+    const {openNotification} = useAlert();
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -21,10 +21,10 @@ export default function LoginPage() {
             if (responseData.ok) {
                 window.location.replace(MAIN_PAGE_URL);
             } else {
-                showAlertMessage({type: "error", text: responseData.error});
+                openNotification({type: "error", message: responseData.error});
             }
         } catch (error) {
-            showAlertMessage({type: "error", text: error});
+            openNotification({type: "error", message: error});
         }
     }
 

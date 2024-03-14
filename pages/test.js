@@ -13,9 +13,11 @@ import FileFormats from "../components/main/table/cell/FileFormats";
 import ServerCell from "../components/main/table/cell/ServerCell";
 import SearchByColumn from "../components/main/table/cell/SearchByColumn";
 import SmartTable from "../components/main/table/SmartTable";
+import {useAlert} from "../contexts/AlertContext";
 
 export default function TestPage() {
     const {data: session} = useSession(); // Получаем сессию
+    const {openNotification} = useAlert();
     const [formData, setFormData] = useState({
         name: '',
         formats: [],
@@ -149,6 +151,12 @@ export default function TestPage() {
                         size="large"
                         locale="ru"
                     />
+                    <bottom
+                        type="primary"
+                        onClick={() => openNotification({type: "error", message: 'ew2222222er'})}
+                    >
+                        bottom
+                    </bottom>
                     <div className='mt-2'>
                         <div className="d-flex justify-content-end w-100">
                             <Link href={REGISTRY_CREATE_URL} className="btn btn-purple">Добавить запись</Link>

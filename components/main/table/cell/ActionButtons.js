@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEllipsis} from '@fortawesome/free-solid-svg-icons';
 import DataRemover from "../../database/DataRemover";
 import Link from "next/link";
-import {Dropdown, Menu} from "antd";
+import {Divider, Dropdown, Menu} from "antd";
 
 const ActionButtons = (buttonsLinks = null, props) => {
     const id = props.id;
@@ -12,6 +12,8 @@ const ActionButtons = (buttonsLinks = null, props) => {
     const deletedAt = props.deletedAt;
 
     const buttons = [];
+    
+    const Item = Menu.Item
 
     for (const key in buttonsLinks) {
         const {label, link, useId} = buttonsLinks[key];
@@ -19,17 +21,17 @@ const ActionButtons = (buttonsLinks = null, props) => {
         if (key !== 'deleteRoute' && id) {
             const buttonLink = `${link}${useId ? `/${id}` : ''}`;
             buttons.push(
-                <Menu.Item key={key}>
+                <Item key={key}>
                     <Link href={buttonLink} className="dropdown-item d-flex align-items-center">
                         {label}
                     </Link>
-                </Menu.Item>
+                </Item>
             );
         } else if (key === 'deleteRoute' && id) {
             buttons.push(
-                <Menu.Item key={key}>
+                <Item key={key}>
                     <DataRemover id={id} deleteRoute={link}/>
-                </Menu.Item>
+                </Item>
             );
         }
     }
@@ -40,7 +42,7 @@ const ActionButtons = (buttonsLinks = null, props) => {
             {(createdAt || updatedAt || deletedAt) && (
                 <>
                     <Menu.Divider/>
-                    <Menu.Item className="d-flex fw-bold flex-column text-start">
+                    <Item className="d-flex fw-bold flex-column text-start">
                         {createdAt && (
                             <div className="d-flex flex-column justify-content-start">
                                 <small className="text-secondary">Создано:</small>
@@ -59,7 +61,7 @@ const ActionButtons = (buttonsLinks = null, props) => {
                                 <small>{deletedAt}</small>
                             </div>
                         )}
-                    </Menu.Item>
+                    </Item>
                 </>
             )}
         </Menu>

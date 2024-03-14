@@ -27,11 +27,8 @@ export default function RegistryResendPage() {
     const [testEmail, setTestEmail] = useState('');
     const [isTestEmailEnabled, setIsTestEmailEnabled] = useState(false);
 
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-
     const [rows, setRows] = useState([]);
-    const {clearAlertMessage, showAlertMessage} = useAlert();
+    const {openNotification} = useAlert();
     const [formData, setFormData] = useState({
         formats: [],
         services_id: [],
@@ -56,8 +53,7 @@ export default function RegistryResendPage() {
             }
             return true;
         } catch (error) {
-            console.error('Ошибка валидации формы:', error.message);
-            showAlertMessage({type: "error", text: error.message});
+            openNotification({type: "error", message: error.message});
             return false;
         }
     };
@@ -79,11 +75,6 @@ export default function RegistryResendPage() {
             ...prevFormData,
             testEmail: newTestEmail,
         }));
-    };
-
-    const handleDateChange = (newStartDate, newEndDate) => {
-        setStartDate(newStartDate);
-        setEndDate(newEndDate);
     };
 
     const handleAddColumn = async (event) => {
@@ -121,7 +112,7 @@ export default function RegistryResendPage() {
                 ]);
 
             } else {
-                showAlertMessage({type: "error", text: responseData.message});
+                openNotification({type: "error", message: responseData.message});
             }
         } catch (error) {
             console.error('Ошибка при выполнении запроса:', error);
@@ -162,13 +153,13 @@ export default function RegistryResendPage() {
                 const responseData = await response.json();
 
                 if (response.ok) {
-                    showAlertMessage({type: "success", text: responseData.message});
+                    openNotification({type: "success", message: responseData.message});
                 } else {
-                    showAlertMessage({type: "error", text: responseData.message});
+                    openNotification({type: "error", message: responseData.message});
                 }
             } catch (error) {
                 console.error('Ошибка при отправке реестра:', error);
-                showAlertMessage({type: "error", text: "Произошла ошибка при отправке реестра"});
+                openNotification({type: "error", message: "Произошла ошибка при отправке реестра"});
             } finally {
                 setProcessingLoader(false); // Скрыть прелоадер после получения ответа или в случае ошибки
             }
@@ -220,9 +211,9 @@ export default function RegistryResendPage() {
                 setRegistryOptions(registryList.data);
 
             } catch (error) {
-                showAlertMessage({
+                openNotification({
                     type: 'error',
-                    text: 'Ошибка при получении данных: ' + error.message,
+                    message: 'Ошибка при получении данных: ' + error.message,
                 });
             }
         };
@@ -238,14 +229,6 @@ export default function RegistryResendPage() {
         handleRegistry()
     }, [recipient]);
 
-    useEffect(() => {
-        clearAlertMessage();
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            startDate: startDate,
-            endDate: endDate,
-        }));
-    }, [startDate, endDate]);
 
 
     return (
@@ -318,7 +301,6 @@ export default function RegistryResendPage() {
                                     <label htmlFor="recipient_id">Получатель</label>
                                     <UniversalSelect
                                         name='recipient_id'
-                                        // selectedOptions={recipient}
                                         placeholder="Выберете получателя"
                                         fetchDataConfig={{
                                             model: 'Recipient',
@@ -375,9 +357,13 @@ export default function RegistryResendPage() {
                                                 />
                                             </div>
                                             <DateRangeInput
-                                                initialStartDate={startDate}
-                                                initialEndDate={endDate}
-                                                onDateChange={handleDateChange}
+                                                onDateChange={(dates) => {
+                                                    setFormData((prevFormData) => ({
+                                                        ...prevFormData,
+                                                        startDate: dates[0],
+                                                        endDate: dates[1],
+                                                    }));
+                                                }}
                                             />
                                             <div
                                                 className="form-group d-flex align-items-center flex-column mt-4">

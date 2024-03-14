@@ -6,7 +6,7 @@ import {useSession} from "next-auth/react";
 
 
 const SmartTable = ({model, columns, data}) => {
-    const {showAlertMessage} = useAlert();
+    const {openNotification} = useAlert();
     const {data: session} = useSession(); // Получаем сессию
     const [dataTable, setDataTable] = useState([])
 
@@ -21,8 +21,8 @@ const SmartTable = ({model, columns, data}) => {
 
             setDataTable(response.data)
         } catch (error) {
-            showAlertMessage({
-                type: 'error', text: 'Ошибка при получении данных: ' + error.message,
+            openNotification({
+                type: 'error', message: 'Ошибка при получении данных: ' + error.message,
             });
         }
     }

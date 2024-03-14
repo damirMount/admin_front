@@ -90,7 +90,7 @@ const RegistryFiles = ({apiUrl, downloadUrl}) => {
         {
             title: 'Дата создания',
             dataIndex: 'createdAt',
-            sorter: (a, b) => a.createdAt - b.createdAt,
+            sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
             ...SearchByColumn('createdAt'),
         },
         {
