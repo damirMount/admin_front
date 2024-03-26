@@ -150,13 +150,12 @@ export default function TestPage() {
         }));
 
         if (inputValue !== formData[inputName]) {
-            const updatedData = { ...updatedFormData, [inputName]: inputValue };
-            openConfirmAction({ onSave: () => handleSave(updatedData), onReset: handleReset });
+            const updatedData = {...updatedFormData, [inputName]: inputValue};
+            openConfirmAction({onSave: () => handleSave(updatedData), onReset: handleReset});
         } else {
             closeConfirmAction();
         }
     };
-
 
 
     useEffect(() => {

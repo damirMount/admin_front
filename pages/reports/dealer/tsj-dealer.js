@@ -8,6 +8,7 @@ import {useAlert} from "../../../contexts/AlertContext";
 import {useSession} from "next-auth/react";
 import SmartTable from "../../../components/main/table/SmartTable";
 import SearchByColumn from "../../../components/main/table/cell/SearchByColumn";
+import ProtectedElement from "../../../components/main/system/ProtectedElement";
 
 
 export default function TSJDealerPage() {
@@ -93,48 +94,50 @@ export default function TSJDealerPage() {
     };
 
     return (
-        <div>
-            <Head>
-                <title>Список дилеров ТСЖ | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-            </Head>
+        <ProtectedElement allowedPermissions={'reports_dealer'}>
             <div>
-                <h1>Список дилеров ТСЖ</h1>
-                <ReportsNavigationTabs/>
+                <Head>
+                    <title>Список дилеров ТСЖ | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                </Head>
+                <div>
+                    <h1>Список дилеров ТСЖ</h1>
+                    <ReportsNavigationTabs/>
 
-                {processingLoader ? (
-                    <Preloader/>
-                ) : (
-                    <div className='mt-5'>
-                        <div className="d-flex justify-content-end w-100">
-                            <form className="d-flex justify-content-between align-items-center align-content-center">
-                                <div>
-                                    <FormInput
-                                        type="file"
-                                        className="form-control input-search"
-                                        id="excelFile"
-                                        name="excelFile"
-                                        onChange={handleFileUpload}
-                                        required
-                                    />
-                                </div>
-                                <button
-                                    type="button"
-                                    className="btn btn-purple btn-search"
-                                    onClick={handleUpdateDealer}
-                                >
-                                    Обновить список
-                                </button>
-                            </form>
+                    {processingLoader ? (
+                        <Preloader/>
+                    ) : (
+                        <div className='mt-5'>
+                            <div className="d-flex justify-content-end w-100">
+                                <form
+                                    className="d-flex justify-content-between align-items-center align-content-center">
+                                    <div>
+                                        <FormInput
+                                            type="file"
+                                            className="form-control input-search"
+                                            id="excelFile"
+                                            name="excelFile"
+                                            onChange={handleFileUpload}
+                                            required
+                                        />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="btn btn-purple btn-search"
+                                        onClick={handleUpdateDealer}
+                                    >
+                                        Обновить список
+                                    </button>
+                                </form>
+                            </div>
+                            <SmartTable
+                                model='TSJDealer'
+                                columns={tableColumns}
+                            />
                         </div>
-                        <SmartTable
-                            model='TSJDealer'
-                            columns={tableColumns}
-                        />
-                    </div>
-                )}
+                    )}
 
+                </div>
             </div>
-
-        </div>
+        </ProtectedElement>
     );
 }

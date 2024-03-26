@@ -4,6 +4,7 @@ import {ROLES_EDIT_URL} from "../../../../routes/web";
 import SmartTable from "../../../../components/main/table/SmartTable";
 import SearchByColumn from "../../../../components/main/table/cell/SearchByColumn";
 import ActionButtons from "../../../../components/main/table/cell/ActionButtons";
+import ProtectedElement from "../../../../components/main/system/ProtectedElement";
 
 export default function rolesAndPermissionsPage() {
 
@@ -38,17 +39,19 @@ export default function rolesAndPermissionsPage() {
     ];
 
     return (
-        <div>
-            <Head>
-                <title>Список ролей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-            </Head>
+        <ProtectedElement allowedPermissions={'access_management'}>
             <div>
-                <h1>Список ролей</h1>
-                <SmartTable
-                    model='Role'
-                    columns={tableColumns}
-                />
+                <Head>
+                    <title>Список ролей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                </Head>
+                <div>
+                    <h1>Список ролей</h1>
+                    <SmartTable
+                        model='Role'
+                        columns={tableColumns}
+                    />
+                </div>
             </div>
-        </div>
+        </ProtectedElement>
     )
 }

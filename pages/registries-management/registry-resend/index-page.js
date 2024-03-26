@@ -14,6 +14,7 @@ import fetchData from "../../../components/main/database/DataFetcher";
 import {value} from "lodash/seq";
 import {useSession} from "next-auth/react";
 import DateRangePicker from "../../../components/main/input/DateRangePicker";
+import ProtectedElement from "../../../components/main/system/ProtectedElement";
 
 
 export default function RegistryResendPage() {
@@ -233,219 +234,221 @@ export default function RegistryResendPage() {
 
 
     return (
-        <div>
-            <Head>
-                <title>Перезапуск реестра | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-            </Head>
-            <div className="d-flex flex-column align-items-center">
-                <div className="container d-flex flex-column align-items-center body-container">
-                    <h1>Перезапуск реестра</h1>
-                    <RegistryNavigationTabs/>
+        <ProtectedElement allowedPermissions={'registry_management'}>
+            <div>
+                <Head>
+                    <title>Перезапуск реестра | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                </Head>
+                <div className="d-flex flex-column align-items-center">
+                    <div className="container d-flex flex-column align-items-center body-container">
+                        <h1>Перезапуск реестра</h1>
+                        <RegistryNavigationTabs/>
 
-                    {processingLoader && (
-                        <Preloader/>
-                    )}
+                        {processingLoader && (
+                            <Preloader/>
+                        )}
 
-                    <div className={`${processingLoader ? 'd-none' : 'd-flex'} flex-row w-100 mt-5`}>
-                        <div className="d-flex flex-row w-100">
-                            <div className="d-flex flex-column w-50 mt-3 justify-content-start">
+                        <div className={`${processingLoader ? 'd-none' : 'd-flex'} flex-row w-100 mt-5`}>
+                            <div className="d-flex flex-row w-100">
+                                <div className="d-flex flex-column w-50 mt-3 justify-content-start">
 
-                                <h3>Перезапуск реестра</h3>
-                                <div className="form-group">
-                                    <label htmlFor="isTestEmailEnabled">Тип отправки реестра</label>
-                                    <div
-                                        className="ps-3 input-form d-flex justify-content-between bg-white align-items-center">
-                                        <label htmlFor="">Выберете опцию</label>
-                                        <UniversalSelect
-                                            options={[
-                                                {value: false, label: 'Обычная отправка'},
-                                                {value: true, label: 'Тестовая отправка'},
-                                            ]}
-                                            selectedOptions={[isTestEmailEnabled]}
-                                            onSelectChange={(selectedValue) => {
-                                                setIsTestEmailEnabled(selectedValue);
-                                                setFormData((prevFormData) => ({
-                                                    ...prevFormData,
-                                                    isTestEmailEnabled: selectedValue,
-                                                }));
-                                            }}
-                                            required
-                                            firstOptionSelected
-                                            className="selector-choice"
-                                            name="isTestEmailEnabled"
-                                        />
-                                    </div>
-                                </div>
-
-                                {isTestEmailEnabled && (
-                                    <FormInput
-                                        required
-                                        label="Тестовая почта"
-                                        prefix={<FontAwesomeIcon icon={faEnvelope} size="lg"/>}
-                                        type="email"
-                                        id="email"
-                                        placeholder="Укажите почту"
-                                        value={testEmail}
-                                        onChange={handleEmailChange}
-                                    />
-                                )}
-
-                                <UniversalSelect
-                                    label="Получатель"
-                                    name='recipient_id'
-                                    placeholder="Выберете получателя"
-                                    fetchDataConfig={{
-                                        model: 'Recipient',
-                                        searchTerm: {is_blocked: false}
-                                    }}
-                                    firstOptionSelected
-                                    required
-                                    onSelectChange={(selectedValue, name) => {
-                                        handleSelectorChange(selectedValue, name);
-                                        setRecipient(selectedValue);
-                                    }}
-                                />
-
-
-                                {recipient > 0 && (
-                                    <div>
-                                        <div>
+                                    <h3>Перезапуск реестра</h3>
+                                    <div className="form-group">
+                                        <label htmlFor="isTestEmailEnabled">Тип отправки реестра</label>
+                                        <div
+                                            className="ps-3 input-form d-flex justify-content-between bg-white align-items-center">
+                                            <label htmlFor="">Выберете опцию</label>
                                             <UniversalSelect
-                                                label="Реестр"
-                                                key={JSON.stringify(registryOptions)}
-                                                name='registry_id'
-                                                placeholder="Выберете файлы реестров"
-                                                options={registryOptions && registryOptions.length > 0 ? (
-                                                    registryOptions.map((item) => ({
-                                                        value: item.id,
-                                                        label: `${item.name} ${item.id}`
-                                                    }))
-                                                ) : []}
-                                                firstOptionSelected
-                                                required
-                                                isSearchable={false}
-                                                onSelectChange={(selectedValue, name) => {
-                                                    handleSelectorChange(Number(selectedValue), name);
-                                                    setRegistry(Number(selectedValue))
+                                                options={[
+                                                    {value: false, label: 'Обычная отправка'},
+                                                    {value: true, label: 'Тестовая отправка'},
+                                                ]}
+                                                selectedOptions={[isTestEmailEnabled]}
+                                                onSelectChange={(selectedValue) => {
+                                                    setIsTestEmailEnabled(selectedValue);
+                                                    setFormData((prevFormData) => ({
+                                                        ...prevFormData,
+                                                        isTestEmailEnabled: selectedValue,
+                                                    }));
                                                 }}
+                                                required
+                                                firstOptionSelected
+                                                className="selector-choice"
+                                                name="isTestEmailEnabled"
                                             />
                                         </div>
-                                        <UniversalSelect
-                                            label="Сервисы"
-                                            key={JSON.stringify(services)}
-                                            name='services_id'
-                                            fetchDataConfig={{
-                                                model: 'Service',
-                                                searchTerm: {id: services}
-                                            }}
-                                            placeholder="Выберете сервисы"
-                                            selectedOptions={services}
-                                            onSelectChange={handleSelectorChange}
-                                            required
-                                            isMulti
-                                        />
-                                        <DateRangePicker
-                                            onDateChange={(dates) => {
-                                                setFormData((prevFormData) => ({
-                                                    ...prevFormData,
-                                                    startDate: dates[0],
-                                                    endDate: dates[1],
-                                                }));
-                                            }}
-                                        />
-
-                                        <RegistryFileFormat
-                                            formData={formData}
-                                            setFormData={setFormData}
-                                        />
-
                                     </div>
-                                )}
-                            </div>
 
-                            <div className="container w-75 ms-3 d-flex mt-3 flex-column align-items-end">
-                                <h3 className="mb-3">Добавление платежа</h3>
-                                {rows.length > 0 && (
-                                    <div className="w-100 d-flex flex-column align-items-end">
-                                        <label>
-                                            Добавленные платежи в реестр
-                                        </label>
-                                        <table className="table table-bordered w-100">
-                                            <thead>
-                                            <tr>
-                                                <th className="col-2">ID платежа</th>
-                                                <th scope="col">Реквизит</th>
-                                                <th className="col-2">Сумма</th>
-                                                <th className="col-1">Сервис</th>
-                                                <th scope="col"></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {rows.map((row, index) => (
-                                                <tr key={index}>
-                                                    <td>
-                                                        {row.id}
-                                                    </td>
-                                                    <td>
-                                                        {row.identifier}
-                                                    </td>
-                                                    <td>
-                                                        {row.real_pay}
-                                                    </td>
-                                                    <td>
+                                    {isTestEmailEnabled && (
+                                        <FormInput
+                                            required
+                                            label="Тестовая почта"
+                                            prefix={<FontAwesomeIcon icon={faEnvelope} size="lg"/>}
+                                            type="email"
+                                            id="email"
+                                            placeholder="Укажите почту"
+                                            value={testEmail}
+                                            onChange={handleEmailChange}
+                                        />
+                                    )}
+
+                                    <UniversalSelect
+                                        label="Получатель"
+                                        name='recipient_id'
+                                        placeholder="Выберете получателя"
+                                        fetchDataConfig={{
+                                            model: 'Recipient',
+                                            searchTerm: {is_blocked: false}
+                                        }}
+                                        firstOptionSelected
+                                        required
+                                        onSelectChange={(selectedValue, name) => {
+                                            handleSelectorChange(selectedValue, name);
+                                            setRecipient(selectedValue);
+                                        }}
+                                    />
+
+
+                                    {recipient > 0 && (
+                                        <div>
+                                            <div>
+                                                <UniversalSelect
+                                                    label="Реестр"
+                                                    key={JSON.stringify(registryOptions)}
+                                                    name='registry_id'
+                                                    placeholder="Выберете файлы реестров"
+                                                    options={registryOptions && registryOptions.length > 0 ? (
+                                                        registryOptions.map((item) => ({
+                                                            value: item.id,
+                                                            label: `${item.name} ${item.id}`
+                                                        }))
+                                                    ) : []}
+                                                    firstOptionSelected
+                                                    required
+                                                    isSearchable={false}
+                                                    onSelectChange={(selectedValue, name) => {
+                                                        handleSelectorChange(Number(selectedValue), name);
+                                                        setRegistry(Number(selectedValue))
+                                                    }}
+                                                />
+                                            </div>
+                                            <UniversalSelect
+                                                label="Сервисы"
+                                                key={JSON.stringify(services)}
+                                                name='services_id'
+                                                fetchDataConfig={{
+                                                    model: 'Service',
+                                                    searchTerm: {id: services}
+                                                }}
+                                                placeholder="Выберете сервисы"
+                                                selectedOptions={services}
+                                                onSelectChange={handleSelectorChange}
+                                                required
+                                                isMulti
+                                            />
+                                            <DateRangePicker
+                                                onDateChange={(dates) => {
+                                                    setFormData((prevFormData) => ({
+                                                        ...prevFormData,
+                                                        startDate: dates[0],
+                                                        endDate: dates[1],
+                                                    }));
+                                                }}
+                                            />
+
+                                            <RegistryFileFormat
+                                                formData={formData}
+                                                setFormData={setFormData}
+                                            />
+
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="container w-75 ms-3 d-flex mt-3 flex-column align-items-end">
+                                    <h3 className="mb-3">Добавление платежа</h3>
+                                    {rows.length > 0 && (
+                                        <div className="w-100 d-flex flex-column align-items-end">
+                                            <label>
+                                                Добавленные платежи в реестр
+                                            </label>
+                                            <table className="table table-bordered w-100">
+                                                <thead>
+                                                <tr>
+                                                    <th className="col-2">ID платежа</th>
+                                                    <th scope="col">Реквизит</th>
+                                                    <th className="col-2">Сумма</th>
+                                                    <th className="col-1">Сервис</th>
+                                                    <th scope="col"></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {rows.map((row, index) => (
+                                                    <tr key={index}>
+                                                        <td>
+                                                            {row.id}
+                                                        </td>
+                                                        <td>
+                                                            {row.identifier}
+                                                        </td>
+                                                        <td>
+                                                            {row.real_pay}
+                                                        </td>
+                                                        <td>
                                                         <span key={index}
                                                               className="status status-active w-100 d-flex justify-content-center">
                                                             {row.id_service}
                                                         </span>
-                                                    </td>
-                                                    <td className="w-0">
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-purple"
-                                                            onClick={() => handleRemoveColumn(index)}
-                                                        >
-                                                            <FontAwesomeIcon icon={faTrashAlt} size="xl"/>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                            </tbody>
-                                        </table>
+                                                        </td>
+                                                        <td className="w-0">
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-purple"
+                                                                onClick={() => handleRemoveColumn(index)}
+                                                            >
+                                                                <FontAwesomeIcon icon={faTrashAlt} size="xl"/>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
+                                    <div className="d-flex flex-row mt-4">
+                                        <form className="d-flex justify-content-end">
+                                            <input
+                                                className="form-control input-search"
+                                                type="text"
+                                                placeholder="Введите ID платежа"
+                                                value={paymentId}
+                                                onChange={handleChange}
+                                            />
+                                            <button
+                                                className="btn btn-purple d-flex btn-search"
+                                                type="button"
+                                                onClick={handleAddColumn}
+                                            >
+                                                <FontAwesomeIcon icon={faSearch} className="input-btn"/>
+                                            </button>
+                                        </form>
                                     </div>
-                                )}
-                                <div className="d-flex flex-row mt-4">
-                                    <form className="d-flex justify-content-end">
-                                        <input
-                                            className="form-control input-search"
-                                            type="text"
-                                            placeholder="Введите ID платежа"
-                                            value={paymentId}
-                                            onChange={handleChange}
-                                        />
-                                        <button
-                                            className="btn btn-purple d-flex btn-search"
-                                            type="button"
-                                            onClick={handleAddColumn}
-                                        >
-                                            <FontAwesomeIcon icon={faSearch} className="input-btn"/>
-                                        </button>
-                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    {!processingLoader && recipient > 0 && (
+                        <div className="d-flex justify-content-end">
+                            <button type="button" className="btn btn-purple mt-5" onClick={handleSendRegistry}>
+                                Отправить реестр
+                            </button>
+                        </div>
+                    )}
+
                 </div>
 
-                {!processingLoader && recipient > 0 && (
-                    <div className="d-flex justify-content-end">
-                        <button type="button" className="btn btn-purple mt-5" onClick={handleSendRegistry}>
-                            Отправить реестр
-                        </button>
-                    </div>
-                )}
-
             </div>
-
-        </div>
+        </ProtectedElement>
     );
 }

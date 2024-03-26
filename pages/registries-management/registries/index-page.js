@@ -11,6 +11,7 @@ import ServerCell from "../../../components/main/table/cell/ServerCell";
 import FileFormats from "../../../components/main/table/cell/FileFormats";
 import ActionButtons from "../../../components/main/table/cell/ActionButtons";
 import SmartTable from "../../../components/main/table/SmartTable";
+import ProtectedElement from "../../../components/main/system/ProtectedElement";
 
 export default function RegistryPage() {
 
@@ -97,27 +98,29 @@ export default function RegistryPage() {
     ];
 
     return (
-        <div>
-            <Head>
-                <title>Список реестров | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-            </Head>
+        <ProtectedElement allowedPermissions={'registry_management'}>
             <div>
-                <h1>Список реестров</h1>
+                <Head>
+                    <title>Список реестров | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                </Head>
+                <div>
+                    <h1>Список реестров</h1>
 
-                <div className="create-button d-flex justify-content-center">
-                    <RegistryNavigationTabs/>
-                </div>
-
-                <div className='mt-5'>
-                    <div className="d-flex justify-content-end w-100">
-                        <Link href={REGISTRY_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
+                    <div className="create-button d-flex justify-content-center">
+                        <RegistryNavigationTabs/>
                     </div>
-                    <SmartTable
-                        model='Registry'
-                        columns={tableColumns}
-                    />
+
+                    <div className='mt-5'>
+                        <div className="d-flex justify-content-end w-100">
+                            <Link href={REGISTRY_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
+                        </div>
+                        <SmartTable
+                            model='Registry'
+                            columns={tableColumns}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </ProtectedElement>
     );
 };

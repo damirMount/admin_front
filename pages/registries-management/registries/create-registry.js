@@ -12,6 +12,7 @@ import UniversalSelect from "../../../components/main/input/UniversalSelect";
 import {useAlert} from "../../../contexts/AlertContext";
 import {REGISTRY_INDEX_URL} from "../../../routes/web";
 import {useSession} from "next-auth/react";
+import ProtectedElement from "../../../components/main/system/ProtectedElement";
 
 library.add(faCheck, faTag, faGripVertical, faPlus);
 
@@ -95,96 +96,97 @@ export default function CreateRegistry() {
     };
 
     return (
-        <div>
-            <Head>
-                <title>Создать реестр | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-            </Head>
-
+        <ProtectedElement allowedPermissions={'registry_management'}>
             <div>
-                <h1>Страница создания файла реестров</h1>
+                <Head>
+                    <title>Создать реестр | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                </Head>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="container d-flex">
-                        <div className="container w-50 mt-5">
-                            <FormInput
-                                type="text"
-                                label="Название файла реестра"
-                                className="input-field"
-                                id="name"
-                                name="name"
-                                placeholder="Название"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                required
-                            />
-                            <UniversalSelect
-                                name='is_blocked'
-                                label="Статус реестра"
-                                placeholder="Укажите статус файла реестра"
-                                onSelectChange={handleSelectorChange}
-                                firstOptionSelected
-                                required
-                                isSearchable={false}
-                                options={[
-                                    {value: false, label: 'Файл реестра активен'},
-                                    {value: true, label: 'Файл реестра отключён'},
-                                ]}
-                            />
-                            <UniversalSelect
-                                name='serverId'
-                                label="Сервер"
-                                placeholder="Выберете сервер"
-                                fetchDataConfig={{
-                                    model: 'Server',
-                                }}
-                                onSelectChange={(selectedValue, name) => {
-                                    handleSelectorChange(selectedValue, name);
-                                    setSelectedServer(selectedValue);
-                                }}
-                                required
-                            />
+                <div>
+                    <h1>Страница создания файла реестров</h1>
 
-                            <UniversalSelect
-                                key={JSON.stringify(selectedServer)}
-                                name='servicesId'
-                                label="Сервисы"
-                                placeholder="Выберете сервисы"
-                                fetchDataConfig={{
-                                    model: 'Service',
-                                    searchTerm: {id_bserver: selectedServer}
-                                }}
-                                onSelectChange={handleSelectorChange}
-                                required
-                                isMulti
-                            />
-                            <RegistryFileFormat
-                                formData={formData}
-                                setFormData={setFormData}
-                            />
+                    <form onSubmit={handleSubmit}>
+                        <div className="container d-flex">
+                            <div className="container w-50 mt-5">
+                                <FormInput
+                                    type="text"
+                                    label="Название файла реестра"
+                                    className="input-field"
+                                    id="name"
+                                    name="name"
+                                    placeholder="Название"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                                <UniversalSelect
+                                    name='is_blocked'
+                                    label="Статус реестра"
+                                    placeholder="Укажите статус файла реестра"
+                                    onSelectChange={handleSelectorChange}
+                                    firstOptionSelected
+                                    required
+                                    isSearchable={false}
+                                    options={[
+                                        {value: false, label: 'Файл реестра активен'},
+                                        {value: true, label: 'Файл реестра отключён'},
+                                    ]}
+                                />
+                                <UniversalSelect
+                                    name='serverId'
+                                    label="Сервер"
+                                    placeholder="Выберете сервер"
+                                    fetchDataConfig={{
+                                        model: 'Server',
+                                    }}
+                                    onSelectChange={(selectedValue, name) => {
+                                        handleSelectorChange(selectedValue, name);
+                                        setSelectedServer(selectedValue);
+                                    }}
+                                    required
+                                />
+
+                                <UniversalSelect
+                                    key={JSON.stringify(selectedServer)}
+                                    name='servicesId'
+                                    label="Сервисы"
+                                    placeholder="Выберете сервисы"
+                                    fetchDataConfig={{
+                                        model: 'Service',
+                                        searchTerm: {id_bserver: selectedServer}
+                                    }}
+                                    onSelectChange={handleSelectorChange}
+                                    required
+                                    isMulti
+                                />
+                                <RegistryFileFormat
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                />
+                            </div>
+
+                            <div className="container w-75">
+                                <RegistryFieldsTable
+                                    getRows={getRows}
+                                    onUpdateData={handleUpdateRows}
+                                />
+                            </div>
                         </div>
-
-                        <div className="container w-75">
-                            <RegistryFieldsTable
-                                getRows={getRows}
-                                onUpdateData={handleUpdateRows}
-                            />
+                        <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
+                            <button className="btn btn-purple me-2" type="submit">
+                                Сохранить
+                            </button>
+                            <Link
+                                href={REGISTRY_INDEX_URL}
+                                className="btn btn-cancel ms-2"
+                                type="button"
+                            >
+                                Отмена
+                            </Link>
                         </div>
-                    </div>
-                    <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
-                        <button className="btn btn-purple me-2" type="submit">
-                            Сохранить
-                        </button>
-                        <Link
-                            href={REGISTRY_INDEX_URL}
-                            className="btn btn-cancel ms-2"
-                            type="button"
-                        >
-                            Отмена
-                        </Link>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-
-        </div>
+        </ProtectedElement>
     );
 }

@@ -20,9 +20,9 @@ export default function Home() {
                 <title>Главная страница | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <ProtectedElement allowedPermissions={'second_test_permission'} redirect={false}>
-            <div>
-                <h1>Главная страница</h1>
-            </div>
+                <div>
+                    <h1>Главная страница</h1>
+                </div>
             </ProtectedElement>
             <div className='d-flex justify-content-between'>
                 <div className="w-75">

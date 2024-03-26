@@ -4,6 +4,7 @@ import {faArrowRightArrowLeft, faFileExcel,} from "@fortawesome/free-solid-svg-i
 import {ACQUIRING_COMPARISON_API} from "../../routes/api";
 import Head from "next/head";
 import {useSession} from "next-auth/react";
+import ProtectedElement from "../../components/main/system/ProtectedElement";
 
 export default function IndexPage() {
     const [excelFile, setExcelFile] = useState(null);
@@ -63,6 +64,7 @@ export default function IndexPage() {
 
 
     return (
+        <ProtectedElement allowedPermissions={'develop'}>
         <div>
             <Head>
                 <title>Сверка платежей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
@@ -134,8 +136,7 @@ export default function IndexPage() {
                     </div>
                 )}
             </div>
-
-
         </div>
+        </ProtectedElement>
     );
 }

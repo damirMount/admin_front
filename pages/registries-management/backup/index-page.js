@@ -2,22 +2,24 @@ import RegistryFiles from "../../../components/pages/registry/RegistryFilesBacku
 import {REGISTRY_BACKUP_DOWNLOAD_API, REGISTRY_BACKUP_INDEX_API} from '../../../routes/api'
 import Head from "next/head";
 import React from "react";
+import ProtectedElement from "../../../components/main/system/ProtectedElement";
 
 export default function RegistryFilesBackupsListPage() {
     return (
-        <div>
-            <Head>
-                <title>Резервные копии реестров | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-            </Head>
-
+        <ProtectedElement allowedPermissions={'registry_management'}>
             <div>
-                <h1>Резервные копии</h1>
-                <RegistryFiles
-                    apiUrl={REGISTRY_BACKUP_INDEX_API}
-                    downloadUrl={REGISTRY_BACKUP_DOWNLOAD_API}
-                />
-            </div>
+                <Head>
+                    <title>Резервные копии реестров | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                </Head>
 
-        </div>
+                <div>
+                    <h1>Резервные копии</h1>
+                    <RegistryFiles
+                        apiUrl={REGISTRY_BACKUP_INDEX_API}
+                        downloadUrl={REGISTRY_BACKUP_DOWNLOAD_API}
+                    />
+                </div>
+            </div>
+        </ProtectedElement>
     );
 };

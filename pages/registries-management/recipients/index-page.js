@@ -10,6 +10,7 @@ import SmartTable from "../../../components/main/table/SmartTable";
 import SearchByColumn from "../../../components/main/table/cell/SearchByColumn";
 import ActionButtons from "../../../components/main/table/cell/ActionButtons";
 import TypeSend from "../../../components/main/table/cell/TypeSend";
+import ProtectedElement from "../../../components/main/system/ProtectedElement";
 
 export default function RecipientPage() {
 
@@ -93,29 +94,29 @@ export default function RecipientPage() {
     ];
 
     return (
-        <div>
-            <Head>
-                <title>Список получателей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-            </Head>
+        <ProtectedElement allowedPermissions={'registry_management'}>
             <div>
-                <h1>Список получателей</h1>
+                <Head>
+                    <title>Список получателей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                </Head>
+                <div>
+                    <h1>Список получателей</h1>
 
-                <div className="create-button d-flex justify-content-center">
-                    <RegistryNavigationTabs/>
-                </div>
-
-                <div className='mt-5'>
-                    <div className="d-flex justify-content-end w-100">
-                        <Link href={RECIPIENT_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
+                    <div className="create-button d-flex justify-content-center">
+                        <RegistryNavigationTabs/>
                     </div>
-                    <SmartTable
-                        model='Recipient'
-                        columns={tableColumns}
-                    />
+
+                    <div className='mt-5'>
+                        <div className="d-flex justify-content-end w-100">
+                            <Link href={RECIPIENT_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
+                        </div>
+                        <SmartTable
+                            model='Recipient'
+                            columns={tableColumns}
+                        />
+                    </div>
                 </div>
-
             </div>
-
-        </div>
+        </ProtectedElement>
     );
 };

@@ -11,6 +11,7 @@ import FormInput from "../../../../../components/main/input/FormInput";
 import SmartTable from "../../../../../components/main/table/SmartTable";
 import SearchByColumn from "../../../../../components/main/table/cell/SearchByColumn";
 import {isEqual} from "lodash";
+import ProtectedElement from "../../../../../components/main/system/ProtectedElement";
 
 export default function UpdatePermission() {
     const [formData, setFormData] = useState({
@@ -196,100 +197,94 @@ export default function UpdatePermission() {
     }, []);
 
     return (
-        <div>
-            <Head>
-                <title>Редактировать разрешения для роли | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-            </Head>
+        <ProtectedElement allowedPermissions={'access_management'}>
             <div>
-                <h1>Редактировать разрешения для роли</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className="container  d-flex">
-                        <div className="container mt-2">
-                            <div className='d-flex  justify-content-between'>
-                                <div className='w-25'>
-                                    <SmartTable
-                                        data={rolesList}
-                                        paginationPosition={['none']}
-                                        columns={[
-                                            {
-                                                title: 'Роли',
-                                                dataIndex: 'name',
-                                                ...SearchByColumn('name'),
-                                            }
-                                        ]}
-                                        onRow={(record) => ({
-                                            onClick: () => {
-                                                setItemId(record.id);
-                                                closeConfirmAction()
-                                            },
-                                            className: `cursor-pointer user-select-none ${record.id === itemId ? 'btn-cancel' : ''}`
-                                        })}
-                                    />
-                                </div>
-                                <div className='border-end ms-3 mt-3 me-4'></div>
-                                <div className='w-75 h-100' key={itemId}>
+                <Head>
+                    <title>Редактировать разрешения для роли | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                </Head>
+                <div>
+                    <h1>Редактировать разрешения для роли</h1>
+                    <form onSubmit={handleSubmit}>
+                        <div className="container  d-flex">
+                            <div className="container mt-2">
+                                <div className='d-flex  justify-content-between'>
+                                    <div className='w-25'>
+                                        <SmartTable
+                                            data={rolesList}
+                                            paginationPosition={['none']}
+                                            columns={[
+                                                {
+                                                    title: 'Роли',
+                                                    dataIndex: 'name',
+                                                    ...SearchByColumn('name'),
+                                                }
+                                            ]}
+                                            onRow={(record) => ({
+                                                onClick: () => {
+                                                    setItemId(record.id);
+                                                    closeConfirmAction()
+                                                },
+                                                className: `cursor-pointer user-select-none ${record.id === itemId ? 'btn-cancel' : ''}`
+                                            })}
+                                        />
+                                    </div>
+                                    <div className='border-end ms-3 mt-3 me-4'></div>
+                                    <div className='w-75 h-100' key={itemId}>
 
-                                    {isLoading ? (
-                                        <Preloader/>
+                                        {isLoading ? (
+                                            <Preloader/>
 
-                                    ) : (
-                                        <div className='mt-3'>
-                                            <h5>Основное </h5>
+                                        ) : (
                                             <div className='mt-3'>
-                                                <FormInput
-                                                    input="input"
-                                                    type="text"
-                                                    label="Название"
-                                                    className="input-field"
-                                                    id="name"
-                                                    placeholder="Название"
-                                                    name="name"
-                                                    defaultValue={formData.name}
-                                                    value={updatedFormData.name}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                                <div
-                                                    className='mt-3 d-flex flex-column w-100 h-100 justify-content-center'>
-                                                    <Divider><span
-                                                        className="text-nowrap">Права доступа</span></Divider>
-                                                    {permissionsList.length > 0 ? (
-                                                        permissionsList.map((item, index) => (
-                                                            <div className='w-100' key={index}>
-                                                                <div
-                                                                    className="d-flex w-100 justify-content-between mb-2 align-items-center">
-                                                                    <h5>{item.title}</h5>
-                                                                    <Switch
-                                                                        value={updatedFormData.permissions.some(permission => permission === item.id)}
-                                                                        defaultChecked={formData.permissions.some(permission => permission === item.id)}
-                                                                        onChange={(checked) => permissionSelect(checked, item.id)}
-                                                                    />
+                                                <h5>Основное </h5>
+                                                <div className='mt-3'>
+                                                    <FormInput
+                                                        input="input"
+                                                        type="text"
+                                                        label="Название"
+                                                        className="input-field"
+                                                        id="name"
+                                                        placeholder="Название"
+                                                        name="name"
+                                                        defaultValue={formData.name}
+                                                        value={updatedFormData.name}
+                                                        onChange={handleInputChange}
+                                                        required
+                                                    />
+                                                    <div
+                                                        className='mt-3 d-flex flex-column w-100 h-100 justify-content-center'>
+                                                        <Divider><span
+                                                            className="text-nowrap">Права доступа</span></Divider>
+                                                        {permissionsList.length > 0 ? (
+                                                            permissionsList.map((item, index) => (
+                                                                <div className='w-100' key={index}>
+                                                                    <div
+                                                                        className="d-flex w-100 justify-content-between mb-2 align-items-center">
+                                                                        <h5>{item.title}</h5>
+                                                                        <Switch
+                                                                            value={updatedFormData.permissions.some(permission => permission === item.id)}
+                                                                            defaultChecked={formData.permissions.some(permission => permission === item.id)}
+                                                                            onChange={(checked) => permissionSelect(checked, item.id)}
+                                                                        />
+                                                                    </div>
+                                                                    <p>{item.description}</p>
+                                                                    <Divider/>
                                                                 </div>
-                                                                <p>{item.description}</p>
-                                                                <Divider/>
-                                                            </div>
-                                                        ))
-                                                    ) : (
-                                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>
-                                                    )}
+                                                            ))
+                                                        ) : (
+                                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                            {/*<div className="w-100 mt-5 mb-5 d-flex justify-content-center">*/}
-                            {/*    <button className="btn btn-purple me-2" type="submit">*/}
-                            {/*        Сохранить*/}
-                            {/*    </button>*/}
-                            {/*    <Link href={ROLES_INDEX_URL} className="btn btn-cancel ms-2" type="button">*/}
-                            {/*        Отмена*/}
-                            {/*    </Link>*/}
-                            {/*</div>*/}
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
+        </ProtectedElement>
     );
 }

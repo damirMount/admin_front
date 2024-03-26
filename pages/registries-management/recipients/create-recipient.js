@@ -8,6 +8,7 @@ import UniversalSelect from "../../../components/main/input/UniversalSelect";
 import {RECIPIENT_INDEX_URL} from "../../../routes/web";
 import {useAlert} from "../../../contexts/AlertContext";
 import {useSession} from "next-auth/react";
+import ProtectedElement from "../../../components/main/system/ProtectedElement";
 
 export default function CreateRecipient() {
     const [formData, setFormData] = useState({
@@ -76,96 +77,97 @@ export default function CreateRecipient() {
     };
 
     return (
-        <div>
-            <Head>
-                <title>Создать получателя | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-            </Head>
+        <ProtectedElement allowedPermissions={'registry_management'}>
             <div>
-                <h1>Создать получателя</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className="container d-flex">
-                        <div className="container w-50 mt-2">
-                            <FormInput
-                                type="text"
-                                label="Получатель"
-                                className="input-field"
-                                id="name"
-                                placeholder="Название"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                required
-                            />
-                            <div className="d-flex justify-content-between align-items-center">
-                                <div className="w-50">
-                                    <UniversalSelect
-                                        name='type'
-                                        label="Период отправки реестра"
-                                        placeholder="Выберете период"
-                                        onSelectChange={handleSelectorChange}
-                                        firstOptionSelected
-                                        required
-                                        isSearchable={false}
-                                        options={recipientTypes}
-                                    />
+                <Head>
+                    <title>Создать получателя | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                </Head>
+                <div>
+                    <h1>Создать получателя</h1>
+                    <form onSubmit={handleSubmit}>
+                        <div className="container d-flex">
+                            <div className="container w-50 mt-2">
+                                <FormInput
+                                    type="text"
+                                    label="Получатель"
+                                    className="input-field"
+                                    id="name"
+                                    placeholder="Название"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <div className="w-50">
+                                        <UniversalSelect
+                                            name='type'
+                                            label="Период отправки реестра"
+                                            placeholder="Выберете период"
+                                            onSelectChange={handleSelectorChange}
+                                            firstOptionSelected
+                                            required
+                                            isSearchable={false}
+                                            options={recipientTypes}
+                                        />
+                                    </div>
+                                    <div className="text-nowrap">
+                                        <UniversalSelect
+                                            name='is_blocked'
+                                            label="Статус получателя"
+                                            placeholder="Укажите статус реестра"
+                                            onSelectChange={handleSelectorChange}
+                                            firstOptionSelected
+                                            className={"selector-choice"}
+                                            required
+                                            isSearchable={false}
+                                            options={[
+                                                {value: false, label: 'Получатель Активен'},
+                                                {value: true, label: 'Получатель Отключен'},
+                                            ]}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="text-nowrap">
-                                    <UniversalSelect
-                                        name='is_blocked'
-                                        label="Статус получателя"
-                                        placeholder="Укажите статус реестра"
-                                        onSelectChange={handleSelectorChange}
-                                        firstOptionSelected
-                                        className={"selector-choice"}
-                                        required
-                                        isSearchable={false}
-                                        options={[
-                                            {value: false, label: 'Получатель Активен'},
-                                            {value: true, label: 'Получатель Отключен'},
-                                        ]}
-                                    />
-                                </div>
+                                <UniversalSelect
+                                    name='registry_ids'
+                                    label="Файлы реестров"
+                                    placeholder="Выберете файлы реестров"
+                                    onSelectChange={handleSelectorChange}
+                                    required
+                                    isMulti
+                                    fetchDataConfig={{
+                                        model: 'Registry',
+                                        searchTerm: {is_blocked: false}
+                                    }}
+                                />
+                                <UniversalSelect
+                                    name='emails'
+                                    label="Emails"
+                                    placeholder="Введите почту получателя"
+                                    onSelectChange={handleSelectorChange}
+                                    required
+                                    isMulti
+                                    options={formData.emails && formData.emails.length > 0 ? (
+                                        formData.emails.map((item) => ({
+                                            value: item,
+                                            label: `${item}`
+                                        }))
+                                    ) : []}
+                                    createNewValues
+                                />
                             </div>
-                            <UniversalSelect
-                                name='registry_ids'
-                                label="Файлы реестров"
-                                placeholder="Выберете файлы реестров"
-                                onSelectChange={handleSelectorChange}
-                                required
-                                isMulti
-                                fetchDataConfig={{
-                                    model: 'Registry',
-                                    searchTerm: {is_blocked: false}
-                                }}
-                            />
-                            <UniversalSelect
-                                name='emails'
-                                label="Emails"
-                                placeholder="Введите почту получателя"
-                                onSelectChange={handleSelectorChange}
-                                required
-                                isMulti
-                                options={formData.emails && formData.emails.length > 0 ? (
-                                    formData.emails.map((item) => ({
-                                        value: item,
-                                        label: `${item}`
-                                    }))
-                                ) : []}
-                                createNewValues
-                            />
                         </div>
-                    </div>
-                    <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
-                        <button className="btn btn-purple me-2" type="submit">
-                            Сохранить
-                        </button>
-                        <Link href={RECIPIENT_INDEX_URL} className="btn btn-cancel ms-2" type="button">
-                            Отмена
-                        </Link>
-                    </div>
-                </form>
+                        <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
+                            <button className="btn btn-purple me-2" type="submit">
+                                Сохранить
+                            </button>
+                            <Link href={RECIPIENT_INDEX_URL} className="btn btn-cancel ms-2" type="button">
+                                Отмена
+                            </Link>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-        </div>
+        </ProtectedElement>
     );
 }

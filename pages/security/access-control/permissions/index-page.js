@@ -6,6 +6,7 @@ import SearchByColumn from "../../../../components/main/table/cell/SearchByColum
 import ActionButtons from "../../../../components/main/table/cell/ActionButtons";
 import Link from "next/link";
 import {PERMISSION_DELETE_API} from "../../../../routes/api";
+import ProtectedElement from "../../../../components/main/system/ProtectedElement";
 
 export default function rolesAndPermissionsPage() {
 
@@ -51,22 +52,24 @@ export default function rolesAndPermissionsPage() {
     ];
 
     return (
-        <div>
-            <Head>
-                <title>Лист разрешений | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-            </Head>
+        <ProtectedElement allowedPermissions={'access_management'}>
             <div>
-                <h1>Лист разрешений</h1>
-                <div className='mt-2'>
-                    <div className="d-flex justify-content-end w-100">
-                        <Link href={PERMISSION_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
+                <Head>
+                    <title>Лист разрешений | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                </Head>
+                <div>
+                    <h1>Лист разрешений</h1>
+                    <div className='mt-2'>
+                        <div className="d-flex justify-content-end w-100">
+                            <Link href={PERMISSION_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
+                        </div>
+                        <SmartTable
+                            model='Permission'
+                            columns={tableColumns}
+                        />
                     </div>
-                    <SmartTable
-                        model='Permission'
-                        columns={tableColumns}
-                    />
                 </div>
             </div>
-        </div>
+        </ProtectedElement>
     )
 }
