@@ -1,5 +1,5 @@
 // pages/index.js
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Head from 'next/head';
 import {REGISTRY_DELETE_API} from "../routes/api";
 import StatusIndicator from "../components/main/table/cell/StatusIndicator";
@@ -14,15 +14,20 @@ import ServerCell from "../components/main/table/cell/ServerCell";
 import SearchByColumn from "../components/main/table/cell/SearchByColumn";
 import SmartTable from "../components/main/table/SmartTable";
 import {useAlert} from "../contexts/AlertContext";
+import ProtectedElement from "../components/main/system/ProtectedElement";
+import FormInput from "../components/main/input/FormInput";
 
 export default function TestPage() {
     const {data: session} = useSession(); // Получаем сессию
-    const {openNotification} = useAlert();
+    const {openNotification, openConfirmAction, closeConfirmAction} = useAlert();
     const [formData, setFormData] = useState({
         name: '',
+        value1: '111',
+        value2: '',
         formats: [],
         is_blocked: '',
     });
+    const [updatedFormData, setUpdatedFormData] = useState({...formData});
 
     const actionButtonsLinks = {
         editRoute: {label: 'Изменить запись', link: REGISTRY_EDIT_URL, useId: true},
@@ -34,7 +39,6 @@ export default function TestPage() {
         {value: 'strawberry', label: 'Strawberry'},
         {value: 'vanilla', label: 'Vanilla'}
     ]
-
 
     const fetchDataConfig = {
         model: 'Registry',
@@ -50,6 +54,9 @@ export default function TestPage() {
 
 
     const tableColumns = [
+        {
+            key: 'sort'
+        },
         {
             title: 'ID',
             dataIndex: 'id',
@@ -125,51 +132,115 @@ export default function TestPage() {
 
     ];
 
+    const handleSave = (updatedData) => {
+        setFormData(updatedData);
+    };
 
+    const handleReset = () => {
+        setUpdatedFormData(formData);
+    };
+
+    const handleChange = (e) => {
+        const inputValue = e.target.value;
+        const inputName = e.target.name;
+
+        setUpdatedFormData((prevFormData) => ({
+            ...prevFormData,
+            [inputName]: inputValue,
+        }));
+
+        if (inputValue !== formData[inputName]) {
+            const updatedData = { ...updatedFormData, [inputName]: inputValue };
+            openConfirmAction({ onSave: () => handleSave(updatedData), onReset: handleReset });
+        } else {
+            closeConfirmAction();
+        }
+    };
+
+
+
+    useEffect(() => {
+        // Функция, которая закрывает окно подтверждения действия после перехода на другую страницу
+        return () => {
+            closeConfirmAction()
+        };
+    }, []);
     return (
-        // <ProtectedRoute allowedRoles={3}>
-        <div>
+        <ProtectedElement allowedPermissions={'develop'}>
             <div>
-                <Head>
-                    <title>TEST ZONE | {process.env.NEXT_PUBLIC_APP_NAME}</title>
-                </Head>
                 <div>
-                    <h1>TEST ZONE</h1>
-                    <UniversalSelect
-                        name='name1'
-                        selectedOptions={['11001', 4447, 4553,]}
-                        firstOptionSelected
-                        onSelectChange={handleSelectorChange}
-                        fetchDataConfig={fetchDataConfig}
-                        options={options}
-                        isMulti
-                        isSearchable
-                        createNewValues
-                        // type='number'
-                    />
-                    <DatePicker.RangePicker
-                        size="large"
-                        locale="ru"
-                    />
-                    <bottom
-                        type="primary"
-                        onClick={() => openNotification({type: "error", message: 'ew2222222er'})}
-                    >
-                        bottom
-                    </bottom>
-                    <div className='mt-2'>
-                        <div className="d-flex justify-content-end w-100">
-                            <Link href={REGISTRY_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
-                        </div>
-                        <SmartTable
-                            model='Registry'
-                            columns={tableColumns}
+                    <Head>
+                        <title>TEST ZONE | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                    </Head>
+                    <div>
+                        <h1>TEST ZONE</h1>
+                        <UniversalSelect
+                            name='name1'
+                            selectedOptions={['11001', 4447, 4553,]}
+                            firstOptionSelected
+                            onSelectChange={handleSelectorChange}
+                            // fetchDataConfig={fetchDataConfig}
+                            options={options}
+                            isMulti
+                            isSearchable
+                            createNewValues
+                            // type='number'
                         />
+                        <div className='d-flex mt-2 align-items-center'>
+                            <DatePicker.RangePicker
+                                size="large"
+                                locale="ru"
+                            />
+                            <bottom
+                                type="primary"
+                                className="ms-2 btn btn-danger"
+                                onClick={() => openNotification({
+                                    type: "error",
+                                    message: 'Произошла неизвестная ошибка'
+                                })}
+                            >
+                                Ошибка
+                            </bottom>
+                            <bottom
+                                type="primary"
+                                className="ms-2 btn btn-success"
+                                onClick={() => openNotification({
+                                    type: "success",
+                                    message: 'Операция выполнена успешно'
+                                })}
+                            >
+                                Успех
+                            </bottom>
+                            <FormInput
+                                defaultValue={formData.value1}
+                                className='ms-2'
+                                name='value1'
+                                value={updatedFormData.value1}
+                                placeholder="Введите данные"
+                                onChange={handleChange}
+                            />
+                            <FormInput
+                                defaultValue={formData.value2}
+                                className='ms-3'
+                                name='value2'
+                                value={updatedFormData.value2}
+                                placeholder="Введите вторые данные"
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className='mt-2'>
+                            <div className="d-flex justify-content-end w-100">
+                                <Link href={REGISTRY_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
+                            </div>
+                            <SmartTable
+                                model='Registry'
+                                columns={tableColumns}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        // </ProtectedRoute>
+        </ProtectedElement>
     );
 };
 

@@ -55,7 +55,8 @@ export default NextAuth({
                     id: token.user.id,
                     name: token.user.fio,
                     role: token.user.role_name,
-                    id_role: token.user.id_role,
+                    // permissions: token.user.permissions,
+                    // id_role: token.user.id_role,
                 };
                 session.accessToken = token.accessToken;
                 session.expires = token.tokenExpires

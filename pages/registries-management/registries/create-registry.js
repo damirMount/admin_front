@@ -99,80 +99,68 @@ export default function CreateRegistry() {
             <Head>
                 <title>Создать реестр | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div>
 
-            </div>
-            <div className=" mt-5">
+            <div>
                 <h1>Страница создания файла реестров</h1>
 
                 <form onSubmit={handleSubmit}>
                     <div className="container d-flex">
-                        <div className="container w-50">
-                            <div className="form-group mt-5">
-                                <label htmlFor="name">Название файла реестра*</label>
-                                <FormInput
-                                    type="text"
-                                    className="input-field"
-                                    id="name"
-                                    name="name"
-                                    placeholder="Название"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="is_blocked">Статус реестра</label>
-                                <UniversalSelect
-                                    name='is_blocked'
-                                    placeholder="Укажите статус файла реестра"
-                                    onSelectChange={handleSelectorChange}
-                                    firstOptionSelected
-                                    required
-                                    isSearchable={false}
-                                    options={[
-                                        {value: false, label: 'Файл реестра активен'},
-                                        {value: true, label: 'Файл реестра отключён'},
-                                    ]}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="serverId">Сервер</label>
-                                <UniversalSelect
-                                    name='serverId'
-                                    placeholder="Выберете сервер"
-                                    fetchDataConfig={{
-                                        model: 'Server',
-                                    }}
-                                    onSelectChange={(selectedValue, name) => {
-                                        handleSelectorChange(selectedValue, name);
-                                        setSelectedServer(selectedValue);
-                                    }}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="servicesId">Сервисы</label>
+                        <div className="container w-50 mt-5">
+                            <FormInput
+                                type="text"
+                                label="Название файла реестра"
+                                className="input-field"
+                                id="name"
+                                name="name"
+                                placeholder="Название"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                required
+                            />
+                            <UniversalSelect
+                                name='is_blocked'
+                                label="Статус реестра"
+                                placeholder="Укажите статус файла реестра"
+                                onSelectChange={handleSelectorChange}
+                                firstOptionSelected
+                                required
+                                isSearchable={false}
+                                options={[
+                                    {value: false, label: 'Файл реестра активен'},
+                                    {value: true, label: 'Файл реестра отключён'},
+                                ]}
+                            />
+                            <UniversalSelect
+                                name='serverId'
+                                label="Сервер"
+                                placeholder="Выберете сервер"
+                                fetchDataConfig={{
+                                    model: 'Server',
+                                }}
+                                onSelectChange={(selectedValue, name) => {
+                                    handleSelectorChange(selectedValue, name);
+                                    setSelectedServer(selectedValue);
+                                }}
+                                required
+                            />
 
-                                <UniversalSelect
-                                    key={JSON.stringify(selectedServer)}
-                                    name='servicesId'
-                                    placeholder="Выберете сервисы"
-                                    fetchDataConfig={{
-                                        model: 'Service',
-                                        searchTerm: {id_bserver: selectedServer}
-                                    }}
-                                    onSelectChange={handleSelectorChange}
-                                    required
-                                    isMulti
-                                />
-                            </div>
-                            <div className="form-group d-flex align-items-center flex-column mt-4">
-                                <RegistryFileFormat
-                                    formData={formData}
-                                    setFormData={setFormData}
-                                />
-                            </div>
+                            <UniversalSelect
+                                key={JSON.stringify(selectedServer)}
+                                name='servicesId'
+                                label="Сервисы"
+                                placeholder="Выберете сервисы"
+                                fetchDataConfig={{
+                                    model: 'Service',
+                                    searchTerm: {id_bserver: selectedServer}
+                                }}
+                                onSelectChange={handleSelectorChange}
+                                required
+                                isMulti
+                            />
+                            <RegistryFileFormat
+                                formData={formData}
+                                setFormData={setFormData}
+                            />
                         </div>
 
                         <div className="container w-75">

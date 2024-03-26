@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEllipsis} from '@fortawesome/free-solid-svg-icons';
 import DataRemover from "../../database/DataRemover";
 import Link from "next/link";
-import {Divider, Dropdown, Menu} from "antd";
+import {Dropdown, Menu} from "antd";
 
 const ActionButtons = (buttonsLinks = null, props) => {
     const id = props.id;
@@ -12,13 +12,13 @@ const ActionButtons = (buttonsLinks = null, props) => {
     const deletedAt = props.deletedAt;
 
     const buttons = [];
-    
+
     const Item = Menu.Item
 
     for (const key in buttonsLinks) {
         const {label, link, useId} = buttonsLinks[key];
 
-        if (key !== 'deleteRoute' && id) {
+        if (key !== 'deleteRoute' && (id !== null && id !== undefined)) {
             const buttonLink = `${link}${useId ? `/${id}` : ''}`;
             buttons.push(
                 <Item key={key}>
@@ -27,7 +27,7 @@ const ActionButtons = (buttonsLinks = null, props) => {
                     </Link>
                 </Item>
             );
-        } else if (key === 'deleteRoute' && id) {
+        } else if (key === 'deleteRoute' && (id !== null && id !== undefined)) {
             buttons.push(
                 <Item key={key}>
                     <DataRemover id={id} deleteRoute={link}/>

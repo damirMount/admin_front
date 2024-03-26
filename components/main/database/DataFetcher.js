@@ -15,16 +15,12 @@ const fetchData = async (config, session) => {
             limit: config.limit || undefined, // limit = 10
             offset: config.offset || undefined, // offset = 5
         });
-        // const cookies = parseCookies();
-        // console.log(cookies.authToken)
-        // const authToken = cookies.authToken;
         const response = await fetch(`${fetchDataUrl}?${params.toString()}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${session.accessToken}`,
             },
         });
-
         const data = await response.json();
 
         // Проверяем, есть ли у ответа свойство error

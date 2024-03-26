@@ -56,23 +56,42 @@ footer {
     margin-top: 50px;
 }
 
+.cursor-pointer {
+    cursor: pointer;
+}
+/*input*/
+.ant-input::placeholder {
+    color: #838585;
+
+}
+
+.ant-input-lg, .ant-input-affix-wrapper-lg {
+    border-radius: 5px;
+}
+
+.ant-input-affix-wrapper .ant-input-prefix {
+    margin-inline-end: 10px;
+}
+
 /*tooltip*/
 .ant-tooltip {
     z-index: 2;
 }
 
 .ant-notification .ant-notification-notice-wrapper .ant-notification-notice {
-     padding: 0;
-     width: fit-content;
+    padding: 0;
+    width: fit-content;
     height: fit-content;
     max-width: calc(100vw - 48px);
     overflow: hidden;
     line-height: 1.5714285714285714;
     word-wrap: break-word;
 }
+
 .ant-notification .ant-notification-notice-wrapper .ant-notification-notice-message {
     margin-bottom: 0;
 }
+
 /*datePicker*/
 .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-range-start:not(.ant-picker-cell-disabled) .ant-picker-cell-inner {
     background: #532C59 !important;
@@ -142,7 +161,7 @@ tr, td, table, tbody, th, thead, tfoot {
 
 .ant-table {
     border: 1px solid #dee2e6;
-    overflow: auto;
+    /*overflow: auto;*/
     border-radius: 9px 9px 0 0 !important;
 }
 
@@ -221,6 +240,7 @@ h1 {
 .btn-purple:hover {
     border: #532C59 2px solid;
     background-color: #FFFFFF;
+    color: #532C59;
 }
 
 .btn-purple:active {
@@ -364,17 +384,8 @@ input:disabled {
 }
 
 .form-group {
-    margin-bottom: 10px;
-    margin-top: 10px;
-}
-
-.input-with-padding {
-    padding-left: 40px;
-}
-
-.input-icon {
-    position: absolute;
-    padding: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 .input-search {
@@ -400,14 +411,6 @@ input:focus-visible {
 .input-btn {
     width: 20px;
     height: 24px !important;
-}
-
-.mail-input {
-    border: #A9C9DD 1px solid;
-    border-radius: 5px;
-    height: 40px;
-    width: 100%;
-    padding-right: 40px;
 }
 
 .input-btn-close {

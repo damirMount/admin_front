@@ -10,6 +10,7 @@ import {
     MAIN_PAGE_URL,
     OFFLINE_SERVICE_DATABASE_UPDATE_INDEX_URL,
     OLD_ADMIN_URL,
+    PERMISSION_INDEX_URL,
     RECIPIENT_INDEX_URL,
     REGISTRY_BACKUP_URL,
     REGISTRY_INDEX_URL,
@@ -17,13 +18,13 @@ import {
     REGISTRY_RESEND_URL,
     REPORT_DEALERS_ACCOUNT_HISTORY_URL,
     REPORT_DEALERS_TSJ_URL,
-    SECURITY_ACCESS_PERMISSION_INDEX,
-    SECURITY_ACCESS_ROLES_INDEX,
-    SECURITY_ACCESS_USERS_LIST,
-    TEST_ZONE_URL
+    ROLES_INDEX_URL,
+    TEST_ZONE_URL,
+    USERS_LIST_URL
 } from "../../../routes/web";
 import {useSession} from "next-auth/react";
 import {Tooltip} from "antd";
+import ProtectedElement from "../system/ProtectedElement";
 
 const SidebarTab = () => {
     const [collapsed, setCollapsed] = useState(true);
@@ -32,13 +33,13 @@ const SidebarTab = () => {
         setCollapsed(!collapsed);
     };
 
-    const menuButtonList = [
+    const menuItemsList = [
         {label: 'Меню', hideWhereCollapsed: true},
         {label: 'Админ зона', link: OLD_ADMIN_URL, targetLink: '_blank', icon: faHome},
         {label: 'Главная', link: MAIN_PAGE_URL, icon: faDisplay},
         {label: 'Навигация', hideWhereCollapsed: true},
         {
-            label: 'Реестры', icon: faEnvelopeOpen, showInSubMenu: true, subMenu: [
+            label: 'Реестры', permission: 'registry_management', icon: faEnvelopeOpen, showInSubMenu: true, subMenu: [
                 {label: 'Получатели', link: RECIPIENT_INDEX_URL},
                 {label: 'Реестры', link: REGISTRY_INDEX_URL},
                 {label: 'Перезапуск реестров', link: REGISTRY_RESEND_URL},
@@ -47,9 +48,9 @@ const SidebarTab = () => {
             ]
         },
         {
-            label: 'Отчёты', icon: faFileLines, showInSubMenu: true, subMenu: [
+            label: 'Отчёты', permission: 'reports_management', icon: faFileLines, showInSubMenu: true, subMenu: [
                 {
-                    label: 'Дилеры', subMenu: [
+                    label: 'Дилеры', permission: 'reports_dealer', subMenu: [
                         {label: 'История счетов', link: REPORT_DEALERS_ACCOUNT_HISTORY_URL},
                         {label: 'Дилеры ТСЖ', link: REPORT_DEALERS_TSJ_URL}
                     ]
@@ -57,36 +58,34 @@ const SidebarTab = () => {
             ]
         },
         {
-            label: 'Обновления', icon: faRotate, showInSubMenu: true, subMenu: [
-                {label: 'База Данных', link: OFFLINE_SERVICE_DATABASE_UPDATE_INDEX_URL},
-                {label: 'Список ГСФР', link: GSFR_UPDATE_URL}
+            label: 'Обновления', permission: 'updates_management', icon: faRotate, showInSubMenu: true, subMenu: [
+                {label: 'База Данных', permission: 'update_database', link: OFFLINE_SERVICE_DATABASE_UPDATE_INDEX_URL},
+                {label: 'Список ГСФР', permission: 'update_gsfr', link: GSFR_UPDATE_URL}
             ]
         },
         {
-            label: 'Безопасность', icon: faShieldHalved, showInSubMenu: true, subMenu: [
+            label: 'Безопасность', permission: 'security_management', icon: faShieldHalved, showInSubMenu: true, subMenu: [
                 {
-                    label: 'Права доступа', subMenu: [
-                        {label: 'Список пользователей', link: SECURITY_ACCESS_USERS_LIST},
-                        {label: 'Список ролей', link: SECURITY_ACCESS_ROLES_INDEX},
-                        {label: 'Список прав', link: SECURITY_ACCESS_PERMISSION_INDEX},
+                    label: 'Права доступа', permission: 'access_management', subMenu: [
+                        {label: 'Список ролей', link: ROLES_INDEX_URL},
+                        {label: 'Лист разрешений', link: PERMISSION_INDEX_URL},
                     ],
                 },
                 // {label: 'Журнал аудита', link: TEST_ZONE_URL},
             ]
         },
-        {label: 'В Разработке', hideWhereCollapsed: true},
+        {label: 'В Разработке', permission: 'develop', hideWhereCollapsed: true},
         {
-            label: 'Разработка', icon: faCode, showInSubMenu: true, subMenu: [
+            label: 'Разработка', permission: 'develop', icon: faCode, showInSubMenu: true, subMenu: [
                 {label: 'TEST ZONE', link: TEST_ZONE_URL},
                 {label: 'Эквайринг', link: ACQUIRING_URL},
             ]
         }
     ];
 
-    const buildSubMenu = (subMenuData, label, icon, showInSubMenu) => {
-        if (!subMenuData) return null;
+    const buildSubMenu = (subMenuData, label, icon, showInSubMenu, permission) => {
 
-        return (
+        const subMenuItemContent = (
             <Tooltip placement="right" {...((label && collapsed && showInSubMenu) ? {title: label} : {})}>
                 <SubMenu label={label} icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
                     {showInSubMenu && collapsed && (
@@ -97,45 +96,58 @@ const SidebarTab = () => {
                     )}
                     {subMenuData.map((item, index) => (
                         item.subMenu ?
-                            buildSubMenu(item.subMenu, item.label, item.icon, item.targetLink) :
-                            <MenuItem
-                                key={index}
-                                title={item.label}
-                                icon={item.icon && <FontAwesomeIcon icon={item.icon} size="lg"/>}
-                                component={
-                                    item.link ? <Link href={item.link} target={item.targetLink || ''}/> : null
-                                }>
-                                {item.label || ''}
-                            </MenuItem>
+                            buildSubMenu(item.subMenu, item.label, item.icon, item.targetLink)
+                            :
+                            buildMenuItem(item)
                     ))}
                 </SubMenu>
             </Tooltip>
         );
-    };
 
-    const buildMenuItem = (item) => {
-        const {label, link, icon, showInSubMenu, subMenu, targetLink, hideWhereCollapsed = false} = item;
-
-        if (subMenu) {
-            return buildSubMenu(subMenu, label, icon, showInSubMenu);
-        } else {
+        if (permission) {
             return (
-                <Tooltip placement="right" {...((label && collapsed && !hideWhereCollapsed) ? {title: label} : {})}>
-                    <MenuItem
-                        icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}
-                        component={
-                            link ? <Link href={link} target={targetLink || ''}/> : null
-                        }
-                        style={hideWhereCollapsed ? {opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px'} : {}}
-                    >{label || ''}
-                    </MenuItem>
-                </Tooltip>
+                <ProtectedElement allowedPermissions={permission} redirect={false}>
+                    {subMenuItemContent}
+                </ProtectedElement>
             );
+        } else {
+            return subMenuItemContent;
         }
     };
 
-    const buildMenu = (menuButtonList) => {
-        return menuButtonList.map((item, index) => (
+    const buildMenuItem = (item) => {
+        const {label, link, icon, permission, showInSubMenu, subMenu, targetLink, hideWhereCollapsed = false} = item;
+
+        if (subMenu) {
+            return buildSubMenu(subMenu, label, icon, showInSubMenu, permission);
+        } else {
+            const menuItemContent = (
+                <MenuItem
+                    icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}
+                    component={link ? <Link href={link} target={targetLink || ''}/> : null}
+                    style={hideWhereCollapsed ? {opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px'} : {}}
+                >
+                    {label || ''}
+                </MenuItem>
+            );
+
+            if (permission) {
+                return (
+                    <ProtectedElement allowedPermissions={permission} redirect={false}>
+                        {menuItemContent}
+                    </ProtectedElement>
+                );
+            } else {
+                return menuItemContent;
+            }
+        }
+    };
+
+
+
+
+    const buildMenu = (menuItemsList) => {
+        return menuItemsList.map((item, index) => (
             <React.Fragment key={index}>
                 {buildMenuItem(item)}
             </React.Fragment>
@@ -174,12 +186,12 @@ const SidebarTab = () => {
                      style={{maxHeight: '100vh', minHeight: '100vh'}}>
                     <div className="overflow-auto d-flex flex-column justify-content-between align-content-between">
                         <div className="h-100">
-                                <MenuItem onClick={toggleCollapsed}
-                                          icon={collapsed ? <FontAwesomeIcon icon={faBars} size="lg"/> :
-                                              <FontAwesomeIcon icon={faTimes} size="lg"/>}>
-                                    Закрыть
-                                </MenuItem>
-                            {buildMenu(menuButtonList)}
+                            <MenuItem onClick={toggleCollapsed}
+                                      icon={collapsed ? <FontAwesomeIcon icon={faBars} size="lg"/> :
+                                          <FontAwesomeIcon icon={faTimes} size="lg"/>}>
+                                Закрыть
+                            </MenuItem>
+                            {buildMenu(menuItemsList)}
                         </div>
                     </div>
                     <div style={{height: '10%'}}>

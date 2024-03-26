@@ -1,6 +1,7 @@
 const baseURL = process.env.NEXT_PUBLIC_URL
 
 export const POST_LOGIN_API = `${baseURL}/api/login`
+export const CHECK_USER_ACCESS_API = `${baseURL}/api/checkUserAccess`
 
 export const GET_DATA_FROM_DB_API = `${baseURL}/api/getDataFromDB`
 
@@ -31,3 +32,14 @@ export const DEALER_REPORTS_UPDATE_TSJ_DEALER_API = `${baseURL}/api/dealer/repor
 
 
 export const GSFR_UPDATE_API = `${baseURL}/api/GSFR/updateGFSR`
+
+
+export const PERMISSION_CREATE_API = `${baseURL}/api/permission`
+export const PERMISSION_SHOW_API = `${baseURL}/api/permission`
+export const PERMISSION_UPDATE_API = `${baseURL}/api/permission`
+export const PERMISSION_DELETE_API = `${baseURL}/api/permission`
+
+// export const ROLE_CREATE_API = `${baseURL}/api/role`
+export const ROLE_SHOW_API = `${baseURL}/api/role`
+export const ROLE_UPDATE_API = `${baseURL}/api/role`
+// export const ROLE_DELETE_API = `${baseURL}/api/role`

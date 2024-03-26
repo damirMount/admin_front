@@ -1,14 +1,36 @@
-import React, {useEffect, useState} from 'react';
-import {Table} from "antd";
+import React, { useEffect, useState } from 'react';
+import { Table } from 'antd';
+import { useAlert } from '../../../contexts/AlertContext';
+import { useSession } from 'next-auth/react';
+import { DndContext } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import {
+    arrayMove,
+    SortableContext,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import fetchData from "../database/DataFetcher";
-import {useAlert} from "../../../contexts/AlertContext";
-import {useSession} from "next-auth/react";
+import {DraggableBodyRow} from "./cell/DraggableBodyRow"; // Импорт CSS из @dnd-kit/utilities
+const SmartTable = ({
+                        model,
+                        columns,
+                        paginationPosition = ['leftBottom'],
+                        rowClassName,
+                        onRow,
+                        data,
+                    }) => {
+    const { openNotification } = useAlert();
+    const { data: session } = useSession(); // Получаем сессию
+    const [dataTable, setDataTable] = useState(data);
 
-
-const SmartTable = ({model, columns, data}) => {
-    const {openNotification} = useAlert();
-    const {data: session} = useSession(); // Получаем сессию
-    const [dataTable, setDataTable] = useState([])
+    useEffect(() => {
+        if (model) {
+            fetchDataFromDB();
+        }
+    }, []);
+    useEffect(() => {
+        setDataTable(data)
+    }, [data]);
 
     const fetchDataFromDB = async () => {
         try {
@@ -18,38 +40,56 @@ const SmartTable = ({model, columns, data}) => {
             };
 
             const response = await fetchData(fetchDBConfig, session);
-
-            setDataTable(response.data)
+            const updatedData = response.data.map((item, index) => ({ ...item, key: `${index}` }));
+            setDataTable(updatedData);
         } catch (error) {
             openNotification({
                 type: 'error', message: 'Ошибка при получении данных: ' + error.message,
             });
         }
-    }
+    };
 
-    useEffect(() => {
-        if (model) {
-            fetchDataFromDB()
+    const onDragEnd = ({ active, over }) => {
+
+        if (active.id !== over?.id) {
+            const activeIndex = dataTable.findIndex((i) => i.key === active.id);
+            const overIndex = dataTable.findIndex((i) => i.key === over?.id);
+            const newDataTable = arrayMove(dataTable, activeIndex, overIndex);
+            console.log(dataTable,newDataTable,overIndex,activeIndex)
+            setDataTable(newDataTable);
         }
-    }, []);
+    };
 
-    useEffect(() => {
-        setDataTable(data)
-    }, [data]);
+
 
     return (
-        <Table
-            className="mt-3"
-            pagination={{
-                pageSizeOptions: ['50', '75', '100'],
-                defaultPageSize: 50,
-
-            }}
-            bordered="Bordered"
-            columns={columns}
-            dataSource={dataTable}
-        />
+        <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+            <SortableContext
+                items={dataTable ? dataTable.map((item) => item.key) : []}
+                strategy={verticalListSortingStrategy}
+            >
+                <Table
+                    className="mt-3"
+                    pagination={{
+                        pageSizeOptions: ['50', '75', '100'],
+                        defaultPageSize: 50,
+                        position: paginationPosition,
+                    }}
+                    onRow={onRow}
+                    rowClassName={rowClassName}
+                    bordered={true}
+                    columns={columns}
+                    dataSource={dataTable}
+                    components={{
+                        body: {
+                            row: DraggableBodyRow,
+                        },
+                    }}
+                />
+            </SortableContext>
+        </DndContext>
     );
 };
+
 
 export default SmartTable;

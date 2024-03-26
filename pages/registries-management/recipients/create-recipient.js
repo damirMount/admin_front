@@ -80,29 +80,27 @@ export default function CreateRecipient() {
             <Head>
                 <title>Создать получателя | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div className=" mt-5">
+            <div>
                 <h1>Создать получателя</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="container d-flex">
                         <div className="container w-50 mt-2">
-                            <div className="form-group">
-                                <label htmlFor="name">Получатель*</label>
-                                <FormInput
-                                    type="text"
-                                    className="input-field"
-                                    id="name"
-                                    placeholder="Название"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group d-flex justify-content-between align-items-center">
-                                <div className="form-group w-50">
-                                    <label htmlFor="name">Период отправки реестра</label>
+                            <FormInput
+                                type="text"
+                                label="Получатель"
+                                className="input-field"
+                                id="name"
+                                placeholder="Название"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                required
+                            />
+                            <div className="d-flex justify-content-between align-items-center">
+                                <div className="w-50">
                                     <UniversalSelect
                                         name='type'
+                                        label="Период отправки реестра"
                                         placeholder="Выберете период"
                                         onSelectChange={handleSelectorChange}
                                         firstOptionSelected
@@ -111,10 +109,10 @@ export default function CreateRecipient() {
                                         options={recipientTypes}
                                     />
                                 </div>
-                                <div className="form-group   text-nowrap">
-                                    <label htmlFor="is_blocked">Статус получателя</label>
+                                <div className="text-nowrap">
                                     <UniversalSelect
                                         name='is_blocked'
+                                        label="Статус получателя"
                                         placeholder="Укажите статус реестра"
                                         onSelectChange={handleSelectorChange}
                                         firstOptionSelected
@@ -128,38 +126,33 @@ export default function CreateRecipient() {
                                     />
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="registry_ids">Файлы реестров</label>
-                                <UniversalSelect
-                                    name='registry_ids'
-                                    placeholder="Выберете файлы реестров"
-                                    onSelectChange={handleSelectorChange}
-                                    required
-                                    isMulti
-                                    fetchDataConfig={{
-                                        model: 'Registry',
-                                        searchTerm: {is_blocked: false}
-                                    }}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="registry_ids">Emails</label>
-                                <UniversalSelect
-                                    name='emails'
-                                    placeholder="Введите почту получателя"
-                                    onSelectChange={handleSelectorChange}
-                                    required
-                                    isMulti
-                                    options={formData.emails && formData.emails.length > 0 ? (
-                                        formData.emails.map((item) => ({
-                                            value: item,
-                                            label: `${item}`
-                                        }))
-                                    ) : []}
-                                    createNewValues
-                                />
-                            </div>
-
+                            <UniversalSelect
+                                name='registry_ids'
+                                label="Файлы реестров"
+                                placeholder="Выберете файлы реестров"
+                                onSelectChange={handleSelectorChange}
+                                required
+                                isMulti
+                                fetchDataConfig={{
+                                    model: 'Registry',
+                                    searchTerm: {is_blocked: false}
+                                }}
+                            />
+                            <UniversalSelect
+                                name='emails'
+                                label="Emails"
+                                placeholder="Введите почту получателя"
+                                onSelectChange={handleSelectorChange}
+                                required
+                                isMulti
+                                options={formData.emails && formData.emails.length > 0 ? (
+                                    formData.emails.map((item) => ({
+                                        value: item,
+                                        label: `${item}`
+                                    }))
+                                ) : []}
+                                createNewValues
+                            />
                         </div>
                     </div>
                     <div className="w-100 mt-5 mb-5 d-flex justify-content-center">

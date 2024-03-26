@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
-import FormInput from '../../../../components/main/input/FormInput';
+
 import Link from 'next/link';
 import RegistryFieldsTable from "../../../../components/pages/registry/RegistryFieldsTable";
 import {REGISTRY_SHOW_API, REGISTRY_UPDATE_API} from "../../../../routes/api";
@@ -11,6 +11,7 @@ import Preloader from "../../../../components/main/system/Preloader";
 import {useAlert} from "../../../../contexts/AlertContext";
 import {REGISTRY_INDEX_URL} from "../../../../routes/web";
 import {useSession} from "next-auth/react";
+import FormInput from "../../../../components/main/input/FormInput";
 
 export default function EditRegistryFile() {
     const [formData, setFormData] = useState({
@@ -188,78 +189,68 @@ export default function EditRegistryFile() {
             <Head>
                 <title>{registryName} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div className=" mt-5">
+            <div className="mt-5">
                 <h1>Страница редактирования файла реестров</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="container d-flex">
-                        <div className="container w-50">
-                            <div className="form-group mt-5">
-                                <label htmlFor="name">Название файла реестра*</label>
-                                <FormInput
-                                    type="text"
-                                    className="input-field"
-                                    id="name"
-                                    name="name"
-                                    placeholder="Название"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="is_blocked">Статус реестра</label>
-                                <UniversalSelect
-                                    name='is_blocked'
-                                    placeholder="Укажите статус файла реестра"
-                                    onSelectChange={handleSelectorChange}
-                                    selectedOptions={[registryStatus]}
-                                    firstOptionSelected
-                                    required
-                                    isSearchable={false}
-                                    options={[
-                                        {value: false, label: 'Файл реестра активен'},
-                                        {value: true, label: 'Файл реестра отключён'},
-                                    ]}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="serverId">Сервер</label>
-                                <UniversalSelect
-                                    name='serverId'
-                                    selectedOptions={[formData.serverId]}
-                                    placeholder="Выберете сервер"
-                                    fetchDataConfig={{
-                                        model: 'Server',
-                                    }}
-                                    onSelectChange={(selectedValue, name) => {
-                                        handleSelectorChange(selectedValue, name);
-                                        setSelectedServer(selectedValue);
-                                    }}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="serverId">Сервисы</label>
-                                <UniversalSelect
-                                    key={JSON.stringify(selectedServer)}
-                                    name='servicesId'
-                                    placeholder="Выберете сервисы"
-                                    fetchDataConfig={{
-                                        model: 'Service',
-                                        searchTerm: {id_bserver: selectedServer}
-                                    }}
-                                    selectedOptions={formData.servicesId}
-                                    onSelectChange={handleSelectorChange}
-                                    required
-                                    isMulti
-                                />
-                            </div>
-                            <div className="form-group d-flex align-items-center flex-column mt-3">
-                                <RegistryFileFormat
-                                    formData={formData}
-                                    setFormData={setFormData}
-                                />
-                            </div>
+                        <div className="container w-50 mt-5">
+                            <FormInput
+                                type="text"
+                                label="Название файла реестра"
+                                className="input-field"
+                                id="name"
+                                name="name"
+                                placeholder="Название"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                required
+                            />
+                            <UniversalSelect
+                                name='is_blocked'
+                                label="Статус реестра"
+                                placeholder="Укажите статус файла реестра"
+                                onSelectChange={handleSelectorChange}
+                                selectedOptions={[registryStatus]}
+                                firstOptionSelected
+                                required
+                                isSearchable={false}
+                                options={[
+                                    {value: false, label: 'Файл реестра активен'},
+                                    {value: true, label: 'Файл реестра отключён'},
+                                ]}
+                            />
+                            <UniversalSelect
+                                name='serverId'
+                                label="Сервер"
+                                selectedOptions={[formData.serverId]}
+                                placeholder="Выберете сервер"
+                                fetchDataConfig={{
+                                    model: 'Server',
+                                }}
+                                onSelectChange={(selectedValue, name) => {
+                                    handleSelectorChange(selectedValue, name);
+                                    setSelectedServer(selectedValue);
+                                }}
+                                required
+                            />
+                            <UniversalSelect
+                                key={JSON.stringify(selectedServer)}
+                                name='servicesId'
+                                label="Сервисы"
+                                placeholder="Выберете сервисы"
+                                fetchDataConfig={{
+                                    model: 'Service',
+                                    searchTerm: {id_bserver: selectedServer}
+                                }}
+                                selectedOptions={formData.servicesId}
+                                onSelectChange={handleSelectorChange}
+                                required
+                                isMulti
+                            />
+                            <RegistryFileFormat
+                                formData={formData}
+                                setFormData={setFormData}
+                            />
                             <div className="mt-4">
                                 <p>Дата создания: {createdAt}</p>
                                 <p>Дата изменения: {updatedAt}</p>

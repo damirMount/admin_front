@@ -5,7 +5,7 @@ import ruLocale from 'date-fns/locale/ru';
 import ReportsNavigationTabs from "../../../components/pages/report/ReportsNavigationTabs";
 import {DEALER_REPORTS_EXPORT_API} from "../../../routes/api";
 import Head from "next/head";
-import DateRangeInput from "../../../components/main/input/DateRangeInput";
+import DateRangePicker from "../../../components/main/input/DateRangePicker";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
 import {useSession} from "next-auth/react";
 import {useAlert} from "../../../contexts/AlertContext";
@@ -100,182 +100,182 @@ export default function DealerExportPage() {
                 {processingLoader && (
                     <Preloader/>
                 )}
-                    <div className={`${processingLoader ? 'd-none' : 'd-flex'} w-100 flex-column`}>
-                        <div className="d-flex flex-row w-100 justify-content-center">
-                            <div className="d-flex flex-column w-75 align-items-center">
-                                <div>
-                                    <div className="form-group">
-                                        <label htmlFor="is_blocked">Выберите отчет</label>
-                                        <UniversalSelect
-                                            firstOptionSelected
-                                            options={[
-                                                {value: '0', label: 'Проведенные платежи'}
-                                            ]}
-                                            required
-                                            onSelectChange={(selectedValue) => {
-                                                // setFormData((prevFormData) => ({
-                                                //     ...prevFormData,
-                                                //     is_blocked: selectedValue,
-                                                // }));
-                                            }}
-                                            name="is_blocked"
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="is_blocked">По времени</label>
-                                        <div
-                                            className="ps-3 input-form d-flex justify-content-between bg-white align-items-center">
-                                            <label htmlFor="">Выберите опцию</label>
-                                            <UniversalSelect
-                                                firstOptionSelected
-                                                options={[
-                                                    {value: 0, label: 'Проведения платежа'},
-                                                ]}
-                                                onSelectChange={(selectedValue) => {
-                                                    // setFormData((prevFormData) => ({
-                                                    //     ...prevFormData,
-                                                    //     is_blocked: selectedValue,
-                                                    // }));
-                                                }}
-                                                required
-                                                className="selector-choice"
-                                                name="isTestEmailEnabled"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="is_blocked">Дилер</label>
-                                        <UniversalSelect
-                                            firstOptionSelected
-                                            options={[
-                                                {value: '0', label: 'По всем дилерам'}
-                                            ]}
-                                            required
-                                            onSelectChange={(selectedValue) => {
-                                                // setFormData((prevFormData) => ({
-                                                //     ...prevFormData,
-                                                //     is_blocked: selectedValue,
-                                                // }));
-                                            }}
-                                            name="is_blocked"
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="is_blocked">Поставщик</label>
-                                        <UniversalSelect
-                                            firstOptionSelected
-                                            options={[
-                                                {value: '0', label: 'По всем поставщикам'}
-                                            ]}
-                                            required
-                                            onSelectChange={(selectedValue) => {
-                                                // setFormData((prevFormData) => ({
-                                                //     ...prevFormData,
-                                                //     is_blocked: selectedValue,
-                                                // }));
-                                            }}
-                                            name="is_blocked"
-                                        />
-                                    </div>
-
-
-                                    <DateRangeInput
-                                        onDateChange={(dates) => {
-                                            setStartDate(dates[0]);
-                                            setEndDate(dates[1]);
+                <div className={`${processingLoader ? 'd-none' : 'd-flex'} w-100 flex-column`}>
+                    <div className="d-flex flex-row w-100 justify-content-center">
+                        <div className="d-flex flex-column w-75 align-items-center">
+                            <div>
+                                <div className="form-group">
+                                    <label htmlFor="is_blocked">Выберите отчет</label>
+                                    <UniversalSelect
+                                        firstOptionSelected
+                                        options={[
+                                            {value: '0', label: 'Проведенные платежи'}
+                                        ]}
+                                        required
+                                        onSelectChange={(selectedValue) => {
+                                            // setFormData((prevFormData) => ({
+                                            //     ...prevFormData,
+                                            //     is_blocked: selectedValue,
+                                            // }));
                                         }}
+                                        name="is_blocked"
                                     />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="is_blocked">По времени</label>
+                                    <div
+                                        className="ps-3 input-form d-flex justify-content-between bg-white align-items-center">
+                                        <label htmlFor="">Выберите опцию</label>
+                                        <UniversalSelect
+                                            firstOptionSelected
+                                            options={[
+                                                {value: 0, label: 'Проведения платежа'},
+                                            ]}
+                                            onSelectChange={(selectedValue) => {
+                                                // setFormData((prevFormData) => ({
+                                                //     ...prevFormData,
+                                                //     is_blocked: selectedValue,
+                                                // }));
+                                            }}
+                                            required
+                                            className="selector-choice ms-4"
+                                            name="isTestEmailEnabled"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="is_blocked">Дилер</label>
+                                    <UniversalSelect
+                                        firstOptionSelected
+                                        options={[
+                                            {value: '0', label: 'По всем дилерам'}
+                                        ]}
+                                        required
+                                        onSelectChange={(selectedValue) => {
+                                            // setFormData((prevFormData) => ({
+                                            //     ...prevFormData,
+                                            //     is_blocked: selectedValue,
+                                            // }));
+                                        }}
+                                        name="is_blocked"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="is_blocked">Поставщик</label>
+                                    <UniversalSelect
+                                        firstOptionSelected
+                                        options={[
+                                            {value: '0', label: 'По всем поставщикам'}
+                                        ]}
+                                        required
+                                        onSelectChange={(selectedValue) => {
+                                            // setFormData((prevFormData) => ({
+                                            //     ...prevFormData,
+                                            //     is_blocked: selectedValue,
+                                            // }));
+                                        }}
+                                        name="is_blocked"
+                                    />
+                                </div>
 
-                                </div>
-                                <div className="d-flex justify-content-center">
-                                    <button type="button" className="btn btn-purple mt-5" onClick={handleCreateReport}>
-                                        Создать отчет
-                                    </button>
-                                </div>
+
+                                <DateRangePicker
+                                    onDateChange={(dates) => {
+                                        setStartDate(dates[0]);
+                                        setEndDate(dates[1]);
+                                    }}
+                                />
+
                             </div>
+                            <div className="d-flex justify-content-center">
+                                <button type="button" className="btn btn-purple mt-5" onClick={handleCreateReport}>
+                                    Создать отчет
+                                </button>
+                            </div>
+                        </div>
 
-                            {fileDownloaded.length > 0 && (
-                                <div className="mt-2 w-75 ms-5">
-                                    <label htmlFor="reportsDownload" className="w-100 text-nowrap text-end ">Скачать
-                                        предыдущие отчёты</label>
-                                    <table id="reportsDownload" className="table table-bordered">
-                                        <thead>
-                                        <tr>
-                                            <th className="col-3">Название файла</th>
-                                            <th className="col-auto" colSpan="2">Параметры отчёта</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {fileDownloaded.map((file, index) => (
-                                            <tr key={index}>
-                                                <td>
-                                                    <div>
+                        {fileDownloaded.length > 0 && (
+                            <div className="mt-2 w-75 ms-5">
+                                <label htmlFor="reportsDownload" className="w-100 text-nowrap text-end ">Скачать
+                                    предыдущие отчёты</label>
+                                <table id="reportsDownload" className="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th className="col-3">Название файла</th>
+                                        <th className="col-auto" colSpan="2">Параметры отчёта</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {fileDownloaded.map((file, index) => (
+                                        <tr key={index}>
+                                            <td>
+                                                <div>
                                                         <span
                                                             className="justify-content-start fs-6 flex-wrap p-0">{file.fileName}</span>
-                                                    </div>
-                                                    <div className="d-flex justify-content-between mt-3 flex-column">
+                                                </div>
+                                                <div className="d-flex justify-content-between mt-3 flex-column">
                                                         <span
                                                             className="status status-dashed">{formatDistanceToNow(new Date(file.created),
                                                             {addSuffix: true, includeSeconds: true, locale: ruLocale})}
                                                         </span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className="d-flex align-items-center justify-content-between">
-                                                        <div className="d-flex flex-column me-2">
-                                                            <div className="d-flex justify-content-between flex-column">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="d-flex align-items-center justify-content-between">
+                                                    <div className="d-flex flex-column me-2">
+                                                        <div className="d-flex justify-content-between flex-column">
                                                                 <span
                                                                     className="justify-content-start fs-6 flex-wrap p-0">Тип отчёта:</span>
-                                                                <span
-                                                                    className="status justify-content-start p-0 align-items-center">Проведённые платежи</span>
-                                                            </div>
-                                                            <div
-                                                                className="d-flex justify-content-between mt-3 flex-column">
+                                                            <span
+                                                                className="status justify-content-start p-0 align-items-center">Проведённые платежи</span>
+                                                        </div>
+                                                        <div
+                                                            className="d-flex justify-content-between mt-3 flex-column">
                                                                 <span
                                                                     className="justify-content-start fs-6 flex-wrap p-0">По времени:</span>
-                                                                <span
-                                                                    className="status justify-content-start p-0 align-items-center">Проведения платежа</span>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="d-flex flex-column ms-2">
-                                                            <div className="d-flex justify-content-between flex-column">
-                                                                <span
-                                                                    className="justify-content-start fs-6 flex-wrap p-0">Дилер:</span>
-                                                                <span
-                                                                    className="status justify-content-start p-0 align-items-center">По всем дилерам</span>
-                                                            </div>
-                                                            <div
-                                                                className="d-flex justify-content-between mt-3 flex-column">
-                                                                <span
-                                                                    className="justify-content-start fs-6 flex-wrap p-0">Поставщик:</span>
-                                                                <span
-                                                                    className="status justify-content-start p-0 align-items-center">По всем поставщикам</span>
-                                                            </div>
+                                                            <span
+                                                                className="status justify-content-start p-0 align-items-center">Проведения платежа</span>
                                                         </div>
                                                     </div>
-                                                </td>
 
-                                                <td className="col-1 action-table-buttons">
-                                                    <button
-                                                        key={index}
-                                                        type="button"
-                                                        className="btn btn-purple"
-                                                        onClick={() => handleDownloadReport(file.url, file.fileName)}
-                                                    >
-                                                        Скачать
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            )}
+                                                    <div className="d-flex flex-column ms-2">
+                                                        <div className="d-flex justify-content-between flex-column">
+                                                                <span
+                                                                    className="justify-content-start fs-6 flex-wrap p-0">Дилер:</span>
+                                                            <span
+                                                                className="status justify-content-start p-0 align-items-center">По всем дилерам</span>
+                                                        </div>
+                                                        <div
+                                                            className="d-flex justify-content-between mt-3 flex-column">
+                                                                <span
+                                                                    className="justify-content-start fs-6 flex-wrap p-0">Поставщик:</span>
+                                                            <span
+                                                                className="status justify-content-start p-0 align-items-center">По всем поставщикам</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
 
-                        </div>
+                                            <td className="col-1 action-table-buttons">
+                                                <button
+                                                    key={index}
+                                                    type="button"
+                                                    className="btn btn-purple"
+                                                    onClick={() => handleDownloadReport(file.url, file.fileName)}
+                                                >
+                                                    Скачать
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+
                     </div>
                 </div>
+            </div>
         </div>
     );
 };

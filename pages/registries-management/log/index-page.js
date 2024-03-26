@@ -9,11 +9,9 @@ export default function RegistryFilesBackupsListPage() {
             <Head>
                 <title>Логи реестров | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
+
+
             <div>
-
-            </div>
-
-            <div className=" mt-5">
                 <h1>Логи реестров</h1>
                 <RegistryFiles
                     apiUrl={REGISTRY_LOG_INDEX_API}

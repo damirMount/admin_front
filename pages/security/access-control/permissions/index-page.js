@@ -1,19 +1,24 @@
 import Head from "next/head";
 import React from "react";
-import {REGISTRY_EDIT_URL} from "../../../../routes/web";
-import {REGISTRY_DELETE_API} from "../../../../routes/api";
+import {PERMISSION_CREATE_URL, PERMISSION_EDIT_URL} from "../../../../routes/web";
 import SmartTable from "../../../../components/main/table/SmartTable";
 import SearchByColumn from "../../../../components/main/table/cell/SearchByColumn";
 import ActionButtons from "../../../../components/main/table/cell/ActionButtons";
+import Link from "next/link";
+import {PERMISSION_DELETE_API} from "../../../../routes/api";
 
 export default function rolesAndPermissionsPage() {
 
     const actionButtonsLinks = {
-        editRoute: {label: 'Изменить запись', link: REGISTRY_EDIT_URL, useId: true},
-        deleteRoute: {label: 'Удалить', link: REGISTRY_DELETE_API, useId: true},
+        editRoute: {label: 'Изменить запись', link: PERMISSION_EDIT_URL, useId: true},
+        deleteRoute: {label: 'Удалить', link: PERMISSION_DELETE_API, useId: true},
     };
 
     const tableColumns = [
+        // {
+        //     key: 'sort',
+        //     dataIndex: 'id'
+        // },
         {
             title: 'ID',
             dataIndex: 'id',
@@ -23,9 +28,9 @@ export default function rolesAndPermissionsPage() {
         {
             title: 'Название',
             dataIndex: 'name',
-
             sorter: (a, b) => a.name.localeCompare(b.name),
             ...SearchByColumn('name'),
+            render: (text) => <b>{(text)}</b>,
         },
         {
             title: 'Заголовок',
@@ -36,9 +41,8 @@ export default function rolesAndPermissionsPage() {
         {
             title: 'Описание',
             dataIndex: 'description',
-            className: 'col-10',
-            sorter: (a, b) => a.description.localeCompare(b.description),
             ...SearchByColumn('description'),
+
         },
         {
             render: (text, record) => ActionButtons(actionButtonsLinks, record),
@@ -49,14 +53,19 @@ export default function rolesAndPermissionsPage() {
     return (
         <div>
             <Head>
-                <title>Список прав | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                <title>Лист разрешений | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <div>
-                <h1>Список прав</h1>
-                <SmartTable
-                    model='Permission'
-                    columns={tableColumns}
-                />
+                <h1>Лист разрешений</h1>
+                <div className='mt-2'>
+                    <div className="d-flex justify-content-end w-100">
+                        <Link href={PERMISSION_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
+                    </div>
+                    <SmartTable
+                        model='Permission'
+                        columns={tableColumns}
+                    />
+                </div>
             </div>
         </div>
     )

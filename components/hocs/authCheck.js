@@ -5,7 +5,7 @@ import Navbar from "../main/navigation/Navbar";
 import {ConfigProvider} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import Footer from "../main/Footer";
-import {useSession} from 'next-auth/react'; // Импортируем useSession здесь
+import {useSession} from 'next-auth/react';
 
 const AuthCheck = (WrappedComponent) => {
     const Check = (props) => {
@@ -25,6 +25,7 @@ const AuthCheck = (WrappedComponent) => {
                             <div className=" w-100 overflow-x-auto overflow-y-hidden mt-5">
                                 <div className="container body-container mt-5">
                                     <ConfigProvider locale={ruRU}>
+
                                         <WrappedComponent {...props}/>
                                     </ConfigProvider>
                                 </div>

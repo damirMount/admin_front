@@ -13,7 +13,7 @@ import UniversalSelect from "../../../components/main/input/UniversalSelect";
 import fetchData from "../../../components/main/database/DataFetcher";
 import {value} from "lodash/seq";
 import {useSession} from "next-auth/react";
-import DateRangeInput from "../../../components/main/input/DateRangeInput";
+import DateRangePicker from "../../../components/main/input/DateRangePicker";
 
 
 export default function RegistryResendPage() {
@@ -208,7 +208,9 @@ export default function RegistryResendPage() {
                 };
 
                 const registryList = await fetchData(fetchRegistry, session);
-                setRegistryOptions(registryList.data);
+                if (registryList) {
+                    setRegistryOptions(registryList.data);
+                }
 
             } catch (error) {
                 openNotification({
@@ -230,15 +232,11 @@ export default function RegistryResendPage() {
     }, [recipient]);
 
 
-
     return (
         <div>
             <Head>
                 <title>Перезапуск реестра | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div>
-
-            </div>
             <div className="d-flex flex-column align-items-center">
                 <div className="container d-flex flex-column align-items-center body-container">
                     <h1>Перезапуск реестра</h1>
@@ -280,46 +278,40 @@ export default function RegistryResendPage() {
                                 </div>
 
                                 {isTestEmailEnabled && (
-                                    <div className="form-group w-100">
-                                        <label htmlFor="email">Тестовая почта</label>
-                                        <div>
-                                            <FontAwesomeIcon className="input-icon" icon={faEnvelope} size="lg"/>
-                                            <FormInput
-                                                required
-                                                type="email"
-                                                id="email"
-                                                className="mail-input input-with-padding"
-                                                placeholder="Укажите почту"
-                                                value={testEmail}
-                                                onChange={handleEmailChange}
-                                            />
-                                        </div>
-                                    </div>
+                                    <FormInput
+                                        required
+                                        label="Тестовая почта"
+                                        prefix={<FontAwesomeIcon icon={faEnvelope} size="lg"/>}
+                                        type="email"
+                                        id="email"
+                                        placeholder="Укажите почту"
+                                        value={testEmail}
+                                        onChange={handleEmailChange}
+                                    />
                                 )}
 
-                                <div className="form-group">
-                                    <label htmlFor="recipient_id">Получатель</label>
-                                    <UniversalSelect
-                                        name='recipient_id'
-                                        placeholder="Выберете получателя"
-                                        fetchDataConfig={{
-                                            model: 'Recipient',
-                                            searchTerm: {is_blocked: false}
-                                        }}
-                                        firstOptionSelected
-                                        required
-                                        onSelectChange={(selectedValue, name) => {
-                                            handleSelectorChange(selectedValue, name);
-                                            setRecipient(selectedValue);
-                                        }}
-                                    />
-                                </div>
+                                <UniversalSelect
+                                    label="Получатель"
+                                    name='recipient_id'
+                                    placeholder="Выберете получателя"
+                                    fetchDataConfig={{
+                                        model: 'Recipient',
+                                        searchTerm: {is_blocked: false}
+                                    }}
+                                    firstOptionSelected
+                                    required
+                                    onSelectChange={(selectedValue, name) => {
+                                        handleSelectorChange(selectedValue, name);
+                                        setRecipient(selectedValue);
+                                    }}
+                                />
+
 
                                 {recipient > 0 && (
                                     <div>
-                                        <div className="form-group">
-                                            <label htmlFor="registry_id">Реестр</label>
+                                        <div>
                                             <UniversalSelect
+                                                label="Реестр"
                                                 key={JSON.stringify(registryOptions)}
                                                 name='registry_id'
                                                 placeholder="Выберете файлы реестров"
@@ -338,41 +330,35 @@ export default function RegistryResendPage() {
                                                 }}
                                             />
                                         </div>
-                                        <div>
-                                            <div className="form-group">
-                                                <label htmlFor="serverId">Сервисы</label>
+                                        <UniversalSelect
+                                            label="Сервисы"
+                                            key={JSON.stringify(services)}
+                                            name='services_id'
+                                            fetchDataConfig={{
+                                                model: 'Service',
+                                                searchTerm: {id: services}
+                                            }}
+                                            placeholder="Выберете сервисы"
+                                            selectedOptions={services}
+                                            onSelectChange={handleSelectorChange}
+                                            required
+                                            isMulti
+                                        />
+                                        <DateRangePicker
+                                            onDateChange={(dates) => {
+                                                setFormData((prevFormData) => ({
+                                                    ...prevFormData,
+                                                    startDate: dates[0],
+                                                    endDate: dates[1],
+                                                }));
+                                            }}
+                                        />
 
-                                                <UniversalSelect
-                                                    key={JSON.stringify(services)}
-                                                    name='services_id'
-                                                    fetchDataConfig={{
-                                                        model: 'Service',
-                                                        searchTerm: {id: services}
-                                                    }}
-                                                    placeholder="Выберете сервисы"
-                                                    selectedOptions={services}
-                                                    onSelectChange={handleSelectorChange}
-                                                    required
-                                                    isMulti
-                                                />
-                                            </div>
-                                            <DateRangeInput
-                                                onDateChange={(dates) => {
-                                                    setFormData((prevFormData) => ({
-                                                        ...prevFormData,
-                                                        startDate: dates[0],
-                                                        endDate: dates[1],
-                                                    }));
-                                                }}
-                                            />
-                                            <div
-                                                className="form-group d-flex align-items-center flex-column mt-4">
-                                                <RegistryFileFormat
-                                                    formData={formData}
-                                                    setFormData={setFormData}
-                                                />
-                                            </div>
-                                        </div>
+                                        <RegistryFileFormat
+                                            formData={formData}
+                                            setFormData={setFormData}
+                                        />
+
                                     </div>
                                 )}
                             </div>

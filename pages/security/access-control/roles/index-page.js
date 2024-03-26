@@ -1,7 +1,6 @@
 import Head from "next/head";
 import React from "react";
-import {REGISTRY_EDIT_URL} from "../../../../routes/web";
-import {REGISTRY_DELETE_API} from "../../../../routes/api";
+import {ROLES_EDIT_URL} from "../../../../routes/web";
 import SmartTable from "../../../../components/main/table/SmartTable";
 import SearchByColumn from "../../../../components/main/table/cell/SearchByColumn";
 import ActionButtons from "../../../../components/main/table/cell/ActionButtons";
@@ -9,8 +8,7 @@ import ActionButtons from "../../../../components/main/table/cell/ActionButtons"
 export default function rolesAndPermissionsPage() {
 
     const actionButtonsLinks = {
-        editRoute: {label: 'Изменить запись', link: REGISTRY_EDIT_URL, useId: true},
-        deleteRoute: {label: 'Удалить', link: REGISTRY_DELETE_API, useId: true},
+        editRoute: {label: 'Изменить запись', link: ROLES_EDIT_URL, useId: true},
     };
 
     const tableColumns = [
@@ -28,7 +26,7 @@ export default function rolesAndPermissionsPage() {
             ...SearchByColumn('name'),
         },
         {
-            title: 'Название',
+            title: 'Количество пользователей',
             dataIndex: 'name',
             sorter: (a, b) => a.name.localeCompare(b.name),
             ...SearchByColumn('name'),

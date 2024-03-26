@@ -9,10 +9,8 @@ export default function RegistryFilesBackupsListPage() {
             <Head>
                 <title>Резервные копии реестров | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div>
 
-            </div>
-            <div className=" mt-5">
+            <div>
                 <h1>Резервные копии</h1>
                 <RegistryFiles
                     apiUrl={REGISTRY_BACKUP_INDEX_API}

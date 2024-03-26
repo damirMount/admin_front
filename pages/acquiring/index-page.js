@@ -69,7 +69,7 @@ export default function IndexPage() {
             </Head>
 
 
-            <div className=" mt-5">
+            <div>
                 <h1>Сверка платежей</h1>
                 <div className="d-flex flex-column align-items-center w-100">
                     <div className="d-flex flex-row align-items-center w-100 mt-5">

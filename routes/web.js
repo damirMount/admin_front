@@ -21,12 +21,14 @@ export const OFFLINE_SERVICE_DATABASE_UPDATE_INDEX_URL = '/updates/offline-servi
 export const TEST_ZONE_URL = '/test'
 export const ACQUIRING_URL = '/acquiring/index-page'
 
-export const SECURITY_ACCESS_USERS_LIST = '/security/access-control/users-list'
+export const USERS_LIST_URL = '/security/access-control/users-list'
 
-export const SECURITY_ACCESS_ROLES_INDEX = '/security/access-control/roles/index-page'
-export const SECURITY_ACCESS_ROLES_CREATE = '/security/access-control/roles/create-role'
-export const SECURITY_ACCESS_ROLES_EDIT = '/security/access-control/roles/edit-role'
+export const ROLES_INDEX_URL = '/security/access-control/roles/index-page'
+export const ROLES_CREATE_URL = '/security/access-control/roles/create-role'
+export const ROLES_EDIT_URL = '/security/access-control/roles/edit-role'
 
-export const SECURITY_ACCESS_PERMISSION_INDEX = '/security/access-control/permissions/index-page'
-export const SECURITY_ACCESS_PERMISSION_CREATE = '/security/access-control/permissions/create-permission'
-export const SECURITY_ACCESS_PERMISSION_EDIT = '/security/access-control/permissions/edit-permission'
+export const PERMISSION_INDEX_URL = '/security/access-control/permissions/index-page'
+export const PERMISSION_CREATE_URL = '/security/access-control/permissions/create-permission'
+export const PERMISSION_EDIT_URL = '/security/access-control/permissions/edit-permission'
+
+export const ERROR_PAGE_403 = '/error/403'

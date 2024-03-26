@@ -97,7 +97,7 @@ export default function TSJDealerPage() {
             <Head>
                 <title>Список дилеров ТСЖ | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <div className=" mt-5">
+            <div>
                 <h1>Список дилеров ТСЖ</h1>
                 <ReportsNavigationTabs/>
 
