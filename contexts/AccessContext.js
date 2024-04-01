@@ -12,34 +12,53 @@ export const AuthProvider = ({ children }) => {
     const router = useRouter();
     const { openNotification } = useAlert();
 
-    const checkAccess = async (allowedPermissions, redirect = true) => {
-        try {
-            const dataToSend = {
-                userId: session.user.id,
-                permissionName: allowedPermissions
-            };
+    // const checkAccess = async (allowedPermissions, redirect = true) => {
+    //     try {
+    //         const dataToSend = {
+    //             userId: session.user.id,
+    //             permissionName: allowedPermissions
+    //         };
+    //
+    //         const response = await fetch(CHECK_USER_ACCESS_API, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 Authorization: `Bearer ${session.accessToken}`,
+    //             },
+    //             body: JSON.stringify(dataToSend),
+    //         });
+    //
+    //         if (response.ok) {
+    //             return true;
+    //         } else {
+    //             if (redirect) {
+    //                 router.push(ERROR_PAGE_403);
+    //             }
+    //             return false;
+    //         }
+    //     } catch (error) {
+    //         openNotification({ type: "error", message: error.message });
+    //         console.error(error);
+    //         return false;
+    //     }
+    // };
 
-            const response = await fetch(CHECK_USER_ACCESS_API, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${session.accessToken}`,
-                },
-                body: JSON.stringify(dataToSend),
-            });
+    const checkAccess = (allowedPermissions, redirect) => {
+        console.log(session.user)
+        let userHasAccess = false
+        if (session?.user?.permissions) {
+            userHasAccess = session?.user?.permissions.some(permission => allowedPermissions.includes(permission.name));
+        }
 
-            if (response.ok) {
-                return true;
+        // const userHasAccess = session && allowedPermissions === session.user.id_role;
+        if (!userHasAccess) {
+            if (redirect) {
+                router.push(ERROR_PAGE_403); // Перенаправляем на страницу входа
             } else {
-                if (redirect) {
-                    router.push(ERROR_PAGE_403);
-                }
-                return false;
+                return false
             }
-        } catch (error) {
-            openNotification({ type: "error", message: error.message });
-            console.error(error);
-            return false;
+        } else {
+            return true
         }
     };
 

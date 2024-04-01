@@ -15,11 +15,11 @@ const ModalWindow = ({showModal, closeModal, data, onHandle}) => {
             </Modal.Header>
             <Modal.Body>{data.message}</Modal.Body>
             <Modal.Footer>
+                <Button variant="cancel" onClick={closeModal}>
+                    Отмена
+                </Button>
                 <Button variant={data.buttonVariant} onClick={onHandle}>
                     {data.button}
-                </Button>
-                <Button variant="secondary" onClick={closeModal}>
-                    Отмена
                 </Button>
 
             </Modal.Footer>

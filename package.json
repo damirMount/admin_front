@@ -49,6 +49,7 @@
     "react-pro-sidebar": "^1.1.0",
     "react-router-dom": "^6.22.2",
     "react-select": "^5.7.3",
+    "react-transition-group": "^4.4.5",
     "react-uid": "^2.3.3",
     "typescript": "5.0.4",
     "validator": "^13.11.0"

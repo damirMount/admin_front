@@ -165,6 +165,7 @@ export default function TestPage() {
         };
     }, []);
     return (
+
         <ProtectedElement allowedPermissions={'develop'}>
             <div>
                 <div>

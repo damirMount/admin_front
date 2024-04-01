@@ -2,10 +2,12 @@ import {useRouter} from 'next/router';
 import {LOGIN_PAGE_URL} from "../../routes/web";
 import SidebarTab from "../main/navigation/SidebarTab";
 import Navbar from "../main/navigation/Navbar";
-import {ConfigProvider} from "antd";
+import {ConfigProvider, Layout, Menu} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import Footer from "../main/Footer";
 import {useSession} from 'next-auth/react';
+// import Sider from "antd/es/layout/Sider";
+// import Sider from "antd";
 
 const AuthCheck = (WrappedComponent) => {
     const Check = (props) => {

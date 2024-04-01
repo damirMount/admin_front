@@ -1,0 +1,75 @@
+import {useRouter} from "next/router";
+import {signOut, useSession} from "next-auth/react";
+import {LOGIN_PAGE_URL} from "../../../routes/web";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowRightFromBracket} from "@fortawesome/free-solid-svg-icons";
+import {Dropdown} from "antd";
+import {MenuItem} from "react-pro-sidebar";
+import {faUser} from "@fortawesome/free-regular-svg-icons";
+import React, {useState} from "react";
+import ModalWindow from "../system/ModalWindow";
+
+const UserDropdownMenu = (collapsed) => {
+    const router = useRouter();
+    const {data: session} = useSession(); // Получаем сессию
+    const [modalData, setModalData] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [open, setOpen] = useState(false);
+    const handleSignOut = async () => {
+        await signOut();
+        await router.replace(LOGIN_PAGE_URL); // Перенаправление на страницу логина после выхода
+    };
+
+    const handleOk = () => {
+        const newModalData = {
+            title: 'Подтвердите действие',
+            message: `Вы уверены что вы хотите выйти?`,
+            button: 'Выйти',
+            buttonVariant: `purple`,
+        };
+
+        setModalData(newModalData);
+        setShowModal(true); // Открываем модальное окно
+
+    };
+
+    const items = [
+        {
+            label: 'Выйти из админ зоны',
+            onClick: handleOk,
+            autoFocus: true,
+            icon: <FontAwesomeIcon icon={faArrowRightFromBracket}/>,
+            key: '0',
+        },
+    ];
+    if (!collapsed && session) {
+        return (
+            <div style={{height: '10%'}}>
+                <ModalWindow
+                    showModal={showModal} // Передаем состояние модального окна
+                    closeModal={() => setShowModal(false)} // Передаем функцию для закрытия модального окна
+                    data={modalData}
+                    onHandle={handleSignOut} // Передаем функцию для вызова при нажатии на кнопку в модальном окне
+                />
+                <Dropdown
+                    menu={{items}}
+                    trigger={['click']}
+                    overlayClassName='sidebar-user-dropdown'
+                >
+                    <span>
+                        <MenuItem className='bottom-0 border-top' suffix={<FontAwesomeIcon icon={faUser} size="lg"/>}>
+                            <div className="d-flex flex-column">
+                                <span className="fw-bold text-overflow"
+                                      title={session.user.name}>{session.user.name}</span>
+                                <small className="text-overflow" title={session.user.role}>{session.user.role}</small>
+                            </div>
+                        </MenuItem>
+                    </span>
+                </Dropdown>
+            </div>
+        );
+    }
+    return null;
+}
+
+export default UserDropdownMenu

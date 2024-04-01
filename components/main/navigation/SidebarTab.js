@@ -1,8 +1,16 @@
 import React, {useState} from 'react';
 import {Menu, MenuItem, Sidebar, SubMenu} from 'react-pro-sidebar';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBars, faCode, faDisplay, faHome, faRotate, faShieldHalved, faTimes} from "@fortawesome/free-solid-svg-icons";
-import {faEnvelopeOpen, faFileLines, faUser} from "@fortawesome/free-regular-svg-icons";
+import {
+    faBars,
+    faCode,
+    faDisplay,
+    faHome,
+    faRotate,
+    faShieldHalved,
+    faTimes
+} from "@fortawesome/free-solid-svg-icons";
+import {faEnvelopeOpen, faFileLines} from "@fortawesome/free-regular-svg-icons";
 import Link from "next/link";
 import {
     ACQUIRING_URL,
@@ -19,16 +27,13 @@ import {
     REPORT_DEALERS_ACCOUNT_HISTORY_URL,
     REPORT_DEALERS_TSJ_URL,
     ROLES_INDEX_URL,
-    TEST_ZONE_URL,
-    USERS_LIST_URL
+    TEST_ZONE_URL
 } from "../../../routes/web";
-import {useSession} from "next-auth/react";
 import {Tooltip} from "antd";
 import ProtectedElement from "../system/ProtectedElement";
-
+import UserDropdownMenu from "./UserDropdownMenu";
 const SidebarTab = () => {
     const [collapsed, setCollapsed] = useState(true);
-    const {data: session} = useSession(); // Получаем сессию
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
     };
@@ -64,7 +69,11 @@ const SidebarTab = () => {
             ]
         },
         {
-            label: 'Безопасность', permission: 'security_management', icon: faShieldHalved, showInSubMenu: true, subMenu: [
+            label: 'Безопасность',
+            permission: 'security_management',
+            icon: faShieldHalved,
+            showInSubMenu: true,
+            subMenu: [
                 {
                     label: 'Права доступа', permission: 'access_management', subMenu: [
                         {label: 'Список ролей', link: ROLES_INDEX_URL},
@@ -144,8 +153,6 @@ const SidebarTab = () => {
     };
 
 
-
-
     const buildMenu = (menuItemsList) => {
         return menuItemsList.map((item, index) => (
             <React.Fragment key={index}>
@@ -154,23 +161,10 @@ const SidebarTab = () => {
         ));
     };
 
-    const renderUserDetails = () => {
-        if (!collapsed) {
-            return (
-                <MenuItem className='bottom-0 border-top' suffix={<FontAwesomeIcon icon={faUser} size="lg"/>}>
-                    <div className="d-flex flex-column">
-                        <span className="fw-bold text-overflow" title={session.user.name}>{session.user.name}</span>
-                        <small className="text-overflow" title={session.user.role}>{session.user.role}</small>
-                    </div>
-                </MenuItem>
-            );
-        }
-        return null;
-    };
 
     return (
         <Sidebar className='shadow user-select-none' backgroundColor="#ffffff" collapsed={collapsed}
-                 breakPoint="none" transitionDuration={0} onBackdropClick={toggleCollapsed} toggled={collapsed}
+                 breakPoint="none" transitionDuration={90} onBackdropClick={toggleCollapsed} toggled={collapsed}
                  collapsedWidth="80px">
             <Menu className="position-fixed " style={{width: collapsed ? 80 : 249}} menuItemStyles={{
                 button: ({level, active, disabled}) => {
@@ -194,9 +188,7 @@ const SidebarTab = () => {
                             {buildMenu(menuItemsList)}
                         </div>
                     </div>
-                    <div style={{height: '10%'}}>
-                        {renderUserDetails()}
-                    </div>
+                        {UserDropdownMenu(collapsed)}
                 </div>
             </Menu>
         </Sidebar>

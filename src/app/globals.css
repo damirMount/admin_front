@@ -180,6 +180,24 @@ tr, td, table, tbody, th, thead, tfoot {
 
 }
 
+.ant-dropdown-menu-item {
+    color: #532c59 !important;
+}
+
+.sidebar-user-dropdown .ant-dropdown-menu {
+    border-radius: unset;
+    margin-bottom: -4px;
+    box-shadow: none;
+    border-top: 1px solid #dee2e6;
+}
+
+/*.sidebar-user-dropdown .ant-dropdown-menu-item {*/
+/*    font-size: 15px !important;*/
+/*}*/
+
+.ant-dropdown-menu-item svg {
+    font-size: 20px !important;
+}
 .ant-table-column-sorter-inner {
     margin-left: 10px;
 }

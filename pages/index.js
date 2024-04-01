@@ -19,18 +19,16 @@ export default function Home() {
             <Head>
                 <title>Главная страница | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
-            <ProtectedElement allowedPermissions={'second_test_permission'} redirect={false}>
                 <div>
                     <h1>Главная страница</h1>
                 </div>
-            </ProtectedElement>
             <div className='d-flex justify-content-between'>
                 <div className="w-75">
                     {/*<h3>Новости</h3>*/}
                     <div className="row row-cols-1 row-cols-md-3 g-4">
+                        <ProtectedElement allowedPermissions={'registry_management'} redirect={false}>
                         <div className="col">
                             <div className="card h-100">
-
                                 <div className="card-body d-flex flex-column justify-content-between">
                                     <div>
                                         <h5 className="card-title">Перезапуск реестров</h5>
@@ -40,6 +38,8 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
+                            </ProtectedElement>
+                        <ProtectedElement allowedPermissions={'reports_management'} redirect={false}>
                         <div className="col">
                             <div className="card h-100">
 
@@ -53,6 +53,8 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
+                        </ProtectedElement>
+                        <ProtectedElement allowedPermissions={'registry_management'} redirect={false}>
                         <div className="col">
                             <div className="card h-100">
 
@@ -65,6 +67,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
+                        </ProtectedElement>
                         <div className="col">
                             <div className="card h-100">
 
