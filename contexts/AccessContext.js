@@ -1,50 +1,15 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { ERROR_PAGE_403 } from "../routes/web";
-import { CHECK_USER_ACCESS_API } from "../routes/api";
-import { useAlert } from "./AlertContext";
+import { ERROR_PAGE_403 } from "../routes/web";;
 
 const AccessContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const { data: session } = useSession();
     const router = useRouter();
-    const { openNotification } = useAlert();
-
-    // const checkAccess = async (allowedPermissions, redirect = true) => {
-    //     try {
-    //         const dataToSend = {
-    //             userId: session.user.id,
-    //             permissionName: allowedPermissions
-    //         };
-    //
-    //         const response = await fetch(CHECK_USER_ACCESS_API, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 Authorization: `Bearer ${session.accessToken}`,
-    //             },
-    //             body: JSON.stringify(dataToSend),
-    //         });
-    //
-    //         if (response.ok) {
-    //             return true;
-    //         } else {
-    //             if (redirect) {
-    //                 router.push(ERROR_PAGE_403);
-    //             }
-    //             return false;
-    //         }
-    //     } catch (error) {
-    //         openNotification({ type: "error", message: error.message });
-    //         console.error(error);
-    //         return false;
-    //     }
-    // };
 
     const checkAccess = (allowedPermissions, redirect) => {
-        console.log(session.user)
         let userHasAccess = false
         if (session?.user?.permissions) {
             userHasAccess = session?.user?.permissions.some(permission => allowedPermissions.includes(permission.name));

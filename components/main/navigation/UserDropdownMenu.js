@@ -54,7 +54,7 @@ const UserDropdownMenu = (collapsed) => {
                 <Dropdown
                     menu={{items}}
                     trigger={['click']}
-                    overlayClassName='sidebar-user-dropdown'
+                    overlayClassName='sidebar-user-dropdown position-fixed'
                 >
                     <span>
                         <MenuItem className='bottom-0 border-top' suffix={<FontAwesomeIcon icon={faUser} size="lg"/>}>

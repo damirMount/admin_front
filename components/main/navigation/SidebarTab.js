@@ -166,7 +166,7 @@ const SidebarTab = () => {
         <Sidebar className='shadow user-select-none' backgroundColor="#ffffff" collapsed={collapsed}
                  breakPoint="none" transitionDuration={90} onBackdropClick={toggleCollapsed} toggled={collapsed}
                  collapsedWidth="80px">
-            <Menu className="position-fixed " style={{width: collapsed ? 80 : 249}} menuItemStyles={{
+            <Menu className="position-fixed" style={{width: collapsed ? 80 : 249}} menuItemStyles={{
                 button: ({level, active, disabled}) => {
                     if (level === 0)
                         return {
