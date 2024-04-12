@@ -44,7 +44,7 @@ const UserDropdownMenu = (collapsed) => {
     ];
     if (!collapsed && session) {
         return (
-            <div style={{height: '10%'}}>
+            <div className='sidebar-user-dropdown-menu'>
                 <ModalWindow
                     showModal={showModal} // Передаем состояние модального окна
                     closeModal={() => setShowModal(false)} // Передаем функцию для закрытия модального окна

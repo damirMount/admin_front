@@ -1,19 +1,11 @@
 import React, {useState} from 'react';
 import {Menu, MenuItem, Sidebar, SubMenu} from 'react-pro-sidebar';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-    faBars,
-    faCode,
-    faDisplay,
-    faHome,
-    faRotate,
-    faShieldHalved,
-    faTimes
-} from "@fortawesome/free-solid-svg-icons";
+import {faBars, faCode, faDisplay, faHome, faRotate, faShieldHalved, faTimes} from "@fortawesome/free-solid-svg-icons";
 import {faEnvelopeOpen, faFileLines} from "@fortawesome/free-regular-svg-icons";
 import Link from "next/link";
 import {
-    ACQUIRING_URL,
+    ACQUIRING_URL, DATA_UTILS_TEST_URL,
     GSFR_UPDATE_URL,
     MAIN_PAGE_URL,
     OFFLINE_SERVICE_DATABASE_UPDATE_INDEX_URL,
@@ -32,6 +24,7 @@ import {
 import {Tooltip} from "antd";
 import ProtectedElement from "../system/ProtectedElement";
 import UserDropdownMenu from "./UserDropdownMenu";
+
 const SidebarTab = () => {
     const [collapsed, setCollapsed] = useState(true);
     const toggleCollapsed = () => {
@@ -87,6 +80,7 @@ const SidebarTab = () => {
         {
             label: 'Разработка', permission: 'develop', icon: faCode, showInSubMenu: true, subMenu: [
                 {label: 'TEST ZONE', link: TEST_ZONE_URL},
+                {label: 'Эксель тест', link: DATA_UTILS_TEST_URL},
                 {label: 'Эквайринг', link: ACQUIRING_URL},
             ]
         }
@@ -131,13 +125,15 @@ const SidebarTab = () => {
             return buildSubMenu(subMenu, label, icon, showInSubMenu, permission);
         } else {
             const menuItemContent = (
-                <MenuItem
-                    icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}
-                    component={link ? <Link href={link} target={targetLink || ''}/> : null}
-                    style={hideWhereCollapsed ? {opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px'} : {}}
-                >
-                    {label || ''}
-                </MenuItem>
+                <Tooltip placement="right" {...((label && collapsed && !hideWhereCollapsed) ? {title: label} : {})}>
+                    <MenuItem
+                        icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}
+                        component={link ? <Link href={link} target={targetLink || ''}/> : null}
+                        style={hideWhereCollapsed ? {opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px'} : {}}
+                    >
+                        {label || ''}
+                    </MenuItem>
+                </Tooltip>
             );
 
             if (permission) {
@@ -172,12 +168,11 @@ const SidebarTab = () => {
                         return {
                             color: disabled ? '#f5d9ff' : 'rgba(83,44,89,0.8)',
                             backgroundColor: active ? '#aaaaaa' : undefined,
-                            height: 58,
+                            height: 59,
                         };
                 },
             }}>
-                <div className='d-flex flex-column justify-content-between'
-                     style={{maxHeight: '100vh', minHeight: '100vh'}}>
+                <div className='d-flex flex-column justify-content-between sidebar-menu-body'>
                     <div className="overflow-auto d-flex flex-column justify-content-between align-content-between">
                         <div className="h-100">
                             <MenuItem onClick={toggleCollapsed}
@@ -188,7 +183,7 @@ const SidebarTab = () => {
                             {buildMenu(menuItemsList)}
                         </div>
                     </div>
-                        {UserDropdownMenu(collapsed)}
+                    {UserDropdownMenu(collapsed)}
                 </div>
             </Menu>
         </Sidebar>

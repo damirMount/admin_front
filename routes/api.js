@@ -43,3 +43,6 @@ export const PERMISSION_DELETE_API = `${baseURL}/api/permission`
 export const ROLE_SHOW_API = `${baseURL}/api/role`
 export const ROLE_UPDATE_API = `${baseURL}/api/role`
 // export const ROLE_DELETE_API = `${baseURL}/api/role`
+
+export const TEST_DATA_UTILS_CREATE_FILE_API = `${baseURL}/api/testZone/testDataUtils/createFile`
+export const TEST_DATA_UTILS_READ_FILE_API = `${baseURL}/api/testZone/testDataUtils/readFile`

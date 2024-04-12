@@ -1,88 +1,65 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
-const RegistryFileFormat = ({formData = [], setFormData}) => {
-    const [selectedCheckboxCount, setSelectedCheckboxCount] = useState(0);
+const RegistryFileFormat = ({ formData = [], setFormData, isRadioMode = false }) => {
+    const [selectedFormats, setSelectedFormats] = useState([]);
 
-    // Обработчик изменения выбранных чекбоксов
-    const handleCheckboxChange = (event) => {
-        const {name, checked} = event.target;
-        setFormData((prevFormData) => {
-            const formats = [...prevFormData.formats];
-            if (checked && !formats.includes(name)) {
-                formats.push(name);
-            } else if (!checked && formats.includes(name)) {
-                formats.splice(formats.indexOf(name), 1);
-            }
-            return {
+    const handleFormatChange = (event) => {
+        const { name, checked } = event.target;
+
+        if (isRadioMode) {
+            setSelectedFormats([name]);
+            setFormData((prevFormData) => ({
                 ...prevFormData,
-                formats,
-            };
-        });
+                formats: [name], // If radio mode, set only the selected format
+            }));
+        } else {
+            setFormData((prevFormData) => {
+                let formats;
+                if (checked) {
+                    formats = [...selectedFormats, name]; // Add the format if checked
+                } else {
+                    formats = selectedFormats.filter(format => format !== name); // Remove the format if unchecked
+                }
+                setSelectedFormats(formats); // Update selected formats
+                return {
+                    ...prevFormData,
+                    formats,
+                };
+            });
+        }
     };
 
+
     useEffect(() => {
-        setSelectedCheckboxCount(formData.formats.length);
+        setSelectedFormats(formData.formats);
     }, [formData]);
 
-    return (<div
-            className="form-group d-flex align-items-center flex-column mt-4">
-            <div className="d-flex justify-content-evenly w-75">
-                <div>
-                    <input
-                        autoComplete="off"
-                        id="btn-xlsx"
-                        className="btn-checked btn-grey"
-                        type="checkbox"
-                        name="xlsx"
-                        checked={formData.formats.includes('xlsx')}
-                        onChange={handleCheckboxChange}
-                        required={selectedCheckboxCount === 0}
-                    />
-                    <label
-                        className={`btn ${
-                            formData.formats.includes('xlsx') ? 'btn-purple' : 'btn-grey'
-                        }`}
-                        htmlFor="btn-xlsx">
-                        XLSX
-                    </label>
-                </div>
-                <div>
-                    <input
-                        autoComplete="off"
-                        id="btn-csv"
-                        className="btn-checked btn-grey"
-                        type="checkbox"
-                        name="csv"
-                        checked={formData.formats.includes('csv')}
-                        onChange={handleCheckboxChange}
-                        required={selectedCheckboxCount === 0}
-                    />
-                    <label
-                        className={`btn ${
-                            formData.formats.includes('csv') ? 'btn-purple' : 'btn-grey'
-                        }`}
-                        htmlFor="btn-csv">
-                        CSV
-                    </label>
-                </div>
-                <div>
-                    <input
-                        autoComplete="off"
-                        id="btn-dbf"
-                        className="btn-checked btn-grey"
-                        type="checkbox"
-                        name="dbf"
-                        checked={formData.formats.includes('dbf')}
-                        onChange={handleCheckboxChange}
-                        required={selectedCheckboxCount === 0}
-                    />
-                    <label
-                        className={`btn ${
-                            formData.formats.includes('dbf') ? 'btn-purple' : 'btn-grey'
-                        }`}
-                        htmlFor="btn-dbf">
-                        DBF
-                    </label>
+    return (
+        <div>
+            <div className="form-group d-flex align-items-center flex-column mt-4">
+                <div className="d-flex justify-content-evenly">
+                    {["xlsx", "csv", "dbf"].map(format => (
+                        <div key={format}>
+                            <input
+                                autoComplete="off"
+                                id={`btn-${format}`}
+                                className={`btn-checked btn-grey`}
+                                type={isRadioMode ? "radio" : "checkbox"}
+                                name={format}
+                                checked={selectedFormats.includes(format)}
+                                onChange={handleFormatChange}
+                                required={!isRadioMode}
+                            />
+                            <label
+                                className={`btn me-2 ${
+                                    selectedFormats.includes(format) ? "btn-purple" : "btn-grey"
+                                }`}
+                                htmlFor={`btn-${format}`}
+                            >
+                                {format.toUpperCase()}
+                            </label>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

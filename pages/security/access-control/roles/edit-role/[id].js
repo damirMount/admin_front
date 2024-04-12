@@ -253,8 +253,10 @@ export default function UpdatePermission() {
                                                     />
                                                     <div
                                                         className='mt-3 d-flex flex-column w-100 h-100 justify-content-center'>
-                                                        <Divider><span
-                                                            className="text-nowrap">Права доступа</span></Divider>
+                                                        <Divider>
+                                                            <span
+                                                            className="text-nowrap">Права доступа</span><
+                                                            /Divider>
                                                         {permissionsList.length > 0 ? (
                                                             permissionsList.map((item, index) => (
                                                                 <div className='w-100' key={index}>

@@ -28,8 +28,17 @@ const SmartTable = ({
             fetchDataFromDB();
         }
     }, []);
+    const addIdsToData = (data) => {
+        if (!data) return []; // Проверяем, определен ли data
+        return data.map((item, index) => ({
+            ...item,
+            key: item.key || index.toString(),
+        }));
+    };
+
     useEffect(() => {
-        setDataTable(data)
+        const newData = addIdsToData(data);
+        setDataTable(newData);
     }, [data]);
 
     const fetchDataFromDB = async () => {
@@ -55,7 +64,6 @@ const SmartTable = ({
             const activeIndex = dataTable.findIndex((i) => i.key === active.id);
             const overIndex = dataTable.findIndex((i) => i.key === over?.id);
             const newDataTable = arrayMove(dataTable, activeIndex, overIndex);
-            console.log(dataTable,newDataTable,overIndex,activeIndex)
             setDataTable(newDataTable);
         }
     };

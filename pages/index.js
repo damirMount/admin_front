@@ -10,9 +10,33 @@ import {
     REPORT_DEALERS_ACCOUNT_HISTORY_URL
 } from "../routes/web";
 import ProtectedElement from "../components/main/system/ProtectedElement";
+import ChartArea from "../components/main/charts/ChartArea";
 
 
 export default function Home() {
+
+    const config = {
+        data: {
+            type: 'fetch',
+            value: 'https://assets.antv.antgroup.com/g2/stocks.json',
+            transform: [{type: 'filter', callback: (d) => d.symbol === 'GOOG'}],
+        },
+        xField: 'date',
+        yField: 'price',
+        style: {
+            fill: `linear-gradient(-90deg, white 0%, darkblue 100%)`,
+        },
+        axis: {
+            y: {labelFormatter: ''},
+        },
+
+        line: {
+            style: {
+                stroke: 'darkblue',
+                strokeWidth: 2,
+            },
+        },
+    };
 
     return (
         <div>
@@ -25,6 +49,7 @@ export default function Home() {
             <div className='d-flex justify-content-between'>
                 <div className="w-75">
                     {/*<h3>Новости</h3>*/}
+                    {/*<ChartArea config={config} />*/}
                     <div className="row row-cols-1 row-cols-md-3 g-4">
                         <ProtectedElement allowedPermissions={'registry_management'} redirect={false}>
                         <div className="col">
@@ -92,14 +117,14 @@ export default function Home() {
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon={faHandHoldingDollar} size="2xl" className='color-purple'/>
                                     <div className="ms-3 d-flex flex-column">
-                                        <h5 className="card-title text-secondary">Баланс дилеров</h5>
+                                        <h5 className="card-title text-secondary">Баланс</h5>
                                         <h5 className="card-text">12314234 сом</h5>
                                     </div>
                                 </div>
                                 <div className="d-flex align-items-center mt-4 ">
                                     <FontAwesomeIcon icon={faLandmark} size="2xl" className='color-purple'/>
                                     <div className="ms-3 d-flex flex-column">
-                                        <h5 className="card-title text-secondary">Долги дилеров</h5>
+                                        <h5 className="card-title text-secondary">Кредит</h5>
                                         <h5 className="card-text">123 142 343,4 сом</h5>
                                     </div>
                                 </div>
@@ -112,8 +137,15 @@ export default function Home() {
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon={faMoneyBillTrendUp} size="2xl" className='color-purple'/>
                                     <div className="ms-3 d-flex flex-column">
-                                        <h5 className="card-title text-secondary">За сегодня</h5>
+                                        <h5 className="card-title text-secondary">Сегодня принято</h5>
                                         <h5 className="card-text">12,314 платежей</h5>
+                                    </div>
+                                </div>
+                                <div className="d-flex align-items-center mt-4 ">
+                                    <FontAwesomeIcon icon={faSackDollar} size="2xl" className='color-purple'/>
+                                    <div className="ms-3 d-flex flex-column">
+                                        <h5 className="card-title text-secondary">Проведено</h5>
+                                        <h5 className="card-text">123 142 34 сом</h5>
                                     </div>
                                 </div>
                                 <div className="d-flex align-items-center mt-4 ">

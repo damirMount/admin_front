@@ -1,5 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../src/app/globals.css';
+import '../src/app/css/main.css';
+import '../src/app/css/ant-design.css';
+import '../src/app/css/preloader.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import Head from "next/head";
 import {AlertProvider} from "../contexts/AlertContext";

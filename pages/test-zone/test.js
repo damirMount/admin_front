@@ -1,33 +1,33 @@
 // pages/index.js
 import React, {useEffect, useState} from 'react';
 import Head from 'next/head';
-import {REGISTRY_DELETE_API} from "../routes/api";
-import StatusIndicator from "../components/main/table/cell/StatusIndicator";
-import UniversalSelect from "../components/main/input/UniversalSelect";
+import {REGISTRY_DELETE_API} from "../../routes/api";
+import StatusIndicator from "../../components/main/table/cell/StatusIndicator";
+import UniversalSelect from "../../components/main/input/UniversalSelect";
 import Link from "next/link";
-import {useSession} from "next-auth/react";
-import {REGISTRY_CREATE_URL, REGISTRY_EDIT_URL} from "../routes/web";
-import {DatePicker} from "antd";
-import ActionButtons from "../components/main/table/cell/ActionButtons";
-import FileFormats from "../components/main/table/cell/FileFormats";
-import ServerCell from "../components/main/table/cell/ServerCell";
-import SearchByColumn from "../components/main/table/cell/SearchByColumn";
-import SmartTable from "../components/main/table/SmartTable";
-import {useAlert} from "../contexts/AlertContext";
-import ProtectedElement from "../components/main/system/ProtectedElement";
-import FormInput from "../components/main/input/FormInput";
+import {REGISTRY_CREATE_URL, REGISTRY_EDIT_URL} from "../../routes/web";
+import {ColorPicker, DatePicker} from "antd";
+import ActionButtons from "../../components/main/table/cell/ActionButtons";
+import FileFormats from "../../components/main/table/cell/FileFormats";
+import ServerCell from "../../components/main/table/cell/ServerCell";
+import SearchByColumn from "../../components/main/table/cell/SearchByColumn";
+import SmartTable from "../../components/main/table/SmartTable";
+import {useAlert} from "../../contexts/AlertContext";
+import ProtectedElement from "../../components/main/system/ProtectedElement";
+import FormInput from "../../components/main/input/FormInput";
+import ChartArea from "../../components/main/charts/ChartArea";
 
 export default function TestPage() {
-    const {data: session} = useSession(); // Получаем сессию
     const {openNotification, openConfirmAction, closeConfirmAction} = useAlert();
     const [formData, setFormData] = useState({
         name: '',
-        value1: '111',
+        value1: '',
         value2: '',
         formats: [],
         is_blocked: '',
     });
     const [updatedFormData, setUpdatedFormData] = useState({...formData});
+    const [color, setColor] = useState('darkblue');
 
     const actionButtonsLinks = {
         editRoute: {label: 'Изменить запись', link: REGISTRY_EDIT_URL, useId: true},
@@ -158,6 +158,30 @@ export default function TestPage() {
     };
 
 
+
+    const config = {
+        data: {
+            type: 'fetch',
+            value: 'https://assets.antv.antgroup.com/g2/stocks.json',
+            transform: [{type: 'filter', callback: (d) => d.symbol === 'GOOG'}],
+        },
+        xField: 'date',
+        yField: 'price',
+        style: {
+            fill: `linear-gradient(-90deg, white 0%, darkblue 100%)`,
+        },
+        axis: {
+            y: {labelFormatter: ''},
+        },
+
+        line: {
+            style: {
+                stroke: 'darkblue',
+                strokeWidth: 2,
+            },
+        },
+    };
+
     useEffect(() => {
         // Функция, которая закрывает окно подтверждения действия после перехода на другую страницу
         return () => {
@@ -186,14 +210,11 @@ export default function TestPage() {
                             createNewValues
                             // type='number'
                         />
-                        <div className='d-flex mt-2 align-items-center'>
-                            <DatePicker.RangePicker
-                                size="large"
-                                locale="ru"
-                            />
+                        <div className='d-flex mt-2 justify-content-between'>
+                            <div className='d-flex align-items-center'>
                             <bottom
                                 type="primary"
-                                className="ms-2 btn btn-danger"
+                                className="btn btn-danger"
                                 onClick={() => openNotification({
                                     type: "error",
                                     message: 'Произошла неизвестная ошибка'
@@ -219,15 +240,24 @@ export default function TestPage() {
                                 placeholder="Введите данные"
                                 onChange={handleChange}
                             />
-                            <FormInput
-                                defaultValue={formData.value2}
-                                className='ms-3'
-                                name='value2'
-                                value={updatedFormData.value2}
-                                placeholder="Введите вторые данные"
-                                onChange={handleChange}
-                            />
+                            </div>
+                            <div className='d-flex align-items-end'>
+                                <DatePicker.RangePicker
+                                    className='ms-5'
+                                    locale="ru"
+                                    // size='large'
+                                />
+                                <ColorPicker
+
+                                    className='ms-2'
+                                    onChangeComplete={(color) => {
+                                        setColor(color.toHexString());
+                                    }}
+                                    showText={(color) => <span>Цвет {color.toHexString()}</span>}
+                                    defaultValue="darkblue"/>
+                            </div>
                         </div>
+                        <ChartArea key={color} config={config}/>
                         <div className='mt-2'>
                             <div className="d-flex justify-content-end w-100">
                                 <Link href={REGISTRY_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
@@ -243,5 +273,3 @@ export default function TestPage() {
         </ProtectedElement>
     );
 };
-
-// export default TestPage;
