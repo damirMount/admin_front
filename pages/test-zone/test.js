@@ -257,7 +257,7 @@ export default function TestPage() {
                                     defaultValue="darkblue"/>
                             </div>
                         </div>
-                        <ChartArea key={color} config={config}/>
+                        {/*<ChartArea key={color} config={config}/>*/}
                         <div className='mt-2'>
                             <div className="d-flex justify-content-end w-100">
                                 <Link href={REGISTRY_CREATE_URL} className="btn btn-purple">Добавить запись</Link>
