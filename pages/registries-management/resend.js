@@ -433,6 +433,7 @@ export default function RegistryResendPage() {
                                                 {formData.send_type === 1 ? (
                                                     <ServiceByServerSelect
                                                         key={JSON.stringify(registry)}
+                                                        selectedService={registry.services_id}
                                                         selectedServer={registry.server_id}
                                                         onChange={handleSelectorChange}
                                                     />

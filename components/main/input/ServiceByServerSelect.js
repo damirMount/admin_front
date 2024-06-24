@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {GET_SERVICES_BY_SERVER_API} from "../../../routes/api";
-import {useSession} from "next-auth/react";
+import React, { useEffect, useState } from 'react';
+import { GET_SERVICES_BY_SERVER_API } from "../../../routes/api";
+import { useSession } from "next-auth/react";
 import UniversalSelect from "./UniversalSelect";
 
-const ServiceByServerSelect = ({selectedServer, selectedService, onChange}) => {
-    const {data: session} = useSession(); // Получаем сессию
+const ServiceByServerSelect = ({ selectedServer, selectedService = [], onChange }) => {
+    const { data: session } = useSession(); // Получаем сессию
     const [servicesList, setServicesList] = useState([]);
 
     const getServicesByServer = async () => {
@@ -25,7 +25,7 @@ const ServiceByServerSelect = ({selectedServer, selectedService, onChange}) => {
             }));
 
             setServicesList(services)
-
+            console.log(selectedService)
         } catch (error) {
             console.log('fetch error', error, servicesList, selectedService, servicesList)
         }
@@ -41,7 +41,7 @@ const ServiceByServerSelect = ({selectedServer, selectedService, onChange}) => {
             name='services_id'
             label="Услуги"
             placeholder="Выберете услугу"
-            selectedOptions={selectedService.map(serviceItem => serviceItem)}
+            selectedOptions={Array.isArray(selectedService) ? selectedService.map(serviceItem => serviceItem) : []}
             options={servicesList}
             onSelectChange={onChange}
             required

@@ -40,7 +40,7 @@ const SidebarTab = () => {
             label: 'Реестры', permission: 'registry_management', icon: faEnvelopeOpen, showInSubMenu: true, subMenu: [
                 {label: 'Получатели', link: RECIPIENT_INDEX_URL},
                 {label: 'Реестры', link: REGISTRY_INDEX_URL},
-                {label: 'Перезапуск реестров', link: REGISTRY_RESEND_URL},
+                {label: 'Отправка реестра', link: REGISTRY_RESEND_URL},
                 {label: 'Резервные копии', link: REGISTRY_BACKUP_URL},
                 {label: 'Логи', link: REGISTRY_LOGS_URL}
             ]
