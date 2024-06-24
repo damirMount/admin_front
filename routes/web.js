@@ -9,7 +9,7 @@ export const RECIPIENT_EDIT_URL = '/registries-management/recipients/edit-recipi
 export const REGISTRY_INDEX_URL = '/registries-management/registries/index-page'
 export const REGISTRY_CREATE_URL = '/registries-management/registries/create-registry'
 export const REGISTRY_EDIT_URL = '/registries-management/registries/edit-registry'
-export const REGISTRY_RESEND_URL = '/registries-management/registry-resend/index-page'
+export const REGISTRY_RESEND_URL = '/registries-management/resend'
 export const REGISTRY_BACKUP_URL = '/registries-management/backup/index-page'
 export const REGISTRY_LOGS_URL = '/registries-management/log/index-page'
 

@@ -14,10 +14,6 @@ const SearchInput = ({onSearchSubmit}) => {
         onSearchSubmit(searchTerm);
     };
 
-    useEffect(() => {
-
-    }, [searchTerm]);
-
     return (
         <form onSubmit={handleSearchSubmit} className="d-flex justify-content-end">
             <div className="d-flex">

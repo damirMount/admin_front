@@ -91,7 +91,6 @@ const UniversalSelect = ({
             selectedOptions.length > 0 &&
             optionsList.length > 0
         ) {
-            console.log(111)
             const matchingOptions = optionsList.filter(option => selectedOptions.includes(option.value));
             setAndNotifyChange(matchingOptions);
         }
@@ -101,7 +100,6 @@ const UniversalSelect = ({
             firstOptionSelected &&
             optionsList.length > 0
         ) {
-            console.log(222)
             const initialValue = [optionsList[0]];
             setAndNotifyChange(initialValue);
         }
@@ -162,18 +160,17 @@ const UniversalSelect = ({
             }
         }
 
-        // Если условие срабатывает ставим выбранным только 1 элемент, setIsMultiSelect(false) если нет выставляем стандартное значение
+        // Если условие срабатывает ставим выбранным только 1 элемент, setIsMultiSelect(false) если нет
+        // выставляем стандартное значение
         if (
             isMulti &&
             optionsList.length > 0 &&
             optionsListArray &&
             optionsListArray.length > 0
         ) {
-            console.log(333)
             setIsMultiSelect(false);
             updatedValue = optionsListArray;
         } else {
-            console.log(isMulti, optionsList.length > 0, optionsListArray, optionsListArray.length > 0 )
             setIsMultiSelect(isMulti);
             updatedValue = newValue;
         }
@@ -189,7 +186,8 @@ const UniversalSelect = ({
                     ? updatedValue.map(item => item.value)
                     : [updatedValue.value];
             } else {
-                callBackValues = Array.isArray(updatedValue) && updatedValue.length > 0 ? updatedValue[0].value : updatedValue.value;
+                callBackValues = Array.isArray(updatedValue) && updatedValue.length > 0
+                    ? updatedValue[0].value : updatedValue.value;
 
             }
 
@@ -220,14 +218,14 @@ const UniversalSelect = ({
 
 // Код для отображения компонента после загрузки данных
     return (
-        <div className="d-flex flex-column form-group">
+        <div className="d-flex flex-column form-group w-100">
             <label htmlFor={name}>{label}</label>
             <Selector
                 name={name}
                 closeMenuOnSelect={closeMenuOnSelect}
                 required={isRequired}
-                placeholder={placeholder}
                 className={className}
+                placeholder={placeholder}
                 options={optionsList}
                 isLoading={isLoading}
                 isMulti={isMultiSelect}

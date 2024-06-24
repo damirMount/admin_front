@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
 import FormInput from '../../../../components/main/input/FormInput';
-import Link from "next/link";
 import {RECIPIENT_SHOW_API, RECIPIENT_UPDATE_API} from "../../../../routes/api";
 import Head from "next/head";
 import UniversalSelect from "../../../../components/main/input/UniversalSelect";
@@ -10,8 +9,10 @@ import {RECIPIENT_INDEX_URL} from "../../../../routes/web";
 import {useAlert} from "../../../../contexts/AlertContext";
 import {useSession} from "next-auth/react";
 import ProtectedElement from "../../../../components/main/system/ProtectedElement";
+import {Divider} from "antd";
 
 export default function EditRecipient() {
+    const [processingLoader, setProcessingLoader] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         type: '',
@@ -23,8 +24,6 @@ export default function EditRecipient() {
     });
     const {openNotification} = useAlert();
     const [isLoading, setIsLoading] = useState(true);
-    const [createdAt, setCreatedAt] = useState('');
-    const [updatedAt, setUpdatedAt] = useState('');
     const [recipientName, setRecipientName] = useState('');
     const {data: session} = useSession(); // Получаем сессию
     const router = useRouter();
@@ -41,6 +40,9 @@ export default function EditRecipient() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setProcessingLoader(true)
+        formData.create_author = formData.create_author ? formData.create_author : session.user.name
+        formData.update_author = session.user.name
 
         try {
             const dataToSend = {
@@ -58,16 +60,19 @@ export default function EditRecipient() {
             });
 
             const responseData = await response.json();
+
             if (response.ok) {
                 openNotification({type: "success", message: responseData.message});
                 await router.push(RECIPIENT_INDEX_URL);
             } else {
                 openNotification({type: "error", message: responseData.message});
             }
+
         } catch (error) {
             openNotification({type: "error", message: error.message});
             console.error(error);
         }
+        setProcessingLoader(false)
     };
 
     const recipientTypes = [
@@ -103,9 +108,11 @@ export default function EditRecipient() {
                         emails: responseData.emails.split(',').map(email => email.trim()),
                         is_blocked: responseData.is_blocked,
                         registry_ids: responseData.registry_ids.map((item) => item.id),
+                        create_author: responseData.create_author,
+                        update_author: responseData.update_author,
+                        createdAt: responseData.createdAt,
+                        updatedAt: responseData.updatedAt,
                     }));
-                    setCreatedAt(responseData.createdAt)
-                    setUpdatedAt(responseData.updatedAt)
 
                 } else {
                     openNotification({type: "error", message: responseData.message});
@@ -136,7 +143,8 @@ export default function EditRecipient() {
                     <title>{recipientName} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
                 </Head>
 
-                <div>
+                {processingLoader && <Preloader/>}
+                <div className={`${processingLoader ? 'd-none' : 'd-flex'} flex-column`}>
                     <h1>Редактировать получателя</h1>
                     <form onSubmit={handleSubmit}>
                         <div className="container d-flex">
@@ -214,16 +222,39 @@ export default function EditRecipient() {
                                     createNewValues
                                 />
 
-                                <div>
-                                    <p>Дата создания: {createdAt}</p>
-                                    <p>Дата изменения: {updatedAt}</p>
-                                </div>
+                                {formData.createdAt || formData.updatedAt ? (
+                                    <>
+                                        <Divider/>
+                                        <div className='d-flex align-items-center justify-content-between'>
+                                            <h6>Создано:</h6>
+                                            <h6>{formData.createdAt ||
+                                                <span className="text-secondary">(Дата отсутствует)</span>
+                                            } - {
+                                                formData.create_author ||
+                                                <span className="text-secondary">(Имя отсутствует)</span>
+                                            }
+                                            </h6>
+                                        </div>
+                                        <div className='d-flex align-items-center justify-content-between'>
+                                            <h6>Обновлено:</h6>
+                                            <h6>{formData.updatedAt ||
+                                                <span className="text-secondary">(Дата отсутствует)</span>
+                                            } - {
+                                                formData.update_author ||
+                                                <span className="text-secondary">(Имя отсутствует)</span>
+                                            }
+                                            </h6>
+                                        </div>
+                                    </>
+                                ) : null}
                             </div>
                         </div>
                         <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
                             <button className="btn btn-purple me-2" type="submit">Сохранить</button>
-                            <Link href={RECIPIENT_INDEX_URL} className="btn btn-cancel ms-2"
-                                  type="button">Отмена</Link>
+                            <button onClick={() => router.back()} className="btn btn-cancel ms-2"
+                                    type="button">
+                                Отмена
+                            </button>
                         </div>
                     </form>
                 </div>

@@ -6,8 +6,6 @@ import {ConfigProvider, Layout, Menu} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import Footer from "../main/Footer";
 import {useSession} from 'next-auth/react';
-// import Sider from "antd/es/layout/Sider";
-// import Sider from "antd";
 
 const AuthCheck = (WrappedComponent) => {
     const Check = (props) => {
@@ -24,7 +22,7 @@ const AuthCheck = (WrappedComponent) => {
                         {router.pathname !== LOGIN_PAGE_URL && <SidebarTab/>}
                         <div className="w-100 overflow-hidden">
                             <Navbar/>
-                            <div className=" w-100 overflow-x-auto overflow-y-hidden mt-5">
+                            <div className="w-100 overflow-x-auto overflow-y-hidden mt-5">
                                 <div className="container body-container mt-5">
                                     <ConfigProvider locale={ruRU}>
 

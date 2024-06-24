@@ -1,106 +1,71 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
 
-import Link from 'next/link';
-import RegistryFieldsTable from "../../../../components/pages/registry/RegistryFieldsTable";
 import {REGISTRY_SHOW_API, REGISTRY_UPDATE_API} from "../../../../routes/api";
 import Head from "next/head";
-import RegistryFileFormat from "../../../../components/pages/registry/RegistryFileFormat";
-import UniversalSelect from "../../../../components/main/input/UniversalSelect";
 import Preloader from "../../../../components/main/system/Preloader";
 import {useAlert} from "../../../../contexts/AlertContext";
-import {REGISTRY_INDEX_URL} from "../../../../routes/web";
 import {useSession} from "next-auth/react";
-import FormInput from "../../../../components/main/input/FormInput";
 import ProtectedElement from "../../../../components/main/system/ProtectedElement";
+import RegistryForm from "../../../../components/pages/registry/RegistryForm";
 
 export default function EditRegistryFile() {
+    const {data: session} = useSession(); // Получаем сессию
     const [formData, setFormData] = useState({
         name: '',
-        servicesId: '',
-        serverId: '',
-        tableHeaders: '',
-        is_blocked: '',
         formats: [],
-        sqlQuery: '',
+        is_blocked: '',
+        send_type: '',
+        server_id: '',
+        services_id: [],
+        fields: [],
     });
-    const [isLoading, setIsLoading] = useState(true);
+    const [oldFormData, setOldFormData] = useState({
+        name: '',
+        formats: [],
+        is_blocked: '',
+        send_type: '',
+        server_id: '',
+        services_id: [],
+        fields: [],
+    });
+    const [processingLoader, setProcessingLoader] = useState(false);
     const {openNotification} = useAlert();
     const router = useRouter();
     const itemId = router.query.id;
-    const [registryStatus, setRegistryStatus] = useState('');
-    const [getRows, setRows] = useState([]);
-    const [selectedServer, setSelectedServer] = useState(null)
-    const {data: session} = useSession(); // Получаем сессию
-    const handleUpdateRows = (updatedRows) => {
-        setRows(updatedRows); // Обновляем состояние rows в EditRegistryFile на основе данных из RegistryFieldsTable
-    };
-    const [createdAt, setCreatedAt] = useState('');
-    const [updatedAt, setUpdatedAt] = useState('');
-
     const [registryName, setRegistryName] = useState('');
-
-
-    const handleInputChange = (event) => {
-        const {name, value} = event.target;
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: value,
-        }));
-    };
-
-    const handleSelectorChange = (valuesArray, name) => {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: valuesArray,
-        }));
-    };
-
-    function combineDataFromDatabase(databaseFields, databaseHeaders) {
-        const combinedData = [];
-
-        for (let i = 0; i < databaseFields.length; i++) {
-            const field = databaseFields[i].trim();
-            const header = databaseHeaders[i].trim();
-
-            const existingRow = getRows.find((row) => row.field === field);
-
-            if (existingRow) {
-                existingRow.tableHeader = header;
-                existingRow.isActive = true;
-                combinedData.push(existingRow);
-            } else {
-                combinedData.push({
-                    isActive: true,
-                    field: field,
-                    tableHeader: header,
-                });
-            }
-        }
-
-        getRows.forEach((row) => {
-            if (!combinedData.find((item) => item.field === row.field)) {
-                combinedData.push(row);
-            }
-        });
-
-        return combinedData;
-    }
-
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
+        setProcessingLoader(true)
         try {
-            const activeRows = getRows.filter((row) => row.isActive);
-            const activeFields = activeRows.map((row) => row.field);
-            const activeTableHeaders = activeRows.map((row) => row.tableHeader);
+            if (formData.name === null || formData.name === '') {
+                throw new Error(`Введите название реестра`)
+            }
+            if (formData.formats.length === 0) {
+                throw new Error('Выберете формат файла')
+            }
+            if (formData.formats.includes('dbf')
+                && formData.fields.some((item) => item.nameDbf === '')) {
+                throw new Error(`Поле 'Название для DBF' обязательно для заполнения`)
+            }
+            if (formData.formats.some(format => ['xlsx', 'csv'].includes(format))
+                && formData.fields.some((item) => item.name === '')) {
+                throw new Error(`Поле 'Название' обязательно для заполнения`)
+            }
+            if (formData.server_id === null || formData.server_id === '') {
+                throw new Error(`Выберете сервер`)
+            }
+            if (formData.send_type === 1 && formData.services_id.length <= 0) {
+                throw new Error(`Выбран тип отправки реестра 'по услугам' но не одна услуга не выбрана.
+                Вы должны выбрать хотя бы одну услугу`)
+            }
+            if (formData.fields.length <= 0) {
+                throw new Error(`Таблица не может быть пуста`)
+            }
 
-            const activeFormData = {
-                ...formData,
-                fields: activeFields.join(', '),
-                tableHeaders: activeTableHeaders.join(', '),
-            };
+            formData.create_author = formData.create_author ? formData.create_author : session.user.name
+            formData.update_author = session.user.name
 
             const response = await fetch(`${REGISTRY_UPDATE_API}/${itemId}`, {
                 method: 'PUT',
@@ -108,82 +73,78 @@ export default function EditRegistryFile() {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${session.accessToken}`,
                 },
-                body: JSON.stringify(activeFormData),
+                body: JSON.stringify(formData),
             });
 
             const responseData = await response.json();
+
             if (response.ok) {
+                setOldFormData(formData)
                 openNotification({type: "success", message: responseData.message});
-                await router.push(REGISTRY_INDEX_URL);
             } else {
                 openNotification({type: "error", message: responseData.message});
             }
+
         } catch (error) {
             openNotification({type: "error", message: error.message});
             console.error(error);
         }
+        setProcessingLoader(false)
     };
 
-    useEffect(() => {
-        const fetchRegistryItem = async () => {
-            try {
-                const response = await fetch(`${REGISTRY_SHOW_API}/${itemId}`, {
-                    headers: {
-                        Authorization: `Bearer ${session.accessToken}`,
-                    },
-                });
-
-                const responseData = await response.json();
-                if (response.ok) {
-                    setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        name: responseData.name,
-                        servicesId: responseData.services_id,
-                        serverId: responseData.server_id,
-                        tableHeaders: responseData.table_headers,
-                        is_blocked: responseData.is_blocked,
-                    }));
-
-                    setCreatedAt(responseData.createdAt)
-                    setUpdatedAt(responseData.updatedAt)
-                    setRegistryStatus(responseData.is_blocked)
-                    setRegistryName(responseData.name)
-
-                    const dataFieldArray = responseData.fields.split(',').map((item) => item.trim());
-
-                    const dataHeadersArray = responseData.table_headers.split(',').map((item) => item.trim());
-                    const combinedData = combineDataFromDatabase(dataFieldArray, dataHeadersArray);
-                    setRows(combinedData);
-
-                    const selectedFormats = responseData.formats; // предположим, что это уже массив форматов
-                    setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        formats: selectedFormats,
-                    }));
-                } else {
-                    openNotification({type: "error", message: responseData.message});
-                    console.error('Ошибка при загрузке данных с API');
-                }
-            } catch (error) {
-                console.error(error);
-                openNotification({type: "error", message: error.message});
-            } finally {
-                setIsLoading(false); // Устанавливаем isLoading в false после завершения загрузки
-            }
+    const updateFormData = (responseData) => {
+        return {
+            name: responseData.name,
+            services_id: responseData.services_id,
+            server_id: responseData.server_id,
+            is_blocked: responseData.is_blocked,
+            send_type: responseData.send_type,
+            formats: responseData.formats,
+            fields:  responseData.fields,
+            create_author: responseData.create_author,
+            update_author: responseData.update_author,
+            createdAt: responseData.createdAt,
+            updatedAt: responseData.updatedAt
         };
+    };
 
+    const fetchRegistryItem = async () => {
+        try {
+            const response = await fetch(`${REGISTRY_SHOW_API}/${itemId}`, {
+                headers: {
+                    Authorization: `Bearer ${session.accessToken}`,
+                },
+            });
 
-        if (itemId) {
-            fetchRegistryItem();
+            const responseData = await response.json();
+            if (response.ok) {
+                setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    ...updateFormData(responseData)
+                }));
+
+                setOldFormData((prevOldFormData) => ({
+                    ...prevOldFormData,
+                    ...updateFormData(responseData)
+                }));
+
+                setRegistryName(responseData.name)
+
+            } else {
+                openNotification({type: "error", message: responseData.message});
+                console.error('Ошибка при загрузке данных с API');
+            }
+        } catch (error) {
+            console.error(error);
+            openNotification({type: "error", message: error.message});
         }
-    }, [itemId]);
+    };
 
 
-    if (isLoading) {
-        return <div>
-            <Preloader/>
-        </div>;
-    }
+    useEffect(() => {
+        fetchRegistryItem();
+    }, []);
+
 
     return (
         <ProtectedElement allowedPermissions={'registry_management'}>
@@ -191,89 +152,21 @@ export default function EditRegistryFile() {
                 <Head>
                     <title>{registryName} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
                 </Head>
-                <div className="mt-5">
+                {processingLoader && formData && <Preloader/>}
+                <div className={`${processingLoader ? 'd-none' : 'd-flex'} flex-column`} key={JSON.stringify(oldFormData)}>
                     <h1>Страница редактирования файла реестров</h1>
-                    <form onSubmit={handleSubmit}>
-                        <div className="container d-flex">
-                            <div className="container w-50 mt-5">
-                                <FormInput
-                                    type="text"
-                                    label="Название файла реестра"
-                                    className="input-field"
-                                    id="name"
-                                    name="name"
-                                    placeholder="Название"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                                <UniversalSelect
-                                    name='is_blocked'
-                                    label="Статус реестра"
-                                    placeholder="Укажите статус файла реестра"
-                                    onSelectChange={handleSelectorChange}
-                                    selectedOptions={[registryStatus]}
-                                    firstOptionSelected
-                                    required
-                                    isSearchable={false}
-                                    options={[
-                                        {value: false, label: 'Файл реестра активен'},
-                                        {value: true, label: 'Файл реестра отключён'},
-                                    ]}
-                                />
-                                <UniversalSelect
-                                    name='serverId'
-                                    label="Сервер"
-                                    selectedOptions={[formData.serverId]}
-                                    placeholder="Выберете сервер"
-                                    fetchDataConfig={{
-                                        model: 'Server',
-                                    }}
-                                    onSelectChange={(selectedValue, name) => {
-                                        handleSelectorChange(selectedValue, name);
-                                        setSelectedServer(selectedValue);
-                                    }}
-                                    required
-                                />
-                                <UniversalSelect
-                                    key={JSON.stringify(selectedServer)}
-                                    name='servicesId'
-                                    label="Сервисы"
-                                    placeholder="Выберете сервисы"
-                                    fetchDataConfig={{
-                                        model: 'Service',
-                                        searchTerm: {id_bserver: selectedServer}
-                                    }}
-                                    selectedOptions={formData.servicesId}
-                                    onSelectChange={handleSelectorChange}
-                                    required
-                                    isMulti
-                                />
-                                <RegistryFileFormat
-                                    formData={formData}
-                                    setFormData={setFormData}
-                                />
-                                <div className="mt-4">
-                                    <p>Дата создания: {createdAt}</p>
-                                    <p>Дата изменения: {updatedAt}</p>
-                                </div>
-                            </div>
-                            <div className="container w-75">
-                                <RegistryFieldsTable
-                                    getRows={getRows}
-                                    onUpdateData={handleUpdateRows}
-                                />
-                            </div>
-                        </div>
-                        <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
-                            <button className="btn btn-purple me-2" type="submit">
-                                Сохранить
-                            </button>
-                            <Link href={REGISTRY_INDEX_URL} className="btn btn-cancel ms-2" type="button">
-                                Отмена
-                            </Link>
-                        </div>
-                    </form>
+                    <RegistryForm
+                        oldFormData={oldFormData}
+                        formData={formData}
+                        onDataFieldsChange={setFormData}/>
+                    <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
+                        <button onClick={handleSubmit} className="btn btn-purple me-2" type="submit">
+                            Сохранить
+                        </button>
+                        <button onClick={() => router.back()} className="btn btn-cancel ms-2" type="button">
+                            Отмена
+                        </button>
+                    </div>
                 </div>
             </div>
         </ProtectedElement>

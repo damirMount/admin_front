@@ -38,7 +38,6 @@ const FormTextArea = ({
             <label>{label}</label>
             <Input.TextArea {...sharedProps} />
         </div>
-    )
-        ;
+    );
 };
 export default FormTextArea

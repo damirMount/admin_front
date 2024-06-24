@@ -127,7 +127,7 @@ export default function DealerExportPage() {
                                         <label htmlFor="is_blocked">По времени</label>
                                         <div
                                             className="ps-3 input-form d-flex justify-content-between bg-white align-items-center">
-                                            <label htmlFor="">Выберите опцию</label>
+                                            <label className='text-nowrap me-5 fw-normal'>Выберете опцию</label>
                                             <UniversalSelect
                                                 firstOptionSelected
                                                 options={[
@@ -141,7 +141,7 @@ export default function DealerExportPage() {
                                                 }}
                                                 required
                                                 className="selector-choice ms-4"
-                                                name="isTestEmailEnabled"
+                                                name="isSelectiveEmailEnabled"
                                             />
                                         </div>
                                     </div>

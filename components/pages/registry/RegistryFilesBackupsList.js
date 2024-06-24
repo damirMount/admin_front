@@ -26,6 +26,7 @@ const RegistryFiles = ({apiUrl, downloadUrl}) => {
             }
 
             const data = await response.json();
+            console.log(data)
             setRegistryFile(data.data);
         } catch (error) {
             console.error('Error fetching registry files:', error);
@@ -108,7 +109,10 @@ const RegistryFiles = ({apiUrl, downloadUrl}) => {
                 <RegistryNavigationTabs/>
             </div>
             <div>
-                <SmartTable data={registryFiles} columns={tableColumns}/>
+                <SmartTable
+                    columns={tableColumns}
+                    data={registryFiles}
+                />
             </div>
         </div>
     );

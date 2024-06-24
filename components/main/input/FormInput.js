@@ -35,7 +35,7 @@ const FormInput = ({
     };
 
     return (
-        <div className="d-flex flex-column form-group">
+        <div className="d-flex flex-column form-group w-100">
             <label>{label}</label>
             <Input {...sharedProps} />
         </div>
