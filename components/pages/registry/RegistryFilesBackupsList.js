@@ -93,6 +93,7 @@ const RegistryFiles = ({apiUrl, downloadUrl}) => {
             dataIndex: 'createdAt',
             sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
             ...SearchByColumn('createdAt'),
+            defaultSortOrder: 'descend',
         },
         {
             title: 'Скачать',
