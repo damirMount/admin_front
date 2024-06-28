@@ -7,7 +7,6 @@ const ProtectedElement = ({children, accessGranted, redirect}) => {
         return <Preloader/>; // Можно отображать загрузочный индикатор здесь
     }
     if (!accessGranted) {
-        console.log(false)
         return false
     }
 

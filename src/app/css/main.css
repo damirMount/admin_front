@@ -43,7 +43,7 @@
 html, body {
     background-color: #FCFAFF;
     color: #532C59;
-    overflow-x: hidden;
+    scroll-behavior: auto !important;
 }
 
 tr, td {
@@ -54,6 +54,10 @@ footer {
     width: -webkit-fill-available;
     border-top: #F8E0FB 1px solid;
     margin-top: 50px;
+}
+
+label {
+    font-weight: 600;
 }
 
 ::-webkit-scrollbar {
@@ -105,7 +109,7 @@ footer {
     max-width: 100%;
     background-color: #FFFFFF;
     border-bottom: #F8E0FB 1px solid;
-    z-index: 1050;
+    z-index: 1001;
 }
 
 
@@ -125,8 +129,8 @@ h1 {
 }
 
 .btn-purple:hover {
-    border: #532C59 2px solid;
-    background-color: #FFFFFF;
+    border: rgba(0, 0, 0, 0.06) 2px solid;
+    background-color: rgba(0, 0, 0, 0.06);
     color: #532C59;
 }
 
@@ -141,11 +145,23 @@ h1 {
     background-color: #FFFFFF;
     border-radius: 7px;
 }
+.relative-container {
+    position: relative;
+}
+
+.absolute-skeleton {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+}
 
 .btn-grey:hover {
-    border: #532C59 2px solid;
-    background-color: #532C59;
-    color: #FFFFFF;
+    border: rgba(0, 0, 0, 0.06) 2px solid;
+    background-color: rgba(0, 0, 0, 0.06);
+    color: #532C59;
 }
 
 .btn-grey:active {
@@ -177,17 +193,17 @@ h1 {
 }
 
 
-.table-center {
-    text-align: -webkit-center;
-    vertical-align: middle;
-    margin: 0;
-}
+/*.table-center {*/
+/*    text-align: -webkit-center;*/
+/*    vertical-align: middle;*/
+/*    margin: 0;*/
+/*}*/
 
-.action-table-buttons {
-    margin-left: -1px;
-    margin-right: -1px;
-    white-space: nowrap;
-}
+/*.action-table-buttons {*/
+/*    margin-left: -1px;*/
+/*    margin-right: -1px;*/
+/*    white-space: nowrap;*/
+/*}*/
 
 .check {
     border: #532C59 2px solid;
@@ -242,11 +258,7 @@ h1 {
     white-space: nowrap;
 }
 
-.status-active {
-    background-color: #532C59;
-    border: #532C59 2px solid;
-    color: #FFFFFF;
-}
+
 
 .status-disabled {
     background-color: #cfcdcd;
@@ -263,7 +275,7 @@ h1 {
     width: 100%;
 }
 
-.status-formats {
+.status-large {
     color: #FFFFFF;
     background-color: #532C59;
     font-size: 12px;
@@ -272,7 +284,14 @@ h1 {
     padding: 10px 15px;
     text-transform: uppercase;
 }
-
+.status-small {
+    font-size: 11px;
+    padding: 4px 15px 4px 15px;
+    background-color: #532C59;
+    border: #532C59 2px solid;
+    color: #FFFFFF;
+    text-transform: uppercase;
+}
 
 .icon-not-found {
     font-size: 50px;
@@ -364,6 +383,11 @@ h1 {
 .selector-choice [class*="css-"][class*="-singleValue"] {
     color: #FFFFFF;
     font-weight: 500;
+}
+[class*="css-"][class*="-ValueContainer"] {
+    overflow: auto;
+    max-height: 167px;
+    display: flex;
 }
 
 [class*="css-"] {

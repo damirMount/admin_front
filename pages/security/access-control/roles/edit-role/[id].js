@@ -18,8 +18,8 @@ export default function UpdatePermission() {
         name: '',
         permissions: [],
     });
-    const [updatedFormData, setUpdatedFormData] = useState({...formData});
     const router = useRouter();
+    const [updatedFormData, setUpdatedFormData] = useState({...formData});
     const {openNotification, openConfirmAction, closeConfirmAction} = useAlert();
     const {data: session} = useSession(); // Получаем сессию
     const [itemId, setItemId] = useState(Number(router.query.id));

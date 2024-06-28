@@ -99,7 +99,13 @@ tr, td, table, tbody, th, thead, tfoot {
     border: 1px solid #dee2e6;
     border-radius: 9px 9px 0 0 !important;
 }
+.nested-table .ant-table {
+    border-radius: 0 !important;
+}
 
+.ant-table-placeholder {
+ z-index: 0 !important;
+}
 .ant-table-wrapper .ant-table-column-title {
     z-index: 0;
     position: relative;
@@ -109,7 +115,9 @@ tr, td, table, tbody, th, thead, tfoot {
 .ant-table-cell {
     color: #532c59 !important;
 }
-
+.ant-table-wrapper tr.ant-table-expanded-row  {
+    background: rgba(0, 0, 0, 0.02);
+}
 .ant-table-wrapper .ant-table-column-sorter-up.active, .ant-table-wrapper .ant-table-column-sorter-down.active {
     color: #532c59;
 
@@ -140,4 +148,16 @@ tr, td, table, tbody, th, thead, tfoot {
 
 .sidebar-user-dropdown-menu {
     height: 10%;
+}
+
+
+.ant-popconfirm {
+    z-index: 1201;
+}
+.ant-dropdown-menu-item svg {
+    font-size: 16px !important;
+}
+.ant-dropdown-menu-item-container {
+    max-height: 165px;
+    overflow-y: auto;
 }

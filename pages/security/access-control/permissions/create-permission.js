@@ -111,9 +111,9 @@ export default function CreatePermission() {
                                     <button className="btn btn-purple me-2" type="submit">
                                         Сохранить
                                     </button>
-                                    <Link href={PERMISSION_INDEX_URL} className="btn btn-cancel ms-2" type="button">
+                                    <button onClick={() => router.back()} className="btn btn-cancel ms-2" type="button">
                                         Отмена
-                                    </Link>
+                                    </button>
                                 </div>
                             </div>
                         </div>

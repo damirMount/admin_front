@@ -9,7 +9,8 @@ const fetchData = async (config, session) => {
             model: config.model, // 'ModelName' - REQUIRED!!!
             filters: config.searchTerm
                 ? JSON.stringify(config.searchTerm)
-                : undefined, // filters = { column1: 'value', column2: '[value1, value2]', accurateSearch: true} accurateSearch: true - Включает точный поиск по всем аргументам, по стандарту false;
+                : undefined, // filters = { column1: 'value', column2: '[value1, value2]', accurateSearch: true}
+            // accurateSearch: true - Включает точный поиск по всем аргументам, по стандарту false;
             attributes: config.attributes || undefined, // attributes = 'name,fio'
             sort: config.sort || undefined, // sort = { column: name, direction: asc }
             limit: config.limit || undefined, // limit = 10
@@ -22,7 +23,6 @@ const fetchData = async (config, session) => {
             },
         });
         const data = await response.json();
-
         // Проверяем, есть ли у ответа свойство error
         if (data && data.error) {
             throw new Error(data.error);

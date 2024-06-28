@@ -1,7 +1,7 @@
 import React from "react";
 
 
-const ServerCell = (props) => {
+const ServerAndServiceCountCell = (props) => {
 
     const serverId = props ? props.server_id || '' : '';
     const services = props ? props.services_id || '' : '';
@@ -11,13 +11,13 @@ const ServerCell = (props) => {
         const lastTwoDigits = value.length % 100;
 
         if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
-            return `${value.length} СЕРВИСОВ`;
+            return `${value.length} УСЛУГ`;
         } else if (lastDigit === 1) {
-            return `${value.length} СЕРВИС`;
+            return `${value.length} УСЛУГА`;
         } else if (lastDigit >= 2 && lastDigit <= 4) {
-            return `${value.length} СЕРВИСА`;
+            return `${value.length} УСЛУГИ`;
         } else {
-            return `${value.length} СЕРВИСОВ`;
+            return `${value.length} УСЛУГ`;
         }
     }
 
@@ -26,10 +26,10 @@ const ServerCell = (props) => {
                 <span className="status status-dashed">
                     ID {`${serverId}`}
                     <br/>
-                    {`${countServices(services)}`}
+                    {props.send_type === 2 ? 'ПО СЕРВЕРУ' : `${countServices(services)}`}
                 </span>
         </div>
     );
 };
 
-export default ServerCell;
+export default ServerAndServiceCountCell;

@@ -9,7 +9,7 @@ import {REGISTRY_CREATE_URL, REGISTRY_EDIT_URL} from "../../routes/web";
 import {ColorPicker, DatePicker} from "antd";
 import ActionButtons from "../../components/main/table/cell/ActionButtons";
 import FileFormats from "../../components/main/table/cell/FileFormats";
-import ServerCell from "../../components/main/table/cell/ServerCell";
+import ServerAndServiceCountCell from "../../components/main/table/cell/ServerAndServiceCountCell";
 import SearchByColumn from "../../components/main/table/cell/SearchByColumn";
 import SmartTable from "../../components/main/table/SmartTable";
 import {useAlert} from "../../contexts/AlertContext";
@@ -92,7 +92,7 @@ export default function TestPage() {
             className: 'col-2',
             ...SearchByColumn('server_id'),
             sorter: (a, b) => a.server_id - b.server_id,
-            render: (text, record) => ServerCell(record),
+            render: (text, record) => ServerAndServiceCountCell(record),
         },
         {
             title: 'Формат',

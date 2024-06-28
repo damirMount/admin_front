@@ -9,18 +9,22 @@ import {RECIPIENT_INDEX_URL} from "../../../routes/web";
 import {useAlert} from "../../../contexts/AlertContext";
 import {useSession} from "next-auth/react";
 import ProtectedElement from "../../../components/main/system/ProtectedElement";
+import Preloader from "../../../components/main/system/Preloader";
 
 export default function CreateRecipient() {
+    const [processingLoader, setProcessingLoader] = useState(false);
+    const {data: session} = useSession(); // Получаем сессию
     const [formData, setFormData] = useState({
         name: '',
         type: '',
         is_blocked: '',
         registry_ids: '',
-        emails: '', // Начнем с одного поля по умолчанию
+        emails: '',
+        create_author: session.user.name,
+        update_author: session.user.name,
     });
     const router = useRouter();
     const {openNotification} = useAlert();
-    const {data: session} = useSession(); // Получаем сессию
     const recipientTypes = [
         {value: 1, label: 'Каждый день'},
         {value: 2, label: 'Раз в неделю'},
@@ -45,7 +49,7 @@ export default function CreateRecipient() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
+        setProcessingLoader(true)
         try {
 
             // Формируем данные для отправки на сервер, включая данные emails
@@ -64,16 +68,19 @@ export default function CreateRecipient() {
             });
 
             const responseData = await response.json();
+
             if (response.ok) {
                 openNotification({type: "success", message: responseData.message});
                 await router.push(RECIPIENT_INDEX_URL);
             } else {
                 openNotification({type: "error", message: responseData.message});
             }
+
         } catch (error) {
             openNotification({type: "error", message: error.message});
             console.error(error);
         }
+        setProcessingLoader(false)
     };
 
     return (
@@ -82,7 +89,9 @@ export default function CreateRecipient() {
                 <Head>
                     <title>Создать получателя | {process.env.NEXT_PUBLIC_APP_NAME}</title>
                 </Head>
-                <div>
+
+                {processingLoader && <Preloader/>}
+                <div className={`${processingLoader ? 'd-none' : 'd-flex'} flex-column`}>
                     <h1>Создать получателя</h1>
                     <form onSubmit={handleSubmit}>
                         <div className="container d-flex">
@@ -157,13 +166,14 @@ export default function CreateRecipient() {
                                 />
                             </div>
                         </div>
+
                         <div className="w-100 mt-5 mb-5 d-flex justify-content-center">
                             <button className="btn btn-purple me-2" type="submit">
                                 Сохранить
                             </button>
-                            <Link href={RECIPIENT_INDEX_URL} className="btn btn-cancel ms-2" type="button">
+                            <button onClick={() => router.back()} className="btn btn-cancel ms-2" type="button">
                                 Отмена
-                            </Link>
+                            </button>
                         </div>
                     </form>
                 </div>

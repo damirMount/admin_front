@@ -26,7 +26,7 @@ const RegistryNavigationTabs = () => {
             <div>
                 <Link href={REGISTRY_RESEND_URL}
                       className={`btn text-nowrap ${router.pathname === REGISTRY_RESEND_URL ? 'btn-purple' : 'btn-grey'} me-2 ms-2`}>
-                    Перезапуск реестра
+                    Отправка реестра
                 </Link>
             </div>
             <div className="d-flex align-items-start">

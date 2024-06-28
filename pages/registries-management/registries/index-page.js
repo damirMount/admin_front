@@ -7,7 +7,7 @@ import RegistryNavigationTabs from "../../../components/pages/registry/RegistryN
 import {REGISTRY_CREATE_URL, REGISTRY_EDIT_URL} from "../../../routes/web";
 import Link from "next/link";
 import SearchByColumn from "../../../components/main/table/cell/SearchByColumn";
-import ServerCell from "../../../components/main/table/cell/ServerCell";
+import ServerAndServiceCountCell from "../../../components/main/table/cell/ServerAndServiceCountCell";
 import FileFormats from "../../../components/main/table/cell/FileFormats";
 import ActionButtons from "../../../components/main/table/cell/ActionButtons";
 import SmartTable from "../../../components/main/table/SmartTable";
@@ -57,7 +57,7 @@ export default function RegistryPage() {
             className: 'col-2',
             ...SearchByColumn('server_id'),
             sorter: (a, b) => a.server_id - b.server_id,
-            render: (text, record) => ServerCell(record),
+            render: (text, record) => ServerAndServiceCountCell(record),
         },
         {
             title: 'Формат',

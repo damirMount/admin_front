@@ -11,7 +11,7 @@ const StatusIndicator = (props) => {
         return Math.round(100 * (bytes / Math.pow(1024, i))) / 100 + ' ' + sizes[i];
     };
     return (
-        <span className="status status-active">{formatFileSize(props)}</span>
+        <span className="status status-small">{formatFileSize(props)}</span>
     );
 };
 
