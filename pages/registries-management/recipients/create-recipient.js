@@ -40,10 +40,25 @@ export default function CreateRecipient() {
         }));
     };
     const handleSelectorChange = (valuesArray, name) => {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: valuesArray,
-        }));
+        if (name === 'emails') {
+            let emails = [];
+
+            if (Array.isArray(valuesArray)) {
+                emails = valuesArray.flatMap(value => value.split(',').map(email => email.trim()));
+            } else if (typeof valuesArray === 'string') {
+                emails = valuesArray.split(',').map(email => email.trim());
+            }
+
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                [name]: emails,
+            }));
+        } else {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                [name]: valuesArray,
+            }));
+        }
     };
 
 
@@ -150,12 +165,14 @@ export default function CreateRecipient() {
                                     }}
                                 />
                                 <UniversalSelect
+                                    key={JSON.stringify(formData.emails)}
                                     name='emails'
                                     label="Emails"
                                     placeholder="Введите почту получателя"
                                     onSelectChange={handleSelectorChange}
                                     required
                                     isMulti
+                                    selectedOptions={formData.emails}
                                     options={formData.emails && formData.emails.length > 0 ? (
                                         formData.emails.map((item) => ({
                                             value: item,
