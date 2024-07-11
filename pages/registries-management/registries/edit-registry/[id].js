@@ -45,14 +45,7 @@ export default function EditRegistryFile() {
             if (formData.formats.length === 0) {
                 throw new Error('Выберете формат файла')
             }
-            if (formData.formats.includes('dbf')
-                && formData.fields.some((item) => item.nameDbf === '')) {
-                throw new Error(`Поле 'Название для DBF' обязательно для заполнения`)
-            }
-            if (formData.formats.some(format => ['xlsx', 'csv'].includes(format))
-                && formData.fields.some((item) => item.name === '')) {
-                throw new Error(`Поле 'Название' обязательно для заполнения`)
-            }
+
             if (formData.server_id === null || formData.server_id === '') {
                 throw new Error(`Выберете сервер`)
             }

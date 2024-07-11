@@ -38,6 +38,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
             field: 'id',
             name: 'Номер платежа',
             nameDbf: 'KOD_TR',
+            formatDbf: 'N',
             regularValue: '',
             regularValueType: 'value',
             regularValueList: [],
@@ -47,6 +48,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
             field: 'identifier',
             name: 'Лицевой счёт',
             nameDbf: 'KOD',
+            formatDbf: 'C',
             regularValue: '',
             regularValueType: 'value',
             regularValueList: [],
@@ -56,6 +58,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
             field: 'real_pay',
             name: 'Сумма платежа',
             nameDbf: 'SUM',
+            formatDbf: 'N',
             regularValue: '',
             regularValueType: 'value',
             regularValueList: [],
@@ -65,6 +68,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
             field: 'time_proc',
             name: 'Дата оплаты',
             nameDbf: 'D_TR',
+            formatDbf: 'D',
             regularValue: '',
             regularValueType: 'value',
             regularValueList: [],
@@ -74,6 +78,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
             field: 'account.fio',
             name: 'ФИО',
             nameDbf: 'FIO',
+            formatDbf: 'C',
             regularValue: '',
             regularValueType: 'value',
             regularValueList: [],
@@ -83,6 +88,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
             field: 'id_apparat',
             name: 'ID терминала',
             nameDbf: 'OTD_TR',
+            formatDbf: 'N',
             regularValue: '',
             regularValueType: 'value',
             regularValueList: [],
@@ -92,17 +98,10 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
             field: 'id_service',
             name: 'Сервисы',
             nameDbf: 'SERVICE',
+            formatDbf: 'C',
             regularValue: '',
             regularValueType: 'list',
-            regularValueList: [{
-                "originalValue": "0000",
-                "newValue": "Название услуги",
-                "key": '1'
-            }, {
-                "originalValue": "1111",
-                "newValue": "Test",
-                "key": '2'
-            }],
+            regularValueList: [],
             charNumber: '30'
         },
     ]
@@ -267,6 +266,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                 field: 'account.',
                 name: '',
                 nameDbf: '',
+                formatDbf: 'C',
                 regularValue: '',
                 regularValueType: 'value',
                 regularValueList: [],
@@ -278,6 +278,28 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
         onDataFieldsChange(newData);
     };
 
+    function transformValue(type) {
+        switch (type) {
+            case 'C':
+                return 'CHAR';
+            case 'N':
+                return 'NUMERIC';
+            case 'F':
+                return 'FLOAT';
+            case 'Y':
+                return 'CURRENCY';
+            case 'I':
+                return 'INTEGER';
+            case 'L':
+                return 'LOGICAL';
+            case 'D':
+                return 'DATE';
+            case 'T':
+                return 'DATETIME';
+            case 'B':
+                return 'DOUBLE';
+        }
+    }
 
     const tableColumns = [
         {
@@ -318,9 +340,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                 if (record.key === selectedRowKey) {
                     return <Input
                         defaultValue={text}
-                        placeholder={formData && formData.fields && !formData.formats.some(
-                            format => ['xlsx', 'csv'].includes(format)
-                        ) ? '(Пусто)' : '(Обязательное поле)'}
+                        placeholder={'(Пусто)'}
                         disabled={
                             formData && formData.fields && !formData.formats.some(format => ['xlsx', 'csv']
                                 .includes(format))
@@ -335,12 +355,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                         oldFormData.fields.some(filedValue => filedValue.key === record.key && filedValue.name === text)
                             ? '' : 'fst-italic text-decoration-underline'
                     }>
-                        {text ? text :
-                            <span className="text-secondary">{
-                                !formData.formats.some(format => ['xlsx', 'csv'].includes(format))
-                                    ? '(Пусто)'
-                                    : '(Обязательное поле)'
-                            }</span>
+                        {text ? text : <span className="text-secondary">(Пусто)</span>
                         }
                     </span>
                 )
@@ -352,33 +367,56 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
             className: 'col-3 text-nowrap',
             render: (text, record) => {
                 if (record.key === selectedRowKey) {
-                    return <Input
-                        defaultValue={text}
-                        placeholder={
-                            formData && formData.fields && !formData.formats.includes('dbf')
-                                ? '(Пусто)'
-                                : '(Обязательное поле)'
-                        }
-                        disabled={formData && formData.fields && !formData.formats.includes('dbf')}
-                        maxLength={10}
-                        onChange={(event) => handleTableInputChange(event.target.value, record, 'nameDbf')}
-                        onFocus={() => setActiveInput(record.key)}
-                        onBlur={() => setActiveInput(null)}
-                    />;
+                    return (
+                        <div className='d-flex w-100'>
+                            <Input
+                                rootClassName='w-50'
+                                defaultValue={text}
+                                placeholder={'(Пусто)'}
+                                disabled={formData && formData.fields && !formData.formats.includes('dbf')}
+                                maxLength={10}
+                                onChange={(event) => handleTableInputChange(event.target.value, record, 'nameDbf')}
+                                onFocus={() => setActiveInput(record.key)}
+                                onBlur={() => setActiveInput(null)}
+                            />
+                            <Tooltip title='Формат DBF'>
+                                <Select
+                                    className='ms-2 w-50'
+                                    placeholder='пусто'
+                                    defaultValue={record.formatDbf || 'C'}
+                                    disabled={formData && formData.fields && !formData.formats.includes('dbf')}
+                                    onChange={(value) => {
+                                        setActiveInput(null);
+                                        handleTableInputChange(value, record, 'formatDbf');
+                                    }}
+                                    onFocus={() => setActiveInput(record.key)}
+                                    onBlur={() => setActiveInput(null)}
+                                    options={[
+                                        {value: 'C', label: 'CHAR'},
+                                        {value: 'N', label: 'NUMERIC'},
+                                        {value: 'D', label: 'DATE'},
+                                    ]}
+                                />
+                            </Tooltip>
+                        </div>
+                    )
                 }
                 return (
                     <span className={
-                        oldFormData.fields.some(filedValue => filedValue.key === record.key && filedValue.nameDbf === text)
+                        oldFormData.fields.some(filedValue => filedValue.key === record.key && filedValue.nameDbf === text
+                            && filedValue.formatDbf === record.formatDbf)
                             ? '' : 'fst-italic text-decoration-underline'
                     }>
-                        {text ? text :
-                            <span className="text-secondary">{
-                                !formData.formats.includes('dbf')
-                                    ? '(Пусто)'
-                                    : '(Обязательное поле)'
-                            }</span>
-                        }
-                    </span>
+                        <span className='d-flex justify-content-between w-100'>
+                            {text ? (
+                                <span>{text}</span>
+                            ) : (
+                                <span className="text-secondary">(Пусто)</span>
+                            )}
+                            <small className='fw-bold'>{
+                                transformValue(record.formatDbf || 'C')}</small>
+                            </span>
+                        </span>
                 )
             },
         },
@@ -433,6 +471,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                     setActiveInput={setActiveInput}
                     onChange={onDataFieldsChange}
                 />
+
             },
         },
         {
