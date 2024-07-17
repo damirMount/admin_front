@@ -230,14 +230,17 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
         const newData = cloneDeep(formData);
         let fieldExists = false;
 
-        // Обновляем существующие поля или добавляем новые
-        newData.additional_fields = newData.additional_fields.map(item => {
-            if (item.hasOwnProperty(name)) {
-                fieldExists = true;
-                return {...item, [name]: value};
-            }
-            return item;
-        });
+        if (Array.isArray(newData.additional_fields)) {
+            newData.additional_fields = newData.additional_fields.map(item => {
+                if (item.hasOwnProperty(name)) {
+                    fieldExists = true;
+                    return {...item, [name]: value};
+                }
+                return item;
+            });
+        } else {
+            newData.additional_fields = []; // или любое другое значение по умолчанию, в зависимости от логики вашего приложения
+        }
 
         if (!fieldExists) {
             newData.additional_fields.push({[name]: value});
