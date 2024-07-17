@@ -698,10 +698,11 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                                 className="input-field"
                                 id="totalpayFieldName"
                                 name="totalpayFieldName"
-                                defaultValue={formData.additional_fields[0].totalpayFieldName ? formData.additional_fields[0].totalpayFieldName : 'ИТОГО:'}
+                                defaultValue={formData.additional_fields.length > 0 ? formData.additional_fields[0]?.totalpayFieldName || 'ИТОГО:' : 'ИТОГО:'}
                                 onChange={handleAdditionalFieldChange}
                                 required
                             />
+
                         </div>
                     </Tooltip>
                 </div>
