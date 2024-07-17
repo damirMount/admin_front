@@ -20,7 +20,7 @@ export default function CreateRegistry() {
         server_id: '',
         services_id: [],
         fields: [],
-        additional_fields:  [{ totalpayFieldName: "ИТОГО:" }],
+        additional_fields: [{totalpayFieldName: "ИТОГО:"}],
         createdAt: '',
         updatedAt: '',
         create_author: session.user.name,
@@ -35,7 +35,7 @@ export default function CreateRegistry() {
         server_id: '',
         services_id: [],
         fields: [],
-        additional_fields: [{ totalpayFieldName: "ИТОГО:" }],
+        additional_fields: [{totalpayFieldName: "ИТОГО:"}],
         createdAt: '',
         updatedAt: '',
         create_author: session.user.name,
@@ -65,7 +65,6 @@ export default function CreateRegistry() {
             if (formData.fields.length <= 0) {
                 throw new Error(`Таблица не может быть пуста`)
             }
-
 
 
             // Отправка данных формы на API

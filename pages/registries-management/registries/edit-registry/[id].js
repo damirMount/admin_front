@@ -19,7 +19,7 @@ export default function EditRegistryFile() {
         server_id: '',
         services_id: [],
         fields: [],
-        additional_fields:  [{ totalpayFieldName: "ИТОГО:" }],
+        additional_fields: [{totalpayFieldName: "ИТОГО:"}],
     });
     const [oldFormData, setOldFormData] = useState({
         name: '',
@@ -29,7 +29,7 @@ export default function EditRegistryFile() {
         server_id: '',
         services_id: [],
         fields: [],
-        additional_fields:  [{ totalpayFieldName: "ИТОГО:" }],
+        additional_fields: [{totalpayFieldName: "ИТОГО:"}],
     });
     const [processingLoader, setProcessingLoader] = useState(false);
     const {openNotification} = useAlert();
