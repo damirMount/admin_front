@@ -20,6 +20,7 @@ export default function CreateRegistry() {
         server_id: '',
         services_id: [],
         fields: [],
+        additional_fields:  [{ totalpayFieldName: "ИТОГО:" }],
         createdAt: '',
         updatedAt: '',
         create_author: session.user.name,
@@ -34,6 +35,7 @@ export default function CreateRegistry() {
         server_id: '',
         services_id: [],
         fields: [],
+        additional_fields: [{ totalpayFieldName: "ИТОГО:" }],
         createdAt: '',
         updatedAt: '',
         create_author: session.user.name,
@@ -92,7 +94,9 @@ export default function CreateRegistry() {
         }
         setProcessingLoader(false)
     };
-
+    useEffect(() => {
+        console.log(formData)
+    }, [formData]);
 
     return (
         <ProtectedElement allowedPermissions={'registry_management'}>
