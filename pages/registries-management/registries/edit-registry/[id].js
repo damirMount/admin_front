@@ -19,6 +19,7 @@ export default function EditRegistryFile() {
         server_id: '',
         services_id: [],
         fields: [],
+        additional_fields:  [{ totalpayFieldName: "ИТОГО:" }],
     });
     const [oldFormData, setOldFormData] = useState({
         name: '',
@@ -28,6 +29,7 @@ export default function EditRegistryFile() {
         server_id: '',
         services_id: [],
         fields: [],
+        additional_fields:  [{ totalpayFieldName: "ИТОГО:" }],
     });
     const [processingLoader, setProcessingLoader] = useState(false);
     const {openNotification} = useAlert();
@@ -94,6 +96,7 @@ export default function EditRegistryFile() {
             send_type: responseData.send_type,
             formats: responseData.formats,
             fields:  responseData.fields,
+            additional_fields: responseData.additional_fields,
             create_author: responseData.create_author,
             update_author: responseData.update_author,
             createdAt: responseData.createdAt,
