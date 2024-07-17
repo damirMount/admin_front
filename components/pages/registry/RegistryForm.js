@@ -698,7 +698,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                                 className="input-field"
                                 id="totalpayFieldName"
                                 name="totalpayFieldName"
-                                defaultValue={formData.additional_fields[0].totalpayFieldName}
+                                defaultValue={formData.additional_fields[0].totalpayFieldName || 'ИТОГО:'}
                                 onChange={handleAdditionalFieldChange}
                                 required
                             />
