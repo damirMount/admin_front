@@ -43,7 +43,7 @@
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
-    "next": "^14.2.5",
+    "next": "^13.5.6",
     "next-auth": "^4.24.6",
     "next-transpile-modules": "^10.0.1",
     "nookies": "^2.5.2",
@@ -59,5 +59,8 @@
     "react-uid": "^2.3.3",
     "typescript": "5.0.4",
     "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3"
   }
 }

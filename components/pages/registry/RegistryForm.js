@@ -225,28 +225,6 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
         onDataFieldsChange(newData);
     };
 
-    const handleAdditionalFieldChange = (event) => {
-        const {name, value} = event.target;
-        const newData = cloneDeep(formData);
-        let fieldExists = false;
-
-        // Обновляем существующие поля или добавляем новые
-        newData.additional_fields = newData.additional_fields.map(item => {
-            if (item.hasOwnProperty(name)) {
-                fieldExists = true;
-                return {...item, [name]: value};
-            }
-            return item;
-        });
-
-        if (!fieldExists) {
-            newData.additional_fields.push({[name]: value});
-        }
-
-        onDataFieldsChange(newData);
-    };
-
-
     const handleInputChange = (event) => {
         const {name, value} = event.target;
         const newData = cloneDeep(formData)
@@ -689,22 +667,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                     paginationPosition={['none']}
                 />
             </div>
-            <div className="d-flex w-100 justify-content-between align-items-center ">
-                <div className=' mt-3 d-flex align-items-center'>
-                    <Tooltip placement="bottom" title='Название поля с итоговой суммой'>
-                        <div>
-                            <FormInput
-                                type="text"
-                                className="input-field"
-                                id="totalpayFieldName"
-                                name="totalpayFieldName"
-                                defaultValue={formData.additional_fields[0].totalpayFieldName || 'ИТОГО:'}
-                                onChange={handleAdditionalFieldChange}
-                                required
-                            />
-                        </div>
-                    </Tooltip>
-                </div>
+            <div className="d-flex w-100 justify-content-end align-items-center ">
                 <div ref={refAddNewRow} className='w-25 mt-3 d-flex align-items-center'>
                     <Select
                         key={addFieldVariant}
