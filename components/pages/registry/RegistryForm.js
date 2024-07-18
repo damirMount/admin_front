@@ -420,6 +420,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                                         {value: 'C', label: 'CHAR'},
                                         {value: 'N', label: 'NUMERIC'},
                                         {value: 'D', label: 'DATE'},
+                                        {value: 'T', label: 'DATETIME'},
                                     ]}
                                 />
                             </Tooltip>
