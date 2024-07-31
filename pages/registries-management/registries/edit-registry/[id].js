@@ -19,7 +19,7 @@ export default function EditRegistryFile() {
         server_id: '',
         services_id: [],
         fields: [],
-        additional_fields:  [{ totalpayFieldName: "ИТОГО:" }],
+        additional_fields:  [{enableTotalpayField: true,  totalpayFieldName: "ИТОГО:" }],
     });
     const [oldFormData, setOldFormData] = useState({
         name: '',
@@ -29,7 +29,7 @@ export default function EditRegistryFile() {
         server_id: '',
         services_id: [],
         fields: [],
-        additional_fields:  [{ totalpayFieldName: "ИТОГО:" }],
+        additional_fields:  [{enableTotalpayField: true,  totalpayFieldName: "ИТОГО:" }],
     });
     const [processingLoader, setProcessingLoader] = useState(false);
     const {openNotification} = useAlert();
@@ -105,6 +105,9 @@ export default function EditRegistryFile() {
     };
 
     const fetchRegistryItem = async () => {
+        if(!itemId) {
+            return false
+        }
         try {
             const response = await fetch(`${REGISTRY_SHOW_API}/${itemId}`, {
                 headers: {
@@ -136,6 +139,9 @@ export default function EditRegistryFile() {
         }
     };
 
+    useEffect(() => {
+        console.log(formData.additional_fields.enableTotalpayField)
+    }, [formData]);
 
     useEffect(() => {
         fetchRegistryItem();

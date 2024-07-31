@@ -1,5 +1,5 @@
 import React, {useRef, useState} from "react";
-import {Divider, Empty, Input, InputNumber, Popconfirm, Select, Tooltip, Tour} from "antd";
+import {Checkbox, Divider, Empty, Input, InputNumber, Popconfirm, Select, Switch, Tooltip, Tour} from "antd";
 import SmartTable from "../../main/table/SmartTable";
 import UniversalSelect from "../../main/input/UniversalSelect";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -227,6 +227,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
 
     const handleAdditionalFieldChange = (event) => {
         const {name, value} = event.target;
+        console.log(name, value)
         const newData = cloneDeep(formData);
         let fieldExists = false;
 
@@ -234,7 +235,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
             newData.additional_fields = newData.additional_fields.map(item => {
                 if (item.hasOwnProperty(name)) {
                     fieldExists = true;
-                    return {...item, [name]: value};
+                    return {...item, [name]: value !== undefined ? value : checked};
                 }
                 return item;
             });
@@ -248,7 +249,28 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
 
         onDataFieldsChange(newData);
     };
+    const handleAdditionalFieldChangeCheckBox = (checked) => {
+        const newData = cloneDeep(formData);
+        let fieldExists = false;
 
+        if (Array.isArray(newData.additional_fields)) {
+            newData.additional_fields = newData.additional_fields.map(item => {
+                if (item.hasOwnProperty('enableTotalpayField')) {
+                    fieldExists = true;
+                    return { ...item, enableTotalpayField: checked };
+                }
+                return item;
+            });
+        } else {
+            newData.additional_fields = []; // или любое другое значение по умолчанию, в зависимости от логики вашего приложения
+        }
+
+        if (!fieldExists) {
+            newData.additional_fields.push({ enableTotalpayField: checked });
+        }
+
+        onDataFieldsChange(newData);
+    };
 
     const handleInputChange = (event) => {
         const {name, value} = event.target;
@@ -545,6 +567,14 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
         return options
     }
 
+    const findFieldValue = (fields, key) => {
+        try {
+            const field = fields.find(item => item.hasOwnProperty(key));
+            return field ? field[key] : undefined;
+        } catch (error) {
+            return undefined
+        }
+    };
 
     return (
         <>
@@ -695,14 +725,22 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
             </div>
             <div className="d-flex w-100 justify-content-between align-items-center ">
                 <div className=' mt-3 d-flex align-items-center'>
+                    <Tooltip placement="leftTop" title='Включить отображение поля'>
+                        <Switch
+                            defaultChecked={findFieldValue(formData.additional_fields, 'enableTotalpayField')}
+                            onChange={(checked) => handleAdditionalFieldChangeCheckBox(checked)}
+                        />
+
+                    </Tooltip>
+
                     <Tooltip placement="bottom" title='Название поля с итоговой суммой'>
                         <div>
                             <FormInput
                                 type="text"
-                                className="input-field"
+                                className="ms-3 input-field"
                                 id="totalpayFieldName"
                                 name="totalpayFieldName"
-                                defaultValue={formData.additional_fields.length > 0 ? formData.additional_fields[0]?.totalpayFieldName || 'ИТОГО:' : 'ИТОГО:'}
+                                defaultValue={findFieldValue(formData.additional_fields, 'totalpayFieldName') || 'ИТОГО:'}
                                 onChange={handleAdditionalFieldChange}
                                 required
                             />
