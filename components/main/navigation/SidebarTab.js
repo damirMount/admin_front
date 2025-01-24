@@ -54,7 +54,7 @@ const SidebarTab = () => {
                     ]
                 },
                 {
-                    label: 'Сервисы', permission: 'reports_dealer', subMenu: [
+                    label: 'Сервисы', subMenu: [
                         {label: 'Северэлектро', link: REPORT_SERVICES_NORTH_ELECTRO_URL},
                     ]
                 }

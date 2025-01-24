@@ -120,7 +120,7 @@ export default function DealerExportPage() {
 
 
     return (
-        <ProtectedElement allowedPermissions={'reports_dealer'}>
+        <ProtectedElement allowedPermissions={'reports_management'}>
             <div>
                 <Head>
                     <title>Итоговый отчет по Северэлектро | {process.env.NEXT_PUBLIC_APP_NAME}</title>
