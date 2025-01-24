@@ -17,7 +17,7 @@ import {
     REGISTRY_LOGS_URL,
     REGISTRY_RESEND_URL,
     REPORT_DEALERS_ACCOUNT_HISTORY_URL,
-    REPORT_DEALERS_TSJ_URL,
+    REPORT_DEALERS_TSJ_URL, REPORT_SERVICES_NORTH_ELECTRO_URL,
     ROLES_INDEX_URL,
     TEST_ZONE_URL
 } from "../../../routes/web";
@@ -51,6 +51,11 @@ const SidebarTab = () => {
                     label: 'Дилеры', permission: 'reports_dealer', subMenu: [
                         {label: 'История счетов', link: REPORT_DEALERS_ACCOUNT_HISTORY_URL},
                         {label: 'Дилеры ТСЖ', link: REPORT_DEALERS_TSJ_URL}
+                    ]
+                },
+                {
+                    label: 'Сервисы', permission: 'reports_dealer', subMenu: [
+                        {label: 'Северэлектро', link: REPORT_SERVICES_NORTH_ELECTRO_URL},
                     ]
                 }
             ]

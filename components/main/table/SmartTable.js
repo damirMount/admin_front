@@ -17,7 +17,9 @@ const SmartTable = ({
                         expandable,
                         onRow,
                         data = [],
-                        onUpdateData
+                        onUpdateData,
+                        loading = false,
+                        size= 'large'
                     }) => {
     const {openNotification} = useAlert();
     const {data: session} = useSession(); // Получаем сессию
@@ -99,6 +101,8 @@ const SmartTable = ({
                     onRow={onRow}
                     rowClassName={rowClassName}
                     bordered={true}
+                    loading={loading}
+                    size={size}
                     columns={columns}
                     dataSource={dataTable}
                     components={{

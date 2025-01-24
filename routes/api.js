@@ -29,8 +29,10 @@ export const REGISTRY_LOG_DOWNLOAD_API = `${baseURL}/api/registryLog/download`
 
 export const ACQUIRING_COMPARISON_API = `${baseURL}/api/acquiring/comparison`
 
-export const DEALER_REPORTS_EXPORT_API = `${baseURL}/api/dealer/reports/createReport`
-export const DEALER_REPORTS_UPDATE_TSJ_DEALER_API = `${baseURL}/api/dealer/reports/updateTSJDealer`
+export const DEALER_REPORTS_EXPORT_API = `${baseURL}/api/reports/dealer/createReport`
+export const DEALER_REPORTS_UPDATE_TSJ_DEALER_API = `${baseURL}/api/reports/dealer/updateTSJDealer`
+
+export const GET_REPORTS_NORTHELECTRO_REPORT_API = `${baseURL}/api/reports/service/northelectro`
 
 export const GSFR_UPDATE_API = `${baseURL}/api/GSFR/updateGFSR`
 

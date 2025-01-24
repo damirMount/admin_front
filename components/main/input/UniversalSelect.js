@@ -17,6 +17,7 @@ const UniversalSelect = ({
                              fetchDataConfig = false,
                              isMulti,
                              isSearchable,
+                             isDisabled = false,
                              selectedOptions = [],
                              firstOptionSelected,
                              onSelectChange,
@@ -231,6 +232,7 @@ const UniversalSelect = ({
                 isMulti={isMultiSelect}
                 isSearchable={isSearchable}
                 value={selectedValue}
+                isDisabled={isDisabled}
                 onChange={(newValue) => setAndNotifyChange(newValue)}
             />
             {createNewValues && type && (

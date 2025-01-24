@@ -14,7 +14,7 @@ const DateRangePicker = ({startDate, endDate, onDateChange}) => {
 
     return (
         <div className="d-flex flex-column">
-            <label>Период отправки</label>
+            <label>Период времени</label>
             <RangePicker
                 size="large"
                 defaultValue={[

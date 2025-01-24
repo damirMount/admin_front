@@ -15,6 +15,7 @@ export const REGISTRY_LOGS_URL = '/registries-management/log/index-page'
 
 export const REPORT_DEALERS_ACCOUNT_HISTORY_URL = '/reports/dealer/export'
 export const REPORT_DEALERS_TSJ_URL = '/reports/dealer/tsj-dealer'
+export const REPORT_SERVICES_NORTH_ELECTRO_URL = '/reports/service/north-electro'
 
 export const GSFR_UPDATE_URL = '/updates/gsfr/update'
 export const OFFLINE_SERVICE_DATABASE_UPDATE_INDEX_URL = '/updates/offline-services/update-db'
