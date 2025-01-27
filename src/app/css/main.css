@@ -400,6 +400,7 @@ h1 {
 
 .card {
     box-shadow: var(--bs-box-shadow-sm) !important;
+    font-size: 14px;
 }
 
 .toast {

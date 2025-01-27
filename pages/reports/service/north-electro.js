@@ -7,7 +7,7 @@ import {useSession} from "next-auth/react";
 import {useAlert} from "../../../contexts/AlertContext";
 import ProtectedElement from "../../../components/main/system/ProtectedElement";
 import SmartTable from "../../../components/main/table/SmartTable";
-import {Divider, Select, Statistic} from "antd";
+import {Divider, Statistic} from "antd";
 
 
 export default function DealerExportPage() {
@@ -142,6 +142,7 @@ export default function DealerExportPage() {
                                 <div className="form-group w-50 me-2">
                                     <label htmlFor="selected_report_type">Тип сервиса</label>
                                     <UniversalSelect
+                                        isSearchable={false}
                                         firstOptionSelected
                                         options={[
                                             {value: 'offline', label: 'Оффлайн сервис'},
@@ -156,6 +157,7 @@ export default function DealerExportPage() {
                                     <label htmlFor="selected_report_type">Тип клиентов</label>
 
                                     <UniversalSelect
+                                        isSearchable={false}
                                         selectedOptions={'physical'}
                                         options={[
                                             {value: 'physical', label: 'Физ. лица'},
@@ -171,6 +173,7 @@ export default function DealerExportPage() {
                             <div className="form-group">
                                 <label htmlFor="selected_report_type">Тип платежей</label>
                                 <UniversalSelect
+                                    isSearchable={false}
                                     selectedOptions={'ordinary'}
                                     options={[
                                         {value: 'all', label: 'Все платежи'},
@@ -198,7 +201,8 @@ export default function DealerExportPage() {
                             </div>
                             <Divider/>
                             <div className="d-flex justify-content-center">
-                                <button type="button" className="btn btn-purple" disabled={loading} onClick={handleCreateReport}>
+                                <button type="button" className="btn btn-purple" disabled={loading}
+                                        onClick={handleCreateReport}>
                                     Получить отчёт
                                 </button>
                             </div>
