@@ -1,8 +1,8 @@
 import {useRouter} from 'next/router';
-import {LOGIN_PAGE_URL} from "../../routes/web";
+import {LOGIN_PAGE_URL, MAIN_PAGE_URL} from "../../routes/web";
 import SidebarTab from "../main/navigation/SidebarTab";
 import Navbar from "../main/navigation/Navbar";
-import {ConfigProvider, Layout, Menu} from "antd";
+import {ConfigProvider} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import Footer from "../main/Footer";
 import {useSession} from 'next-auth/react';
@@ -11,8 +11,14 @@ const AuthCheck = (WrappedComponent) => {
     const Check = (props) => {
         const router = useRouter();
         const {data: session} = useSession(); // Получаем сессию здесь
+        const sessionExpired = new Date(session.expires).getTime() < Date.now();
 
-        if ((!session || new Date(session.expires).getTime() < Date.now()) && router.pathname !== LOGIN_PAGE_URL) {
+        if ((session && !sessionExpired) && router.pathname === LOGIN_PAGE_URL) {
+            router.replace(MAIN_PAGE_URL);
+            return null;
+        }
+
+        if ((!session || sessionExpired) && router.pathname !== LOGIN_PAGE_URL) {
             router.replace(LOGIN_PAGE_URL);
             return null;
         } else {

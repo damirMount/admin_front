@@ -11,7 +11,7 @@ const Navbar = () => {
                     <li className="nav-item">
                         <a className="navbar-brand d-flex align-items-center" href={MAIN_PAGE_URL}>
                             <Image src="/favicon.ico" width='32' height='32' className="me-2" alt='Логотип'/>
-                            Mancho Admin
+                            {process.env.NEXT_PUBLIC_APP_NAME}
                         </a>
                     </li>
                     {/*<li className="nav-item">*/}

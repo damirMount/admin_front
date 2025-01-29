@@ -4,6 +4,7 @@ import {faHandHoldingDollar, faLandmark, faMoneyBillTrendUp, faSackDollar} from 
 import Head from "next/head";
 import Link from "next/link";
 import {
+    MAIN_PAGE_URL,
     OLD_ADMIN_URL,
     REGISTRY_INDEX_URL,
     REGISTRY_RESEND_URL,
@@ -11,7 +12,7 @@ import {
     REPORT_SERVICES_NORTH_ELECTRO_URL
 } from "../routes/web";
 import ProtectedElement from "../components/main/system/ProtectedElement";
-import {Badge, Statistic} from "antd";
+import {Badge, Button, Statistic} from "antd";
 
 
 export default function Home() {
@@ -59,8 +60,7 @@ export default function Home() {
                                         <div className="card-body d-flex flex-column justify-content-between">
                                             <h5 className="card-title">Итоговый отчёт по Северэлектро</h5>
                                             <p>Статистика платежей по всем РЭС Северэлектро</p>
-                                            <Link className="btn btn-purple "
-                                                  href={REPORT_SERVICES_NORTH_ELECTRO_URL}>Перейти</Link>
+                                            <Button type="primary" href={REPORT_SERVICES_NORTH_ELECTRO_URL}>Перейти</Button>
                                         </div>
                                     </Badge.Ribbon>
                                 </div>
@@ -72,7 +72,7 @@ export default function Home() {
                                     <div className="card-body d-flex flex-column justify-content-between">
                                         <h5 className="card-title">Перезапуск реестров</h5>
                                         <p>Здесь вы можете в ручную оставить реестры по конкретному сервису</p>
-                                        <Link className="btn btn-purple " href={REGISTRY_RESEND_URL}>Перейти</Link>
+                                        <Button type="primary" href={REGISTRY_RESEND_URL}>Перейти</Button>
                                     </div>
                                 </div>
                             </div>
@@ -84,8 +84,7 @@ export default function Home() {
                                     <div className="card-body d-flex flex-column justify-content-between">
                                         <h5 className="card-title">Отчёт по истории счётов дилеров</h5>
                                         <p>Возможность выгрузки истории счёта по всем дилерам</p>
-                                        <Link className="btn btn-purple "
-                                              href={REPORT_DEALERS_ACCOUNT_HISTORY_URL}>Перейти</Link>
+                                        <Button type="primary" href={REPORT_DEALERS_ACCOUNT_HISTORY_URL}>Перейти</Button>
                                     </div>
                                 </div>
                             </div>
@@ -96,7 +95,7 @@ export default function Home() {
                                     <div className="card-body d-flex flex-column justify-content-between">
                                         <h5 className="card-title">Реестры</h5>
                                         <p>Старинца ежедневных реестров</p>
-                                        <Link className="btn btn-purple " href={REGISTRY_INDEX_URL}>Перейти</Link>
+                                        <Button type="primary" href={REGISTRY_INDEX_URL}>Перейти</Button>
                                     </div>
                                 </div>
                             </div>
@@ -106,7 +105,7 @@ export default function Home() {
                                 <div className="card-body d-flex flex-column justify-content-between">
                                     <h5 className="card-title">Старая админ зона</h5>
                                     <p>Вернуться в старую админ зону</p>
-                                    <Link className="btn btn-purple " href={OLD_ADMIN_URL}>Перейти</Link>
+                                    <Button type="primary" href={OLD_ADMIN_URL}>Перейти</Button>
                                 </div>
                             </div>
                         </div>

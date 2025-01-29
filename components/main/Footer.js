@@ -4,7 +4,7 @@ const Footer = () => {
     return (
         <footer className='position-relative'>
             <div className="footer-container container">
-                <span>{process.env.NEXT_PUBLIC_APP_NAME} - Alpha v1.3.5</span>
+                <span>{process.env.NEXT_PUBLIC_APP_NAME} - Alpha v2.5.7</span>
             </div>
         </footer>
     );

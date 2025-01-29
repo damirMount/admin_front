@@ -136,9 +136,12 @@ export default function DealerExportPage() {
                             columns={tableColumns}
                             data={dataTable}
                         />
+
                         <div className='border-end ms-3 mt-3 me-2'></div>
+
                         <div className='d-flex w-75 ms-4 flex-column'>
                             <div className='d-flex justify-content-between'>
+
                                 <div className="form-group w-50 me-2">
                                     <label htmlFor="selected_report_type">Тип сервиса</label>
                                     <UniversalSelect
@@ -153,9 +156,9 @@ export default function DealerExportPage() {
                                         name="serviceType"
                                     />
                                 </div>
+
                                 <div className="form-group w-50">
                                     <label htmlFor="selected_report_type">Тип клиентов</label>
-
                                     <UniversalSelect
                                         isSearchable={false}
                                         selectedOptions={'physical'}
@@ -169,7 +172,9 @@ export default function DealerExportPage() {
                                         name="clientType"
                                     />
                                 </div>
+
                             </div>
+
                             <div className="form-group">
                                 <label htmlFor="selected_report_type">Тип платежей</label>
                                 <UniversalSelect
@@ -186,12 +191,14 @@ export default function DealerExportPage() {
                                     name="paymentType"
                                 />
                             </div>
+
                             <DateRangePicker
                                 onDateChange={(dates) => {
                                     setStartDate(dates[0]);
                                     setEndDate(dates[1]);
                                 }}
                             />
+
                             <Divider/>
                             <div className='d-flex justify-content-between'>
                                 <Statistic title="Итоговая сумма" value={totalAmount} precision={2} suffix={'сом'}
@@ -200,6 +207,7 @@ export default function DealerExportPage() {
                                            loading={loading}/>
                             </div>
                             <Divider/>
+
                             <div className="d-flex justify-content-center">
                                 <button type="button" className="btn btn-purple" disabled={loading}
                                         onClick={handleCreateReport}>

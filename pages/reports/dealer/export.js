@@ -109,6 +109,7 @@ export default function DealerExportPage() {
                                     <div className="form-group">
                                         <label htmlFor="is_blocked">Выберите отчет</label>
                                         <UniversalSelect
+                                            isDisabled={true}
                                             firstOptionSelected
                                             options={[
                                                 {value: '0', label: 'Проведенные платежи'}
@@ -129,6 +130,7 @@ export default function DealerExportPage() {
                                             className="ps-3 input-form d-flex justify-content-between bg-white align-items-center">
                                             <label className='text-nowrap me-5 fw-normal'>Выберете опцию</label>
                                             <UniversalSelect
+                                                isDisabled={true}
                                                 firstOptionSelected
                                                 options={[
                                                     {value: 0, label: 'Проведения платежа'},
@@ -148,6 +150,7 @@ export default function DealerExportPage() {
                                     <div className="form-group">
                                         <label htmlFor="is_blocked">Дилер</label>
                                         <UniversalSelect
+                                            isDisabled={true}
                                             firstOptionSelected
                                             options={[
                                                 {value: '0', label: 'По всем дилерам'}
@@ -165,6 +168,7 @@ export default function DealerExportPage() {
                                     <div className="form-group">
                                         <label htmlFor="is_blocked">Поставщик</label>
                                         <UniversalSelect
+                                            isDisabled={true}
                                             firstOptionSelected
                                             options={[
                                                 {value: '0', label: 'По всем поставщикам'}

@@ -168,16 +168,13 @@ export default function TestPage() {
         xField: 'date',
         yField: 'price',
         style: {
-            fill: `linear-gradient(-90deg, white 0%, darkblue 100%)`,
+            fill: `linear-gradient(-90deg, white 0%, ${color} 100%)`,
         },
-        axis: {
-            y: {labelFormatter: ''},
-        },
+
 
         line: {
             style: {
-                stroke: 'darkblue',
-                strokeWidth: 2,
+                stroke: color,
             },
         },
     };
