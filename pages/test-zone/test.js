@@ -15,6 +15,7 @@ import SmartTable from "../../components/main/table/SmartTable";
 import {useAlert} from "../../contexts/AlertContext";
 import ProtectedElement from "../../components/main/system/ProtectedElement";
 import FormInput from "../../components/main/input/FormInput";
+import Custom500 from "../_error";
 
 export default function TestPage() {
     const {openNotification, openConfirmAction, closeConfirmAction} = useAlert();
@@ -52,7 +53,7 @@ export default function TestPage() {
     };
 
     const getServerSideProps = () => {
-       return throw new Error("Это тестовая ошибка 500");
+       return <Custom500 />;
     }
 
     const tableColumns = [
