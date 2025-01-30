@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from "next/head";
 import {Button, Result} from "antd";
-import {MAIN_PAGE_URL} from "../routes/web";
+import {MAIN_PAGE_URL} from "../../routes/web";
 
 export default function Error500() {
     return (

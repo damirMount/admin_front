@@ -52,10 +52,6 @@ export default function TestPage() {
         }));
     };
 
-    const getServerSideProps = () => {
-       return <Custom500 />;
-    }
-
     const tableColumns = [
         {
             key: 'sort'
@@ -220,16 +216,6 @@ export default function TestPage() {
                                     })}
                                 >
                                     Ошибка
-                                </bottom>
-                                <bottom
-                                    type="primary"
-                                    className="ms-2 btn btn-outline-danger"
-                                    onClick={() => getServerSideProps({
-                                        type: "error",
-                                        message: 'Произошла неизвестная ошибка'
-                                    })}
-                                >
-                                    Ошибка 500
                                 </bottom>
                                 <bottom
                                     type="primary"
