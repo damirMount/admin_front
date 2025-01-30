@@ -3,7 +3,7 @@ import Head from "next/head";
 import {Button, Result} from "antd";
 import {MAIN_PAGE_URL} from "../routes/web";
 
-export default function Error({ statusCode }) {
+export default function Custom500() {
     return (
         <div>
             <Head>

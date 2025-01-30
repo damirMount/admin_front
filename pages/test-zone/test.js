@@ -52,7 +52,7 @@ export default function TestPage() {
     };
 
     const getServerSideProps = () => {
-        throw new Error("Это тестовая ошибка 500");
+       return throw new Error("Это тестовая ошибка 500");
     }
 
     const tableColumns = [
