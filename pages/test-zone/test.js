@@ -15,7 +15,6 @@ import SmartTable from "../../components/main/table/SmartTable";
 import {useAlert} from "../../contexts/AlertContext";
 import ProtectedElement from "../../components/main/system/ProtectedElement";
 import FormInput from "../../components/main/input/FormInput";
-import ChartArea from "../../components/main/charts/ChartArea";
 
 export default function TestPage() {
     const {openNotification, openConfirmAction, closeConfirmAction} = useAlert();
@@ -52,6 +51,9 @@ export default function TestPage() {
         }));
     };
 
+    const getServerSideProps = () => {
+        throw new Error("Это тестовая ошибка 500");
+    }
 
     const tableColumns = [
         {
@@ -158,7 +160,6 @@ export default function TestPage() {
     };
 
 
-
     const config = {
         data: {
             type: 'fetch',
@@ -208,35 +209,45 @@ export default function TestPage() {
                             // type='number'
                         />
                         <div className='d-flex mt-2 justify-content-between'>
-                            <div className='d-flex align-items-center'>
-                            <bottom
-                                type="primary"
-                                className="btn btn-danger"
-                                onClick={() => openNotification({
-                                    type: "error",
-                                    message: 'Произошла неизвестная ошибка'
-                                })}
-                            >
-                                Ошибка
-                            </bottom>
-                            <bottom
-                                type="primary"
-                                className="ms-2 btn btn-success"
-                                onClick={() => openNotification({
-                                    type: "success",
-                                    message: 'Операция выполнена успешно'
-                                })}
-                            >
-                                Успех
-                            </bottom>
-                            <FormInput
-                                defaultValue={formData.value1}
-                                className='ms-2'
-                                name='value1'
-                                value={updatedFormData.value1}
-                                placeholder="Введите данные"
-                                onChange={handleChange}
-                            />
+                            <div className='d-flex align-items-center text-nowrap'>
+                                <bottom
+                                    type="primary"
+                                    className="btn btn-danger"
+                                    onClick={() => openNotification({
+                                        type: "error",
+                                        message: 'Произошла неизвестная ошибка'
+                                    })}
+                                >
+                                    Ошибка
+                                </bottom>
+                                <bottom
+                                    type="primary"
+                                    className="ms-2 btn btn-outline-danger"
+                                    onClick={() => getServerSideProps({
+                                        type: "error",
+                                        message: 'Произошла неизвестная ошибка'
+                                    })}
+                                >
+                                    Ошибка 500
+                                </bottom>
+                                <bottom
+                                    type="primary"
+                                    className="ms-2 btn btn-success"
+                                    onClick={() => openNotification({
+                                        type: "success",
+                                        message: 'Операция выполнена успешно'
+                                    })}
+                                >
+                                    Успех
+                                </bottom>
+                                <FormInput
+                                    defaultValue={formData.value1}
+                                    className='ms-2'
+                                    name='value1'
+                                    value={updatedFormData.value1}
+                                    placeholder="Введите данные"
+                                    onChange={handleChange}
+                                />
                             </div>
                             <div className='d-flex align-items-end'>
                                 <DatePicker.RangePicker
