@@ -11,7 +11,11 @@ const AuthCheck = (WrappedComponent) => {
     const Check = (props) => {
         const router = useRouter();
         const {data: session} = useSession(); // Получаем сессию здесь
-        const sessionExpired = new Date(session.expires).getTime() < Date.now();
+        let sessionExpired
+        if (session) {
+            sessionExpired = new Date(session.expires).getTime() < Date.now();
+        }
+
 
         if ((session && !sessionExpired) && router.pathname === LOGIN_PAGE_URL) {
             router.replace(MAIN_PAGE_URL);
