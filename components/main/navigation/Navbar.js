@@ -14,9 +14,6 @@ const Navbar = () => {
                             {process.env.NEXT_PUBLIC_APP_NAME}
                         </a>
                     </li>
-                    {/*<li className="nav-item">*/}
-                    {/*    <SearchInput onSearchSubmit={handleSearchSubmit}/>*/}
-                    {/*</li>*/}
                 </ul>
             </div>
         </div>

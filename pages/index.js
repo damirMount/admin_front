@@ -13,6 +13,7 @@ import {
 } from "../routes/web";
 import ProtectedElement from "../components/main/system/ProtectedElement";
 import {Badge, Button, Statistic} from "antd";
+import ChartArea from "../components/main/charts/ChartArea";
 
 
 export default function Home() {
@@ -51,7 +52,6 @@ export default function Home() {
             <div className='d-flex justify-content-between'>
                 <div className="w-75">
                     {/*<h3>Новости</h3>*/}
-                    {/*<ChartArea config={config} />*/}
                     <div className="row row-cols-1 row-cols-md-3 g-4">
                         <ProtectedElement allowedPermissions={'reports_management'} redirect={false}>
                             <div className="col">
@@ -111,7 +111,7 @@ export default function Home() {
                         </div>
 
                     </div>
-
+                    <ChartArea config={config} />
                 </div>
                 <div className="w-25 ms-4 text-nowrap">
                     {/*<h3>Статистика</h3>*/}
