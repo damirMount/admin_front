@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {Skeleton} from "antd";
+import {Button, Empty, Skeleton} from "antd";
+import { Typography } from 'antd';
+const { Text, Title } = Typography;
 
-const ChartArea = ({config, className, style, loading}) => {
+const ChartArea = ({config, className, style, loading, onCallBack}) => {
     const [AreaComponent, setAreaComponent] = useState(null); // Состояние для компонента
     const [isLoaded, setIsLoaded] = useState(false); // Состояние для отслеживания завершения загрузки
 
@@ -24,6 +26,20 @@ const ChartArea = ({config, className, style, loading}) => {
                 active={loading}
                 style={{width: '100%', minHeight: '70.05vh', fontSize: 0}}
             />
+        );
+    }
+
+    if ((!loading || isLoaded) && (config && config.data.length <= 0)) {
+        return (
+            <div className="ant-result d-flex flex-column align-items-center justify-content-center"
+                 style={{width: '100%', minHeight: '70.05vh'}}>
+                <Empty description={false} />
+                <Title level={3} className='ant-result-title'>ДАННЫЕ ОТСУТВУЮТ</Title>
+                <Text type="secondary">Извините, но мы не смогли ничего найти по вашему запросу.</Text>
+                {onCallBack ? (
+                    <Button type="primary" className="mt-4" onClick={onCallBack}>Попробовать ещё раз</Button>
+                ) : {}}
+            </div>
         );
     }
 

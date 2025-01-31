@@ -11,6 +11,7 @@ const PaymentsChart = () => {
     const [data, setData] = useState([]);
 
     const getPaymentsStatistic = async () => {
+        setLoading(true)
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 7); // Вычитаем 7 дней
 
@@ -81,6 +82,7 @@ const PaymentsChart = () => {
     // После загрузки компонента отображаем его с переданными пропсами и стилями
     return (
         <ChartArea
+            onCallBack={getPaymentsStatistic}
             loading={loading}
             key={data}
             config={config}

@@ -161,6 +161,7 @@ tr, td, table, tbody, th, thead, tfoot {
     max-height: 165px;
     overflow-y: auto;
 }
-canvas {
-    /*display: none;*/
+.ant-result .ant-result-title {
+    font-weight: 400;
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
 }
