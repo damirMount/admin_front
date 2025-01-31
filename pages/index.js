@@ -1,10 +1,7 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import React from "react";
-import {faHandHoldingDollar, faLandmark, faMoneyBillTrendUp, faSackDollar} from "@fortawesome/free-solid-svg-icons";
+import {faMoneyBillTrendUp, faSackDollar} from "@fortawesome/free-solid-svg-icons";
 import Head from "next/head";
-import Link from "next/link";
 import {
-    MAIN_PAGE_URL,
     OLD_ADMIN_URL,
     REGISTRY_INDEX_URL,
     REGISTRY_RESEND_URL,
@@ -14,32 +11,18 @@ import {
 import ProtectedElement from "../components/main/system/ProtectedElement";
 import {Badge, Button, Statistic} from "antd";
 import ChartArea from "../components/main/charts/ChartArea";
+import DealerBalance from "../components/main/statistic/DealerBalance";
+import {GET_PAYMENTS_STATISTIC_API} from "../routes/api";
+import {useAlert} from "../contexts/AlertContext";
+import {useSession} from "next-auth/react";
+import {useEffect, useState} from "react";
+import PaymentsChart from "../components/main/charts/PaymentsChart";
+import PaymetnsToday from "../components/main/statistic/PaymetnsToday";
 
 
 export default function Home() {
 
-    const config = {
-        data: {
-            type: 'fetch',
-            value: 'https://assets.antv.antgroup.com/g2/stocks.json',
-            transform: [{type: 'filter', callback: (d) => d.symbol === 'GOOG'}],
-        },
-        xField: 'date',
-        yField: 'price',
-        style: {
-            fill: `linear-gradient(-90deg, white 0%, darkblue 100%)`,
-        },
-        axis: {
-            y: {labelFormatter: ''},
-        },
 
-        line: {
-            style: {
-                stroke: 'darkblue',
-                strokeWidth: 2,
-            },
-        },
-    };
 
     return (
         <div>
@@ -50,9 +33,10 @@ export default function Home() {
                 <h1>Главная страница</h1>
             </div>
             <div className='d-flex justify-content-between'>
-                <div className="w-75">
-                    {/*<h3>Новости</h3>*/}
-                    <div className="row row-cols-1 row-cols-md-3 g-4">
+                <div className="w-75 d-flex flex-column">
+                    <PaymentsChart/>
+
+                    <div className="row row-cols-1 row-cols-md-3 g-4 mt-3">
                         <ProtectedElement allowedPermissions={'reports_management'} redirect={false}>
                             <div className="col">
                                 <div className="card h-100">
@@ -60,7 +44,8 @@ export default function Home() {
                                         <div className="card-body d-flex flex-column justify-content-between">
                                             <h5 className="card-title">Итоговый отчёт по Северэлектро</h5>
                                             <p>Статистика платежей по всем РЭС Северэлектро</p>
-                                            <Button type="primary" href={REPORT_SERVICES_NORTH_ELECTRO_URL}>Перейти</Button>
+                                            <Button type="primary"
+                                                    href={REPORT_SERVICES_NORTH_ELECTRO_URL}>Перейти</Button>
                                         </div>
                                     </Badge.Ribbon>
                                 </div>
@@ -84,7 +69,8 @@ export default function Home() {
                                     <div className="card-body d-flex flex-column justify-content-between">
                                         <h5 className="card-title">Отчёт по истории счётов дилеров</h5>
                                         <p>Возможность выгрузки истории счёта по всем дилерам</p>
-                                        <Button type="primary" href={REPORT_DEALERS_ACCOUNT_HISTORY_URL}>Перейти</Button>
+                                        <Button type="primary"
+                                                href={REPORT_DEALERS_ACCOUNT_HISTORY_URL}>Перейти</Button>
                                     </div>
                                 </div>
                             </div>
@@ -111,34 +97,12 @@ export default function Home() {
                         </div>
 
                     </div>
-                    <ChartArea config={config} />
+
                 </div>
                 <div className="w-25 ms-4 text-nowrap">
                     {/*<h3>Статистика</h3>*/}
-                    <div className="card">
-                        <div className="card-body">
-                            <Statistic prefix={
-                                <FontAwesomeIcon icon={faHandHoldingDollar} className='color-purple me-2'/>
-                            } title="Баланс" value={1234567} precision={2} suffix={'сом'}
-                            />
-                            <Statistic prefix={
-                                <FontAwesomeIcon icon={faLandmark} className='color-purple me-2'/>
-                            } title="Кредит" value={1234567} precision={2} suffix={'сом'}
-                            />
-                        </div>
-                    </div>
-                    <div className="card mt-4">
-                        <div className="card-body">
-                            <Statistic prefix={
-                                <FontAwesomeIcon icon={faMoneyBillTrendUp} className='color-purple me-2'/>
-                            } title="Сегодня принято платежей" value={123456} suffix={'шт.'}
-                            />
-                            <Statistic prefix={
-                                <FontAwesomeIcon icon={faSackDollar} className='color-purple me-2'/>
-                            } title="Проведено" value={1234567} precision={2} suffix={'сом'}
-                            />
-                        </div>
-                    </div>
+                    <DealerBalance/>
+                    <PaymetnsToday/>
                 </div>
             </div>
 

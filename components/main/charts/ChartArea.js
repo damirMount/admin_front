@@ -1,43 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
+import {Skeleton} from "antd";
 
-const ChartArea = ({config}) => {
-    const [areaComponent, setAreaComponent] = useState(null);
+const ChartArea = ({config, className, style, loading}) => {
+    const [AreaComponent, setAreaComponent] = useState(null); // Состояние для компонента
+    const [isLoaded, setIsLoaded] = useState(false); // Состояние для отслеживания завершения загрузки
 
     useEffect(() => {
-        const fetchComponent = async () => {
-            // Ленивая загрузка компонента Area
-            const { Area } = await import('@ant-design/charts');
-            setAreaComponent(<Area {...config} />);
+        const loadComponent = async () => {
+            // Динамическая загрузка компонента
+            const {Area} = await import('@ant-design/charts');
+            setAreaComponent(() => Area); // Устанавливаем компонент после загрузки
+            setIsLoaded(true); // Меняем состояние, когда компонент загружен
         };
 
-        fetchComponent();
-    }, []); 
+        loadComponent();
+    }, []); // Загружаем компонент только один раз при монтировании
 
-    // const config = {
-    //     data: {
-    //         type: 'fetch',
-    //         value: 'https://assets.antv.antgroup.com/g2/stocks.json',
-    //         transform: [{ type: 'filter', callback: (d) => d.symbol === 'GOOG' }],
-    //     },
-    //
-    //     xField: 'date',
-    //     yField: 'price',
-    //     style: {
-    //         fill: 'linear-gradient(-90deg, white 0%, darkblue 100%)',
-    //     },
-    //     axis: {
-    //         y: { labelFormatter: '~s' },
-    //     },
-    //     line: {
-    //         style: {
-    //             stroke: 'darkblue',
-    //             strokeWidth: 2,
-    //         },
-    //     },
-    //     // interactions: [{ type: 'brush' }],
-    // };
+    // Пока компонент не загружен, показываем скелет
+    if (loading || !isLoaded) {
+        return (
+            <Skeleton.Node
+                className={loading ? '' : 'd-none'}
+                active={loading}
+                style={{width: '100%', minHeight: '70.05vh', fontSize: 0}}
+            />
+        );
+    }
 
-    return areaComponent;
+    // После загрузки компонента отображаем его с переданными пропсами и стилями
+    return (
+        <div
+            className={className}
+            style={{
+                ...style,
+                display: 'block', // Показываем компонент после загрузки
+            }}
+        >
+            <AreaComponent {...config} /> {/* Отображаем компонент с конфигурацией */}
+        </div>
+    );
 };
 
 export default ChartArea;

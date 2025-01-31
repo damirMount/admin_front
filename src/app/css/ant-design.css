@@ -161,3 +161,6 @@ tr, td, table, tbody, th, thead, tfoot {
     max-height: 165px;
     overflow-y: auto;
 }
+canvas {
+    /*display: none;*/
+}

@@ -41,6 +41,11 @@ export const PERMISSION_SHOW_API = `${baseURL}/api/permission`
 export const PERMISSION_UPDATE_API = `${baseURL}/api/permission`
 export const PERMISSION_DELETE_API = `${baseURL}/api/permission`
 
+export const GET_DEALER_BALANCE_API = `${baseURL}/api/dealer/getBalance`
+export const GET_DEALER_CREDIT_API = `${baseURL}/api/dealer/getCredit`
+
+export const GET_PAYMENTS_STATISTIC_API = `${baseURL}/api/payments/getTotalPayments`
+
 // export const ROLE_CREATE_API = `${baseURL}/api/role`
 export const ROLE_SHOW_API = `${baseURL}/api/role`
 export const ROLE_UPDATE_API = `${baseURL}/api/role`
