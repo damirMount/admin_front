@@ -3,6 +3,7 @@ import {useAlert} from "../../../contexts/AlertContext";
 import {useSession} from "next-auth/react";
 import {GET_PAYMENTS_STATISTIC_API} from "../../../routes/api";
 import ChartArea from "./ChartArea";
+import moment from 'moment-timezone';
 
 const PaymentsChart = () => {
     const {openNotification} = useAlert();
@@ -12,14 +13,12 @@ const PaymentsChart = () => {
 
     const getPaymentsStatistic = async () => {
         setLoading(true)
-        const startDate = new Date();
-        startDate.setDate(startDate.getDate() - 7); // Вычитаем 7 дней
-
-        const endDate = new Date();
+        const startDate = moment().subtract(31, 'days').format('YYYY-MM-DD');
+        const endDate = moment().format('YYYY-MM-DD');
 
         const params = new URLSearchParams({
-            startDate: startDate.toISOString().split("T")[0], // Преобразуем в YYYY-MM-DD
-            endDate: endDate.toISOString().split("T")[0],
+            startDate,
+            endDate,
         });
         try {
             const response = await fetch(`${GET_PAYMENTS_STATISTIC_API}?${params.toString()}`, {
