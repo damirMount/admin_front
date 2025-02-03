@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Empty, Skeleton} from "antd";
+import {Button, Empty, Result, Skeleton} from "antd";
 import { Typography } from 'antd';
 const { Text, Title } = Typography;
 
@@ -31,15 +31,14 @@ const ChartArea = ({config, className, style, loading, onCallBack}) => {
 
     if ((!loading || isLoaded) && (config && config.data.length <= 0)) {
         return (
-            <div className="ant-result d-flex flex-column align-items-center justify-content-center"
-                 style={{width: '100%', minHeight: '70.05vh'}}>
-                <Empty description={false} />
-                <Title level={3} className='ant-result-title'>ДАННЫЕ ОТСУТВУЮТ</Title>
-                <Text type="secondary">Извините, но мы не смогли ничего найти по вашему запросу.</Text>
-                {onCallBack ? (
-                    <Button type="primary" className="mt-4" onClick={onCallBack}>Попробовать ещё раз</Button>
-                ) : {}}
-            </div>
+            <Result
+                icon={<Empty description={false} />}
+                title="ДАННЫЕ ОТСУТВУЮТ"
+                subTitle="Извините, но мы не смогли ничего найти по вашему запросу."
+                extra={onCallBack ? (
+                            <Button type="primary" onClick={onCallBack}>Попробовать ещё раз</Button>
+                        ) : ''}
+            />
         );
     }
 
