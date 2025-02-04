@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {GET_REPORTS_NORTHELECTRO_REPORT_API} from "../../../routes/api";
+import {DOWNLOAD_NORTHELECTRO_REPORT_API, GET_NORTHELECTRO_REPORT_API} from "../../../routes/api";
 import Head from "next/head";
 import DateRangePicker from "../../../components/main/input/DateRangePicker";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
@@ -7,13 +7,17 @@ import {useSession} from "next-auth/react";
 import {useAlert} from "../../../contexts/AlertContext";
 import ProtectedElement from "../../../components/main/system/ProtectedElement";
 import SmartTable from "../../../components/main/table/SmartTable";
-import {Divider, Statistic} from "antd";
+import {Button, Divider, Statistic, Typography} from "antd";
+import {DownloadOutlined} from "@ant-design/icons";
+
+const {Text, Link} = Typography;
 
 
 export default function DealerExportPage() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [loading, setLoading] = useState(false);
+    const [downloadLoading, setDownloadLoading] = useState(false);
     const [dataTable, setDataTable] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
     const [paymentCount, setPaymentCount] = useState(0);
@@ -26,11 +30,18 @@ export default function DealerExportPage() {
         startDate: null,
         endDate: null,
     });
+    const [oldFormData, setOldFormData] = useState({
+        serviceType: 'offline',
+        clientType: 'physical',
+        paymentType: 'ordinary',
+        startDate: null,
+        endDate: null,
+    });
     const {data: session} = useSession(); // Получаем сессию
 
     const tableColumns = [
         {
-            title: 'Список районов',
+            title: 'Список РЭС',
             dataIndex: 'label',
             render: (text, record) => record && record.label === 'ИТОГО:' ? <b>{text}</b> : text
         },
@@ -67,11 +78,12 @@ export default function DealerExportPage() {
     const handleCreateReport = async () => {
         try {
             setLoading(true);
+            setOldFormData(formData)
 
             const dataToSend = {
                 formData,
             };
-            const response = await fetch(GET_REPORTS_NORTHELECTRO_REPORT_API, {
+            const response = await fetch(GET_NORTHELECTRO_REPORT_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,7 +94,6 @@ export default function DealerExportPage() {
 
             if (response.ok) {
                 const responseData = await response.json();
-
                 const totalResult = responseData.find(item => item.label === 'ИТОГО:');
 
                 setTotalAmount(totalResult ? totalResult.totalAmount : 0);
@@ -90,18 +101,62 @@ export default function DealerExportPage() {
 
                 setDataTable(responseData);
 
-                openNotification({type: "success", message: "Отчет успешно создан."});
+                openNotification({type: "success", message: "Отчет успешно получен."});
             } else {
                 const errorResponse = await response.json();
                 openNotification({type: "error", message: errorResponse.message});
             }
         } catch (error) {
-            openNotification({type: "error", message: "Произошла ошибка при создании отчета"});
+            openNotification({type: "error", message: "Произошла ошибка при получении отчета"});
         } finally {
             setLoading(false);
         }
     };
 
+    const handleDownload = async () => {
+        setDownloadLoading(true)
+        const dataToSend = {
+            formData: oldFormData,
+            dataTable
+        };
+
+        try {
+            const response = await fetch(`${DOWNLOAD_NORTHELECTRO_REPORT_API}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session.accessToken}`,
+                },
+                body: JSON.stringify(dataToSend),
+            });
+
+            if (response.ok) {
+                // Получите Blob (бинарные данные файла)
+                const blob = await response.blob();
+                // Создайте объект URL для Blob
+                const blobUrl = URL.createObjectURL(blob);
+
+                // Создайте ссылку для скачивания
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = `northelectro-${formData.serviceType}-registry-${formData.startDate}-${formData.endDate}`;
+                document.body.appendChild(a);
+                a.click();
+
+                // Очистите объект URL
+                URL.revokeObjectURL(blobUrl);
+            } else {
+                const errorResponse = await response.json();
+
+                openNotification({type: "error", message: errorResponse.message});
+            }
+
+        } catch (error) {
+            openNotification({type: "error", message: "Произошла ошибка во время скачивания отчета"});
+        } finally {
+            setDownloadLoading(false)
+        }
+    };
 
     const handleSelectorChange = (valuesArray, name) => {
         setFormData((prevFormData) => ({
@@ -118,25 +173,45 @@ export default function DealerExportPage() {
         }));
     }, [startDate, endDate]);
 
-
     return (
         <ProtectedElement allowedPermissions={'reports_management'}>
             <div>
                 <Head>
                     <title>Итоговый отчет по Северэлектро | {process.env.NEXT_PUBLIC_APP_NAME}</title>
                 </Head>
+
                 <div className="w-100 mt-5">
                     <h1>Итоговый отчет по Северэлектро</h1>
 
                     <div className='d-flex justify-content-between'>
-                        <SmartTable
-                            size='small'
-                            loading={loading}
-                            paginationPosition={['none']}
-                            columns={tableColumns}
-                            data={dataTable}
-                        />
+                        <div className='d-flex align-items-center  flex-column w-100'>
 
+                            <SmartTable
+                                size='small'
+                                loading={loading}
+                                paginationPosition={['none']}
+                                columns={tableColumns}
+                                data={dataTable}
+                            />
+
+                            {dataTable.length > 0 ? (
+                                <div className='d-flex w-100 mt-3 align-items-center justify-content-between'>
+                                    <DownloadOutlined className='opacity-25' style={{
+                                        fontSize: '60px',
+                                    }}/>
+                                    <div className='d-flex align-items-center w-100 h-100 ms-2 border-start'>
+                                        <Text className='ms-3 me-2' type="secondary">
+                                            Все данные из выше указанной таблицы вы можете скачать на ваш компьютер, в
+                                            виде
+                                            Exel файла. </Text>
+                                        <Button type="primary" onClick={handleDownload}
+                                                loading={loading || downloadLoading}>Скачать</Button>
+                                    </div>
+                                </div>
+                            ) : ''}
+
+
+                        </div>
                         <div className='border-end ms-3 mt-3 me-2'></div>
 
                         <div className='d-flex w-75 ms-4 flex-column'>
@@ -200,21 +275,24 @@ export default function DealerExportPage() {
                             />
 
                             <Divider/>
+
                             <div className='d-flex justify-content-between'>
                                 <Statistic title="Итоговая сумма" value={totalAmount} precision={2} suffix={'сом'}
-                                           loading={loading}/>
+                                           loading={loading}
+                                />
                                 <Statistic title="Количество платежей" value={paymentCount} suffix={'шт.'}
-                                           loading={loading}/>
+                                           loading={loading}
+                                />
                             </div>
+
                             <Divider/>
 
                             <div className="d-flex justify-content-center">
-                                <button type="button" className="btn btn-purple" disabled={loading}
-                                        onClick={handleCreateReport}>
+                                <Button type="primary" className='fw-bold' size={'large'} onClick={handleCreateReport}
+                                        loading={loading}>
                                     Получить отчёт
-                                </button>
+                                </Button>
                             </div>
-
                         </div>
                     </div>
                 </div>

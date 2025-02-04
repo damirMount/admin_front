@@ -32,7 +32,8 @@ export const ACQUIRING_COMPARISON_API = `${baseURL}/api/acquiring/comparison`
 export const DEALER_REPORTS_EXPORT_API = `${baseURL}/api/reports/dealer/createReport`
 export const DEALER_REPORTS_UPDATE_TSJ_DEALER_API = `${baseURL}/api/reports/dealer/updateTSJDealer`
 
-export const GET_REPORTS_NORTHELECTRO_REPORT_API = `${baseURL}/api/reports/service/northelectro`
+export const GET_NORTHELECTRO_REPORT_API = `${baseURL}/api/reports/service/northelectro`
+export const DOWNLOAD_NORTHELECTRO_REPORT_API = `${baseURL}/api/reports/service/northelectro/downloadReport`
 
 export const GSFR_UPDATE_API = `${baseURL}/api/GSFR/updateGFSR`
 
