@@ -139,7 +139,7 @@ export default function DealerExportPage() {
                 // Создайте ссылку для скачивания
                 const a = document.createElement('a');
                 a.href = blobUrl;
-                a.download = `northelectro-${formData.serviceType}-registry-${formData.startDate}-${formData.endDate}`;
+                a.download = `north-electro-${oldFormData.serviceType}-registry-${oldFormData.clientType}-payments-${oldFormData.startDate}-${oldFormData.endDate}`;
                 document.body.appendChild(a);
                 a.click();
 
