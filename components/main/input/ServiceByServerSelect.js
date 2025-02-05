@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { GET_SERVICES_BY_SERVER_API } from "../../../routes/api";
-import { useSession } from "next-auth/react";
+import React, {useEffect, useState} from 'react';
+import {GET_SERVICES_BY_SERVER_API} from "../../../routes/api";
+import {useSession} from "next-auth/react";
 import UniversalSelect from "./UniversalSelect";
 
-const ServiceByServerSelect = ({ selectedServer, selectedService = [], onChange }) => {
-    const { data: session } = useSession(); // Получаем сессию
+const ServiceByServerSelect = ({selectedServer, selectedService = [], onChange}) => {
+    const {data: session} = useSession(); // Получаем сессию
     const [servicesList, setServicesList] = useState([]);
 
     const getServicesByServer = async () => {

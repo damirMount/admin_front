@@ -24,8 +24,8 @@ const AuthCheck = (WrappedComponent) => {
         if ((!session || sessionExpired) && router.pathname !== LOGIN_PAGE_URL) {
             router.replace(LOGIN_PAGE_URL);
             return null;
-        }
-        else {
+        } else {
+
             return (
                 <div>
                     <div className="d-flex w-100 overflow-hidden">

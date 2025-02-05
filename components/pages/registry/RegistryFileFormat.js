@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 
-const RegistryFileFormat = ({ formData = [], setFormData, isRadioMode = false, className }) => {
+const RegistryFileFormat = ({formData = [], setFormData, isRadioMode = false, className}) => {
     const [selectedFormats, setSelectedFormats] = useState([]);
 
     const handleFormatChange = (event) => {
-        const { name, checked } = event.target;
-
+        const {name, checked} = event.target;
         let updatedFormats;
 
         if (isRadioMode) {

@@ -1,8 +1,8 @@
-import { Button, Form, Input, Popconfirm, Table } from 'antd';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import {Form, Input} from 'antd';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 
 const EditableContext = React.createContext(null);
-const EditableRow = ({ index, ...props }) => {
+const EditableRow = ({index, ...props}) => {
     const [form] = Form.useForm();
     return (
         <Form form={form} component={false}>
@@ -12,6 +12,7 @@ const EditableRow = ({ index, ...props }) => {
         </Form>
     );
 };
+
 const EditableCell = ({
                           title,
                           editable,
@@ -24,17 +25,20 @@ const EditableCell = ({
     const [editing, setEditing] = useState(false);
     const inputRef = useRef(null);
     const form = useContext(EditableContext);
+
     useEffect(() => {
         if (editing) {
             inputRef.current.focus();
         }
     }, [editing]);
+
     const toggleEdit = () => {
         setEditing(!editing);
         form.setFieldsValue({
             [dataIndex]: record[dataIndex],
         });
     };
+
     const save = async () => {
         try {
             const values = await form.validateFields();
@@ -47,7 +51,9 @@ const EditableCell = ({
             console.log('Save failed:', errInfo);
         }
     };
+
     let childNode = children;
+
     if (editable) {
         childNode = editing ? (
             <Form.Item
@@ -62,7 +68,7 @@ const EditableCell = ({
                     },
                 ]}
             >
-                <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+                <Input ref={inputRef} onPressEnter={save} onBlur={save}/>
             </Form.Item>
         ) : (
             <div
@@ -76,6 +82,7 @@ const EditableCell = ({
             </div>
         );
     }
+
     return <td {...restProps}>{childNode}</td>;
 };
 

@@ -4,7 +4,6 @@
     --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
     'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
-
     --foreground-rgb: 0, 0, 0;
     --background-start-rgb: 214, 219, 220;
     --background-end-rgb: 255, 255, 255;
@@ -61,7 +60,7 @@ label {
 }
 
 ::-webkit-scrollbar {
-    width: 7px; /* Ширина полосы прокрутки */
+    width: 7px;
     height: 8px;
     position: fixed;
 }
@@ -78,11 +77,10 @@ label {
 .cursor-pointer {
     cursor: pointer;
 }
+
 .cursor-grab {
     cursor: grab;
 }
-
-
 
 .footer-container {
     height: 100px;
@@ -111,7 +109,6 @@ label {
     border-bottom: #F8E0FB 1px solid;
     z-index: 1001;
 }
-
 
 h1 {
     font-weight: bold;
@@ -145,6 +142,7 @@ h1 {
     background-color: #FFFFFF;
     border-radius: 7px;
 }
+
 .relative-container {
     position: relative;
 }
@@ -192,19 +190,6 @@ h1 {
     pointer-events: none;
 }
 
-
-/*.table-center {*/
-/*    text-align: -webkit-center;*/
-/*    vertical-align: middle;*/
-/*    margin: 0;*/
-/*}*/
-
-/*.action-table-buttons {*/
-/*    margin-left: -1px;*/
-/*    margin-right: -1px;*/
-/*    white-space: nowrap;*/
-/*}*/
-
 .check {
     border: #532C59 2px solid;
     color: #532C59;
@@ -225,26 +210,27 @@ h1 {
     border-bottom: #A9C9DD 1px solid;
 }
 
-
-
 .form-group {
     margin-bottom: 5px;
     margin-top: 5px;
 }
+
 .input-search:focus {
     box-shadow: none;
 }
+
 .btn-search {
     border-radius: 0 5px 5px 0;
 }
+
 .input-search {
     border-radius: 5px 0 0 5px;
 }
+
 .input-btn {
     width: 20px;
     height: 24px !important;
 }
-
 
 .status {
     font-weight: bold;
@@ -257,8 +243,6 @@ h1 {
     justify-content: center;
     white-space: nowrap;
 }
-
-
 
 .status-disabled {
     background-color: #cfcdcd;
@@ -284,6 +268,7 @@ h1 {
     padding: 10px 15px;
     text-transform: uppercase;
 }
+
 .status-small {
     font-size: 11px;
     padding: 4px 15px 4px 15px;
@@ -384,6 +369,7 @@ h1 {
     color: #FFFFFF;
     font-weight: 500;
 }
+
 [class*="css-"][class*="-ValueContainer"] {
     overflow: auto;
     max-height: 167px;

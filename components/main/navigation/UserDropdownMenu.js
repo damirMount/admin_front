@@ -14,7 +14,6 @@ const UserDropdownMenu = (collapsed) => {
     const {data: session} = useSession(); // Получаем сессию
     const [modalData, setModalData] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const [open, setOpen] = useState(false);
     const handleSignOut = async () => {
         await signOut();
         await router.replace(LOGIN_PAGE_URL); // Перенаправление на страницу логина после выхода
@@ -42,6 +41,7 @@ const UserDropdownMenu = (collapsed) => {
             key: '0',
         },
     ];
+
     if (!collapsed && session) {
         return (
             <div className='sidebar-user-dropdown-menu'>

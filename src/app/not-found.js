@@ -3,6 +3,7 @@ import Head from "next/head";
 import {Button, Result} from "antd";
 import {MAIN_PAGE_URL} from "../../routes/web";
 import Navbar from "../../components/main/navigation/Navbar";
+
 export default function Custom404() {
     return (
         <div>
@@ -12,12 +13,12 @@ export default function Custom404() {
             <Navbar/>
             <div className='d-flex justify-content-center align-items-center h-100 w-100'
                  style={{minHeight: '100vh'}}>
-                    <Result
-                        status="404"
-                        title="404 СТРАНИЦА НЕ НАЙДЕНА"
-                        subTitle="Извините, данная страница не существует"
-                        extra={<Button type="primary" href={MAIN_PAGE_URL}>Вернуться на главную</Button>}
-                    />
+                <Result
+                    status="404"
+                    title="404 СТРАНИЦА НЕ НАЙДЕНА"
+                    subTitle="Извините, данная страница не существует"
+                    extra={<Button type="primary" href={MAIN_PAGE_URL}>Вернуться на главную</Button>}
+                />
             </div>
         </div>
     );

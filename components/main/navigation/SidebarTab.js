@@ -5,7 +5,8 @@ import {faBars, faCode, faDisplay, faHome, faRotate, faShieldHalved, faTimes} fr
 import {faEnvelopeOpen, faFileLines} from "@fortawesome/free-regular-svg-icons";
 import Link from "next/link";
 import {
-    ACQUIRING_URL, DATA_UTILS_TEST_URL,
+    ACQUIRING_URL,
+    DATA_UTILS_TEST_URL,
     GSFR_UPDATE_URL,
     MAIN_PAGE_URL,
     OFFLINE_SERVICE_DATABASE_UPDATE_INDEX_URL,
@@ -17,7 +18,8 @@ import {
     REGISTRY_LOGS_URL,
     REGISTRY_RESEND_URL,
     REPORT_DEALERS_ACCOUNT_HISTORY_URL,
-    REPORT_DEALERS_TSJ_URL, REPORT_SERVICES_NORTH_ELECTRO_URL,
+    REPORT_DEALERS_TSJ_URL,
+    REPORT_SERVICES_NORTH_ELECTRO_URL,
     ROLES_INDEX_URL,
     TEST_ZONE_URL
 } from "../../../routes/web";

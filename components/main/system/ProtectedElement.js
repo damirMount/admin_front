@@ -26,10 +26,8 @@ const ProtectedElementContainer = ({children, allowedPermissions, redirect = tru
 
         fetchAccess();
     }, []);
-// Передаем результат проверки доступа в компонент защищенного маршрута
-        return <ProtectedElement accessGranted={accessGranted} redirect={redirect}>{children}</ProtectedElement>;
 
-
+    return <ProtectedElement accessGranted={accessGranted} redirect={redirect}>{children}</ProtectedElement>;
 };
 
 export default ProtectedElementContainer;

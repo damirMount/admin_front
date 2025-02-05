@@ -42,4 +42,5 @@ const RegistryNavigationTabs = () => {
         </div>
     )
 }
+
 export default RegistryNavigationTabs;

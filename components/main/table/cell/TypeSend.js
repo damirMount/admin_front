@@ -3,9 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClockRotateLeft} from "@fortawesome/free-solid-svg-icons";
 import {faEnvelope} from "@fortawesome/free-regular-svg-icons";
 
-
 const TypeSend = (props) => {
-
     const type = props ? props.type || '' : '';
     const emailsCount = props ? props.emails.split(', ') || '' : '';
 

@@ -21,8 +21,9 @@ export default function DealerExportPage() {
     const [dataTable, setDataTable] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
     const [paymentCount, setPaymentCount] = useState(0);
-
     const {openNotification} = useAlert();
+    const [oldFormData, setOldFormData] = useState([]);
+    const {data: session} = useSession(); // Получаем сессию
     const [formData, setFormData] = useState({
         serviceType: 'offline',
         clientType: 'physical',
@@ -30,14 +31,6 @@ export default function DealerExportPage() {
         startDate: null,
         endDate: null,
     });
-    const [oldFormData, setOldFormData] = useState({
-        serviceType: 'offline',
-        clientType: 'physical',
-        paymentType: 'ordinary',
-        startDate: null,
-        endDate: null,
-    });
-    const {data: session} = useSession(); // Получаем сессию
 
     const tableColumns = [
         {
@@ -150,7 +143,6 @@ export default function DealerExportPage() {
 
                 openNotification({type: "error", message: errorResponse.message});
             }
-
         } catch (error) {
             openNotification({type: "error", message: "Произошла ошибка во время скачивания отчета"});
         } finally {
@@ -179,13 +171,11 @@ export default function DealerExportPage() {
                 <Head>
                     <title>Итоговый отчет по Северэлектро | {process.env.NEXT_PUBLIC_APP_NAME}</title>
                 </Head>
-
                 <div className="w-100 mt-5">
                     <h1>Итоговый отчет по Северэлектро</h1>
 
                     <div className='d-flex justify-content-between'>
                         <div className='d-flex align-items-center  flex-column w-100'>
-
                             <SmartTable
                                 size='small'
                                 loading={loading}
@@ -203,20 +193,19 @@ export default function DealerExportPage() {
                                         <Text className='ms-3 me-2' type="secondary">
                                             Все данные из выше указанной таблицы вы можете скачать на ваш компьютер, в
                                             виде
-                                            Exel файла. </Text>
+                                            Exel файла.
+                                        </Text>
                                         <Button type="primary" onClick={handleDownload}
                                                 loading={loading || downloadLoading}>Скачать</Button>
                                     </div>
                                 </div>
                             ) : ''}
-
-
                         </div>
+
                         <div className='border-end ms-3 mt-3 me-2'></div>
 
                         <div className='d-flex w-75 ms-4 flex-column'>
                             <div className='d-flex justify-content-between'>
-
                                 <div className="form-group w-50 me-2">
                                     <label htmlFor="selected_report_type">Тип сервиса</label>
                                     <UniversalSelect
@@ -247,7 +236,6 @@ export default function DealerExportPage() {
                                         name="clientType"
                                     />
                                 </div>
-
                             </div>
 
                             <div className="form-group">

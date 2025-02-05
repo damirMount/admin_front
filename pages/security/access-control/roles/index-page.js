@@ -7,7 +7,6 @@ import ActionButtons from "../../../../components/main/table/cell/ActionButtons"
 import ProtectedElement from "../../../../components/main/system/ProtectedElement";
 
 export default function rolesAndPermissionsPage() {
-
     const actionButtonsLinks = {
         editRoute: {label: 'Изменить запись', link: ROLES_EDIT_URL, useId: true},
     };
@@ -35,7 +34,6 @@ export default function rolesAndPermissionsPage() {
         {
             render: (text, record) => ActionButtons(actionButtonsLinks, record),
         },
-
     ];
 
     return (

@@ -64,7 +64,6 @@ export default function UpdatePermission() {
             // Проверяем, изменилось ли значение для данного разрешения
             const isPermissionChanged = !isEqual(updatedPermissions, formData.permissions);
 
-
             if (isPermissionChanged) {
                 const updatedData = {...prevFormData, permissions: updatedPermissions};
                 openConfirmAction({onSave: () => handleSave(updatedData), onReset: handleReset});
@@ -75,7 +74,6 @@ export default function UpdatePermission() {
             return {...prevFormData, permissions: updatedPermissions}; // Возвращаем обновленные данные
         });
     };
-
 
     const handleSubmit = async (updatedData) => {
         try {
@@ -99,7 +97,6 @@ export default function UpdatePermission() {
             openNotification({type: 'error', message: error.message});
         }
     };
-
 
     const fetchRoleItem = async () => {
         try {
@@ -233,7 +230,6 @@ export default function UpdatePermission() {
 
                                         {isLoading ? (
                                             <Preloader/>
-
                                         ) : (
                                             <div className='mt-3'>
                                                 <h5>Основное </h5>
@@ -255,7 +251,7 @@ export default function UpdatePermission() {
                                                         className='mt-3 d-flex flex-column w-100 h-100 justify-content-center'>
                                                         <Divider>
                                                             <span
-                                                            className="text-nowrap">Права доступа</span><
+                                                                className="text-nowrap">Права доступа</span><
                                                             /Divider>
                                                         {permissionsList.length > 0 ? (
                                                             permissionsList.map((item, index) => (

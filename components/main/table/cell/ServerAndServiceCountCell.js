@@ -1,8 +1,6 @@
 import React from "react";
 
-
 const ServerAndServiceCountCell = (props) => {
-
     const serverId = props ? props.server_id || '' : '';
     const services = props ? props.services_id || '' : '';
 

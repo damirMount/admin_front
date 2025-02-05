@@ -20,4 +20,5 @@ const ReportsNavigationTabs = () => {
         </div>
     )
 }
+
 export default ReportsNavigationTabs;

@@ -1,17 +1,16 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEllipsis} from '@fortawesome/free-solid-svg-icons';
 import DataRemover from "../../database/DataRemover";
 import Link from "next/link";
-import { Dropdown } from "antd";
+import {Dropdown} from "antd";
 
 const ActionButtons = (buttonsLinks = null, props) => {
-    const { id, createdAt, updatedAt, deletedAt } = props;
-
+    const {id, createdAt, updatedAt, deletedAt} = props;
     const items = [];
 
     for (const key in buttonsLinks) {
-        const { label, link, useId, action } = buttonsLinks[key];
+        const {label, link, useId, action} = buttonsLinks[key];
 
         if (key !== 'deleteRoute') {
             const buttonLink = `${link}${useId && (id !== null && id !== undefined) ? `/${id}` : ''}`;
@@ -37,7 +36,7 @@ const ActionButtons = (buttonsLinks = null, props) => {
                 key: key,
                 label: (
                     <div data-clickable="true">
-                        <DataRemover id={id} deleteRoute={link} />
+                        <DataRemover id={id} deleteRoute={link}/>
                     </div>
                 ),
             });
@@ -80,9 +79,9 @@ const ActionButtons = (buttonsLinks = null, props) => {
     }
 
     return (
-        <Dropdown menu={{ items }} placement="bottomRight" arrow trigger={['click']}>
+        <Dropdown menu={{items}} placement="bottomRight" arrow trigger={['click']}>
             <div className="btn btn-purple p-0 ps-2 pe-2 rounded-3" data-clickable="true">
-                <FontAwesomeIcon icon={faEllipsis} size="lg" />
+                <FontAwesomeIcon icon={faEllipsis} size="lg"/>
             </div>
         </Dropdown>
     );

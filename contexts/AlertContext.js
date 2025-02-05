@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {createContext, useContext} from 'react';
 import {useSession} from "next-auth/react";
 import {message, notification} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -28,7 +28,6 @@ export const AlertProvider = ({children}) => {
         </div>
     );
 
-
     const openNotification = ({message, type}) => {
         if (type === 'success') {
             messageApi.open({
@@ -50,14 +49,15 @@ export const AlertProvider = ({children}) => {
         }
     }
 
-    const CustomConfirmAction = ({ onSave, onReset, onClose }) => {
+    const CustomConfirmAction = ({onSave, onReset, onClose}) => {
+
         return (
             <div
                 className="toast d-flex flex-column"
                 role="alert"
                 aria-live="assertive"
                 aria-atomic="true"
-                style={{ width: "45vw" }}
+                style={{width: "45vw"}}
             >
                 <div
                     className={`w-100 d-flex justify-content-between align-items-center toast-body color-purple bg-primary-subtle`}
@@ -69,7 +69,7 @@ export const AlertProvider = ({children}) => {
                             size="xl"
                         />
                         <strong>
-                            Осторожней! <br /> У вас есть не сохранённые изменения!{" "}
+                            Осторожней! <br/> У вас есть не сохранённые изменения!{" "}
                         </strong>
                     </div>
                     <div className="d-flex">
@@ -100,20 +100,20 @@ export const AlertProvider = ({children}) => {
     };
 
     const openConfirmAction = ({onSave, onReset}) => {
-            const notificationKey = `confirm_action`;
-            const onClose = () => {
-                notification.destroy(notificationKey);
-            };
+        const notificationKey = `confirm_action`;
+        const onClose = () => {
+            notification.destroy(notificationKey);
+        };
 
-                notification.open({
-                    key: notificationKey,
-                    duration: null,
-                    description: (
-                        <CustomConfirmAction onSave={onSave} onReset={onReset} onClose={onClose}/>
-                    ),
-                    closeIcon: null,
-                    placement: "bottom",
-                });
+        notification.open({
+            key: notificationKey,
+            duration: null,
+            description: (
+                <CustomConfirmAction onSave={onSave} onReset={onReset} onClose={onClose}/>
+            ),
+            closeIcon: null,
+            placement: "bottom",
+        });
     };
 
     const closeConfirmAction = () => {

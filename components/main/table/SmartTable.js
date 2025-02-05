@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Badge, Space, Table} from 'antd';
+import {Table} from 'antd';
 import {useAlert} from '../../../contexts/AlertContext';
 import {useSession} from 'next-auth/react';
 import {DndContext} from '@dnd-kit/core';
@@ -19,7 +19,7 @@ const SmartTable = ({
                         data = [],
                         onUpdateData,
                         loading = false,
-                        size= 'large'
+                        size = 'large'
                     }) => {
     const {openNotification} = useAlert();
     const {data: session} = useSession(); // Получаем сессию

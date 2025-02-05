@@ -1,5 +1,5 @@
 import React, {useRef, useState} from "react";
-import {Checkbox, Divider, Empty, Input, InputNumber, Popconfirm, Select, Switch, Tooltip, Tour} from "antd";
+import {Divider, Empty, Input, InputNumber, Popconfirm, Select, Switch, Tooltip, Tour} from "antd";
 import SmartTable from "../../main/table/SmartTable";
 import UniversalSelect from "../../main/input/UniversalSelect";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -257,7 +257,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
             newData.additional_fields = newData.additional_fields.map(item => {
                 if (item.hasOwnProperty('enableTotalpayField')) {
                     fieldExists = true;
-                    return { ...item, enableTotalpayField: checked };
+                    return {...item, enableTotalpayField: checked};
                 }
                 return item;
             });
@@ -266,7 +266,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
         }
 
         if (!fieldExists) {
-            newData.additional_fields.push({ enableTotalpayField: checked });
+            newData.additional_fields.push({enableTotalpayField: checked});
         }
 
         onDataFieldsChange(newData);
@@ -449,6 +449,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                         </div>
                     )
                 }
+
                 return (
                     <span className={
                         oldFormData.fields.some(filedValue => filedValue.key === record.key && filedValue.nameDbf === text
@@ -494,6 +495,7 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                         onBlur={() => setActiveInput(null)}
                     />;
                 }
+
                 return (
                     <span className={
                         oldFormData.fields.some(filedValue => filedValue.key === record.key && filedValue.charNumber === text)

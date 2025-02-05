@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Button, Divider, Dropdown, Empty, Input, Select, Tooltip } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAnglesRight, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { cloneDeep } from "lodash";
+import React, {useEffect, useState} from "react";
+import {Button, Divider, Dropdown, Empty, Input, Select, Tooltip} from "antd";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faAnglesRight, faPlus, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {cloneDeep} from "lodash";
 import UniqueKeyGenerator from "../../system/UniqueKeyGenerator";
 import ValueCountCell from "./ValueCountCell";
 
-const FieldTypeCell = ({ record, text, data, oldFormData, setActiveInput, selectedRowKey, onChange }) => {
+const FieldTypeCell = ({record, text, data, oldFormData, setActiveInput, selectedRowKey, onChange}) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useEffect(() => {
@@ -20,7 +20,7 @@ const FieldTypeCell = ({ record, text, data, oldFormData, setActiveInput, select
 
         newData.fields = data.fields.map(item => {
             if (item.key === record.key) {
-                return { ...item, [name]: value };
+                return {...item, [name]: value};
             }
 
             return item;
@@ -38,7 +38,7 @@ const FieldTypeCell = ({ record, text, data, oldFormData, setActiveInput, select
                     ...item,
                     regularValueList: [
                         ...item.regularValueList,
-                        { originalValue: '', newValue: '', key: UniqueKeyGenerator() }
+                        {originalValue: '', newValue: '', key: UniqueKeyGenerator()}
                     ]
                 };
             }
@@ -113,7 +113,7 @@ const FieldTypeCell = ({ record, text, data, oldFormData, setActiveInput, select
                 )}
                 {record.regularValueType === 'list' && (
                     <Dropdown
-                        overlayInnerStyle={{ pointerEvents: 'auto' }}
+                        overlayInnerStyle={{pointerEvents: 'auto'}}
                         trigger='click'
                         disabled={!(data && data.fields && data.formats && data.formats.length > 0)}
                         placement='bottomLeft'
@@ -154,7 +154,7 @@ const FieldTypeCell = ({ record, text, data, oldFormData, setActiveInput, select
                                                                     record, 'originalValue', listItem.key)}
                                                                 onClick={stopPropagation}
                                                             />
-                                                            <FontAwesomeIcon icon={faAnglesRight} />
+                                                            <FontAwesomeIcon icon={faAnglesRight}/>
                                                             <Input
                                                                 defaultValue={listItem.newValue}
                                                                 className={`me-2 ${
@@ -177,7 +177,7 @@ const FieldTypeCell = ({ record, text, data, oldFormData, setActiveInput, select
                                                                     type='default'
                                                                     className="ms-2 me-2 color-purple border"
                                                                     icon={<FontAwesomeIcon className='ms-2 me-2'
-                                                                                           icon={faXmark} />}
+                                                                                           icon={faXmark}/>}
                                                                     onClick={() => deleteRow(record.key, listItem.key)}
                                                                 />
                                                             </Tooltip>
@@ -186,12 +186,12 @@ const FieldTypeCell = ({ record, text, data, oldFormData, setActiveInput, select
                                                 </div>
                                             </>
                                         ) : (
-                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>
                                         )}
                                         <Divider>
                                             <Button onClick={addNewRow} type='text'
                                                     className='btn-purple d-flex align-items-center'
-                                                    icon={<FontAwesomeIcon icon={faPlus} />}>
+                                                    icon={<FontAwesomeIcon icon={faPlus}/>}>
                                                 Добавить
                                             </Button>
                                         </Divider>
@@ -229,8 +229,8 @@ const FieldTypeCell = ({ record, text, data, oldFormData, setActiveInput, select
                         onFocus={() => setActiveInput(record.key)}
                         onBlur={() => setActiveInput(null)}
                         options={[
-                            { value: 'value', label: 'Значение' },
-                            { value: 'list', label: 'Список' },
+                            {value: 'value', label: 'Значение'},
+                            {value: 'list', label: 'Список'},
                         ]}
                     />
                 </Tooltip>

@@ -26,13 +26,11 @@ const RegistryFiles = ({apiUrl, downloadUrl}) => {
             }
 
             const data = await response.json();
-            console.log(data)
             setRegistryFile(data.data);
         } catch (error) {
             console.error('Error fetching registry files:', error);
         }
     };
-
 
     const handleDownload = async (filename) => {
         try {
@@ -67,7 +65,6 @@ const RegistryFiles = ({apiUrl, downloadUrl}) => {
             console.error('Error downloading file:', error);
         }
     };
-
 
     useEffect(() => {
         fetchRegistryFile();

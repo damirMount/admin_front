@@ -19,7 +19,7 @@ export default function EditRegistryFile() {
         server_id: '',
         services_id: [],
         fields: [],
-        additional_fields:  [{enableTotalpayField: true,  totalpayFieldName: "ИТОГО:" }],
+        additional_fields: [{enableTotalpayField: true, totalpayFieldName: "ИТОГО:"}],
     });
     const [oldFormData, setOldFormData] = useState({
         name: '',
@@ -29,7 +29,7 @@ export default function EditRegistryFile() {
         server_id: '',
         services_id: [],
         fields: [],
-        additional_fields:  [{enableTotalpayField: true,  totalpayFieldName: "ИТОГО:" }],
+        additional_fields: [{enableTotalpayField: true, totalpayFieldName: "ИТОГО:"}],
     });
     const [processingLoader, setProcessingLoader] = useState(false);
     const {openNotification} = useAlert();
@@ -95,7 +95,7 @@ export default function EditRegistryFile() {
             is_blocked: responseData.is_blocked,
             send_type: responseData.send_type,
             formats: responseData.formats,
-            fields:  responseData.fields,
+            fields: responseData.fields,
             additional_fields: responseData.additional_fields,
             create_author: responseData.create_author,
             update_author: responseData.update_author,
@@ -105,7 +105,7 @@ export default function EditRegistryFile() {
     };
 
     const fetchRegistryItem = async () => {
-        if(!itemId) {
+        if (!itemId) {
             return false
         }
         try {
@@ -155,7 +155,8 @@ export default function EditRegistryFile() {
                     <title>{registryName} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
                 </Head>
                 {processingLoader && formData && <Preloader/>}
-                <div className={`${processingLoader ? 'd-none' : 'd-flex'} flex-column`} key={JSON.stringify(oldFormData)}>
+                <div className={`${processingLoader ? 'd-none' : 'd-flex'} flex-column`}
+                     key={JSON.stringify(oldFormData)}>
                     <h1>Страница редактирования файла реестров</h1>
                     <RegistryForm
                         oldFormData={oldFormData}

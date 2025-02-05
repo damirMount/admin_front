@@ -22,7 +22,7 @@ const DataRemover = ({id, deleteRoute}) => {
     const handleDelete = async () => {
         if (modalData) {
             try {
-                const response = await fetch(`${deleteRoute}/${id}`, {
+                await fetch(`${deleteRoute}/${id}`, {
                     method: 'DELETE',
                     headers: {
                         Authorization: `Bearer ${session.accessToken}`,

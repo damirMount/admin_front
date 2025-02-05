@@ -78,7 +78,7 @@ const PaymentsChart = () => {
             },
         },
     };
-    // После загрузки компонента отображаем его с переданными пропсами и стилями
+
     return (
         <ChartArea
             onCallBack={getPaymentsStatistic}

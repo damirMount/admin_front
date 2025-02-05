@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {useRouter} from 'next/router';
 import FormInput from '../../../../components/main/input/FormInput';
-import Link from 'next/link';
 import {PERMISSION_CREATE_API} from '../../../../routes/api'
 import {PERMISSION_INDEX_URL} from "../../../../routes/web";
 import Head from "next/head";
@@ -49,8 +48,10 @@ export default function CreatePermission() {
             });
 
             const responseData = await response.json();
+
             if (response.ok) {
                 openNotification({type: "success", message: responseData.message});
+
                 await router.push(PERMISSION_INDEX_URL);
             } else {
                 openNotification({type: "error", message: responseData.message});

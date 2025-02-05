@@ -1,12 +1,9 @@
-// pages/index.js
 import React, {useState} from 'react';
 import Head from 'next/head';
 import {useAlert} from "../../contexts/AlertContext";
 import ProtectedElement from "../../components/main/system/ProtectedElement";
 import SmartTable from "../../components/main/table/SmartTable";
 import RegistryFileFormat from "../../components/pages/registry/RegistryFileFormat";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFileExcel} from "@fortawesome/free-solid-svg-icons";
 import {TEST_DATA_UTILS_CREATE_FILE_API} from "../../routes/api";
 import {useSession} from "next-auth/react";
 
@@ -164,11 +161,12 @@ export default function TestPage() {
                             <div className='ms-3 d-flex flex-column w-75'>
                                 <div className='d-flex flex-column justify-content-around h-100'>
                                     <div>
-                                    <h5>Создание файла</h5>
-                                    <p>Укажите в таблице с лева все необходимые данные которые вы хотите чтобы
-                                        присутствовали в созданном файле. После чего вы можете выбрать формат в котором
-                                        вы хотите чтобы файл создался и нажать на кнопку Создать. Созданный файл вы
-                                        сможете скачать в блоке снизу</p>
+                                        <h5>Создание файла</h5>
+                                        <p>Укажите в таблице с лева все необходимые данные которые вы хотите чтобы
+                                            присутствовали в созданном файле. После чего вы можете выбрать формат в
+                                            котором
+                                            вы хотите чтобы файл создался и нажать на кнопку Создать. Созданный файл вы
+                                            сможете скачать в блоке снизу</p>
                                     </div>
                                     <div className='d-flex justify-content-between align-items-end'>
                                         <RegistryFileFormat

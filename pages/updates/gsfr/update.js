@@ -7,7 +7,6 @@ import FormInput from "../../../components/main/input/FormInput";
 import {useSession} from "next-auth/react";
 import ProtectedElement from "../../../components/main/system/ProtectedElement";
 
-
 export default function GSFRUpdatePage() {
     const [processingLoader, setProcessingLoader] = useState(false);
     const {data: session} = useSession(); // Получаем сессию

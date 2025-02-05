@@ -14,7 +14,6 @@ import "dayjs/locale/ru";
 function MyApp({Component, pageProps}) {
     const AuthCheckedComponent = authCheck(Component);
 
-
     return (
         <div>
             <Script

@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Empty, Result, Skeleton} from "antd";
-import { Typography } from 'antd';
-const { Text, Title } = Typography;
 
 const ChartArea = ({config, className, style, loading, onCallBack}) => {
     const [AreaComponent, setAreaComponent] = useState(null); // Состояние для компонента
@@ -32,12 +30,12 @@ const ChartArea = ({config, className, style, loading, onCallBack}) => {
     if ((!loading || isLoaded) && (config && config.data.length <= 0)) {
         return (
             <Result
-                icon={<Empty description={false} />}
+                icon={<Empty description={false}/>}
                 title="ДАННЫЕ ОТСУТВУЮТ"
                 subTitle="Извините, но мы не смогли ничего найти по вашему запросу."
                 extra={onCallBack ? (
-                            <Button type="primary" onClick={onCallBack}>Попробовать ещё раз</Button>
-                        ) : ''}
+                    <Button type="primary" onClick={onCallBack}>Попробовать ещё раз</Button>
+                ) : ''}
             />
         );
     }

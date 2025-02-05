@@ -1,9 +1,6 @@
 import React from "react";
 
-
 const FileFormats = (formats, size) => {
-
-
     return (
         <div className="col-auto action-table-buttons flex-nowrap d-flex">
             {formats.map((format, index) => (

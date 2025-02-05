@@ -3,7 +3,7 @@ import {CSS} from "@dnd-kit/utilities";
 import React from "react";
 import {MenuOutlined} from "@ant-design/icons";
 
-const DraggableBodyRow = ({ index, record, children, ...props }) => {
+const DraggableBodyRow = ({index, record, children, ...props}) => {
     const {
         attributes,
         listeners,
@@ -56,4 +56,4 @@ const DraggableBodyRow = ({ index, record, children, ...props }) => {
     );
 };
 
-export { DraggableBodyRow };
+export {DraggableBodyRow};

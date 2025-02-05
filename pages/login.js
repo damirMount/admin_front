@@ -9,6 +9,7 @@ export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const {openNotification} = useAlert();
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 

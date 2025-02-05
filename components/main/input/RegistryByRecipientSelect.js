@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { GET_REGISTRY_BY_RECIPIENT_API } from "../../../routes/api";
-import { useSession } from "next-auth/react";
+import React, {useEffect, useState} from 'react';
+import {GET_REGISTRY_BY_RECIPIENT_API} from "../../../routes/api";
+import {useSession} from "next-auth/react";
 import UniversalSelect from "./UniversalSelect";
 
-const RegistryByRecipientSelect = ({ selectedRecipient, selectedRegistry, onChange }) => {
-    const { data: session } = useSession(); // Получаем сессию
+const RegistryByRecipientSelect = ({selectedRecipient, selectedRegistry, onChange}) => {
+    const {data: session} = useSession(); // Получаем сессию
     const [registriesList, setRegistriesList] = useState([]);
     const getRegistriesByRecipient = async () => {
         try {

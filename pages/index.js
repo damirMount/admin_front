@@ -1,5 +1,3 @@
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMoneyBillTrendUp, faSackDollar} from "@fortawesome/free-solid-svg-icons";
 import Head from "next/head";
 import {
     OLD_ADMIN_URL,
@@ -9,21 +7,12 @@ import {
     REPORT_SERVICES_NORTH_ELECTRO_URL
 } from "../routes/web";
 import ProtectedElement from "../components/main/system/ProtectedElement";
-import {Badge, Button, Statistic} from "antd";
-import ChartArea from "../components/main/charts/ChartArea";
+import {Badge, Button} from "antd";
 import DealerBalance from "../components/main/statistic/DealerBalance";
-import {GET_PAYMENTS_STATISTIC_API} from "../routes/api";
-import {useAlert} from "../contexts/AlertContext";
-import {useSession} from "next-auth/react";
-import {useEffect, useState} from "react";
 import PaymentsChart from "../components/main/charts/PaymentsChart";
-import PaymetnsToday from "../components/main/statistic/PaymetnsToday";
-
+import PaymentsToday from "../components/main/statistic/PaymentsToday";
 
 export default function Home() {
-
-
-
     return (
         <div>
             <Head>
@@ -95,14 +84,11 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
-
                     </div>
-
                 </div>
                 <div className="w-25 ms-4 text-nowrap">
-                    {/*<h3>Статистика</h3>*/}
                     <DealerBalance/>
-                    <PaymetnsToday/>
+                    <PaymentsToday/>
                 </div>
             </div>
 

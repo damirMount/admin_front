@@ -1,8 +1,6 @@
 import React from "react";
 
-
 const ValueCountCell = (value) => {
-
     function countServices(value) {
         const lastDigit = value.length % 10;
         const lastTwoDigits = value.length % 100;

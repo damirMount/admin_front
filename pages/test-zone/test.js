@@ -1,4 +1,3 @@
-// pages/index.js
 import React, {useEffect, useState} from 'react';
 import Head from 'next/head';
 import {REGISTRY_DELETE_API} from "../../routes/api";

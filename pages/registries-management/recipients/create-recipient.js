@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {useRouter} from 'next/router';
 import FormInput from '../../../components/main/input/FormInput';
-import Link from 'next/link';
 import {RECIPIENT_CREATE_API} from '../../../routes/api'
 import Head from "next/head";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";

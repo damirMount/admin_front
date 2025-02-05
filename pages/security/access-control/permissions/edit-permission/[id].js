@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import FormInput from '../../../../../components/main/input/FormInput';
-import Link from 'next/link';
 import {PERMISSION_SHOW_API, PERMISSION_UPDATE_API} from '../../../../../routes/api'
 import {PERMISSION_INDEX_URL} from "../../../../../routes/web";
 import Head from "next/head";
@@ -77,9 +76,6 @@ export default function UpdatePermission() {
                         title: responseData.title,
                         description: responseData.description,
                     }));
-                    // setCreatedAt(responseData.createdAt)
-                    // setUpdatedAt(responseData.updatedAt)
-
                 } else {
                     openNotification({type: "error", message: responseData.message});
                     console.error('Ошибка при загрузке данных с API');
