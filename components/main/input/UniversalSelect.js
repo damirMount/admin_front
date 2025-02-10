@@ -5,6 +5,7 @@ import {useAlert} from '../../../contexts/AlertContext';
 import CreatableSelect from "react-select/creatable";
 import validator from 'validator';
 import {useSession} from "next-auth/react";
+import {Typography} from "antd";
 
 
 const UniversalSelect = ({
@@ -34,7 +35,7 @@ const UniversalSelect = ({
     const [valuesSet, setValuesSet] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
     const {data: session} = useSession(); // Получаем сессию
-
+    const {Text} = Typography;
 
     const getOptionData = async () => {
         let dataLoaded = false;
@@ -220,7 +221,9 @@ const UniversalSelect = ({
 // Код для отображения компонента после загрузки данных
     return (
         <div className="d-flex flex-column form-group w-100">
-            <label htmlFor={name}>{label}</label>
+            <Text type="secondary" htmlFor={name} className="mb-1">
+                {label}
+            </Text>
             <Selector
                 name={name}
                 closeMenuOnSelect={closeMenuOnSelect}

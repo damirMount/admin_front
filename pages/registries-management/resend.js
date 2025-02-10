@@ -12,7 +12,7 @@ import DateRangePicker from "../../components/main/input/DateRangePicker";
 import ProtectedElement from "../../components/main/system/ProtectedElement";
 import ServiceByServerSelect from "../../components/main/input/ServiceByServerSelect";
 import SmartTable from "../../components/main/table/SmartTable";
-import {Popconfirm, Tooltip, Tour} from "antd";
+import {Popconfirm, Tooltip, Tour, Typography} from "antd";
 import RegistryByRecipientSelect from "../../components/main/input/RegistryByRecipientSelect";
 import {GET_PAYMENTS_API, REGISTRY_RESEND_API} from "../../routes/api";
 import fetchData from "../../components/main/database/DataFetcher";
@@ -40,6 +40,7 @@ export default function RegistryResendPage() {
     const refRegistryFileFormat = useRef(null);
     const refAddPayment = useRef(null);
     const refFindPayment = useRef(null);
+    const {Text, Title} = Typography;
 
     const [formData, setFormData] = useState({
         formats: [],
@@ -320,13 +321,15 @@ export default function RegistryResendPage() {
 
                         {processingLoader && <Preloader/>}
 
-                        <div className={`${processingLoader ? 'd-none' : 'd-flex'} flex-row w-100 mt-5`}>
-                            <div className="d-flex flex-row w-100">
+                        <div className={`${processingLoader ? 'd-none' : 'd-flex '} flex-row w-100 mt-5 `}>
+                            <div className="d-flex flex-row w-100 ">
                                 <div className="d-flex flex-column w-50 mt-3 justify-content-start">
-                                    <h3>Настройки реестра</h3>
+                                    <Title level={3}>Настройки реестра</Title>
                                     <div ref={refSendType}>
                                         <div className="form-group">
-                                            <label htmlFor="isSelectiveEmailEnabled">Тип отправки реестра</label>
+                                            <Text type="secondary" className="mb-1">
+                                                Тип отправки реестра
+                                            </Text>
                                             <div
                                                 className="ps-3 input-form d-flex justify-content-between bg-white
                                                 align-items-center">
@@ -403,7 +406,9 @@ export default function RegistryResendPage() {
                                             </div>
                                             <div ref={refRegistryDataFormatType}>
                                                 <div className="form-group">
-                                                    <label htmlFor="send_type">Тип формирования реестра</label>
+                                                    <Text type="secondary" className="mb-1">
+                                                        Тип формирования реестра
+                                                    </Text>
                                                     <div
                                                         className="ps-3 input-form d-flex justify-content-between
                                                         bg-white align-items-center">
@@ -468,9 +473,9 @@ export default function RegistryResendPage() {
                                     )}
                                 </div>
 
-                                <div className="container w-75 ms-3 d-flex mt-3 flex-column align-items-end"
+                                <div className="container w-75  ms-3 d-flex mt-3 flex-column align-items-end"
                                      ref={refAddPayment}>
-                                    <h3 className="mb-3">Добавление платежа</h3>
+                                    <Title level={3} className="mb-3">Добавление платежа</Title>
                                     <div className="w-100 d-flex flex-column align-items-end">
                                         <SmartTable
                                             paginationPosition={['none']}

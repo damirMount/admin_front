@@ -10,7 +10,7 @@ import SmartTable from "../../../components/main/table/SmartTable";
 import {Button, Divider, Statistic, Typography} from "antd";
 import {DownloadOutlined} from "@ant-design/icons";
 
-const {Text, Link} = Typography;
+const {Text} = Typography;
 
 
 export default function DealerExportPage() {

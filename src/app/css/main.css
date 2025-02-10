@@ -385,7 +385,7 @@ h1 {
 }
 
 .card {
-    box-shadow: var(--bs-box-shadow-sm) !important;
+    box-shadow: 0 0.125rem 1.25rem 2px rgba(0, 0, 0, 0.075) !important;
     font-size: 14px;
 }
 

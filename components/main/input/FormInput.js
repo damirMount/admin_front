@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import {Input} from "antd";
+import {Input, Typography} from "antd";
 
 const FormInput = ({
                        type,
@@ -33,10 +33,13 @@ const FormInput = ({
         ref: inputRef,
         size: "large",
     };
+    const {Text} = Typography;
 
     return (
         <div className="d-flex flex-column form-group w-100">
-            <label>{label}</label>
+            <Text type="secondary" className="mb-1">
+                {label}
+            </Text>
             <Input {...sharedProps} />
         </div>
     );

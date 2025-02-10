@@ -19,7 +19,9 @@ const SmartTable = ({
                         data = [],
                         onUpdateData,
                         loading = false,
-                        size = 'large'
+                        bordered = true,
+                        className = 'mt-3 w-100',
+                        size = 'middle'
                     }) => {
     const {openNotification} = useAlert();
     const {data: session} = useSession(); // Получаем сессию
@@ -48,7 +50,6 @@ const SmartTable = ({
                 console.log(error);
             }
         }
-        console.log('DATA', data);
     }, [data]);
 
     useEffect(() => {
@@ -91,16 +92,17 @@ const SmartTable = ({
                 strategy={verticalListSortingStrategy}
             >
                 <Table
-                    className="mt-3 w-100"
+                    className={className}
                     pagination={{
                         pageSizeOptions: ['50', '75', '100'],
                         defaultPageSize: 50,
                         position: paginationPosition,
+                        size: 'large'
                     }}
                     expandable={expandable}
                     onRow={onRow}
                     rowClassName={rowClassName}
-                    bordered={true}
+                    bordered={bordered}
                     loading={loading}
                     size={size}
                     columns={columns}

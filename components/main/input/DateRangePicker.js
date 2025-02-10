@@ -1,29 +1,47 @@
 import {format} from 'date-fns';
-import dayjs from "dayjs";
-import {DatePicker} from "antd";
-import {useEffect} from "react";
+import dayjs from 'dayjs';
+import {DatePicker, Typography} from 'antd';
+import {useEffect} from 'react';
 
-const DateRangePicker = ({startDate, endDate, onDateChange}) => {
+const {Text} = Typography;
+const {RangePicker} = DatePicker;
+
+const DateRangePicker = ({startDate, endDate, onDateChange, size = 'large', allowClear = true}) => {
     const dateFormat = 'yyyy-MM-dd';
+    // Форматируем сегодняшнюю дату
     const todayFormatted = format(new Date(), dateFormat);
-    const RangePicker = DatePicker.RangePicker;
 
+    // Если startDate и endDate заданы, используем их, иначе – сегодняшнюю дату
+    const defaultStart = startDate ? dayjs(startDate) : dayjs(todayFormatted);
+    const defaultEnd = endDate ? dayjs(endDate) : dayjs(todayFormatted);
+
+    // Вызываем onDateChange только один раз при монтировании
     useEffect(() => {
-        onDateChange([todayFormatted, todayFormatted])
-    }, []);
+        onDateChange([defaultStart, defaultEnd]);
+    }, []); // пустой массив зависимостей – эффект выполнится один раз
 
     return (
         <div className="d-flex flex-column">
-            <label>Период времени</label>
+            <Text type="secondary" className="mb-1">
+                Период времени
+            </Text>
             <RangePicker
-                size="large"
-                defaultValue={[
-                    dayjs(todayFormatted),
-                    dayjs(todayFormatted),
-
-                ]}
+                size={size}
+                defaultValue={[defaultStart, defaultEnd]}
                 maxDate={dayjs(todayFormatted)}
-                onChange={(dateStrings, dates,) => {
+                allowClear={allowClear}
+                onChange={(dateStrings, dates) => {
+                    if (!dates || dates.length < 2) return;
+                    // Преобразуем выбранные даты в dayjs-объекты
+                    const selectedStart = dayjs(dates[0]);
+                    const selectedEnd = dayjs(dates[1]);
+                    // Если выбранный диапазон совпадает с исходным, ничего не делаем
+                    if (
+                        selectedStart.isSame(defaultStart, 'day') &&
+                        selectedEnd.isSame(defaultEnd, 'day')
+                    ) {
+                        return;
+                    }
                     onDateChange(dates);
                 }}
             />
