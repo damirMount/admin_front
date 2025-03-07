@@ -14,7 +14,6 @@ import SmartTable from "../../components/main/table/SmartTable";
 import {useAlert} from "../../contexts/AlertContext";
 import ProtectedElement from "../../components/main/system/ProtectedElement";
 import FormInput from "../../components/main/input/FormInput";
-import ChartArea from "../../components/main/charts/ChartArea";
 
 export default function TestPage() {
     const {openNotification, openConfirmAction, closeConfirmAction} = useAlert();

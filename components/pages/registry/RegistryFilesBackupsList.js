@@ -82,7 +82,7 @@ const RegistryFiles = ({apiUrl, downloadUrl}) => {
         {
             title: 'Размер',
             dataIndex: 'size',
-            render: (text) => ( <span className="status status-small">{FormatFileSize(text)}</span>),
+            render: (text) => (<span className="status status-small">{FormatFileSize(text)}</span>),
             sorter: (a, b) => a.size - b.size,
         },
         {

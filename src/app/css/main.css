@@ -146,12 +146,15 @@ h1 {
 .relative-container {
     position: relative;
 }
+
 .ps-menu-button {
     color: #532c59 !important;
 }
+
 .ps-submenu-content {
     z-index: 1001 !important;
 }
+
 .absolute-skeleton {
     position: absolute;
     top: 0;
@@ -384,6 +387,7 @@ h1 {
 .color-purple {
     color: #532C59;
 }
+
 .bg-purple {
     background-color: #532C59;
     border: #532C59 2px solid;

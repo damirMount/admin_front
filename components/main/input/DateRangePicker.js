@@ -1,11 +1,11 @@
 import dayjs from 'dayjs';
-import { DatePicker, Typography } from 'antd';
-import { useEffect } from 'react';
+import {DatePicker, Typography} from 'antd';
+import {useEffect} from 'react';
 
-const { Text } = Typography;
-const { RangePicker } = DatePicker;
+const {Text} = Typography;
+const {RangePicker} = DatePicker;
 
-const DateRangePicker = ({ startDate, endDate, onDateChange, size = 'large', allowClear = true }) => {
+const DateRangePicker = ({startDate, endDate, onDateChange, size = 'large', allowClear = true}) => {
     const dateFormat = 'YYYY-MM-DD';
 
     // Формируем текущую дату в строковом формате без временной зоны

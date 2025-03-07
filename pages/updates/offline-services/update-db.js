@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import Head from "next/head";
 import {useSession} from "next-auth/react";
 import ProtectedElement from "../../../components/main/system/ProtectedElement";
-import {Button, Descriptions, Result, Select, Tag, Tooltip, Typography} from "antd";
+import {Button, Descriptions, Select, Tag, Tooltip, Typography} from "antd";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
-import {CloseCircleOutlined, PaperClipOutlined} from "@ant-design/icons";
+import {PaperClipOutlined} from "@ant-design/icons";
 import UploadDatabaseFileForm from "../../../components/pages/offline-services/UploadDatabaseFileForm";
 import UploadedDataTableList from "../../../components/pages/offline-services/UploadedDataTableList";
 import {
@@ -15,7 +15,6 @@ import {
 import {faPenToSquare, faXmarkCircle} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useAlert} from "../../../contexts/AlertContext";
-import {MAIN_PAGE_URL, OFFLINE_SERVICE_DATABASE_UPDATE_INDEX_URL} from "../../../routes/web";
 
 
 const {Paragraph, Text} = Typography;
@@ -79,8 +78,9 @@ export default function UpdateDBPage() {
                 headers: {Authorization: `Bearer ${session?.accessToken}`},
             });
 
+            const responseData = await response.json();
+
             if (response.ok) {
-                const responseData = await response.json();
                 setDefaultTemplateFormData(responseData.data);
 
                 if (responseData.data.files === null) {
@@ -96,6 +96,10 @@ export default function UpdateDBPage() {
                     files: Array.isArray(responseData.data.files) ? responseData.data.files : []
                 });
             } else {
+                setTableFields({
+                    headers: [],
+                    files: []
+                });
                 setDefaultTemplateFormData((prevFormData) => ({
                     ...prevFormData,
                     separator: ';',
@@ -107,12 +111,6 @@ export default function UpdateDBPage() {
                     create_author: '',
                     update_author: '',
                 }));
-
-                setTableFields({
-                    headers: [],
-                    files: []
-                });
-
                 setTemplateFormData((prevFormData) => ({
                     ...prevFormData,
                     separator: ';',
@@ -158,16 +156,18 @@ export default function UpdateDBPage() {
                     Authorization: `Bearer ${session?.accessToken}`,
                 },
             });
-
+            const responseData = await response.json();
             if (response.ok) {
-                const responseData = await response.json();
                 setDefaultTemplateFormData(templateFormData);
                 setDefaultTemplateFormData((prevFormData) => ({
                     ...prevFormData,
                     files: tableFields.files
                 }));
                 closeConfirmAction();
+                setNeedConfirmChanges(false)
                 openNotification({type: "success", message: responseData.message});
+            } else {
+                openNotification({type: "error", message: responseData.message});
             }
         } catch (error) {
             openNotification({type: "error", message: error.message});
@@ -213,14 +213,16 @@ export default function UpdateDBPage() {
                 },
             });
 
+            const responseData = await response.json();
             if (response.ok) {
-                const responseData = await response.json();
                 setDefaultTemplateFormData(templateFormData);
                 setDefaultTemplateFormData((prevFormData) => ({
                     ...prevFormData,
                     files: tableFields.files
                 }));
                 openNotification({type: "success", message: responseData.message});
+            } else {
+                openNotification({type: "error", message: responseData.message});
             }
 
             setLoading(false);
@@ -277,7 +279,6 @@ export default function UpdateDBPage() {
         ) {
             openConfirmAction({
                 onSave: async () => {
-                    setNeedConfirmChanges(false)
                     await updateTemplate();
                 },
                 onReset: () => {
@@ -329,7 +330,6 @@ export default function UpdateDBPage() {
 
                                 fetchDataConfig={{
                                     model: 'Service',
-                                    searchTerm: {id_type: [5, 206, 220, 213], accurateSearch: false},
                                 }}
                                 required
                             />

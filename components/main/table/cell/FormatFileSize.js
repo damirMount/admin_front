@@ -1,5 +1,3 @@
-import React from "react";
-
 const StatusIndicator = (props) => {
     const formatFileSize = (bytes) => {
         if (bytes === 0) return '0 Б';
@@ -9,7 +7,7 @@ const StatusIndicator = (props) => {
     };
 
     return (
-       formatFileSize(props)
+        formatFileSize(props)
     );
 };
 

@@ -11,7 +11,6 @@ import moment from 'moment-timezone';
 import PaymentsToday from '../statistic/PaymentsToday';
 import DealerBalance from '../statistic/DealerBalance';
 import DateRangePicker from "../input/DateRangePicker";
-import {AreaChartOutlined} from "@ant-design/icons";
 
 const {Text} = Typography;
 
@@ -166,7 +165,7 @@ const PaymentsChart = () => {
                     </div>
                 </div>
                 {loading ? (
-                    <Skeleton.Node className="w-100 mt-1 h-100 "  style={{fontSize: 0}} active />
+                    <Skeleton.Node className="w-100 mt-1 h-100 " style={{fontSize: 0}} active/>
                 ) : (
                     <>
                         <ResponsiveContainer width="100%" height={420}>
@@ -192,7 +191,7 @@ const PaymentsChart = () => {
                                 <Area type="monotone" dataKey="processing_total_pay" stackId="1" stroke="orange"
                                       fill="orange" name="В обработке"/>
                                 <Area type="monotone" dataKey="total_pay" stroke="darkBlue" fill="none" name="Итого"/>
-                            </AreaChart>    
+                            </AreaChart>
                         </ResponsiveContainer>
                         <ResponsiveContainer width="100%" height={250}>
                             <AreaChart

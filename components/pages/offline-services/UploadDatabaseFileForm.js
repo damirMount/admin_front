@@ -16,7 +16,15 @@ import {faEye} from "@fortawesome/free-regular-svg-icons";
 
 const {Text, Title} = Typography;
 
-const UploadDatabaseFileForm = ({templateFormData,defaultTemplateFormData, selectedService, onChange, onLoading, setTableFields, setUploadedFiles}) => {
+const UploadDatabaseFileForm = ({
+                                    templateFormData,
+                                    defaultTemplateFormData,
+                                    selectedService,
+                                    onChange,
+                                    onLoading,
+                                    setTableFields,
+                                    setUploadedFiles
+                                }) => {
     const {data: session} = useSession();
     const [uploadedFilesList, setUploadedFilesList] = useState([]);
 
@@ -64,7 +72,6 @@ const UploadDatabaseFileForm = ({templateFormData,defaultTemplateFormData, selec
     // Функция загрузки файла
     const uploadFile = async (formData) => {
         onLoading(true);
-        console.log(formData)
         try {
             const response = await fetch(READ_ABONENT_SERVICE_DB_FILE_API, {
                 method: 'POST',
@@ -76,7 +83,6 @@ const UploadDatabaseFileForm = ({templateFormData,defaultTemplateFormData, selec
 
             if (response.ok) {
                 const responseData = await response.json();
-                console.log(responseData)
                 onChange(prevData => {
                     const existingFiles = Array.isArray(prevData) ? prevData : [];
                     const newFiles = responseData.data.map(file => ({
@@ -163,7 +169,6 @@ const UploadDatabaseFileForm = ({templateFormData,defaultTemplateFormData, selec
         }
 
         for (const fileObj of uploadedFilesList) {
-            console.log(fileObj)
             if (!(fileObj.originFileObj instanceof File)) {
                 console.warn("Некорректный файл:", fileObj);
                 continue;
@@ -174,11 +179,7 @@ const UploadDatabaseFileForm = ({templateFormData,defaultTemplateFormData, selec
             formData.set('separator', templateFormData.separator);
             formData.set('files', fileObj.originFileObj);
             formData.set('fileName', fileObj.name);
-            for (const pair of formData.entries()) {
-                console.log(pair[0], pair[1]);
-            }
 
-            console.log(formData)
             await uploadFile(formData);
         }
     };
