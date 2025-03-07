@@ -89,6 +89,7 @@ export default function UpdatePermission() {
             const responseData = await response.json();
             if (response.ok) {
                 fetchRoles()
+                closeConfirmAction();
                 openNotification({type: 'success', message: responseData.message});
             } else {
                 openNotification({type: 'error', message: responseData.message});

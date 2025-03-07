@@ -107,7 +107,7 @@ label {
     max-width: 100%;
     background-color: #FFFFFF;
     border-bottom: #F8E0FB 1px solid;
-    z-index: 1001;
+    z-index: 1000;
 }
 
 h1 {
@@ -146,7 +146,12 @@ h1 {
 .relative-container {
     position: relative;
 }
-
+.ps-menu-button {
+    color: #532c59 !important;
+}
+.ps-submenu-content {
+    z-index: 1001 !important;
+}
 .absolute-skeleton {
     position: absolute;
     top: 0;
@@ -278,7 +283,7 @@ h1 {
     text-transform: uppercase;
 }
 
-.icon-not-found {
+.icon-large {
     font-size: 50px;
 }
 
@@ -376,16 +381,18 @@ h1 {
     display: flex;
 }
 
-[class*="css-"] {
-    white-space: inherit !important;
-}
-
 .color-purple {
     color: #532C59;
 }
+.bg-purple {
+    background-color: #532C59;
+    border: #532C59 2px solid;
+    color: #f8f9fa;
+}
+
 
 .card {
-    box-shadow: 0 0.125rem 1.25rem 2px rgba(0, 0, 0, 0.075) !important;
+    box-shadow: 0 0.125rem 1.25rem 2px rgba(0, 0, 0, 0.075);
     font-size: 14px;
 }
 

@@ -1,13 +1,48 @@
 import {Divider, Skeleton, Statistic, Tooltip, Typography} from "antd";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBan, faClockRotateLeft, faMoneyBillTrendUp, faSackDollar} from "@fortawesome/free-solid-svg-icons";
 import {faCircleCheck} from "@fortawesome/free-regular-svg-icons/faCircleCheck";
 import {MoneyFormatNumber} from "../system/MoneyFormatNumber";
+import {GET_PAYMENTS_STATISTIC_API} from "../../../routes/api";
+import {useAlert} from "../../../contexts/AlertContext";
+import {useSession} from "next-auth/react";
 
 const {Text} = Typography;
 
-const PaymentsToday = ({data, loading = true}) => {
+const PaymentsToday = () => {
+    const {openNotification} = useAlert();
+    const {data: session} = useSession();
+    const [loading, setLoading] = useState(true);
+    const [data, setData] = useState([]);
+    const getPaymentsStatistic = async () => {
+        setLoading(true);
+
+        try {
+            const response = await fetch(`${GET_PAYMENTS_STATISTIC_API}`, {
+                method: 'GET', headers: {
+                    'Content-Type': 'application/json', Authorization: `Bearer ${session?.accessToken}`,
+                },
+            });
+
+            if (response.ok) {
+                const responseData = await response.json();
+                setData(responseData.data);
+            } else {
+                const errorResponse = await response.json();
+                openNotification({type: 'error', message: errorResponse.message});
+            }
+        } catch (error) {
+            openNotification({type: 'error', message: 'Произошла ошибка при создании отчета'});
+        } finally {
+            setTimeout(() => setLoading(false), 300);
+        }
+    };
+
+    useEffect(() => {
+        getPaymentsStatistic();
+    }, []);
+
 
     return (<div className="card mt-2">
         <div className="card-body">
@@ -51,41 +86,6 @@ const PaymentsToday = ({data, loading = true}) => {
                 </div>
                 <div className='d-flex align-items-center'>
                     <span
-                        className='bg-warning d-flex align-items-center justify-content-center text-white p-3 rounded-1
-                        shadow'
-                        style={{height: 'fit-content'}}>
-                          <FontAwesomeIcon className='fs-5' icon={faClockRotateLeft}/>
-                    </span>
-                    <div className='d-flex flex-column ms-2 w-100'>
-                        <div className='d-flex flex-row w-100 justify-content-between align-items-end text-center'>
-                            <Text type="secondary">
-                                В обработке
-                            </Text>
-                            <Text type="secondary">Кол-во</Text>
-                            {/*<Text type="danger" className='fw-bold'>*/}
-                            {/*    <CaretDownOutlined/>15%*/}
-                            {/*</Text>*/}
-                        </div>
-                        {loading ? (<Skeleton.Input className="w-100 mt-2" active size={'small'}/>) : (
-                            <div className='d-flex flex-row w-100 justify-content-between align-items-end'>
-                                <Tooltip
-                                    title={data.length > 0 ? MoneyFormatNumber(data[data.length - 1].processing_total_pay, 'full') + ' сом' : 0}>
-                                    <Text className='fs-4'>
-                                        {data.length > 0 ? MoneyFormatNumber(data[data.length - 1].processing_total_pay) : 0}
-                                    </Text>
-                                </Tooltip>
-                                <Tooltip
-                                    title={data.length > 0 ? MoneyFormatNumber(data[data.length - 1].processing_total_count, 'full') + ' платежей' : 0}>
-                                    <Text className='fs-5' type='secondary'>
-                                        {data.length > 0 ? MoneyFormatNumber(data[data.length - 1].processing_total_count) : 0}
-                                    </Text>
-                                </Tooltip>
-                            </div>)
-                        }
-                    </div>
-                </div>
-                <div className='d-flex align-items-center'>
-                    <span
                         className='bg-danger d-flex align-items-center justify-content-center text-white p-3 rounded-1
                         shadow'
                         style={{height: 'fit-content'}}>
@@ -113,6 +113,41 @@ const PaymentsToday = ({data, loading = true}) => {
                                     title={data.length > 0 ? MoneyFormatNumber(data[data.length - 1].error_total_count, 'full') + ' платежей' : 0}>
                                     <Text className='fs-5' type='secondary'>
                                         {data.length > 0 ? MoneyFormatNumber(data[data.length - 1].error_total_count) : 0}
+                                    </Text>
+                                </Tooltip>
+                            </div>)
+                        }
+                    </div>
+                </div>
+                <div className='d-flex align-items-center'>
+                    <span
+                        className='bg-warning d-flex align-items-center justify-content-center text-white p-3 rounded-1
+                        shadow'
+                        style={{height: 'fit-content'}}>
+                          <FontAwesomeIcon className='fs-5' icon={faClockRotateLeft}/>
+                    </span>
+                    <div className='d-flex flex-column ms-2 w-100'>
+                        <div className='d-flex flex-row w-100 justify-content-between align-items-end text-center'>
+                            <Text type="secondary">
+                                В обработке
+                            </Text>
+                            <Text type="secondary">Кол-во</Text>
+                            {/*<Text type="danger" className='fw-bold'>*/}
+                            {/*    <CaretDownOutlined/>15%*/}
+                            {/*</Text>*/}
+                        </div>
+                        {loading ? (<Skeleton.Input className="w-100 mt-2" active size={'small'}/>) : (
+                            <div className='d-flex flex-row w-100 justify-content-between align-items-end'>
+                                <Tooltip
+                                    title={data.length > 0 ? MoneyFormatNumber(data[data.length - 1].processing_total_pay, 'full') + ' сом' : 0}>
+                                    <Text className='fs-4'>
+                                        {data.length > 0 ? MoneyFormatNumber(data[data.length - 1].processing_total_pay) : 0}
+                                    </Text>
+                                </Tooltip>
+                                <Tooltip
+                                    title={data.length > 0 ? MoneyFormatNumber(data[data.length - 1].processing_total_count, 'full') + ' платежей' : 0}>
+                                    <Text className='fs-5' type='secondary'>
+                                        {data.length > 0 ? MoneyFormatNumber(data[data.length - 1].processing_total_count) : 0}
                                     </Text>
                                 </Tooltip>
                             </div>)

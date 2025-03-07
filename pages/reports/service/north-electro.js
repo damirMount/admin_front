@@ -12,7 +12,6 @@ import {DownloadOutlined} from "@ant-design/icons";
 
 const {Text} = Typography;
 
-
 export default function DealerExportPage() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -22,14 +21,14 @@ export default function DealerExportPage() {
     const [totalAmount, setTotalAmount] = useState(0);
     const [paymentCount, setPaymentCount] = useState(0);
     const {openNotification} = useAlert();
-    const [oldFormData, setOldFormData] = useState([]);
     const {data: session} = useSession(); // Получаем сессию
+    const [oldFormData, setOldFormData] = useState([]);
     const [formData, setFormData] = useState({
         serviceType: 'offline',
         clientType: 'physical',
         paymentType: 'ordinary',
-        startDate: null,
-        endDate: null,
+        startDate: startDate,
+        endDate: endDate,
     });
 
     const tableColumns = [

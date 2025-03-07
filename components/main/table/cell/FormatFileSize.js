@@ -9,7 +9,7 @@ const StatusIndicator = (props) => {
     };
 
     return (
-        <span className="status status-small">{formatFileSize(props)}</span>
+       formatFileSize(props)
     );
 };
 

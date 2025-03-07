@@ -6,6 +6,9 @@ export const GET_DATA_FROM_DB_API = `${baseURL}/api/getDataFromDB`
 export const GET_SERVICES_BY_SERVER_API = `${baseURL}/api/getServicesByServer`
 
 export const POST_ABONENT_SERVICE_API = `${baseURL}/api/abonent-service/store`
+export const READ_ABONENT_SERVICE_DB_FILE_API = `${baseURL}/api/abonent-service/readUploadedDataFile`
+export const GET_ABONENT_SERVICE_TEMPLATE_API = `${baseURL}/api/abonent-service/getTemplate`
+export const UPDATE_ABONENT_SERVICE_TEMPLATE_API = `${baseURL}/api/abonent-service/updateTemplate`
 
 export const RECIPIENT_CREATE_API = `${baseURL}/api/recipient`
 export const RECIPIENT_SHOW_API = `${baseURL}/api/recipient`

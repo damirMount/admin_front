@@ -114,11 +114,21 @@ tr, td, table, tbody, th, thead, tfoot {
 }
 
 .ant-table-cell {
-    color: #532c59 !important;
+    color: #532c59;
 }
 
-.ant-table-wrapper tr.ant-table-expanded-row {
-    background: rgba(0, 0, 0, 0.02);
+.table-cell-disabled {
+    background-color: rgb(242 242 242) !important;
+    color: rgb(169 149 172);
+}
+
+.strikethrough {
+    background-color: rgb(255 0 0 / 28%) !important;
+    color: rgb(169 149 172) !important;
+}
+
+.strikethrough .table-cell-disabled {
+    background-color: rgb(255 208 208) !important;
 }
 
 .ant-table-wrapper .ant-table-column-sorter-up.active, .ant-table-wrapper .ant-table-column-sorter-down.active {
@@ -169,4 +179,29 @@ tr, td, table, tbody, th, thead, tfoot {
 .ant-result .ant-result-title {
     font-weight: 400;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+.ant-upload-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.ant-upload-list-item-container {
+    width: 50%;
+    padding: 0 3px;
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+    background: #532c59;
+}
+
+.ant-carousel .slick-dots li button {
+    background: #532c59;
+    height: 4px;
+}
+.site-result-demo-error-icon {
+    color: red;
 }

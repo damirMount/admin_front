@@ -92,7 +92,7 @@ export default function IndexPage() {
                                 </label>
                             </div>
                             <div
-                                className="h-100 d-flex icon-not-found flex-column align-items-center justify-content-center">
+                                className="h-100 d-flex icon-large flex-column align-items-center justify-content-center">
                                 <FontAwesomeIcon icon={faArrowRightArrowLeft} size="xl"/>
                             </div>
                             <div className="input__wrapper">

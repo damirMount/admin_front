@@ -91,6 +91,7 @@ const UniversalSelect = ({
         if (
             selectedOptions &&
             selectedOptions.length > 0 &&
+            selectedOptions[0] !== undefined &&
             optionsList.length > 0
         ) {
             const matchingOptions = optionsList.filter(option => selectedOptions.includes(option.value));
@@ -98,7 +99,7 @@ const UniversalSelect = ({
         }
         //Установить первое значение из списка
         if (
-            (!selectedOptions || selectedOptions.length === 0) &&
+            (!selectedOptions || selectedOptions.length < 0 || selectedOptions[0] === undefined) &&
             firstOptionSelected &&
             optionsList.length > 0
         ) {
@@ -214,10 +215,6 @@ const UniversalSelect = ({
 
     const Selector = createNewValues ? CreatableSelect : Select;
 
-    if (isLoading || !valuesSet) {
-        return null; // Пока данные загружаются или valuesSet равно false, ничего не отображается
-    }
-
 // Код для отображения компонента после загрузки данных
     return (
         <div className="d-flex flex-column form-group w-100">
@@ -231,7 +228,7 @@ const UniversalSelect = ({
                 className={className}
                 placeholder={placeholder}
                 options={optionsList}
-                isLoading={isLoading}
+                isLoading={isLoading || !valuesSet}
                 isMulti={isMultiSelect}
                 isSearchable={isSearchable}
                 value={selectedValue}

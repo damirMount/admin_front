@@ -14,7 +14,7 @@ export const AlertProvider = ({children}) => {
             <div className={`w-100 d-flex justify-content-between toast-header bg-danger text-white`}>
                 <div>
                     <FontAwesomeIcon className="fs-5 me-2" icon={faTriangleExclamation} size="xl"/>
-                    <strong> Ошибка!! </strong>
+                    <strong> Ошибка! </strong>
                 </div>
                 <button
                     type="button"
@@ -33,13 +33,12 @@ export const AlertProvider = ({children}) => {
             messageApi.open({
                 type: 'success',
                 content: message,
-                className: 'mt-5'
             });
         } else {
             const notificationKey = `notification_${Date.now()}`;
             notification.open({
                 key: notificationKey,
-                duration: 10,
+                duration: 30,
                 description: <CustomNotification
                     message={message}
                     notificationKey={notificationKey}/>,
@@ -78,7 +77,7 @@ export const AlertProvider = ({children}) => {
                             className="btn btn-purple"
                             onClick={() => {
                                 onSave(); // Вызываем функцию onSave при нажатии на кнопку "Сохранить"
-                                onClose(); // Закрываем оповещение
+                                // onClose(); // Закрываем оповещение
                             }}
                         >
                             Сохранить

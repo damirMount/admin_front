@@ -227,7 +227,6 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
 
     const handleAdditionalFieldChange = (event) => {
         const {name, value} = event.target;
-        console.log(name, value)
         const newData = cloneDeep(formData);
         let fieldExists = false;
 
@@ -504,7 +503,6 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                         {text}
                     </span>
                 )
-
             },
         },
         {
@@ -521,7 +519,6 @@ const RegistryForm = ({oldFormData = [], formData = [], onDataFieldsChange}) => 
                     setActiveInput={setActiveInput}
                     onChange={onDataFieldsChange}
                 />
-
             },
         },
         {
