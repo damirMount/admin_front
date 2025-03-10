@@ -204,15 +204,6 @@ const UploadDatabaseFileForm = ({
         setUploadedFilesList(prevList =>
             Array.isArray(prevList) ? prevList.filter(fileItem => fileItem.name !== file.name) : []
         );
-
-        // Обновляем tableList, удаляя запись из массива files
-        setTableFields(prevData => {
-            const currentFiles = Array.isArray(prevData?.files) ? prevData.files : [];
-            return {
-                ...prevData,
-                files: currentFiles.filter(fileItem => fileItem.fileName !== file.name)
-            };
-        });
     };
 
     useEffect(() => {

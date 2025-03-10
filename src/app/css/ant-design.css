@@ -57,6 +57,9 @@
 tr, td, table, tbody, th, thead, tfoot {
     border-color: #A9C9DD !important;
 }
+.ant-table-cell-row-hover {
+    background-color: #efefef !important;
+}
 
 :where(.css-dev-only-do-not-override-1drr2mu).ant-table-wrapper .ant-table.ant-table-bordered > .ant-table-container {
     border-inline-start: 1px solid #f0f0f0;
@@ -126,10 +129,17 @@ tr, td, table, tbody, th, thead, tfoot {
     background-color: rgb(255 0 0 / 28%) !important;
     color: rgb(169 149 172) !important;
 }
-
 .strikethrough .table-cell-disabled {
     background-color: rgb(255 208 208) !important;
 }
+.strikethrough-warning {
+    background-color: rgb(255 239 149) !important;
+    color: rgb(169 149 172) !important;
+}
+.strikethrough-warning .table-cell-disabled {
+    background-color: rgb(255, 234, 187) !important;
+}
+
 
 .ant-table-wrapper .ant-table-column-sorter-up.active, .ant-table-wrapper .ant-table-column-sorter-down.active {
     color: #532c59;

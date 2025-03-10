@@ -95,6 +95,7 @@ export default function UpdateDBPage() {
                     headers: Array.isArray(responseData.data.headers) ? responseData.data.headers : [],
                     files: Array.isArray(responseData.data.files) ? responseData.data.files : []
                 });
+
             } else {
                 setTableFields({
                     headers: [],
@@ -123,7 +124,7 @@ export default function UpdateDBPage() {
                     update_author: '',
                 }));
             }
-
+            setData([])
             setLoading(false);
         } catch (error) {
             openNotification({type: "error", message: error.message});
@@ -180,6 +181,9 @@ export default function UpdateDBPage() {
         try {
             if (needConfirmChanges) {
                 throw new Error(`У вас есть не сохранённые изменения! Сохраните или отмените их чтобы продолжить`)
+            }
+            if (uploadedFiles.length === 0) {
+                throw new Error(`Вы не загрузили файлы для обновления`)
             }
             if (defaultTemplateFormData.files.length !== uploadedFiles.length) {
                 throw new Error(`Загружено ${uploadedFiles.length} из ${defaultTemplateFormData.files.length} файлов. Загрузите недостающие файлы, либо обновите шаблон для продолжения`)
@@ -330,6 +334,8 @@ export default function UpdateDBPage() {
 
                                 fetchDataConfig={{
                                     model: 'Service',
+                                    searchTerm: {id_type: [5, 206, 220, 213], accurateSearch: false},
+                                    sort: '{"column":"id","direction":"asc"}',
                                 }}
                                 required
                             />
@@ -437,6 +443,7 @@ export default function UpdateDBPage() {
                     </div>
                     <div className="d-flex card card-body w-75 justify-content-start ms-5">
                         <UploadDatabaseFileForm
+                            key={JSON.stringify(selectedService)}
                             templateFormData={templateFormData}
                             defaultTemplateFormData={defaultTemplateFormData}
                             setTableFields={setTableFields}
@@ -448,6 +455,7 @@ export default function UpdateDBPage() {
                     </div>
                 </div>
                 <UploadedDataTableList
+                    key={JSON.stringify(selectedService)}
                     data={data}
                     tableFields={tableFields}
                     setTableFields={setTableFields}
