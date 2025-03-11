@@ -163,6 +163,10 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
 
     const handleHeaderChange = (colName, value) => {
         setTableFields(prev => {
+            // Извлекаем старый идентификатор (ключ, соответствующий столбцу типа "identifier")
+            const oldIdentifier = prev.headers.find(header => header.type === 'identifier')?.key;
+
+            // Обновляем или добавляем заголовок для текущей колонки
             let headers = prev.headers.filter(
                 header => !(header.key !== colName.toString() && header.type === value)
             );
@@ -172,15 +176,59 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
                 const index = headers.findIndex(header => header.key === colName.toString());
                 if (index !== -1) {
                     headers = headers.map(header =>
-                        header.key === colName.toString() ? {...header, type: value} : header
+                        header.key === colName.toString() ? { ...header, type: value } : header
                     );
                 } else {
-                    headers = [...headers, {key: colName.toString(), type: value}];
+                    headers = [...headers, { key: colName.toString(), type: value }];
                 }
             }
-            return {...prev, headers};
+
+            // Если выбран новый тип "identifier", новый идентификатор равен colName.toString()
+            const newIdentifier = value === 'identifier' ? colName.toString() : undefined;
+
+            // Если был старый идентификатор и он изменился, обновляем значения в hiddenElements для всех файлов
+            const updatedFiles = prev.files.map(file => {
+                // Ищем данные для данного файла в data (если они есть)
+                const fileDataObj = data?.find(f => f.fileName === file.fileName);
+                if (!fileDataObj) return file;
+
+                const updatedHiddenElements = (file.hiddenElements || []).map(he => {
+                    // Для каждого скрытого элемента (he) ищем соответствующий лист в fileDataObj.data
+                    const sheetData = fileDataObj.data.find(sheet => {
+                        const sheetNameArr = sheet[2];
+                        const sheetName = Array.isArray(sheetNameArr) ? sheetNameArr[0] : sheetNameArr;
+                        return sheetName === he.sheet;
+                    });
+                    if (!sheetData) return he;
+
+                    const [sheetHeaders, rows] = sheetData;
+                    // Формируем dataSource для данного листа
+                    const dataSource = rows.map((row, index) => {
+                        const rowObj = {};
+                        sheetHeaders.forEach((header, i) => {
+                            rowObj[header] = row[i];
+                        });
+                        rowObj.key = index;
+                        return rowObj;
+                    });
+                    // Используем he.key (номер строки) для поиска соответствующей строки в dataSource
+                    const row = dataSource.find(r => String(r.key) === String(he.key));
+                    // Если строка найдена и задан новый идентификатор, обновляем значение в hiddenElements
+                    if (row && newIdentifier) {
+                        return { ...he, value: row[newIdentifier] };
+                    }
+                    return he;
+                });
+
+                return { ...file, hiddenElements: updatedHiddenElements };
+            });
+
+            return { ...prev, headers, files: updatedFiles };
         });
     };
+
+
+
 
     // Функция рендеринга таблицы для одного файла
     const renderTableForSheet = (sheet, fileName) => {
