@@ -86,7 +86,7 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
                     Object.keys(hiddenRows[compositeKey]).forEach(rowKey => {
                         const expected = hiddenRows[compositeKey][rowKey];
                         const row = dataSource.find(r => String(r.key) === rowKey);
-                        if (row && row[identifierKey] !== expected) {
+                        if (row && row[identifierKey] !== expected && expected !== '')  {
                             mismatches.push({
                                 fileName,
                                 sheetName,
@@ -108,7 +108,7 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
         setTableFields(prev => {
             let newFiles = [...prev.files];
             const identifierKey = tableFields.headers.find(item => item.type === 'identifier')?.key;
-            const recordValue = identifierKey ? record[identifierKey] : undefined;
+            const recordValue = identifierKey ? record[identifierKey] : '';
             const fileIndex = newFiles.findIndex(file => file.fileName === fileName);
             if (fileIndex !== -1) {
                 newFiles[fileIndex] = {
@@ -132,12 +132,13 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
 
     // Функция для добавления/удаления элемента из hiddenElements
     const toggleHiddenElement = (hiddenElements = [], sheetName, record, recordValue) => {
+        console.log('sss', recordValue)
         const exists = hiddenElements.some(el => el.key === record.key && el.type === 'row' && el.sheet === sheetName);
         return exists
             ? hiddenElements.filter(el => !(el.key === record.key && el.type === 'row' && el.sheet === sheetName))
             : [...hiddenElements, {
                 key: record.key,
-                value: recordValue,
+                value: recordValue || '',
                 type: 'row',
                 sheet: sheetName
             }];
@@ -163,9 +164,6 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
 
     const handleHeaderChange = (colName, value) => {
         setTableFields(prev => {
-            // Извлекаем старый идентификатор (ключ, соответствующий столбцу типа "identifier")
-            const oldIdentifier = prev.headers.find(header => header.type === 'identifier')?.key;
-
             // Обновляем или добавляем заголовок для текущей колонки
             let headers = prev.headers.filter(
                 header => !(header.key !== colName.toString() && header.type === value)
@@ -377,11 +375,10 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
                             m.sheetName === sheetName &&
                             String(m.rowKey) === String(record.key)
                         );
-
                         // Проверяем, есть ли несоответствие для данной строки
                         if (isMismatch) return 'strikethrough-warning';
                         // Если строка скрыта, возвращаем класс для зачеркивания
-                        if (hiddenRows && hiddenRows[compositeKey] && hiddenRows[compositeKey][record.key] !== undefined) {
+                        if (hiddenRows && hiddenRows[compositeKey] && hiddenRows[compositeKey][record.key]!== undefined) {
                             return 'strikethrough';
                         }
                         return '';

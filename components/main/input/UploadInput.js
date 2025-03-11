@@ -107,15 +107,19 @@ const UploadInput = ({onUpload, onRemove, allowedFileTypes = ['*']}) => {
 
                 {/* Кнопка удаления */}
                 <div className="d-flex flex-row justify-content-end">
-                    <Popconfirm placement="topLeft"
-                                title={
-                                    <div className='d-flex flex-column'>
-                                        <Text>Вы уверены что хотите удалить этот файл?</Text>
-                                        <Text>Все не сохранённые изменения будут сброшены.</Text>
-                                    </div>}
-                                onConfirm={() => handleRemove(file)}>
-                        <Tooltip placement="topRight"
-                                 title='Удалить файл'>
+                    <Popconfirm
+                        placement="topLeft"
+                        title={
+                            <div className='d-flex flex-column'>
+                                <Text>Вы уверены что хотите удалить этот файл?</Text>
+                                <Text>Все не сохранённые изменения будут сброшены.</Text>
+                            </div>
+                        }
+                        onConfirm={() => handleRemove(file)}>
+                        <Tooltip
+                            placement="topRight"
+                            title='Удалить файл'
+                        >
                             <Button
                                 className="rounded ms-2 d-flex align-items-center justify-content-center"
                                 style={{width: 40, height: 37}}
