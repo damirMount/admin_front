@@ -176,10 +176,10 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
                 const index = headers.findIndex(header => header.key === colName.toString());
                 if (index !== -1) {
                     headers = headers.map(header =>
-                        header.key === colName.toString() ? { ...header, type: value } : header
+                        header.key === colName.toString() ? {...header, type: value} : header
                     );
                 } else {
-                    headers = [...headers, { key: colName.toString(), type: value }];
+                    headers = [...headers, {key: colName.toString(), type: value}];
                 }
             }
 
@@ -215,27 +215,23 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
                     const row = dataSource.find(r => String(r.key) === String(he.key));
                     // Если строка найдена и задан новый идентификатор, обновляем значение в hiddenElements
                     if (row && newIdentifier) {
-                        return { ...he, value: row[newIdentifier] };
+                        return {...he, value: row[newIdentifier]};
                     }
                     return he;
                 });
 
-                return { ...file, hiddenElements: updatedHiddenElements };
+                return {...file, hiddenElements: updatedHiddenElements};
             });
 
-            return { ...prev, headers, files: updatedFiles };
+            return {...prev, headers, files: updatedFiles};
         });
     };
-
-
-
 
     // Функция рендеринга таблицы для одного файла
     const renderTableForSheet = (sheet, fileName) => {
         const [headers, rows, sheetNameArr] = sheet;
         const sheetName = Array.isArray(sheetNameArr) ? sheetNameArr[0] : sheetNameArr;
         const compositeKey = `${fileName}-${sheetName}`;
-
         const dataSource = Array.isArray(rows) && rows.length > 0
             ? rows.map((row, index) => {
                 const rowObj = {};
@@ -247,52 +243,49 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
             })
             : [];
 
-        const identifierKey = tableFields.headers.find(header => header.type === 'identifier')?.key;
-
-        // Здесь mismatchExists локально вычисляется для текущей таблицы, но все несоответствия будут собраны глобально в mismatchRows
-        let localMismatch = false;
-        if (identifierKey && hiddenRows && hiddenRows[compositeKey]) {
-            localMismatch = dataSource.some(row => {
-                if (hiddenRows[compositeKey][row.key] !== undefined) {
-                    const expected = hiddenRows[compositeKey][row.key];
-                    const actual = row[identifierKey];
-                    return expected !== actual;
-                }
-                return false;
-            });
-        }
-
         const actionColumn = {
             title: '',
             key: 'action',
             className: 'text-center',
-            render: (record) => (
-                <Tooltip
-                    title={
-                        !Object.values(activeColumns).includes('identifier')
-                            ? 'Выберете столбец реквизитов'
-                            : hiddenRows && hiddenRows[compositeKey] && hiddenRows[compositeKey][record.key] !== undefined
-                                ? 'Показать строку'
-                                : 'Скрыть строку'
+            render: (record) => {
+                // Вычисляем подсказку для Tooltip
+                const tooltipTitle = !Object.values(activeColumns).includes('identifier')
+                    ? 'Выберете столбец реквизитов'
+                    : (hiddenRows && hiddenRows[compositeKey] && hiddenRows[compositeKey][record.key] !== undefined)
+                        ? 'Показать строку'
+                        : 'Скрыть строку';
+
+                // Вычисляем иконку для FontAwesomeIcon
+                const computedIcon = (() => {
+                    const isMismatch = mismatchRows.some(m =>
+                        m.fileName === fileName &&
+                        m.sheetName === sheetName &&
+                        String(m.rowKey) === String(record.key)
+                    );
+                    if (isMismatch) {
+                        return faEyeSlash;
                     }
-                    placement='right'
-                >
-                    <Button
-                        type={!Object.values(activeColumns).includes('identifier') ? 'default' : 'text'}
-                        onClick={() => toggleStrikethrough(fileName, sheetName, record)}
-                        disabled={!Object.values(activeColumns).includes('identifier')}
-                    >
-                        <FontAwesomeIcon
-                            icon={
-                                hiddenRows && hiddenRows[compositeKey] && hiddenRows[compositeKey][record.key] !== undefined
-                                    ? faEyeSlash
-                                    : faEye
-                            }
-                        />
-                    </Button>
-                </Tooltip>
-            ),
+                    if (hiddenRows && hiddenRows[compositeKey] && hiddenRows[compositeKey][record.key] !== undefined) {
+                        return faEyeSlash;
+                    }
+                    // Можно вернуть null или другую иконку по умолчанию
+                    return faEye;
+                })();
+
+                return (
+                    <Tooltip title={tooltipTitle} placement='right'>
+                        <Button
+                            type={!Object.values(activeColumns).includes('identifier') ? 'default' : 'text'}
+                            onClick={() => toggleStrikethrough(fileName, sheetName, record)}
+                            disabled={!Object.values(activeColumns).includes('identifier')}
+                        >
+                            <FontAwesomeIcon icon={computedIcon} />
+                        </Button>
+                    </Tooltip>
+                );
+            },
         };
+
 
         const columns = headers.map((colName) => {
             const listColumns = [
@@ -375,16 +368,17 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
                 <Table
                     size="small"
                     bordered
-                    scroll={{ x: 'fit-content' }}
+                    scroll={{x: 'fit-content'}}
                     columns={[actionColumn, ...columns]}
                     dataSource={dataSource}
                     rowClassName={(record) => {
-                        // Проверяем, есть ли несоответствие для данной строки
                         const isMismatch = mismatchRows.some(m =>
                             m.fileName === fileName &&
                             m.sheetName === sheetName &&
                             String(m.rowKey) === String(record.key)
                         );
+
+                        // Проверяем, есть ли несоответствие для данной строки
                         if (isMismatch) return 'strikethrough-warning';
                         // Если строка скрыта, возвращаем класс для зачеркивания
                         if (hiddenRows && hiddenRows[compositeKey] && hiddenRows[compositeKey][record.key] !== undefined) {
