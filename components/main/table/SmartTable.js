@@ -21,7 +21,8 @@ const SmartTable = ({
                         loading = false,
                         bordered = true,
                         className = 'mt-3 w-100',
-                        size = 'middle'
+                        size = 'middle',
+    scroll
                     }) => {
     const {openNotification} = useAlert();
     const {data: session} = useSession(); // Получаем сессию
@@ -101,6 +102,7 @@ const SmartTable = ({
                     }}
                     expandable={expandable}
                     onRow={onRow}
+                    scroll={scroll}
                     rowClassName={rowClassName}
                     bordered={bordered}
                     loading={loading}

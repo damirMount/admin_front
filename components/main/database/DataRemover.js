@@ -10,7 +10,7 @@ const DataRemover = ({id, deleteRoute}) => {
     const handleRemoveData = () => {
         const newModalData = {
             title: 'Подтвердите удаление',
-            message: `Вы уверены что вы хотите удалить запись с ID ${id}?`,
+            message: `Внимание! Вы уверены, что вы хотите удалить запись с ID ${id}? Перед подтверждением убедитесь, что удаление этой записи не повлечёт нежелательных последствий в будущем.`,
             button: 'Удалить',
             buttonVariant: `danger`,
         };

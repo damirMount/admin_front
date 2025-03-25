@@ -59,8 +59,8 @@ const UploadDatabaseFileForm = ({
                             icon={faEye}
                         />&quot;
                     </Text>
-
-                </div>)
+                </div>
+            )
         },
         {
             label: 'Обновление базы',
@@ -204,6 +204,14 @@ const UploadDatabaseFileForm = ({
         setUploadedFilesList(prevList =>
             Array.isArray(prevList) ? prevList.filter(fileItem => fileItem.name !== file.name) : []
         );
+
+        setTableFields(prevData => ({
+            ...prevData,
+            files: Array.isArray(prevData.files)
+                ? prevData.files.filter(f => f.fileName !== file.name)
+                : []
+        }));
+
     };
 
     useEffect(() => {

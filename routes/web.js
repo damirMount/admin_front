@@ -13,8 +13,8 @@ export const REGISTRY_RESEND_URL = '/registries-management/resend'
 export const REGISTRY_BACKUP_URL = '/registries-management/backup/index-page'
 export const REGISTRY_LOGS_URL = '/registries-management/log/index-page'
 
-export const REPORT_DEALERS_ACCOUNT_HISTORY_URL = '/reports/dealer/export'
-export const REPORT_DEALERS_TSJ_URL = '/reports/dealer/tsj-dealer'
+export const REPORT_DEALERS_ACCOUNT_HISTORY_URL = '/reports/dealer/payments-report'
+export const REPORT_DEALERS_TSJ_URL = '/reports/dealer/dealer-tsj'
 export const REPORT_SERVICES_NORTH_ELECTRO_URL = '/reports/service/north-electro'
 
 export const GSFR_UPDATE_URL = '/updates/gsfr/update'

@@ -24,6 +24,7 @@ const DateRangePicker = ({startDate, endDate, onDateChange, size = 'large', allo
             <Text type="secondary" className="mb-1">Период времени</Text>
             <RangePicker
                 size={size}
+                maxDate={dayjs(todayFormatted)}
                 defaultValue={[dayjs(defaultStart), dayjs(defaultEnd)]}
                 allowClear={allowClear}
                 onChange={(dates) => {

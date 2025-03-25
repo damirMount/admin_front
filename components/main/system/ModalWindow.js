@@ -1,27 +1,42 @@
 import React from 'react';
-import {Button, Modal} from 'react-bootstrap';
+import {Button, Divider, Modal, Typography} from "antd";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 
 const ModalWindow = ({showModal, closeModal, data, onHandle}) => {
 
     if (data == null) {
         return null
     }
-
+    const {Text, Title} = Typography;
     return (
-        <Modal show={showModal} onHide={closeModal}>
-            <Modal.Header closeButton>
-                <Modal.Title>{data.title}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>{data.message}</Modal.Body>
-            <Modal.Footer>
-                <Button variant="cancel" onClick={closeModal}>
-                    Отмена
-                </Button>
-                <Button variant={data.buttonVariant} onClick={onHandle}>
-                    {data.button}
-                </Button>
-
-            </Modal.Footer>
+        <Modal title={
+            <>
+                <FontAwesomeIcon
+                    className='color-purple me-2'
+                    size="lg"
+                    icon={faCircleExclamation}
+                />
+                {data.title}
+            </>
+        }
+               open={showModal}
+               onCancel={closeModal}
+               footer={[
+                   <Button key="back" onClick={closeModal}>
+                       Отмена
+                   </Button>,
+                   <Button key="submit" type="primary" onClick={() => {
+                       onHandle()
+                       closeModal()
+                   }}>
+                       Подтвердить
+                   </Button>,
+               ]}
+        >
+            <Divider/>
+            <Text>{data.message}</Text>
+            <Divider/>
         </Modal>
     );
 };

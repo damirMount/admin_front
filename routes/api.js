@@ -32,7 +32,8 @@ export const REGISTRY_LOG_DOWNLOAD_API = `${baseURL}/api/registryLog/download`
 
 export const ACQUIRING_COMPARISON_API = `${baseURL}/api/acquiring/comparison`
 
-export const DEALER_REPORTS_EXPORT_API = `${baseURL}/api/reports/dealer/createReport`
+export const DEALER_CREATE_PAYMENTS_REPORT_API = `${baseURL}/api/reports/dealer/createReport`
+export const DEALER_EXPORT_REPORT_1C_API = `${baseURL}/api/reports/dealer/exportReport1C`
 export const DEALER_REPORTS_UPDATE_TSJ_DEALER_API = `${baseURL}/api/reports/dealer/updateTSJDealer`
 
 export const GET_NORTHELECTRO_REPORT_API = `${baseURL}/api/reports/service/northelectro`

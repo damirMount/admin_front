@@ -8,7 +8,7 @@ import FormatFileSize from "../table/cell/FormatFileSize";
 
 const {Text} = Typography;
 
-const UploadInput = ({onUpload, onRemove, allowedFileTypes = ['*']}) => {
+const UploadInput = ({onUpload, onRemove, maxFiles = 8, allowedFileTypes = ['*']}) => {
     const {data: session} = useSession();
     const [fileList, setFileList] = useState([]);
 
@@ -133,17 +133,17 @@ const UploadInput = ({onUpload, onRemove, allowedFileTypes = ['*']}) => {
     };
 
     return (
-        <div className="d-flex flex-column mt-1 w-100">
+        <div className={`d-flex flex-column mt-1` && fileList?.length > 1 ? 'upload-list-wrap' : ''}>
             <Upload
                 name="files"
-                className="d-flex flex-column-reverse justify-content-center align-items-center"
+                className={`d-flex flex-column-reverse justify-content-center align-items-center`}
                 accept={allowedFileTypes.join(',')}
                 fileList={fileList}
                 itemRender={customItemRender}
                 beforeUpload={beforeUpload}
                 onChange={handleChange}
             >
-                {fileList.length >= 8 ? null : (
+                {fileList.length >= maxFiles ? null : (
                     <Button icon={<FontAwesomeIcon icon={faPlus}/>} className="mt-2" type="primary">
                         Загрузить файл
                     </Button>

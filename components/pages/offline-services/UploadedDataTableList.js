@@ -18,11 +18,12 @@ const {Text, Title} = Typography;
 const UploadedDataTableList = ({data, tableFields, setTableFields, loading = false}) => {
     // Формируем активные колонки для выбора типов заголовков
     const activeColumns = useMemo(() => {
-        return tableFields.headers.reduce((acc, header) => {
+        return (tableFields?.headers || []).reduce((acc, header) => {
             acc[header.key] = header.type;
             return acc;
         }, {});
-    }, [tableFields.headers]);
+    }, [tableFields]);
+
 
     // Вычисляем скрытые строки – для каждого файла и листа создаем объект с ключами строк и ожидаемыми значениями
     const hiddenRows = useMemo(() => {
@@ -132,7 +133,6 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
 
     // Функция для добавления/удаления элемента из hiddenElements
     const toggleHiddenElement = (hiddenElements = [], sheetName, record, recordValue) => {
-        console.log('sss', recordValue)
         const exists = hiddenElements.some(el => el.key === record.key && el.type === 'row' && el.sheet === sheetName);
         return exists
             ? hiddenElements.filter(el => !(el.key === record.key && el.type === 'row' && el.sheet === sheetName))

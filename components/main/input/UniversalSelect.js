@@ -17,13 +17,15 @@ const UniversalSelect = ({
                              options = [],
                              fetchDataConfig = false,
                              isMulti,
+                             isClearable,
                              isSearchable,
                              isDisabled = false,
                              selectedOptions = [],
                              firstOptionSelected,
                              onSelectChange,
                              createNewValues,
-                             type
+                             type,
+                             style
                          }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [optionsList, setOptionsList] = useState([]);
@@ -217,7 +219,7 @@ const UniversalSelect = ({
 
 // Код для отображения компонента после загрузки данных
     return (
-        <div className="d-flex flex-column form-group w-100">
+        <div className="d-flex flex-column form-group w-100" style={style}>
             <Text type="secondary" htmlFor={name} className="mb-1">
                 {label}
             </Text>
@@ -233,6 +235,7 @@ const UniversalSelect = ({
                 isSearchable={isSearchable}
                 value={selectedValue}
                 isDisabled={isDisabled}
+                isClearable={isClearable}
                 onChange={(newValue) => setAndNotifyChange(newValue)}
             />
             {createNewValues && type && (

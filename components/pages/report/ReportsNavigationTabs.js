@@ -10,7 +10,7 @@ const ReportsNavigationTabs = () => {
             <div>
                 <Link href={REPORT_DEALERS_ACCOUNT_HISTORY_URL}
                       className={`btn ${router.pathname === REPORT_DEALERS_ACCOUNT_HISTORY_URL ? 'btn-purple' : 'btn-grey'} me-2 ms-2`}>
-                    Создание отчёта
+                    Отчёт по истории платежей
                 </Link>
                 <Link href={REPORT_DEALERS_TSJ_URL}
                       className={`btn ${router.pathname === REPORT_DEALERS_TSJ_URL ? 'btn-purple' : 'btn-grey'} me-2 ms-2`}>

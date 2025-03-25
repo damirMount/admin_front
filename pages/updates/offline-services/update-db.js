@@ -308,6 +308,9 @@ export default function UpdateDBPage() {
         }
     }, [selectedService]);
 
+    useEffect(() => {
+        console.log(tableFields)
+    }, [tableFields]);
     return (
         <ProtectedElement allowedPermissions={'update_database'}>
             <Head>

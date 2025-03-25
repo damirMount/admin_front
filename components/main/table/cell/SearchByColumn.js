@@ -80,7 +80,7 @@ const SearchByColumn = (dataIndex) => {
             <SearchOutlined
                 style={{
                     color: filtered ? '#532c59' : undefined,
-                    fontSize: '15px'
+                    fontSize: '15px',
                 }}
             />
         ),

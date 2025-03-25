@@ -204,9 +204,14 @@ tr, td, table, tbody, th, thead, tfoot {
     justify-content: space-between;
 }
 
-.ant-upload-list-item-container {
+.upload-list-wrap .ant-upload-list-item-container {
     width: 50%;
     padding: 0 3px;
+}
+
+.ant-modal .ant-modal-close {
+    width: 33px;
+    height: 33px;
 }
 
 .ant-carousel .slick-dots li.slick-active button {
