@@ -263,9 +263,19 @@ export default function UpdateDBPage() {
 
     const onResetConfirm = () => {
         setTemplateFormData(defaultTemplateFormData);
-        setTableFields({
+        setTableFields(prev => ({
             headers: Array.isArray(defaultTemplateFormData.headers) ? defaultTemplateFormData.headers : [],
-        });
+            files: Array.isArray(defaultTemplateFormData.files)
+                ? defaultTemplateFormData.files.map(defaultFile => {
+                    // Ищем совпадение по fileName в предыдущем состоянии
+                    const matchedFile = prev?.files?.find(f => f.fileName === defaultFile.fileName);
+                    return matchedFile
+                        ? { ...defaultFile, fileIndex: matchedFile.fileIndex } // Берём fileIndex из prev
+                        : defaultFile; // Если нет совпадения — оставляем как есть
+                })
+                : []
+        }));
+
         setResetKey(prev => prev + 1);
         closeConfirmAction();
         setNeedConfirmChanges(false)
