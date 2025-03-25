@@ -265,7 +265,6 @@ export default function UpdateDBPage() {
         setTemplateFormData(defaultTemplateFormData);
         setTableFields({
             headers: Array.isArray(defaultTemplateFormData.headers) ? defaultTemplateFormData.headers : [],
-            files: Array.isArray(defaultTemplateFormData.files) ? defaultTemplateFormData.files : []
         });
         setResetKey(prev => prev + 1);
         closeConfirmAction();
