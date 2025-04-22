@@ -39,6 +39,9 @@ export const DEALER_REPORTS_UPDATE_TSJ_DEALER_API = `${baseURL}/api/reports/deal
 export const GET_NORTHELECTRO_REPORT_API = `${baseURL}/api/reports/service/northelectro`
 export const DOWNLOAD_NORTHELECTRO_REPORT_API = `${baseURL}/api/reports/service/northelectro/downloadReport`
 
+export const GET_GAZPROM_REPORT_API = `${baseURL}/api/reports/service/gazprom`
+export const DOWNLOAD_GAZPROM_REPORT_API = `${baseURL}/api/reports/service/gazprom/downloadReport`
+
 export const GSFR_UPDATE_API = `${baseURL}/api/GSFR/updateGFSR`
 
 export const PERMISSION_CREATE_API = `${baseURL}/api/permission`

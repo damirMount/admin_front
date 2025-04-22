@@ -18,7 +18,7 @@ import {
     REGISTRY_LOGS_URL,
     REGISTRY_RESEND_URL,
     REPORT_DEALERS_ACCOUNT_HISTORY_URL,
-    REPORT_DEALERS_TSJ_URL,
+    REPORT_DEALERS_TSJ_URL, REPORT_SERVICES_GAZPROM_URL,
     REPORT_SERVICES_NORTH_ELECTRO_URL,
     ROLES_INDEX_URL,
     TEST_ZONE_URL
@@ -58,6 +58,7 @@ const SidebarTab = () => {
                 {
                     label: 'Сервисы', subMenu: [
                         {label: 'Северэлектро', link: REPORT_SERVICES_NORTH_ELECTRO_URL},
+                        {label: 'Газпром онлайн', link: REPORT_SERVICES_GAZPROM_URL},
                     ]
                 }
             ]
