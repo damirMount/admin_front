@@ -23,10 +23,13 @@ const UniversalSelect = ({
                              selectedOptions = [],
                              firstOptionSelected,
                              onSelectChange,
+                             onChange,
                              createNewValues,
                              type,
-                             style
+                             style,
+                             maxOptions = 1000
                          }) => {
+
     const [isLoading, setIsLoading] = useState(false);
     const [optionsList, setOptionsList] = useState([]);
     const [selectType, setSelectType] = useState('');
@@ -38,6 +41,7 @@ const UniversalSelect = ({
     const [errorMessage, setErrorMessage] = useState();
     const {data: session} = useSession(); // Получаем сессию
     const {Text} = Typography;
+    const [inputText, setInputText] = useState('');
 
     const getOptionData = async () => {
         let dataLoaded = false;
@@ -210,10 +214,40 @@ const UniversalSelect = ({
         }
     }, [valuesSet]);
 
+    useEffect(() => {
+        const uniqueOptions = options.filter(
+            (option, index, self) =>
+                index === self.findIndex((t) =>
+                    t.value === option.value && t.label === option.label
+                )
+        );
+
+        // Если массив действительно изменился
+        const areEqual = JSON.stringify(uniqueOptions) === JSON.stringify(optionsList);
+        if (!areEqual) {
+            setOptionsList(uniqueOptions);
+            setAndNotifyChange(
+                uniqueOptions.filter(option => selectedOptions.includes(option.value))
+            );
+        }
+    }, [options]);
+
     const setAndNotifyChange = useCallback((newValue) => {
             returnSelectedOption(newValue)
         }, [onSelectChange, valuesSet]
     );
+
+    const onInputChange = useCallback((newValue) => {
+        setInputText(newValue); // обновляем введённый текст
+        if (onChange) {
+            onChange(newValue);
+        }
+    }, []);
+
+    const filteredOptions = optionsList
+        .filter(opt => opt.label.toLowerCase().includes(inputText.toLowerCase()))
+        .slice(0, maxOptions);
+
 
     const Selector = createNewValues ? CreatableSelect : Select;
 
@@ -229,7 +263,7 @@ const UniversalSelect = ({
                 required={isRequired}
                 className={className}
                 placeholder={placeholder}
-                options={optionsList}
+                options={filteredOptions}
                 isLoading={isLoading || !valuesSet}
                 isMulti={isMultiSelect}
                 isSearchable={isSearchable}
@@ -237,7 +271,9 @@ const UniversalSelect = ({
                 isDisabled={isDisabled}
                 isClearable={isClearable}
                 onChange={(newValue) => setAndNotifyChange(newValue)}
+                onInputChange={(newValue) => onInputChange(newValue)}
             />
+
             {createNewValues && type && (
                 <p className="text-danger">
                     {errorMessage}
@@ -246,6 +282,5 @@ const UniversalSelect = ({
         </div>
     );
 }
-
 
 export default UniversalSelect;
