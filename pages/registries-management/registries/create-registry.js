@@ -93,9 +93,6 @@ export default function CreateRegistry() {
         }
         setProcessingLoader(false)
     };
-    useEffect(() => {
-        console.log(formData)
-    }, [formData]);
 
     return (
         <ProtectedElement allowedPermissions={'registry_management'}>

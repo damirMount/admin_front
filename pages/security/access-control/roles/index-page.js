@@ -1,12 +1,13 @@
 import Head from "next/head";
-import React from "react";
+import React, {useState} from "react";
 import {ROLES_EDIT_URL} from "../../../../routes/web";
 import SmartTable from "../../../../components/main/table/SmartTable";
 import SearchByColumn from "../../../../components/main/table/cell/SearchByColumn";
 import ActionButtons from "../../../../components/main/table/cell/ActionButtons";
 import ProtectedElement from "../../../../components/main/system/ProtectedElement";
 
-export default function rolesAndPermissionsPage() {
+export default function RolesAndPermissionsPage() {
+    const [openDropdownId, setOpenDropdownId] = useState(null);
     const actionButtonsLinks = {
         editRoute: {label: 'Изменить запись', link: ROLES_EDIT_URL, useId: true},
     };
@@ -32,7 +33,18 @@ export default function rolesAndPermissionsPage() {
             ...SearchByColumn('name'),
         },
         {
-            render: (text, record) => ActionButtons(actionButtonsLinks, record),
+            render: (text, record) => {
+                const handleDropdownOpen = (open) => {
+                    setOpenDropdownId(open ? record.id : null);
+                };
+
+                return <ActionButtons
+                    {...record}
+                    buttonsLinks={actionButtonsLinks}
+                    dropdownOpen={openDropdownId === record.id}
+                    setDropdownOpen={handleDropdownOpen}
+                />
+            }
         },
     ];
 

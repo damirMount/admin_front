@@ -1,43 +1,56 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEllipsis} from '@fortawesome/free-solid-svg-icons';
-import DataRemover from "../../database/DataRemover";
-import Link from "next/link";
-import {Dropdown} from "antd";
+import DataRemover from '../../database/DataRemover';
+import Link from 'next/link';
+import {Dropdown} from 'antd';
 
-const ActionButtons = (buttonsLinks = null, props) => {
-    const {id, createdAt, updatedAt, deletedAt} = props;
+const ActionButtons = ({
+                           buttonsLinks = {},
+                           id,
+                           createdAt,
+                           updatedAt,
+                           deletedAt,
+                           dropdownOpen = false,
+                           setDropdownOpen = () => {
+                           },
+                       }) => {
+
     const items = [];
 
-    for (const key in buttonsLinks) {
-        const {label, link, useId, action} = buttonsLinks[key];
+    for (const [key, config] of Object.entries(buttonsLinks)) {
+        if (!config) continue;
 
-        if (key !== 'deleteRoute') {
-            const buttonLink = `${link}${useId && (id !== null && id !== undefined) ? `/${id}` : ''}`;
+        const {label, icon, link, useId, action} = config;
+        const buttonLink = `${link}${useId && id != null ? `/${id}` : ''}`;
+
+        if (key === 'deleteRoute' && id != null) {
             items.push({
-                key: key,
-                label: (
-                    <div className="dropdown-item d-flex align-items-center" data-clickable="true">
-                        {link && (
-                            <Link href={buttonLink} className="dropdown-item" data-clickable="true">
-                                {label}
-                            </Link>
-                        )}
-                        {action && (
-                            <button className="dropdown-item" data-clickable="true">
-                                {label}
-                            </button>
-                        )}
-                    </div>
-                ),
+                key,
+                label: <DataRemover id={id} deleteRoute={link}/>,
             });
-        } else if (key === 'deleteRoute' && (id !== null && id !== undefined)) {
+        } else {
+            const content = (
+                <>
+                    {icon && <FontAwesomeIcon size="ls" className="me-2" icon={icon}/>}
+                    {label}
+                </>
+            );
+
             items.push({
-                key: key,
-                label: (
-                    <div data-clickable="true">
-                        <DataRemover id={id} deleteRoute={link}/>
-                    </div>
+                key,
+                label: action ? (
+                    <button
+                        className="dropdown-item d-flex align-items-center"
+                        data-clickable="true"
+                        onClick={() => action(id)}
+                    >
+                        {content}
+                    </button>
+                ) : (
+                    <Link href={buttonLink} className="dropdown-item d-flex align-items-center" data-clickable="true">
+                        {content}
+                    </Link>
                 ),
             });
         }
@@ -50,10 +63,9 @@ const ActionButtons = (buttonsLinks = null, props) => {
                 type: 'divider',
             },
             {
-                className: 'd-flex fw-bold flex-column text-start',
-                key: 'label',
+                key: 'timestamps',
                 label: (
-                    <div>
+                    <div className="d-flex fw-bold flex-column text-start">
                         {createdAt && (
                             <div className="d-flex flex-column justify-content-start">
                                 <small className="text-secondary">Создано:</small>
@@ -79,7 +91,14 @@ const ActionButtons = (buttonsLinks = null, props) => {
     }
 
     return (
-        <Dropdown menu={{items}} placement="bottomRight" arrow trigger={['click']}>
+        <Dropdown
+            menu={{items}}
+            placement="bottomRight"
+            arrow
+            trigger={['click']}
+            open={dropdownOpen} // управление открытием
+            onOpenChange={setDropdownOpen} // уведомление родителя
+        >
             <div className="btn btn-purple p-0 ps-2 pe-2 rounded-3" data-clickable="true">
                 <FontAwesomeIcon icon={faEllipsis} size="lg"/>
             </div>

@@ -27,6 +27,7 @@ export default function RecipientPage() {
     const {openNotification} = useAlert();
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     const [loadedRegistries, setLoadedRegistries] = useState({});
+    const [openDropdownId, setOpenDropdownId] = useState(null);
 
     const handleExpand = (expanded, record) => {
         const key = record.key;
@@ -63,7 +64,13 @@ export default function RecipientPage() {
                 },
             ],
             onFilter: (value, record) => record.is_blocked === value,
-            render: (text) => StatusIndicator(text),
+            render: (text) => {
+                if (!text) {
+                    return <StatusIndicator text="ON" color="purple"/>
+                } else {
+                    return <StatusIndicator text="OFF" color="gray"/>
+                }
+            },
         },
         {
             title: 'Тип отправки',
@@ -103,7 +110,18 @@ export default function RecipientPage() {
             ...SearchByColumn('createdAt'),
         },
         {
-            render: (text, record) => ActionButtons(actionButtonsLinks, record),
+            render: (text, record) => {
+                const handleDropdownOpen = (open) => {
+                    setOpenDropdownId(open ? record.id : null);
+                };
+
+                return <ActionButtons
+                    {...record}
+                    buttonsLinks={actionButtonsLinks}
+                    dropdownOpen={openDropdownId === record.id}
+                    setDropdownOpen={handleDropdownOpen}
+                />
+            }
         },
     ];
 

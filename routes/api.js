@@ -54,10 +54,12 @@ export const GET_DEALER_CREDIT_API = `${baseURL}/api/dealer/getCredit`
 
 export const GET_PAYMENTS_STATISTIC_API = `${baseURL}/api/payments/getTotalPayments`
 
-// export const ROLE_CREATE_API = `${baseURL}/api/role`
 export const ROLE_SHOW_API = `${baseURL}/api/role`
 export const ROLE_UPDATE_API = `${baseURL}/api/role`
-// export const ROLE_DELETE_API = `${baseURL}/api/role`
+
+export const GET_TERMINALS_LIST_API = `${baseURL}/api/apparats/reRegistration/getTerminalsList`
+export const ADD_TO_TERMINAL_RE_REGISTRATION_QUEUE_API = `${baseURL}/api/apparats/reRegistration/addToQueue`
+export const CHANGE_STATUS_RE_REGISTERED_TERMINAL_RECORD_API = `${baseURL}/api/apparats/reRegistration/changeRecordStatus`
 
 export const TEST_DATA_UTILS_CREATE_FILE_API = `${baseURL}/api/testZone/testDataUtils/createFile`
 export const TEST_DATA_UTILS_READ_FILE_API = `${baseURL}/api/testZone/testDataUtils/readFile`

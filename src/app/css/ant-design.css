@@ -122,24 +122,24 @@ tr, td, table, tbody, th, thead, tfoot {
     color: rgb(169 149 172);
 }
 
-.strikethrough {
+.table-row-danger {
     background-color: rgb(255 0 0 / 28%) !important;
     color: rgb(169 149 172) !important;
 }
-.strikethrough .table-cell-disabled {
+.table-row-danger  .table-cell-disabled {
     background-color: rgb(255 208 208) !important;
 }
-.strikethrough .ant-table-cell-row-hover {
+.table-row-danger  .ant-table-cell-row-hover {
     background-color: #fdcece !important;
 }
-.strikethrough-warning {
+.table-row-warning {
     background-color: rgb(255 239 149) !important;
     color: rgb(240, 240, 240) !important;
 }
-.strikethrough-warning .table-cell-disabled {
+.table-row-warning .table-cell-disabled {
     background-color: rgb(255, 234, 187) !important;
 }
-.strikethrough-warning .ant-table-cell-row-hover {
+.table-row-warning .ant-table-cell-row-hover {
     background-color: #fde8ba !important;
 }
 .ant-table-cell-row-hover {

@@ -1,7 +1,16 @@
 import React, {useState} from 'react';
 import {Menu, MenuItem, Sidebar, SubMenu} from 'react-pro-sidebar';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBars, faCode, faDisplay, faHome, faRotate, faShieldHalved, faTimes} from "@fortawesome/free-solid-svg-icons";
+import {
+    faBars,
+    faCode,
+    faComputer,
+    faDisplay,
+    faHome,
+    faRotate,
+    faShieldHalved,
+    faTimes
+} from "@fortawesome/free-solid-svg-icons";
 import {faEnvelopeOpen, faFileLines} from "@fortawesome/free-regular-svg-icons";
 import Link from "next/link";
 import {
@@ -20,7 +29,7 @@ import {
     REPORT_DEALERS_ACCOUNT_HISTORY_URL,
     REPORT_DEALERS_TSJ_URL, REPORT_SERVICES_GAZPROM_URL,
     REPORT_SERVICES_NORTH_ELECTRO_URL,
-    ROLES_INDEX_URL,
+    ROLES_INDEX_URL, TERMINAL_RE_REGISTRATION_URL,
     TEST_ZONE_URL
 } from "../../../routes/web";
 import {Tooltip} from "antd";
@@ -70,6 +79,11 @@ const SidebarTab = () => {
             ]
         },
         {
+            label: 'Терминалы', permission: 'apparats_managment', icon: faComputer, showInSubMenu: true, subMenu: [
+                {label: 'Перерегистрация', link: TERMINAL_RE_REGISTRATION_URL},
+            ]
+        },
+        {
             label: 'Безопасность',
             permission: 'security_management',
             icon: faShieldHalved,
@@ -84,7 +98,6 @@ const SidebarTab = () => {
                 // {label: 'Журнал аудита', link: TEST_ZONE_URL},
             ]
         },
-        {label: 'В Разработке', permission: 'develop', hideWhereCollapsed: true},
         {
             label: 'Разработка', permission: 'develop', icon: faCode, showInSubMenu: true, subMenu: [
                 {label: 'TEST ZONE', link: TEST_ZONE_URL},

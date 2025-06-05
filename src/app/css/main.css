@@ -252,12 +252,6 @@ h1 {
     white-space: nowrap;
 }
 
-.status-disabled {
-    background-color: #cfcdcd;
-    border: #cfcdcd 2px solid;
-    color: #646464;
-}
-
 .status-dashed {
     color: #532C59;
     border: #532C59 1px dashed;
@@ -277,15 +271,42 @@ h1 {
     text-transform: uppercase;
 }
 
-.status-small {
-    font-size: 11px;
-    padding: 4px 15px 4px 15px;
-    background-color: #532C59;
-    border: #532C59 2px solid;
-    color: #FFFFFF;
-    text-transform: uppercase;
+.status-gray {
+    background-color: #cfcdcd;
+    border: #646464 1px dashed;
+    color: #646464;
 }
 
+.status-success {
+    background-color: #269b4f;
+    border: #269b4f 2px solid;
+    color: #f8f9fa;
+}
+.status-danger {
+    background-color: #dc3545;
+    border: #dc3545 2px solid;
+    color: #f8f9fa;
+}
+.status-primary {
+    background-color: #0d6efd;
+    border: #0d6efd 2px solid;
+    color: #f8f9fa;
+}
+.status-warning {
+    background-color: #fcbf27;
+    border:  rgba(52, 48, 26, 0.88) 1px dashed;
+    color: rgba(44, 43, 39, 0.85);
+}
+.status-purple {
+    background-color: #532C59;
+    border: #532C59 2px solid;
+    color: #f8f9fa;
+}
+
+.status-default {
+    border: #532C59 1px dashed;
+    color: #532C59;
+}
 .icon-large {
     font-size: 50px;
 }

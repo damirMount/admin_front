@@ -1,5 +1,5 @@
 // pages/index.js
-import React from 'react';
+import React, {useState} from 'react';
 import Head from 'next/head';
 import {REGISTRY_DELETE_API} from "../../../routes/api";
 import StatusIndicator from "../../../components/main/table/cell/StatusIndicator";
@@ -15,7 +15,7 @@ import ProtectedElement from "../../../components/main/system/ProtectedElement";
 
 export default function RegistryPage() {
 
-
+    const [openDropdownId, setOpenDropdownId] = useState(null);
     const actionButtonsLinks = {
         editRoute: {label: 'Изменить запись', link: REGISTRY_EDIT_URL, useId: true},
         deleteRoute: {label: 'Удалить', link: REGISTRY_DELETE_API, useId: true},
@@ -49,7 +49,13 @@ export default function RegistryPage() {
                 },
             ],
             onFilter: (value, record) => record.is_blocked === value,
-            render: (text) => StatusIndicator(text),
+            render: (text) => {
+                if (!text) {
+                    return <StatusIndicator text="ON" color="purple"/>
+                } else {
+                    return <StatusIndicator text="OFF" color="gray"/>
+                }
+            },
         },
         {
             title: 'Сервер',
@@ -92,7 +98,18 @@ export default function RegistryPage() {
             ...SearchByColumn('createdAt'),
         },
         {
-            render: (text, record) => ActionButtons(actionButtonsLinks, record),
+            render: (text, record) => {
+                const handleDropdownOpen = (open) => {
+                    setOpenDropdownId(open ? record.id : null);
+                };
+
+                return <ActionButtons
+                    {...record}
+                    buttonsLinks={actionButtonsLinks}
+                    dropdownOpen={openDropdownId === record.id}
+                    setDropdownOpen={handleDropdownOpen}
+                />
+            }
         },
 
     ];

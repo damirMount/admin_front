@@ -67,6 +67,7 @@ const UniversalSelect = ({
             } else {
                 optionsLoaded = true;
             }
+
         } catch (error) {
             openNotification({
                 type: 'error',
@@ -112,7 +113,6 @@ const UniversalSelect = ({
             const initialValue = [optionsList[0]];
             setAndNotifyChange(initialValue);
         }
-
     }
 
     const returnSelectedOption = (newValue) => {
@@ -215,22 +215,20 @@ const UniversalSelect = ({
     }, [valuesSet]);
 
     useEffect(() => {
-        const uniqueOptions = options.filter(
-            (option, index, self) =>
-                index === self.findIndex((t) =>
-                    t.value === option.value && t.label === option.label
-                )
-        );
+        if (!Array.isArray(options) || options.length === 0) return;
 
-        // Если массив действительно изменился
-        const areEqual = JSON.stringify(uniqueOptions) === JSON.stringify(optionsList);
-        if (!areEqual) {
-            setOptionsList(uniqueOptions);
-            setAndNotifyChange(
-                uniqueOptions.filter(option => selectedOptions.includes(option.value))
+        const merged = [...optionsList];
+
+        options.forEach(opt => {
+            const exists = merged.some(existing =>
+                existing.value === opt.value && existing.label === opt.label
             );
-        }
+            if (!exists) merged.push(opt);
+        });
+
+        setOptionsList(merged);
     }, [options]);
+
 
     const setAndNotifyChange = useCallback((newValue) => {
             returnSelectedOption(newValue)

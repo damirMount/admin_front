@@ -376,10 +376,10 @@ const UploadedDataTableList = ({data, tableFields, setTableFields, loading = fal
                             String(m.rowKey) === String(record.key)
                         );
                         // Проверяем, есть ли несоответствие для данной строки
-                        if (isMismatch) return 'strikethrough-warning';
+                        if (isMismatch) return 'table-row-warning';
                         // Если строка скрыта, возвращаем класс для зачеркивания
                         if (hiddenRows && hiddenRows[compositeKey] && hiddenRows[compositeKey][record.key]!== undefined) {
-                            return 'strikethrough';
+                            return 'table-row-danger';
                         }
                         return '';
                     }}

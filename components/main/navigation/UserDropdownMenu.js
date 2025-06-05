@@ -34,15 +34,15 @@ const UserDropdownMenu = (collapsed) => {
 
     const items = [
         {
-            label: 'Выйти из админ зоны',
+            label: !collapsed ? 'Выйти из админ зоны' : <FontAwesomeIcon icon={faArrowRightFromBracket}/>,
             onClick: handleOk,
             autoFocus: true,
-            icon: <FontAwesomeIcon icon={faArrowRightFromBracket}/>,
+            icon: !collapsed ? <FontAwesomeIcon icon={faArrowRightFromBracket}/> : '',
             key: '0',
         },
     ];
 
-    if (!collapsed && session) {
+    if (session) {
         return (
             <div className='sidebar-user-dropdown-menu'>
                 <ModalWindow
@@ -54,16 +54,25 @@ const UserDropdownMenu = (collapsed) => {
                 <Dropdown
                     menu={{items}}
                     trigger={['click']}
-                    overlayClassName='sidebar-user-dropdown position-fixed'
+                    overlayClassName='sidebar-user-dropdown position-fixed text-center'
                 >
                     <span>
-                        <MenuItem className='bottom-0 border-top' suffix={<FontAwesomeIcon icon={faUser} size="lg"/>}>
-                            <div className="d-flex flex-column">
-                                <span className="fw-bold text-overflow"
-                                      title={session.user.name}>{session.user.name}</span>
-                                <small className="text-overflow" title={session.user.role}>{session.user.role}</small>
-                            </div>
-                        </MenuItem>
+                        <MenuItem className='bottom-0 border-top'
+                                  suffix={!collapsed && (<FontAwesomeIcon icon={faUser} size="lg"/>)}>
+
+                            {!collapsed ? (
+                                <div className="d-flex flex-column">
+                                    <span className="fw-bold text-overflow"
+                                          title={session.user.name}>{session.user.name}</span>
+                                    <small className="text-overflow"
+                                           title={session.user.role}>{session.user.role}</small>
+                                </div>
+                            ) : (
+                                <div className="d-flex flex-column w-100">
+                                    <FontAwesomeIcon icon={faUser} size="lg"/>
+                                </div>)}
+
+                            </MenuItem>
                     </span>
                 </Dropdown>
             </div>

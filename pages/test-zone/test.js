@@ -16,6 +16,7 @@ import ProtectedElement from "../../components/main/system/ProtectedElement";
 import FormInput from "../../components/main/input/FormInput";
 
 export default function TestPage() {
+    const [openDropdownId, setOpenDropdownId] = useState(null);
     const {openNotification, openConfirmAction, closeConfirmAction} = useAlert();
     const [formData, setFormData] = useState({
         name: '',
@@ -124,7 +125,18 @@ export default function TestPage() {
             ...SearchByColumn('createdAt'),
         },
         {
-            render: (text, record) => ActionButtons(actionButtonsLinks, record),
+            render: (text, record) => {
+                const handleDropdownOpen = (open) => {
+                    setOpenDropdownId(open ? record.id : null);
+                };
+
+                return <ActionButtons
+                    {...record}
+                    buttonsLinks={actionButtonsLinks}
+                    dropdownOpen={openDropdownId === record.id}
+                    setDropdownOpen={handleDropdownOpen}
+                />
+            }
         },
 
     ];

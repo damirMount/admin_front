@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React from "react";
+import React, {useState} from "react";
 import {PERMISSION_CREATE_URL, PERMISSION_EDIT_URL} from "../../../../routes/web";
 import SmartTable from "../../../../components/main/table/SmartTable";
 import SearchByColumn from "../../../../components/main/table/cell/SearchByColumn";
@@ -8,8 +8,8 @@ import Link from "next/link";
 import {PERMISSION_DELETE_API} from "../../../../routes/api";
 import ProtectedElement from "../../../../components/main/system/ProtectedElement";
 
-export default function rolesAndPermissionsPage() {
-
+export default function RolesAndPermissionsPage() {
+    const [openDropdownId, setOpenDropdownId] = useState(null);
     const actionButtonsLinks = {
         editRoute: {label: 'Изменить запись', link: PERMISSION_EDIT_URL, useId: true},
         deleteRoute: {label: 'Удалить', link: PERMISSION_DELETE_API, useId: true},
@@ -46,7 +46,18 @@ export default function rolesAndPermissionsPage() {
 
         },
         {
-            render: (text, record) => ActionButtons(actionButtonsLinks, record),
+            render: (text, record) => {
+                const handleDropdownOpen = (open) => {
+                    setOpenDropdownId(open ? record.id : null);
+                };
+
+                return <ActionButtons
+                    {...record}
+                    buttonsLinks={actionButtonsLinks}
+                    dropdownOpen={openDropdownId === record.id}
+                    setDropdownOpen={handleDropdownOpen}
+                />
+            }
         },
 
     ];
