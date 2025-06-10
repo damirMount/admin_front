@@ -82,6 +82,10 @@ tr, td, table, tbody, th, thead, tfoot {
     box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
 }
 
+.ant-btn-link {
+    height: auto;
+}
+
 .ant-table-wrapper .ant-table-filter-trigger.active {
     color: #532c59;
 }
@@ -98,6 +102,22 @@ tr, td, table, tbody, th, thead, tfoot {
     border: 1px solid #dee2e6;
     border-radius: 9px 9px 0 0 !important;
 }
+
+
+.ant-table ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.ant-table ul li::before {
+    content: "•";
+    margin-left: 5px; /* контролируй расстояние */
+    font-size: 15px;
+    display: inline-block;
+    width: 1em; /* можно регулировать */
+}
+
 
 .nested-table .ant-table {
     border-radius: 0 !important;
@@ -126,22 +146,28 @@ tr, td, table, tbody, th, thead, tfoot {
     background-color: rgb(255 0 0 / 28%) !important;
     color: rgb(169 149 172) !important;
 }
-.table-row-danger  .table-cell-disabled {
+
+.table-row-danger .table-cell-disabled {
     background-color: rgb(255 208 208) !important;
 }
-.table-row-danger  .ant-table-cell-row-hover {
+
+.table-row-danger .ant-table-cell-row-hover {
     background-color: #fdcece !important;
 }
+
 .table-row-warning {
     background-color: rgb(255 239 149) !important;
     color: rgb(240, 240, 240) !important;
 }
+
 .table-row-warning .table-cell-disabled {
     background-color: rgb(255, 234, 187) !important;
 }
+
 .table-row-warning .ant-table-cell-row-hover {
     background-color: #fde8ba !important;
 }
+
 .ant-table-cell-row-hover {
     background-color: #f0f0f0 !important;
 }

@@ -27,9 +27,11 @@ import {
     REGISTRY_LOGS_URL,
     REGISTRY_RESEND_URL,
     REPORT_DEALERS_ACCOUNT_HISTORY_URL,
-    REPORT_DEALERS_TSJ_URL, REPORT_SERVICES_GAZPROM_URL,
+    REPORT_DEALERS_TSJ_URL,
+    REPORT_SERVICES_GAZPROM_URL,
     REPORT_SERVICES_NORTH_ELECTRO_URL,
-    ROLES_INDEX_URL, TERMINAL_RE_REGISTRATION_URL,
+    ROLES_INDEX_URL,
+    TERMINAL_RE_REGISTRATION_URL,
     TEST_ZONE_URL
 } from "../../../routes/web";
 import {Tooltip} from "antd";
@@ -95,7 +97,6 @@ const SidebarTab = () => {
                         {label: 'Лист разрешений', link: PERMISSION_INDEX_URL},
                     ],
                 },
-                // {label: 'Журнал аудита', link: TEST_ZONE_URL},
             ]
         },
         {
@@ -118,7 +119,7 @@ const SidebarTab = () => {
                             {label || ''}
                         </MenuItem>
                     )}
-                    {subMenuData.map((item, index) => (
+                    {subMenuData.map((item) => (
                         item.subMenu ?
                             buildSubMenu(item.subMenu, item.label, item.icon, item.targetLink)
                             :
@@ -182,20 +183,20 @@ const SidebarTab = () => {
     return (
         <Sidebar className='shadow user-select-none' backgroundColor="#ffffff" collapsed={collapsed}
                  breakPoint="none" transitionDuration={90} onBackdropClick={toggleCollapsed} toggled={collapsed}
+                 width="220px"
                  collapsedWidth="80px">
-            <Menu className="position-fixed" style={{width: collapsed ? 80 : 249}} menuItemStyles={{
-                button: ({level, active, disabled}) => {
+            <Menu className="position-fixed" style={{width: collapsed ? 80 : 220, fontSize: '14px'}} menuItemStyles={{
+                button: ({level, disabled}) => {
                     if (level === 0)
                         return {
                             color: disabled ? '#f5d9ff' : 'rgba(83,44,89,0.8)',
-                            backgroundColor: active ? '#aaaaaa' : undefined,
-                            height: 59,
+                            height: 50,
                         };
                 },
             }}>
                 <div className='d-flex flex-column justify-content-between sidebar-menu-body'>
                     <div className="overflow-auto d-flex flex-column justify-content-between align-content-between">
-                        <div className="h-100">
+                        <div className="h-100 fw-medium">
                             <MenuItem onClick={toggleCollapsed}
                                       icon={collapsed ? <FontAwesomeIcon icon={faBars} size="lg"/> :
                                           <FontAwesomeIcon icon={faTimes} size="lg"/>}>

@@ -2,10 +2,14 @@ import React, {useEffect, useState} from "react";
 import {useAlert} from "../../../contexts/AlertContext";
 import {useSession} from "next-auth/react";
 import UniversalSelect from "../../main/input/UniversalSelect";
-import {Alert, Button, Table, Typography} from "antd";
+import {Alert, Button, Select, Switch, Table, Typography} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBan, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
-import {ADD_TO_TERMINAL_RE_REGISTRATION_QUEUE_API, GET_TERMINALS_LIST_API} from "../../../routes/api";
+import {
+    ADD_TO_TERMINAL_RE_REGISTRATION_QUEUE_API,
+    GET_TERMINALS_LIST_API,
+    GET_UNREGISTERED_TERMINALS_LIST_BY_DEALER_API
+} from "../../../routes/api";
 import fetchData from "../../main/database/DataFetcher";
 import SearchByColumn from "../../main/table/cell/SearchByColumn";
 import uniqueKeyGenerator from "../../main/system/UniqueKeyGenerator";
@@ -18,21 +22,36 @@ const ApparatReRegistrationForm = () => {
 
     // Сырые списки из API
     const [terminalsOptionRaw, setTerminalsOptionRaw] = useState([]);
+    const [unregisteredTerminalsOptionRaw, setUnregisteredTerminalsOptionRaw] = useState([]);
     const [dealersOptionRaw, setDealersOptionRaw] = useState([]);
 
     // Выбранные сущности
     const [selectedTerminals, setSelectedTerminals] = useState([]);
     const [selectedDealer, setSelectedDealer] = useState(null);
+    const [encashmentTerminal, setEncashmentTerminal] = useState(false);
     const [validationResults, setValidationResults] = useState([]);
     const [selectorUpdateKey, setSelectorUpdateKey] = useState([])
 
     // Строки таблицы
     const [dataTable, setDataTable] = useState([]);
-
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 5,
+    });
     /**
      * Колонки таблицы: ID, ID терминала, плюс поиск по этим полям
      */
     const tableColumns = [
+        {
+            title: '№',
+            dataIndex: 'index',
+            key: 'index',
+            width: 50,
+            align: 'center',
+            render: (_, __, index) => (pagination.current - 1) * pagination.pageSize + index + 1,
+
+
+        },
         {
             title: "ID терминала",
             dataIndex: "id",
@@ -46,13 +65,51 @@ const ApparatReRegistrationForm = () => {
             ...SearchByColumn("name"),
         },
         {
+            title: "Новый ID терминала",
+            dataIndex: "new_apparat_id",
+            key: "new_apparat_id",
+            render: (_, record) => {
+                const selectedNewIds = selectedTerminals
+                    .map(t => t.new_apparat_id)
+                    .filter(id => id && id !== 'new' && id !== record.new_apparat_id);
+
+                const options = [
+                    {
+                        value: 'new',
+                        label: 'Новая точка',
+                        disabled: false,
+                    },
+                    ...unregisteredTerminalsOptionRaw
+                        .filter(item => item.id_region === selectedDealer?.id)
+                        .map(item => ({
+                            value: item.id,
+                            label: `${item.id} ${item.name}`,
+                            disabled: selectedNewIds.includes(item.id), // disable если выбран в другой строке
+                        })),
+                ];
+
+                return (
+                    <Select
+                        key={record.id}
+                        value={record.new_apparat_id || 'new'}
+                        style={{width: 150}}
+                        allowClear={true}
+                        showSearch
+                        options={options}
+                        onChange={(value) => handleChangeNewTerminalId(record.id, value)}
+                    />
+                );
+            }
+        },
+
+        {
             title: "Старый дилер",
             dataIndex: "dealer",
             key: "dealer",
             ...SearchByColumn("dealer"),
         },
         {
-            title: "IP",
+            title: "IP адрес",
             dataIndex: "ip",
             key: "ip",
             ...SearchByColumn("ip"),
@@ -61,35 +118,52 @@ const ApparatReRegistrationForm = () => {
             title: "Предупреждения и ошибки",
             dataIndex: "errorMessage",
             key: "errorMessage",
+            render: (text) => {
+                return <ul>
+                    {text && text.map((msg, index) => (
+                        <li key={index}>{msg}</li>
+                    ))}
+                </ul>
+            }
         },
     ];
 
-    /**
-     * При смене селекта «Терминал»:
-     */
     const handleTerminalChange = (selectedValues) => {
         if (!Array.isArray(selectedValues)) return;
 
-        const selectedTerminals = terminalsOptionRaw.filter((terminal) =>
-            selectedValues.includes(terminal.id)
-        );
+        const updatedSelected = selectedValues.map((apparatId) => {
+            const existing = selectedTerminals.find((item) => item.apparat_id === apparatId);
+            return {
+                apparat_id: apparatId,
+                new_apparat_id: existing?.new_apparat_id ?? null,
+            };
+        });
 
-        // Теперь selectedTerminals гарантированно массив
-        const currentIds = selectedTerminals.map((t) => t.id);
-        const newTerminals = selectedTerminals.filter((t) => !currentIds.includes(t.id));
+        const {validation, newRows} = validateTerminals(updatedSelected, selectedDealer, dealersOptionRaw);
 
-        // Сначала новые, затем уже существующие в том же порядке, что в selectedValues
-        const updatedSelected = [
-            ...newTerminals,
-            ...selectedTerminals.filter((t) => selectedValues.includes(t.id)),
-        ];
-
-        const { validation, newRows } = validateTerminals(updatedSelected, selectedDealer, dealersOptionRaw);
-
-        setDataTable(newRows);
         setSelectedTerminals(updatedSelected);
         setValidationResults(validation);
+        setDataTable(newRows);
     };
+
+    const handleChangeNewTerminalId = (apparatId, newValue) => {
+        const updatedTerminals = selectedTerminals.map(terminal => {
+            if (terminal.apparat_id === apparatId) {
+                return {
+                    ...terminal,
+                    new_apparat_id: newValue,
+                };
+            }
+            return terminal;
+        });
+
+        const {validation, newRows} = validateTerminals(updatedTerminals, selectedDealer, dealersOptionRaw);
+
+        setSelectedTerminals(updatedTerminals);
+        setValidationResults(validation);
+        setDataTable(newRows);
+    };
+
 
     /**
      * При смене селекта «Дилер»
@@ -98,70 +172,97 @@ const ApparatReRegistrationForm = () => {
         const dealerObj = dealersOptionRaw.find((d) => d.id === value) || null;
         setSelectedDealer(dealerObj);
 
-        if (selectedTerminals) {
-            const {validation, newRows} = validateTerminals(selectedTerminals, dealerObj, dealersOptionRaw);
+        const {validation, newRows} = validateTerminals(selectedTerminals, dealerObj, dealersOptionRaw);
 
-            setDataTable(newRows);
-            setValidationResults(validation);
-        }
+        setValidationResults(validation);
+        setDataTable(newRows);
     };
 
-    const validateTerminals = (terminals, selectedDealer, dealersOptionRaw) => {
+    const handleEncashmentChange = (value) => {
+        setEncashmentTerminal(value)
+    };
+
+    const validateTerminals = (
+        updatedTerminals = [],
+        selectedDealer,
+        dealersOptionRaw
+    ) => {
         const validation = [];
         const newRows = [];
 
-        terminals.forEach( async (terminal) => {
-            const dealer = dealersOptionRaw.find((d) => d.id === terminal.id_region);
-            let errorMessage;
+        if (updatedTerminals.length === 0) {
+            return {validation, newRows};
+        }
+        updatedTerminals.forEach(({apparat_id, new_apparat_id}) => {
+            const oldTerminal = terminalsOptionRaw.find((t) => t.id === apparat_id);
+            const newTerminal = unregisteredTerminalsOptionRaw.find((t) => t.id === new_apparat_id);
 
-            if (!terminal.ip) {
-                errorMessage = 'Отсутствует ip адрес';
+            const oldDealer = dealersOptionRaw.find((d) => d.id === oldTerminal?.id_region);
+            const newDealer = dealersOptionRaw.find((d) => d.id === newTerminal?.id_region);
+            const errors = [];
+
+            if (!oldTerminal) {
+                errors.push('Старый терминал не найден');
+            } else {
+                if (!oldTerminal.ip) {
+                    errors.push('Отсутствует IP адрес');
+                }
+
+                if (oldTerminal.terminal_type !== 1) {
+                    errors.push('Точка не является терминалом');
+                }
+
+                if (oldTerminal.blocked !== 0) {
+                    errors.push('Точка заблокирована');
+                }
+
+                if (oldDealer?.id === selectedDealer?.id) {
+                    validation.push({
+                        id: apparat_id,
+                        type: 'warning',
+                        message: 'Старый дилер терминала совпадает с выбранным дилером на перерегистрацию',
+                    });
+                }
+                if (newTerminal && newTerminal !== 'new') {
+                    validation.push({
+                        id: apparat_id,
+                        type: 'warning',
+                        message: 'Терминал будет перерегистрирован на существующую точку',
+                    });
+                }
+            }
+
+            if (newTerminal && newDealer && selectedDealer?.id && newDealer.id !== selectedDealer.id || !newTerminal && new_apparat_id && new_apparat_id !== 'new') {
+                errors.push(`Точка ${new_apparat_id} не принадлежит выбранному дилеру`);
+            }
+
+            // Лог для каждой ошибки
+            errors.forEach(message => {
                 validation.push({
-                    id: terminal.id,
+                    id: apparat_id,
                     type: 'error',
-                    message: errorMessage,
+                    message,
                 });
-            }
-
-            if (terminal.terminal_type !== 1) {
-                errorMessage = 'Точка не является терминалом';
-                validation.push({
-                    id: terminal.id,
-                    type: 'error',
-                    message: errorMessage,
-                });
-            }
-
-            if (terminal.blocked !== 0) {
-                errorMessage = 'Точка заблокирована';
-                validation.push({
-                    id: terminal.id,
-                    type: 'error',
-                    message: errorMessage,
-                });
-            }
-
-            if (terminal.id_region === selectedDealer?.id) {
-                errorMessage = 'Старый дилер терминала совпадает с выбранным дилером на перерегистрацию';
-                validation.push({
-                    id: terminal.id,
-                    type: 'warning',
-                    message: errorMessage,
-                });
-            }
+            });
 
             newRows.push({
-                id: terminal.id,
-                name: terminal.name,
-                ip: terminal.ip,
-                errorMessage: errorMessage,
-                dealer: dealer ? `${dealer.id} ${dealer.name}` : 'Неизвестно',
+                id: oldTerminal?.id || apparat_id,
+                name: oldTerminal?.name || '-',
+                ip: oldTerminal?.ip || '-',
+                dealer: oldDealer ? `${oldDealer.id} ${oldDealer.name}` : 'Неизвестно',
+                errorMessage: [
+                    ...errors,
+                    ...validation
+                        .filter(v => v.id === apparat_id && v.type === 'warning')
+                        .map(v => v.message),
+                ],
+                new_apparat_id: new_apparat_id || 'new',
             });
+
         });
 
         return {validation, newRows};
     };
-
 
     /**
      * Добавление в очередь перерегистрации
@@ -194,13 +295,14 @@ const ApparatReRegistrationForm = () => {
                     {
                         selectedDealerId: selectedDealer.id,
                         selectedTerminals: selectedTerminals,
+                        encashmentTerminal: encashmentTerminal,
                         userId: session?.user?.id,
                     },
                 ]),
             });
-            
+
             const result = await response.json();
-            
+
             if (response.ok) {
                 openNotification({
                     type: "success",
@@ -223,7 +325,34 @@ const ApparatReRegistrationForm = () => {
         }
     }
 
-
+    const getUnregisteredTerminalsByDealer = async () => {
+        try {
+            const response = await fetch(GET_UNREGISTERED_TERMINALS_LIST_BY_DEALER_API, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${session?.accessToken}`,
+                },
+                body: JSON.stringify([
+                    {
+                        selectedDealerId: selectedDealer.id,
+                    },
+                ]),
+            });
+            const result = await response.json();
+            if (response.ok) {
+                setUnregisteredTerminalsOptionRaw(result.data || []);
+            } else {
+                openNotification({type: "error", message: result.resultDescription});
+            }
+        } catch (error) {
+            console.error("Ошибка при загрузке терминалов:", error);
+            openNotification({
+                type: "error",
+                message: "Не удалось загрузить список терминалов",
+            });
+        }
+    };
 
     // 1) Загрузка терминалов
     const loadTerminals = async () => {
@@ -252,7 +381,7 @@ const ApparatReRegistrationForm = () => {
     // 2) Загрузка дилеров
     const loadDealers = async () => {
         try {
-            const config = {model: "Dealer"};
+            const config = {model: "Dealer", sort: '{"column":"id","direction":"asc"}',};
             const result = await fetchData(config, session);
             setDealersOptionRaw(result.data || []);
         } catch (error) {
@@ -264,6 +393,12 @@ const ApparatReRegistrationForm = () => {
         }
     };
 
+    useEffect(() => {
+        if (selectedDealer !== null) {
+            getUnregisteredTerminalsByDealer()
+        }
+
+    }, [selectedDealer])
 
     /**
      * Загрузка терминалов и дилеров при монтировании
@@ -290,6 +425,7 @@ const ApparatReRegistrationForm = () => {
                                 перед этим рекомендуется проверить данные. Возможные причины неисправностей:</Text>
                             <ul>
                                 <li>Не заполнены обязательные поля</li>
+                                <li>Выбрана перерегистрация на существующую точку</li>
                                 <li>Текущий дилер совпадает с новым дилером, на которого планируется регистрация</li>
                             </ul>
                             <Text> Пожалуйста, убедитесь в корректности данных перед дальнейшей операцией.</Text>
@@ -318,8 +454,10 @@ const ApparatReRegistrationForm = () => {
                                 <li>Точка заблокирована</li>
                                 <li>У точки отсутствует ip адрес</li>
                                 <li>Точка не является терминалом</li>
+                                <li>Новая точка не принадлежит выбранному дилеру</li>
                             </ul>
-                            <Text>Пожалуйста, перепроверьте данные, затем исправьте или удалите ошибочные точки из списка и попробуйте снова.</Text>
+                            <Text>Пожалуйста, перепроверьте данные, затем исправьте или удалите ошибочные точки из
+                                списка и попробуйте снова.</Text>
                         </div>
                     }
 
@@ -329,8 +467,8 @@ const ApparatReRegistrationForm = () => {
                     icon={<FontAwesomeIcon size="lg" className='text-danger' icon={faBan}/>}
                 />
             )}
-            <div className='d-flex justify-content-between align-items-start mb-5'>
-                <div className="d-flex flex-column align-items-center justify-content-between w-50 me-3">
+            <div className='d-flex justify-content-between align-items-start mb-5 mt-5'>
+                <div className="d-flex flex-column align-items-center justify-content-between w-25 me-4">
 
                     <UniversalSelect
                         label="Новый дилер"
@@ -351,7 +489,7 @@ const ApparatReRegistrationForm = () => {
 
                     <UniversalSelect
                         key={JSON.stringify(selectorUpdateKey)}
-                        label="Терминал"
+                        label="Старый терминал"
                         placeholder="Выберите терминал"
                         name="terminal_id"
                         isMulti={true}
@@ -363,40 +501,50 @@ const ApparatReRegistrationForm = () => {
                         required
                         onSelectChange={handleTerminalChange}
                     />
+
+                    <UniversalSelect
+                        label="Тип инкассации"
+                        placeholder="Выберите тип инкассации"
+                        name="is_collect"
+                        firstOptionSelected={true}
+                        options={[
+                            {value: false, label: 'Ручная инкассация'},
+                            {value: true, label: 'Автоматическая'},
+                        ]}
+                        required
+                        onSelectChange={handleEncashmentChange}
+                    />
                     <Button type="primary" className="mt-2" onClick={addToTerminalQueue}>
                         Добавить в очередь
                     </Button>
                 </div>
                 <Table
                     size="small"
-                    className='w-75 mt-4'
+                    className='w-75'
                     bordered
                     columns={tableColumns}
-                    pagination={{
-                        defaultPageSize: 5,
-                        position: 'center',
-                        size: 'small'
-                    }}
+                    pagination={pagination}
+                    onChange={(pagination) => setPagination(pagination)}
                     dataSource={dataTable}
                     rowClassName={(record) => {
-                        const validation = validationResults.find(v =>
+                        const validations = validationResults.filter(v =>
                             String(v.id) === String(record.id)
                         );
 
-                        if (!validation) return '';
-
-                        if (validation.type === 'warning') return 'table-row-warning';
-                        if (validation.type === 'error') return 'table-row-danger';
+                        if (validations.some(v => v.type === 'error')) {
+                            return 'table-row-danger';
+                        }
+                        if (validations.some(v => v.type === 'warning')) {
+                            return 'table-row-warning';
+                        }
 
                         return '';
                     }}
+
                 />
             </div>
-
-
         </>
-    )
-        ;
+    );
 };
 
 export default ApparatReRegistrationForm;

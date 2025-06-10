@@ -1,4 +1,4 @@
-import {Descriptions, Typography} from "antd";
+import {Button, Descriptions, Typography} from "antd";
 import React, {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
 import Head from "next/head";
@@ -16,19 +16,23 @@ import {
     faCirclePause,
     faCirclePlay,
     faCircleXmark,
+    faCreditCard,
     faFloppyDisk,
+    faHourglassHalf,
     faIdCard,
     faKeyboard,
     faMoneyBill1,
     faSquarePlus,
-    faTrashCan
+    faTrashCan,
 } from "@fortawesome/free-regular-svg-icons";
 import {
     faArrows,
+    faArrowUpRightFromSquare,
     faBan,
     faClockRotateLeft,
-    faHourglassEnd,
+    faGears,
     faLaptopCode,
+    faPercent,
     faRotateRight,
     faSpinner,
     faTriangleExclamation,
@@ -36,6 +40,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {faCircleCheck} from "@fortawesome/free-regular-svg-icons/faCircleCheck";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 
 const {Title, Text} = Typography;
 
@@ -46,22 +51,21 @@ export default function ApparatReRegistrationPage() {
     const [dataTable, setDataTable] = useState([]);
     const [dealersOptionRaw, setDealersOptionRaw] = useState([]);
     const [openDropdownId, setOpenDropdownId] = useState(null);
+    const [openExpandId, setOpenExpandId] = useState(null);
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+    const [userNameCache, setUserNameCache] = useState({});
 
     const handleExpand = (expanded, record) => {
         const key = record.key;
 
         if (expanded) {
             setExpandedRowKeys([key]);
-            setOpenDropdownId(key);
-            setOpenDropdownId(key); // блокируем
+            setOpenExpandId(1)
         } else {
             setExpandedRowKeys([]);
-            setOpenDropdownId(null);
-            setOpenDropdownId(null); // разблокируем
+            setOpenExpandId(null)
         }
     };
-
 
     const statusMap = {
         completed: {icon: faCheckCircle, label: "Выполнено", color: "success"},
@@ -70,19 +74,22 @@ export default function ApparatReRegistrationPage() {
         pending: {icon: faClockRotateLeft, label: "В очереди", color: "default"},
         in_progress: {icon: faSpinner, label: "Обрабатывается", color: "primary"},
         paused: {icon: faCirclePause, label: "Приостановлен", color: "gray"},
-        waiting: {icon: faHourglassEnd, label: "В ожидании", color: "warning"},
+        waiting: {icon: faHourglassHalf, label: "В ожидании", color: "warning"},
     };
+
     const stageMap = {
         create_new_terminal: [1, "Создание новой точки", faSquarePlus],
         register_apparat: [2, "Регистрация новой точки", faIdCard],
-        transfer_point: [3, "Копирование точек обновления", faArrows],
-        check_collection_run: [4, "Проверка инкассации", faMoneyBill1],
-        terminal_registration_run: [5, "Перерегистрация терминала", faLaptopCode],
-        rename_hostname: [6, "Переименование HOSTNAME", faKeyboard],
-        clear_terminal_logs: [7, "Очистка логов", faTrashCan],
-        unregister_old_apparat: [8, "Разрегистрация старой точки", faUserMinus],
-        update_run: [9, "Обновление терминала", faFloppyDisk],
-        completed: [10, "Завершён", faCircleCheck],
+        copy_apparat_params: [3, "Копирование настроек точки", faGears],
+        copy_services: [4, "Копирование сервисов и комиссий", faPercent],
+        copy_points: [5, "Копирование точек обновления", faArrows],
+        encashment_run: [6, "Инкассация терминала", faMoneyBill1],
+        terminal_registration_run: [7, "Перерегистрация терминала", faLaptopCode],
+        rename_hostname: [8, "Переименование HOSTNAME", faKeyboard],
+        clear_terminal_logs: [9, "Очистка логов", faTrashCan],
+        unregister_old_apparat: [10, "Разрегистрация старой точки", faUserMinus],
+        update_run: [11, "Обновление терминала", faFloppyDisk],
+        completed: [12, "Завершён", faCircleCheck],
     };
 
     const getStage = (stage) => stageMap[stage] || [0, "Ожидание", faCirclePause];
@@ -196,7 +203,17 @@ export default function ApparatReRegistrationPage() {
                     };
                 }
 
-                if (stageNum <= 4 && record.status !== 'cancelled') {
+                if (stageNum <= 6 && record.status !== 'cancelled') {
+                    if (stageNum === 6 && !record.encashment_terminal) {
+                        actionButtonsLinks.cashEncashment = {
+                            label: 'Инкассировать',
+                            icon: faCreditCard,
+                            useId: true,
+                            action: (id) => {
+                                handleChangeStatus(id, 'encashmentTerminal')
+                            },
+                        };
+                    }
                     actionButtonsLinks.cancelRoute = {
                         label: 'Отменить',
                         icon: faCircleXmark,
@@ -230,7 +247,7 @@ export default function ApparatReRegistrationPage() {
         const [stageNum] = getStage(record.stage);
         const text = (["completed", "cancelled"].includes(statusKey) || stageNum <= 0)
             ? status.label
-            : `${status.label} (${stageNum}/10)`;
+            : `${status.label} (${stageNum}/12)`;
 
         if (justText) {
             return (
@@ -280,7 +297,6 @@ export default function ApparatReRegistrationPage() {
         }
     }
 
-
     const expandedRowRender = (record) => {
         return <ExpandedRow record={record}/>;
     };
@@ -291,7 +307,6 @@ export default function ApparatReRegistrationPage() {
             handleExpand(!expandedRowKeys.includes(record.key), record);
         }
     };
-
 
     const getReRegisteredTerminalsList = async () => {
         try {
@@ -321,16 +336,23 @@ export default function ApparatReRegistrationPage() {
     };
 
     const getUser = async (userId) => {
+        if (userId === null) {
+            return false
+        }
+
+        if (userNameCache[userId]) {
+            return userNameCache[userId];
+        }
+
         try {
             const config = {model: "User", searchTerm: {id: userId}};
             const result = await fetchData(config, session);
 
-            try {
-                return result.data[0].fio
-            } catch (e) {
-
-            }
-
+            setUserNameCache(prev => ({
+                ...prev,
+                [userId]: result.data[0]?.fio, // или data.fullName / data.username
+            }));
+            return result.data[0]?.fio
 
         } catch (error) {
             console.error("Ошибка при загрузке пользователя:", error);
@@ -344,6 +366,7 @@ export default function ApparatReRegistrationPage() {
     const ExpandedRow = ({record}) => {
         const [createUser, setCreateUser] = useState(null);
         const [updateUser, setUpdateUser] = useState(null);
+
         const stage = getStage(record.stage);
         const dealer = dealersOptionRaw.find((d) => d.id === record.region_id);
 
@@ -360,52 +383,85 @@ export default function ApparatReRegistrationPage() {
         }, [record]);
 
         const itemsDesc = [
-            {label: 'ID терминала', children: record.apparat_id || '(пусто)'},
-            {label: 'ID нового терминала', children: record.new_apparat_id || '(пусто)'},
-
+            {
+                label: 'ID терминала',
+                children: record.apparat_id ? (
+                    <div className="d-flex align-items-center text-black">
+                        <Link
+                            className='text-black'
+                            href={`https://kg.quickpay.kg/idx.php/terminal/edit/index/id/${record.apparat_id}`}
+                            target="_blank"
+                        >
+                            <Text>{record.apparat_id}</Text>
+                            <FontAwesomeIcon size="sm" className="ms-2" icon={faArrowUpRightFromSquare}/>
+                        </Link>
+                    </div>
+                ) : (
+                    '(Пусто)'
+                )
+            },
+            {
+                label: 'ID нового терминала', children: record.new_apparat_id ? (
+                    <div className="d-flex align-items-center text-black">
+                        <Link
+                            className='text-black'
+                            href={`https://kg.quickpay.kg/idx.php/terminal/edit/index/id/${record.new_apparat_id}`}
+                            target="_blank"
+                        >
+                            <Text>{record.new_apparat_id}</Text>
+                            <FontAwesomeIcon size="sm" className="ms-2" icon={faArrowUpRightFromSquare}/>
+                        </Link>
+                    </div>
+                ) : (
+                    '(Пусто)'
+                )
+            },
             {label: 'Дилер', children: dealerName || '(пусто)'},
             {label: 'Запрос создан', children: record.createdAt || '(пусто)'},
             {label: 'Создал запрос', children: createUser || '(пусто)'},
-
             {label: 'Последнее изменение', children: updateUser || '(пусто)'},
+            {
+                label: 'Тип инкассации',
+                children: record.encashment_terminal ? 'Автоматическая инкассация' : 'Ручная инкассация'
+            },
         ];
 
         const statusDesc = [
-                {
-                    label: 'Статус',
-                    children: <GetStatus statusKey={record.status} record={record} justText={true}/> || '(пусто)'
-                },
-                {
-                    label: `Этап ${stage[0]} из 10`, children: (
-                        <div className='d-flex align-items-center'>
-                            <FontAwesomeIcon size={'lg'} className='me-2' icon={stage[2]}/>
-                            <Text>{stage[1] || '(пусто)'}</Text>
-                        </div>
-                    )
-                },
-
-                {
-                    label: 'Описание ошибки', children:
-                        record.error_desc || '(пусто)'
-                }
-                ,
-                {
-                    label: 'Количество попыток', children:
-                        `${record.retries || 0} из 20` || '(пусто)'
-                }
-                ,
-                {
-                    label: 'Время ожидания', children:
-                        `${record.time_out || 0} сек`
-                }
-                ,
-                {
-                    label: 'Последний запрос', children:
-                        record.updatedAt || '(пусто)'
-                }
-                ,
-            ]
-        ;
+            {
+                label: 'Статус',
+                children: <GetStatus statusKey={record.status} record={record} justText={true}/> || '(пусто)'
+            },
+            {
+                label: `Этап ${stage[0]} из 12`, children: (
+                    <div className='d-flex align-items-center'>
+                        <FontAwesomeIcon size={'lg'} className='me-2' icon={stage[2]}/>
+                        <Text>{stage[1] || '(пусто)'}</Text>
+                    </div>
+                )
+            },
+            {
+                label: 'Описание ошибки', children:
+                    record.error_desc || '(пусто)'
+            },
+            {
+                label: 'Количество попыток', children: (
+                    <div className='d-flex align-items-start'>
+                        <Text>{`${record.retries || 0} из 20` || '(пусто)'}</Text>
+                        {!['completed', 'failed', 'cancelled'].includes(record.status) && record.retries > 0 && (
+                            <Button onClick={() => handleChangeStatus(record.id, 'clearRetries')} className='ms-1 p-0 align-text-top' type='link'>(Сбросить)</Button>
+                        )}
+                    </div>
+                )
+            },
+            {
+                label: 'Время ожидания', children:
+                    `${record.time_out || 0} сек`
+            },
+            {
+                label: 'Последний запрос', children:
+                    record.updatedAt || '(пусто)'
+            },
+        ];
 
         return (
             <div className='m-4'>
@@ -418,7 +474,7 @@ export default function ApparatReRegistrationPage() {
 
     useEffect(() => {
         const getData = async () => {
-            if (openDropdownId !== null) return; // Не обновляем, если открыт dropdown
+            if (openDropdownId !== null || openExpandId !== null) return; // Не обновляем, если открыт dropdown
             await getReRegisteredTerminalsList();
         };
 
@@ -427,7 +483,7 @@ export default function ApparatReRegistrationPage() {
         const interval = setInterval(getData, 5000);
 
         return () => clearInterval(interval);
-    }, [openDropdownId]);
+    }, [openDropdownId, openExpandId]);
 
     useEffect(() => {
         loadDealers()
@@ -442,19 +498,19 @@ export default function ApparatReRegistrationPage() {
             <Title level={2}>Перерегистрация терминала</Title>
 
             <ApparatReRegistrationForm/>
-                <SmartTable
-                    expandable={{
-                        expandedRowRender,
-                        expandedRowKeys,
-                        onExpand: handleExpand
-                    }}
-                    size={"small"}
-                    columns={tableColumns}
-                    data={dataTable}
-                    onRow={(record) => ({
-                        onClick: (event) => handleRowClick(event, record),
-                    })}
-                />
+            <SmartTable
+                expandable={{
+                    expandedRowRender,
+                    expandedRowKeys,
+                    onExpand: handleExpand
+                }}
+                size={"small"}
+                columns={tableColumns}
+                data={dataTable}
+                onRow={(record) => ({
+                    onClick: (event) => handleRowClick(event, record),
+                })}
+            />
         </ProtectedElement>
     );
 }

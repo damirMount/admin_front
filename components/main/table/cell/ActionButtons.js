@@ -32,7 +32,7 @@ const ActionButtons = ({
         } else {
             const content = (
                 <>
-                    {icon && <FontAwesomeIcon size="ls" className="me-2" icon={icon}/>}
+                    {icon && <FontAwesomeIcon className="me-2" icon={icon}/>}
                     {label}
                 </>
             );
