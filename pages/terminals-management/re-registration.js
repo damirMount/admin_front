@@ -41,6 +41,7 @@ import {
 import {faCircleCheck} from "@fortawesome/free-regular-svg-icons/faCircleCheck";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
+import humanizeDuration from 'humanize-duration';
 
 const {Title, Text} = Typography;
 
@@ -251,7 +252,7 @@ export default function ApparatReRegistrationPage() {
 
         if (justText) {
             return (
-                <div className='d-flex align-items-center'>
+                <div className='d-flex align-items-center me-5 text-nowrap'>
                     <FontAwesomeIcon size={'lg'} className='me-2' icon={status.icon}/>
                     <Text>{status.label || '(пусто)'}</Text>
                 </div>
@@ -372,6 +373,24 @@ export default function ApparatReRegistrationPage() {
 
         const dealerName = `${record.region_id} ${dealer.name}`
 
+        const formatTimeLeft = (lastRequestTime, timeoutSeconds) => {
+            const now = Date.now();
+            const lastTime = new Date(lastRequestTime).getTime();
+            const passedMs = now - lastTime;
+            const timeoutMs = timeoutSeconds * 1000;
+            const remainingMs = timeoutMs - passedMs;
+
+            if (remainingMs <= 0) return '0 секунд';
+
+            return humanizeDuration(remainingMs, {
+                language: 'ru',
+                largest: 2,
+                round: true,
+                units: ['h', 'm', 's'],
+                spacer: ' ',
+            });
+        };
+
         useEffect(() => {
             const fetchUsers = async () => {
                 const createUser = await getUser(record.create_author_id);
@@ -381,6 +400,7 @@ export default function ApparatReRegistrationPage() {
             };
             fetchUsers();
         }, [record]);
+
 
         const itemsDesc = [
             {
@@ -427,45 +447,46 @@ export default function ApparatReRegistrationPage() {
         ];
 
         const statusDesc = [
-            {
-                label: 'Статус',
-                children: <GetStatus statusKey={record.status} record={record} justText={true}/> || '(пусто)'
-            },
-            {
-                label: `Этап ${stage[0]} из 12`, children: (
-                    <div className='d-flex align-items-center'>
-                        <FontAwesomeIcon size={'lg'} className='me-2' icon={stage[2]}/>
-                        <Text>{stage[1] || '(пусто)'}</Text>
-                    </div>
-                )
-            },
-            {
-                label: 'Описание ошибки', children:
-                    record.error_desc || '(пусто)'
-            },
-            {
-                label: 'Количество попыток', children: (
-                    <div className='d-flex align-items-start'>
-                        <Text>{`${record.retries || 0} из 20` || '(пусто)'}</Text>
-                        {!['completed', 'failed', 'cancelled'].includes(record.status) && record.retries > 0 && (
-                            <Button onClick={() => handleChangeStatus(record.id, 'clearRetries')} className='ms-1 p-0 align-text-top' type='link'>(Сбросить)</Button>
-                        )}
-                    </div>
-                )
-            },
-            {
-                label: 'Время ожидания', children:
-                    `${record.time_out || 0} сек`
-            },
-            {
-                label: 'Последний запрос', children:
-                    record.updatedAt || '(пусто)'
-            },
-        ];
+                {
+                    label: 'Статус',
+                    children: <GetStatus statusKey={record.status} record={record} justText={true}/> || '(пусто)'
+                },
+                {
+                    label: `Этап ${stage[0]} из 12`, children: (
+                        <div className='d-flex align-items-center text-nowrap me-5'>
+                            <FontAwesomeIcon size={'lg'} className='me-2' icon={stage[2]}/>
+                            <Text>{stage[1] || '(пусто)'}</Text>
+                        </div>
+                    )
+                },
+                {
+                    label: 'Описание ошибки', children: record.error_desc || '(пусто)'
+                },
+                {
+                    label: 'Количество попыток', children: (
+                        <div className='d-flex align-items-start text-nowrap me-5'>
+                            <Text>{`${record.retries || 0} из 20` || '(пусто)'}</Text>
+                            {!['completed', 'failed', 'cancelled'].includes(record.status) && record.retries > 0 && (
+                                <Button onClick={() => handleChangeStatus(record.id, 'clearRetries')}
+                                        className='ms-1 p-0 align-text-top' type='link'>(Сбросить)</Button>
+                            )}
+                        </div>
+                    )
+                },
+                {
+                    label: 'Время ожидания след. запроса', children: (formatTimeLeft(record.updatedAt, record.time_out))
+                },
+                {
+                    label: 'Последний запрос', children:
+                        record.updatedAt || '(пусто)'
+                },
+            ]
+        ;
 
         return (
             <div className='m-4'>
-                <Descriptions layout="vertical" className='mb-4' size="small" column={3} title="Статус перерегистрации"
+                <Descriptions layout="vertical" className='mb-4 d-flex flex-column justify-content-between w-100'
+                              size="small" column={3} title="Статус перерегистрации"
                               items={statusDesc}/>
                 <Descriptions layout="horizontal" size="small" column={3} title="Описание" items={itemsDesc}/>
             </div>
