@@ -367,29 +367,42 @@ export default function ApparatReRegistrationPage() {
     const ExpandedRow = ({record}) => {
         const [createUser, setCreateUser] = useState(null);
         const [updateUser, setUpdateUser] = useState(null);
+        const [timeLeft, setTimeLeft] = useState('');
 
         const stage = getStage(record.stage);
         const dealer = dealersOptionRaw.find((d) => d.id === record.region_id);
 
+
         const dealerName = `${record.region_id} ${dealer.name}`
 
-        const formatTimeLeft = (lastRequestTime, timeoutSeconds) => {
+        const formatTimeLeft = () => {
             const now = Date.now();
-            const lastTime = new Date(lastRequestTime).getTime();
+            const lastTime = new Date(record.updatedAt).getTime();
             const passedMs = now - lastTime;
-            const timeoutMs = timeoutSeconds * 1000;
+            const timeoutMs = record.time_out * 1000;
             const remainingMs = timeoutMs - passedMs;
 
-            if (remainingMs <= 0) return '0 секунд';
-
-            return humanizeDuration(remainingMs, {
-                language: 'ru',
-                largest: 2,
-                round: true,
-                units: ['h', 'm', 's'],
-                spacer: ' ',
-            });
+            if (remainingMs <= 0) {
+                setTimeLeft('0 секунд');
+            } else {
+                setTimeLeft(
+                    humanizeDuration(remainingMs, {
+                        language: 'ru',
+                        largest: 2,
+                        round: true,
+                        units: ['h', 'm', 's'],
+                        spacer: ' ',
+                    })
+                );
+            }
         };
+
+        useEffect(() => {
+            formatTimeLeft(); // сразу при монтировании
+
+            const interval = setInterval(formatTimeLeft, 1000);
+            return () => clearInterval(interval);
+        }, [record.updatedAt, record.time_out]);
 
         useEffect(() => {
             const fetchUsers = async () => {
@@ -474,7 +487,7 @@ export default function ApparatReRegistrationPage() {
                     )
                 },
                 {
-                    label: 'Время ожидания след. запроса', children: (formatTimeLeft(record.updatedAt, record.time_out))
+                    label: 'Время ожидания след. запроса', children: (<Text>{timeLeft}</Text>)
                 },
                 {
                     label: 'Последний запрос', children:
