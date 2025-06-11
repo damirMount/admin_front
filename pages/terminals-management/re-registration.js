@@ -382,7 +382,7 @@ export default function ApparatReRegistrationPage() {
             const timeoutMs = record.time_out * 1000;
             const remainingMs = timeoutMs - passedMs;
 
-            if (remainingMs <= 0) {
+            if (remainingMs <= 0 || record.status !== 'waiting') {
                 setTimeLeft('0 секунд');
             } else {
                 setTimeLeft(
