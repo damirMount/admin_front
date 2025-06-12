@@ -30,7 +30,7 @@ import {
     faArrowUpRightFromSquare,
     faBan,
     faClockRotateLeft,
-    faGears,
+    faGears, faHashtag,
     faLaptopCode,
     faPercent,
     faRotateRight,
@@ -86,11 +86,12 @@ export default function ApparatReRegistrationPage() {
         copy_points: [5, "Копирование точек обновления", faArrows],
         encashment_run: [6, "Инкассация терминала", faMoneyBill1],
         terminal_registration_run: [7, "Перерегистрация терминала", faLaptopCode],
-        rename_hostname: [8, "Переименование HOSTNAME", faKeyboard],
-        clear_terminal_logs: [9, "Очистка логов", faTrashCan],
-        unregister_old_apparat: [10, "Разрегистрация старой точки", faUserMinus],
-        update_run: [11, "Обновление терминала", faFloppyDisk],
-        completed: [12, "Завершён", faCircleCheck],
+        fix_trans_number: [8, "Обновление номера транзакции", faHashtag],
+        rename_hostname: [9, "Переименование HOSTNAME", faKeyboard],
+        clear_terminal_logs: [10, "Очистка логов", faTrashCan],
+        unregister_old_apparat: [11, "Разрегистрация старой точки", faUserMinus],
+        update_run: [12, "Обновление терминала", faFloppyDisk],
+        completed: [13, "Завершён", faCircleCheck],
     };
 
     const getStage = (stage) => stageMap[stage] || [0, "Ожидание", faCirclePause];
@@ -248,7 +249,7 @@ export default function ApparatReRegistrationPage() {
         const [stageNum] = getStage(record.stage);
         const text = (["completed", "cancelled"].includes(statusKey) || stageNum <= 0)
             ? status.label
-            : `${status.label} (${stageNum}/12)`;
+            : `${status.label} (${stageNum}/13)`;
 
         if (justText) {
             return (
@@ -465,7 +466,7 @@ export default function ApparatReRegistrationPage() {
                     children: <GetStatus statusKey={record.status} record={record} justText={true}/> || '(пусто)'
                 },
                 {
-                    label: `Этап ${stage[0]} из 12`, children: (
+                    label: `Этап ${stage[0]} из 13`, children: (
                         <div className='d-flex align-items-center text-nowrap me-5'>
                             <FontAwesomeIcon size={'lg'} className='me-2' icon={stage[2]}/>
                             <Text>{stage[1] || '(пусто)'}</Text>
