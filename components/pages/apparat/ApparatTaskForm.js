@@ -155,6 +155,7 @@ const ApparatTaskForm = () => {
                                 label="Терминал"
                                 placeholder="Выберите терминал"
                                 name="terminal_id"
+                                isDisabled={loading}
                                 options={terminalsOptionRaw.map((item) => ({
                                     value: item.id,
                                     label: `${item.id} ${item.name}`,
@@ -166,6 +167,7 @@ const ApparatTaskForm = () => {
 
                             <UniversalSelect
                                 label="Операция"
+                                isDisabled={loading}
                                 placeholder="Выберите операцию"
                                 name="task_type"
                                 options={[
