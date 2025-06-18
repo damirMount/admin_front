@@ -1,10 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {
-    DOWNLOAD_GAZPROM_REPORT_API,
-    DOWNLOAD_NORTHELECTRO_REPORT_API,
-    GET_GAZPROM_REPORT_API,
-    GET_NORTHELECTRO_REPORT_API
-} from "../../../routes/api";
+import {DOWNLOAD_GAZPROM_REPORT_API, GET_GAZPROM_REPORT_API} from "../../../routes/api";
 import Head from "next/head";
 import DateRangePicker from "../../../components/main/input/DateRangePicker";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";

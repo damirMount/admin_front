@@ -406,7 +406,7 @@ h1 {
 }
 
 .color-purple {
-    color: #532C59;
+    color: #532C59 !important;
 }
 
 .bg-purple {

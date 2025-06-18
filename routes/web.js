@@ -21,11 +21,11 @@ export const REPORT_SERVICES_GAZPROM_URL = '/reports/service/gazprom'
 export const GSFR_UPDATE_URL = '/updates/gsfr/update'
 export const OFFLINE_SERVICE_DATABASE_UPDATE_INDEX_URL = '/updates/offline-services/update-db'
 
+export const TERMINAL_TASK_URL = '/terminals-management/task'
 export const TERMINAL_RE_REGISTRATION_URL = '/terminals-management/re-registration'
 
 export const TEST_ZONE_URL = '/test-zone/test'
 export const DATA_UTILS_TEST_URL = '/test-zone/data-utils-test'
-
 
 export const ACQUIRING_URL = '/acquiring/index-page'
 

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Tooltip} from "antd";
 import {Menu, MenuItem, Sidebar, SubMenu} from 'react-pro-sidebar';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
@@ -32,9 +33,9 @@ import {
     REPORT_SERVICES_NORTH_ELECTRO_URL,
     ROLES_INDEX_URL,
     TERMINAL_RE_REGISTRATION_URL,
+    TERMINAL_TASK_URL,
     TEST_ZONE_URL
 } from "../../../routes/web";
-import {Tooltip} from "antd";
 import ProtectedElement from "../system/ProtectedElement";
 import UserDropdownMenu from "./UserDropdownMenu";
 
@@ -82,7 +83,12 @@ const SidebarTab = () => {
         },
         {
             label: 'Терминалы', permission: 'apparats_managment', icon: faComputer, showInSubMenu: true, subMenu: [
-                {label: 'Перерегистрация', link: TERMINAL_RE_REGISTRATION_URL},
+                {
+                    label: 'Сервисное меню', permission: 'apparats_service_menu', subMenu: [
+                        {label: 'Задания', permission: 'apparats_service_menu', link: TERMINAL_TASK_URL},
+                    ],
+                },
+                {label: 'Перерегистрация', permission: 'apparat_re_register', link: TERMINAL_RE_REGISTRATION_URL},
             ]
         },
         {
@@ -121,7 +127,7 @@ const SidebarTab = () => {
                     )}
                     {subMenuData.map((item) => (
                         item.subMenu ?
-                            buildSubMenu(item.subMenu, item.label, item.icon, item.targetLink)
+                            buildSubMenu(item.subMenu, item.label, item.icon, item.targetLink, item.permission)
                             :
                             buildMenuItem(item)
                     ))}
@@ -130,6 +136,7 @@ const SidebarTab = () => {
         );
 
         if (permission) {
+            console.log(permission, 1)
             return (
                 <ProtectedElement allowedPermissions={permission} redirect={false}>
                     {subMenuItemContent}
@@ -159,6 +166,7 @@ const SidebarTab = () => {
             );
 
             if (permission) {
+                console.log(permission, 2)
                 return (
                     <ProtectedElement allowedPermissions={permission} redirect={false}>
                         {menuItemContent}
