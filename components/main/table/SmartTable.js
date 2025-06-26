@@ -69,7 +69,7 @@ const SmartTable = ({
     }, [fetchDataFromDB]);
 
     useEffect(() => {
-        if (!model) {
+        if (!model && data.length > 0) {
             const hasKeys = data.every(item => item?.key);
             const preparedData = hasKeys ? data : addKeyToData(data);
             setDataTable(preparedData);

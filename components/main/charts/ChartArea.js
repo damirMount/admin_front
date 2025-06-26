@@ -31,7 +31,7 @@ const ChartArea = ({config, className, style, loading, onCallBack}) => {
         return (
             <Result
                 icon={<Empty description={false}/>}
-                title="ДАННЫЕ ОТСУТВУЮТ"
+                title="Данные отсутвуют"
                 subTitle="Извините, но мы не смогли ничего найти по вашему запросу."
                 extra={onCallBack ? (
                     <Button type="primary" onClick={onCallBack}>Попробовать ещё раз</Button>

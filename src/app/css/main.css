@@ -59,6 +59,10 @@ label {
     font-weight: 600;
 }
 
+input {
+    font-size: 14px !important;
+}
+
 ::-webkit-scrollbar {
     width: 7px;
     height: 8px;

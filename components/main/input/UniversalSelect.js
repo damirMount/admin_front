@@ -251,7 +251,7 @@ const UniversalSelect = ({
 
 // Код для отображения компонента после загрузки данных
     return (
-        <div className="d-flex flex-column form-group w-100" style={style}>
+        <div className={`${className} d-flex flex-column form-group w-100`} style={style}>
             <Text type="secondary" htmlFor={name} className="mb-1">
                 {label}
             </Text>
@@ -259,7 +259,6 @@ const UniversalSelect = ({
                 name={name}
                 closeMenuOnSelect={closeMenuOnSelect}
                 required={isRequired}
-                className={className}
                 placeholder={placeholder}
                 options={filteredOptions}
                 isLoading={isLoading || !valuesSet}

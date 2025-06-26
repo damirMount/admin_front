@@ -58,6 +58,8 @@ export const ROLE_SHOW_API = `${baseURL}/api/role`
 export const ROLE_UPDATE_API = `${baseURL}/api/role`
 
 export const SEND_TASK_TO_TERMINAL_API = `${baseURL}/api/apparats/task/sendTask`
+export const FIND_TERMINAL_PAYMENT_LOGS_API = `${baseURL}/api/apparats/logs/findPay`
+export const DOWNLOAD_TERMINAL_PAYMENT_LOGS_API = `${baseURL}/api/apparats/logs/downloadLogs`
 
 export const GET_TERMINALS_LIST_API = `${baseURL}/api/apparats/reRegistration/getTerminalsList`
 export const GET_UNREGISTERED_TERMINALS_LIST_BY_DEALER_API = `${baseURL}/api/apparats/reRegistration/getUnregisteredTerminalsList`

@@ -31,7 +31,7 @@ import {
     REPORT_DEALERS_TSJ_URL,
     REPORT_SERVICES_GAZPROM_URL,
     REPORT_SERVICES_NORTH_ELECTRO_URL,
-    ROLES_INDEX_URL,
+    ROLES_INDEX_URL, TERMINAL_FIND_PAY_URL,
     TERMINAL_RE_REGISTRATION_URL,
     TERMINAL_TASK_URL,
     TEST_ZONE_URL
@@ -83,11 +83,8 @@ const SidebarTab = () => {
         },
         {
             label: 'Терминалы', permission: 'apparats_managment', icon: faComputer, showInSubMenu: true, subMenu: [
-                {
-                    label: 'Сервисное меню', permission: 'apparats_service_menu', subMenu: [
-                        {label: 'Задания', permission: 'apparats_service_menu', link: TERMINAL_TASK_URL},
-                    ],
-                },
+                {label: 'Поиск платежа', permission: 'apparats_service_menu', link: TERMINAL_FIND_PAY_URL},
+                {label: 'Задания', permission: 'apparats_service_menu', link: TERMINAL_TASK_URL},
                 {label: 'Перерегистрация', permission: 'apparat_re_register', link: TERMINAL_RE_REGISTRATION_URL},
             ]
         },
@@ -114,11 +111,11 @@ const SidebarTab = () => {
         }
     ];
 
-    const buildSubMenu = (subMenuData, label, icon, showInSubMenu, permission) => {
+    const buildSubMenu = (subMenuData, label, height, icon, showInSubMenu, permission) => {
 
         const subMenuItemContent = (
             <Tooltip placement="right" {...((label && collapsed && showInSubMenu) ? {title: label} : {})}>
-                <SubMenu label={label} icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
+                <SubMenu label={label} style={{height: height}} icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
                     {showInSubMenu && collapsed && (
                         <MenuItem title={label} className='fw-bold border-bottom text-nowrap'
                                   icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
@@ -127,7 +124,7 @@ const SidebarTab = () => {
                     )}
                     {subMenuData.map((item) => (
                         item.subMenu ?
-                            buildSubMenu(item.subMenu, item.label, item.icon, item.targetLink, item.permission)
+                            buildSubMenu(item.subMenu, item.label, item.height, item.icon, item.targetLink, item.permission)
                             :
                             buildMenuItem(item)
                     ))}
@@ -136,7 +133,6 @@ const SidebarTab = () => {
         );
 
         if (permission) {
-            console.log(permission, 1)
             return (
                 <ProtectedElement allowedPermissions={permission} redirect={false}>
                     {subMenuItemContent}
@@ -148,17 +144,20 @@ const SidebarTab = () => {
     };
 
     const buildMenuItem = (item) => {
-        const {label, link, icon, permission, showInSubMenu, subMenu, targetLink, hideWhereCollapsed = false} = item;
+        const {label, link, height = 50, icon, permission, showInSubMenu, subMenu, targetLink, hideWhereCollapsed = false} = item;
 
         if (subMenu) {
-            return buildSubMenu(subMenu, label, icon, showInSubMenu, permission);
+            return buildSubMenu(subMenu, label,height, icon, showInSubMenu, permission);
         } else {
             const menuItemContent = (
                 <Tooltip placement="right" {...((label && collapsed && !hideWhereCollapsed) ? {title: label} : {})}>
                     <MenuItem
                         icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}
                         component={link ? <Link href={link} target={targetLink || ''}/> : null}
-                        style={hideWhereCollapsed ? {opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px'} : {}}
+                        style={{
+                            height: height,
+                            ...(hideWhereCollapsed ? { opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px' } : {})
+                        }}
                     >
                         {label || ''}
                     </MenuItem>
@@ -166,7 +165,6 @@ const SidebarTab = () => {
             );
 
             if (permission) {
-                console.log(permission, 2)
                 return (
                     <ProtectedElement allowedPermissions={permission} redirect={false}>
                         {menuItemContent}
@@ -198,7 +196,6 @@ const SidebarTab = () => {
                     if (level === 0)
                         return {
                             color: disabled ? '#f5d9ff' : 'rgba(83,44,89,0.8)',
-                            height: 50,
                         };
                 },
             }}>
@@ -206,6 +203,7 @@ const SidebarTab = () => {
                     <div className="overflow-auto d-flex flex-column justify-content-between align-content-between">
                         <div className="h-100 fw-medium">
                             <MenuItem onClick={toggleCollapsed}
+                                      style={{height: 59}}
                                       icon={collapsed ? <FontAwesomeIcon icon={faBars} size="lg"/> :
                                           <FontAwesomeIcon icon={faTimes} size="lg"/>}>
                                 Закрыть
