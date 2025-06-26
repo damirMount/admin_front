@@ -8,7 +8,7 @@ import {GET_TERMINALS_LIST_API, SEND_TASK_TO_TERMINAL_API} from "../../routes/ap
 import UniversalSelect from "../../components/main/input/UniversalSelect";
 import {CloseCircleOutlined, SyncOutlined} from "@ant-design/icons";
 
-const {Title, Text} = Typography;
+const {Title, Text, Paragraph} = Typography;
 
 export default function ApparatReRegistrationPage() {
     const {openNotification} = useAlert();
