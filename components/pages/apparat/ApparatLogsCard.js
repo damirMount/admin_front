@@ -163,14 +163,17 @@ const ApparatLogsCard = ({logsResult = [], servicesOptionRaw = [] }) => {
             let totalCount = 0;
             let totalSum = 0;
 
-            for (const unit of cashUnits) {
-                const nominal = unit.nominal;
-                if (Number(nominal) === 0) continue;
-                if (!counts[nominal]) counts[nominal] = 0;
-                counts[nominal]++;
-                totalCount++;
-                totalSum += Number(nominal);
+            if(cashUnits.length > 0) {
+                for (const unit of cashUnits) {
+                    const nominal = unit.nominal;
+                    if (Number(nominal) === 0) continue;
+                    if (!counts[nominal]) counts[nominal] = 0;
+                    counts[nominal]++;
+                    totalCount++;
+                    totalSum += Number(nominal);
+                }
             }
+
 
             const buildGroup = (denoms) => denoms.map(n => ({
                 label: `${n} сом`,
