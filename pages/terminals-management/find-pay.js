@@ -462,14 +462,14 @@ export default function ApparatReRegistrationPage() {
                                             }}/>
                                         <div
                                             className='d-flex align-items-center w-100 h-100 ms-3 border-start'>
-                                            <Text className='ms-3 me-3' type="secondary">
+                                            <Text className='ms-3 me-4' type="secondary">
                                                 Вы можете скачать полный архив логов терминала для последующего
                                                 сравнения данных.
-                                                Архив содержит оригинальный файл логов, а также расшифрованный файл с
+                                                Архив содержит оригинальный файл логов и расшифрованный файл с
                                                 платежами, использованный при выгрузке данных.
                                             </Text>
-                                            <Button type="primary" loading={downloadLoading}
-                                                    onClick={downloadLog}>Скачать</Button>
+                                            <Button  type="primary" loading={downloadLoading}
+                                                    onClick={setDownloadLoading}>Скачать</Button>
                                         </div>
                                     </div>
                                 </>
