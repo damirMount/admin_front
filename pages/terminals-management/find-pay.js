@@ -1,4 +1,4 @@
-import {Button, DatePicker, Divider, Input, Typography} from "antd";
+import {Button, Checkbox, DatePicker, Divider, Input, Typography} from "antd";
 import React, {useEffect, useRef, useState} from "react";
 import {useSession} from "next-auth/react";
 import Head from "next/head";
@@ -16,6 +16,7 @@ import UniversalSelect from "../../components/main/input/UniversalSelect";
 import {CheckCircleFilled, CloseCircleFilled, DownloadOutlined, SyncOutlined, WarningFilled} from "@ant-design/icons";
 import ApparatLogsCard from "../../components/pages/apparat/ApparatLogsCard";
 import plural from 'plural-ru';
+import {isEmpty} from "lodash";
 
 const {Title, Text} = Typography;
 
@@ -31,6 +32,7 @@ export default function ApparatReRegistrationPage() {
     const [selectedTerminal, setSelectedTerminal] = useState('');
     const [identifier, setIdentifier] = useState('');
     const [logsType, setLogsType] = useState('');
+    const [againDownloadLog, setAgainDownloadLog] = useState(false);
 
     const [paymentDate, setPaymentDate] = useState(dayjs().format('YYYYMMDD'));
     const [accurateSearch, setAccurateSearch] = useState(true);
@@ -53,6 +55,10 @@ export default function ApparatReRegistrationPage() {
             openNotification({type: 'error', message: 'Выберите терминал.'});
             return false;
         }
+        if (isEmpty(identifier) && logsType !== 'all_payments' ) {
+            openNotification({type: 'error', message: 'Укажите данные для поиска'});
+            return false;
+        }
 
         try {
             const res = await fetch(FIND_TERMINAL_PAYMENT_LOGS_API, {
@@ -67,6 +73,7 @@ export default function ApparatReRegistrationPage() {
                     paymentDate,
                     logsType,
                     accurateSearch,
+                    againDownloadLog,
                     userId: session?.user?.id,
                 }]),
             });
@@ -99,11 +106,6 @@ export default function ApparatReRegistrationPage() {
     };
 
     const downloadLog = async () => {
-        if (!selectedTerminal) {
-            openNotification({type: 'error', message: 'Выберите терминал.'});
-            return;
-        }
-
         setDownloadLoading(true);
 
         try {
@@ -317,10 +319,24 @@ export default function ApparatReRegistrationPage() {
                                     указанным значением поиска.
                                 </Text>
                             )}
+
+                            <Checkbox defaultChecked={againDownloadLog} disabled={loading}
+                                      className='mt-3 pt-3 border-top'
+                                      onChange={(e) => {
+                                          setAgainDownloadLog(e.target.checked)
+                                      }}>
+                                Повторная загрузка логов с терминала
+                            </Checkbox>
+                            <Text type='secondary' className='mt-2'>
+                                Если эта опция включена, логи с терминала будут скачаны заново. Используйте
+                                эту функцию когда считаете что текущие логи не актуальны, либо их файл повреждён.
+                            </Text>
                         </div>
+
                         <Button type="primary" className="mt-2" onClick={handleSend} loading={loading}>
                             Отправить запрос
                         </Button>
+
                     </div>
 
                     <div className='w-75 h-100 d-flex flex-column align-content-between justify-content-between'>

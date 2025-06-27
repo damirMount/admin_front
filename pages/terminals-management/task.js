@@ -1,4 +1,4 @@
-import {Button, Descriptions, Result, Typography} from "antd";
+import {Button, Checkbox, Descriptions, Result, Typography} from "antd";
 import React, {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
 import Head from "next/head";
