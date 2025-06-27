@@ -268,9 +268,9 @@ const ApparatLogsCard = ({logsResult = [], servicesOptionRaw = []}) => {
 
                     {/*Купюры*/}
                     <div className="d-flex card card-body w-75 justify-content-start ms-3">
-                        <div className='d-flex align-items-end'>
-                            <Descriptions layout="horizontal" size="small" column={1} title="Купюры"
-                                          items={coinsCount}/>
+                        <Title className='mt-1 mb-4' level={5}>Купюры</Title>
+                        <div className='d-flex align-items-end mt-2'>
+                            <Descriptions layout="horizontal" size="small" column={1} items={coinsCount}/>
                             <Descriptions layout="horizontal" size="small" column={1} items={moneyCount1}/>
                             <Descriptions layout="horizontal" size="small" column={1} items={moneyCount2}/>
                         </div>
