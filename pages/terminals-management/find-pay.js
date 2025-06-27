@@ -369,12 +369,14 @@ export default function ApparatReRegistrationPage() {
                                             className='w-100 ms-3 d-flex flex-column align-items-center border-start
                                                 justify-content-center'>
                                             <Title level={5}>Логи платежа успешно получены!</Title>
-                                            <Text className="ms-3 me-3" type="secondary">
-                                                По вашему запросу&nbsp;
-                                                {plural(logsResult.payments?.length || 0, 'был найден', 'было найдено')}&nbsp;
-                                                {logsResult.payments?.length || 0}&nbsp;
-                                                {plural(logsResult.payments?.length || 0, 'платеж', 'платежа', 'платежей')}
-                                                !
+                                            <Text className="ms-3 me-3" type="secondary">{
+                                                `По вашему запросу
+                                                ${plural(logsResult.payments?.length || 0, 'был найден', 'было найдено')}
+                                                ${logsResult.payments?.length || 0}
+                                                ${plural(logsResult.payments?.length || 0, 'платеж', 'платежа', 'платежей')} 
+                                                за ${timeLeft}!`
+                                            }
+
                                             </Text>
                                         </div>
                                     </div>
@@ -389,7 +391,7 @@ export default function ApparatReRegistrationPage() {
                                         <div
                                             className='w-100 ms-3 d-flex flex-column align-items-center border-start
                                             justify-content-center'>
-                                            <Title level={5}>Платёж не найден :( </Title>
+                                            <Title level={5}>Платёж не найден - {timeLeft} :( </Title>
                                             <Text className='ms-3 me-3' type='secondary'>Перепроверьте введённые
                                                 данные
                                                 и попробуйте снова, либо отправьте запрос на инкассацию
@@ -432,7 +434,8 @@ export default function ApparatReRegistrationPage() {
                                 если текущие данные устарели или повреждены.
                             </Text>
                             <Text className='mt-2'>
-                                <b>Обратите внимание:</b> первая загрузка логов может занять некоторое время, так как данные
+                                <b>Обратите внимание:</b> первая загрузка логов может занять некоторое время, так как
+                                данные
                                 загружаются с терминала на сервер. Повторные запросы за ту же дату выполняются быстрее,
                                 но логи за текущий день всегда загружаются заново для актуальности.
                             </Text>

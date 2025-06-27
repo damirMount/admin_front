@@ -14,45 +14,79 @@ const ApparatLogsCard = ({logsResult = [], servicesOptionRaw = []}) => {
             }));
         };
 
-        const tableColumns = [{
-            title: '№', dataIndex: 'index', key: 'index', width: 50, align: 'center', render: (_, record, index) => {
-                const transactionId = record.transactionId;
-                const pag = paginations[transactionId] || {current: 1, pageSize: 20};
-                return (pag.current - 1) * pag.pageSize + index + 1;
-            }
-        }, {title: 'Дата', dataIndex: 'date'}, {title: 'Номинал', dataIndex: 'nominal'}, {
-            title: 'Валюта',
-            dataIndex: 'currency'
-        }, {
-            title: 'Тип', dataIndex: 'formFactor', render: (text) => {
-                if (text === 'BILL') return 'Купюра';
-                if (text === 'COIN') return 'Монета';
-                return text;
-            }
-        }, {title: 'pid', dataIndex: 'pid'},];
+        const tableColumns = [
+            {
+                title: '№',
+                dataIndex: 'index',
+                key: 'index',
+                width: 50,
+                align: 'center',
+                render: (_, record, index) => {
+                    const transactionId = record.transactionId;
+                    const pag = paginations[transactionId] || {current: 1, pageSize: 20};
+                    return (pag.current - 1) * pag.pageSize + index + 1;
+                }
+            },
+            {
+                title: 'Дата', dataIndex: 'date'
+            },
+            {
+                title: 'Номинал', dataIndex: 'nominal'
+            },
+            {
+                title: 'Валюта',
+                dataIndex: 'currency'
+            },
+            {
+                title: 'Тип', dataIndex: 'formFactor', render: (text) => {
+                    if (text === 'BILL') return 'Купюра';
+                    if (text === 'COIN') return 'Монета';
+                    return text;
+                }
+            },
+            {
+                title: 'pid', dataIndex: 'pid'
+            },
+        ];
 
-        const paymentCards = logsResult.payments?.map((payment) => {
+        const paymentCards = logsResult.payments?.map((payment, key) => {
             const transactionId = payment.transactionId;
 
             const pagination = paginations[transactionId] || {
-                current: 1, pageSize: 20
+                current: 1, pageSize: 30
             };
             const selectedService = servicesOptionRaw.find((s) => String(s.id) === String(payment?.service));
             const serviceName = selectedService ? `${selectedService.name} (${selectedService.id})` : (payment.service || 'Неизвестно')
 
             const paymentSum = (payment.sum || payment.sum === 0) ? payment.sum : 0
-            const mainDesc = [{label: 'Реквизит', children: payment.persacc || 'Неизвестно'}, {
-                label: 'Сумма',
-                children: `${MoneyFormatNumber(paymentSum, 'full')} сом`,
-            }, {label: 'Номер транзакции', children: payment.transactionId || 'Неизвестно'}, {
-                label: 'Дата платежка',
-                children: payment.time || 'Неизвестно'
-            }, {label: 'Сервис', children: serviceName},];
+            const mainDesc = [
+                {
+                    label: 'Реквизит',
+                    children: payment.persacc || 'Неизвестно'
+                },
+                {
+                    label: 'Сумма',
+                    children: `${MoneyFormatNumber(paymentSum, 'full')} сом`,
+                },
+                {
+                    label: 'Номер транзакции',
+                    children: payment.transactionId || 'Неизвестно'
+                },
+                {
+                    label: 'Дата платежка',
+                    children: payment.time || 'Неизвестно'
+                },
+                {
+                    label: 'Сервис',
+                    children: serviceName
+                },
+            ];
 
             const variablesMap = {
                 DADDR: 'Адрес дилера',
                 DNAME: 'Дилер',
                 DINN: 'ИНН дилера',
+                DPHONE: 'Номер дилера',
                 n_app: 'Номер терминала',
                 TADDR: 'Адрес терминала',
                 TADDR_woZIP_woSTATE: 'Город ',
@@ -77,13 +111,13 @@ const ApparatLogsCard = ({logsResult = [], servicesOptionRaw = []}) => {
             };
 
             const dealerMainKeys = ['DNAME', 'DADDR'];
-            const dealerSubKeys = ['DINN', 'docname'];
+            const dealerSubKeys = ['DINN', 'docname', 'DPHONE'];
             const terminalMainKeys = ['TNAME', 'TADDR'];
             const terminalSubKeys = ['TADDR_woZIP_woSTATE', 'TSTATE', 'n_app', 'TSNUM'];
             const serviceNameKeys = ['oper'];
             const receiptKeys = ['date', 'number'];
             const serviceKeys = ['persacc', 'pers_acc', 'fio', 'limit', 'tel'];
-            const paymentKeys = ['summ_bills', 'sum_nal', 'sum_real', 'summ'];
+            const paymentKeys = ['sum_nal', 'summ_bills', 'sum_real', 'summ'];
 
             const dealerMainData = [];
             const dealerSubData = [];
@@ -143,126 +177,132 @@ const ApparatLogsCard = ({logsResult = [], servicesOptionRaw = []}) => {
                     ...unit, key: `${transactionId}-${index}`, transactionId, // для рендера индекса
                 }));
 
-            return (<div key={`transaction-${transactionId}`} className="d-flex flex-row justify-content-start mt-3">
-                {/*Основные данные*/}
-                <div className="card card-body w-50 d-flex flex-column justify-content-start">
-                    <Descriptions
-                        layout="vertical" size="small"
-                        column={2}
-                        title={`Транзакция №${transactionId}`}
-                        items={mainDesc}
-                    />
-                    <Divider className="border-secondary" dashed={true}>Доп. данные</Divider>
-                    {payment.variables ? (<>
+            return (
+                <div key={`transaction-${transactionId}`} className="d-flex flex-row justify-content-start mt-3">
+                    {/*Основные данные*/}
+                    <div className="card card-body w-50 d-flex flex-column justify-content-start">
                         <Descriptions
-                            layout="vertical"
-                            size="small"
-                            title='Дилер'
-                            column={1}
-                            items={dealerMainData}
-                        />
-                        <Descriptions
-                            layout="vertical"
-                            size="small" column={2}
-                            items={dealerSubData}
-                        />
-                        <Descriptions
-                            layout="vertical"
-                            size="small"
-                            className='mt-3 pt-3 border-top'
-                            title='Терминал'
-                            column={1}
-                            items={terminalMainData}
-                        />
-                        <Descriptions
-                            layout="vertical"
-                            size="small"
+                            layout="vertical" size="small"
                             column={2}
-                            items={terminalSubData}
+                            title={
+                                <div className='d-flex justify-content-between w-100 align-items-center'>
+                                    <Title level={5}>{`Транзакция №${transactionId}`}</Title>
+                                    <Title className='mt-0' level={4}>{`#${key + 1}`}</Title>
+                                </div>
+                            }
+                            items={mainDesc}
                         />
-                        <Descriptions
-                            layout="vertical"
-                            size="small"
-                            className='mt-3 pt-3 border-top'
-                            title='Платёж'
-                            column={2}
-                            items={serviceNameData}
-                        />
-                        <Descriptions
-                            layout="vertical"
-                            size="small"
-                            column={2}
-                            items={receiptData}
-                        />
-                        <Descriptions
-                            layout="vertical"
-                            size="small"
-                            column={2}
-                            items={serviceData}
-                        />
-                        <Descriptions
-                            layout="vertical"
-                            size="small"
-                            className='mt-3 pt-3 border-top'
-                            title='Доп.данные'
-                            column={2}
-                            items={unknownData}
-                        />
-                        <Descriptions
-                            layout="vertical"
-                            size="small"
-                            className='mt-3 pt-3 border-top'
-                            title='Оплата'
-                            column={2}
-                            items={paymentData}
-                        />
+                        <Divider className="border-secondary" dashed={true}>Доп. данные</Divider>
+                        {payment.variables ? (<>
+                            <Descriptions
+                                layout="vertical"
+                                size="small"
+                                title='Дилер'
+                                column={1}
+                                items={dealerMainData}
+                            />
+                            <Descriptions
+                                layout="vertical"
+                                size="small" column={2}
+                                items={dealerSubData}
+                            />
+                            <Descriptions
+                                layout="vertical"
+                                size="small"
+                                className='mt-3 pt-3 border-top'
+                                title='Терминал'
+                                column={1}
+                                items={terminalMainData}
+                            />
+                            <Descriptions
+                                layout="vertical"
+                                size="small"
+                                column={2}
+                                items={terminalSubData}
+                            />
+                            <Descriptions
+                                layout="vertical"
+                                size="small"
+                                className='mt-3 pt-3 border-top'
+                                title='Платёж'
+                                column={2}
+                                items={serviceNameData}
+                            />
+                            <Descriptions
+                                layout="vertical"
+                                size="small"
+                                column={2}
+                                items={receiptData}
+                            />
+                            <Descriptions
+                                layout="vertical"
+                                size="small"
+                                column={2}
+                                items={serviceData}
+                            />
+                            <Descriptions
+                                layout="vertical"
+                                size="small"
+                                className='mt-3 pt-3 border-top'
+                                title='Доп. данные'
+                                column={2}
+                                items={unknownData}
+                            />
+                            <Descriptions
+                                layout="vertical"
+                                size="small"
+                                className='mt-3 pt-3 border-top'
+                                title='Оплата'
+                                column={2}
+                                items={paymentData}
+                            />
 
-                    </>) : (<div className='d-flex align-items-center h-100'>
-                        <Result
-                            icon={<Empty description={false}/>}
-                            title="Данные отсутствуют"
-                            subTitle="Извините, но мы не смогли ничего найти по вашему запросу."
-                        />
-                    </div>)}
-                </div>
-
-                {/*Купюры*/}
-                <div className="d-flex card card-body w-75 justify-content-start ms-3">
-                    <div className='d-flex align-items-end'>
-                        <Descriptions layout="horizontal" size="small" column={1} title="Купюры"
-                                      items={coinsCount}/>
-                        <Descriptions layout="horizontal" size="small" column={1} items={moneyCount1}/>
-                        <Descriptions layout="horizontal" size="small" column={1} items={moneyCount2}/>
+                        </>) : (<div className='d-flex align-items-center h-100'>
+                            <Result
+                                icon={<Empty description={false}/>}
+                                title="Данные отсутствуют"
+                                subTitle="Извините, но мы не смогли ничего найти по вашему запросу."
+                            />
+                        </div>)}
                     </div>
 
-                    <div className='d-flex flex-row align-items-center justify-content-between mt-4'>
-                        <Title className='fw-medium' level={4}>Всего: {totalCount} шт.</Title>
-                        <Title className='mt-0' level={4}>Сумма: {MoneyFormatNumber(totalSum, 'full')} сом</Title>
+                    {/*Купюры*/}
+                    <div className="d-flex card card-body w-75 justify-content-start ms-3">
+                        <div className='d-flex align-items-end'>
+                            <Descriptions layout="horizontal" size="small" column={1} title="Купюры"
+                                          items={coinsCount}/>
+                            <Descriptions layout="horizontal" size="small" column={1} items={moneyCount1}/>
+                            <Descriptions layout="horizontal" size="small" column={1} items={moneyCount2}/>
+                        </div>
+
+                        <div className='d-flex flex-row align-items-center justify-content-between mt-4'>
+                            <Title className='fw-medium' level={4}>Всего: {totalCount} шт.</Title>
+                            <Title className='mt-0' level={4}>Сумма: {MoneyFormatNumber(totalSum, 'full')} сом</Title>
+                        </div>
+
+                        <Divider className="border-secondary" dashed={true}>Вложенные купюры</Divider>
+
+                        {dataWithKeys.length > 0 ? (<Table
+                            columns={tableColumns}
+                            size='small'
+                            bordered={true}
+                            pagination={{
+                                ...pagination,
+                                onChange: (current, pageSize) => handlePaginationChange(transactionId, {
+                                    current,
+                                    pageSize
+                                })
+                            }}
+                            dataSource={dataWithKeys}
+                        />) : (<div className='d-flex align-items-center h-100'>
+                            <Result
+                                icon={<Empty description={false}/>}
+                                title="Данные отсутствуют"
+                                subTitle="Извините, но мы не смогли ничего найти по вашему запросу."
+                            />
+                        </div>)}
                     </div>
-
-                    <Divider className="border-secondary" dashed={true}>Вложенные купюры</Divider>
-
-                    {dataWithKeys.length > 0 ? (<Table
-                        columns={tableColumns}
-                        size='small'
-                        bordered={true}
-                        pagination={{
-                            ...pagination,
-                            onChange: (current, pageSize) => handlePaginationChange(transactionId, {
-                                current,
-                                pageSize
-                            })
-                        }}
-                        dataSource={dataWithKeys}
-                    />) : (<div className='d-flex align-items-center h-100'>
-                        <Result
-                            icon={<Empty description={false}/>}
-                            title="Данные отсутствуют"
-                            subTitle="Извините, но мы не смогли ничего найти по вашему запросу."
-                        />
-                    </div>)}
-                </div>
-            </div>);
+                </div>);
         });
 
         function parseCashUnits(cashUnits) {
@@ -301,7 +341,6 @@ const ApparatLogsCard = ({logsResult = [], servicesOptionRaw = []}) => {
 
         return <>{paymentCards}</>;
     };
-
 
     return (<>
         {logsResult.payments?.length > 0 && (<>
