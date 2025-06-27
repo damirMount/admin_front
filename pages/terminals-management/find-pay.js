@@ -368,7 +368,12 @@ export default function ApparatReRegistrationPage() {
                                         <div
                                             className='w-100 ms-3 d-flex flex-column align-items-center border-start
                                                 justify-content-center'>
-                                            <Title level={5}>Логи платежа успешно получены!</Title>
+                                            <Title level={5}>
+                                                {
+                                                    `Логи  ${plural(logsResult.payments?.length || 0, 'платежа', 'платежей')}
+                                                     были успешно получены!`
+                                                }
+                                            </Title>
                                             <Text className="ms-3 me-3" type="secondary">{
                                                 `По вашему запросу
                                                 ${plural(logsResult.payments?.length || 0, 'был найден', 'было найдено')}
