@@ -146,12 +146,16 @@ export default function ApparatReRegistrationPage() {
     };
 
     const handleSend = async () => {
-        setLogsResult(prev => ({...prev, payments: []}));
         setTimeLeft('0 сек');
         secondsRef.current = 0;
+
+        setLogsResult(prev => ({...prev, payments: []}));
         setLoading(true);
+
         await sendWithRetry();
+
         setLoading(false);
+        setDownloadLoading(false);
     };
 
     useEffect(() => {
@@ -469,7 +473,7 @@ export default function ApparatReRegistrationPage() {
                                                 платежами, использованный при выгрузке данных.
                                             </Text>
                                             <Button  type="primary" loading={downloadLoading}
-                                                    onClick={setDownloadLoading}>Скачать</Button>
+                                                    onClick={downloadLog}>Скачать</Button>
                                         </div>
                                     </div>
                                 </>
