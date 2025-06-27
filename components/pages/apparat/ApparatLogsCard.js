@@ -73,7 +73,7 @@ const ApparatLogsCard = ({logsResult = [], servicesOptionRaw = []}) => {
                     children: payment.transactionId || 'Неизвестно'
                 },
                 {
-                    label: 'Дата платежка',
+                    label: 'Дата платежа',
                     children: payment.time || 'Неизвестно'
                 },
                 {
