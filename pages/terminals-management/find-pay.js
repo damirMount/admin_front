@@ -219,8 +219,8 @@ export default function ApparatReRegistrationPage() {
                 <title>Поиск платежа | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
             <div className="container d-flex flex-column justify-content-center">
-                <div className="d-flex flex-row justify-content-start mt-3">
-                    <div className="card card-body w-50 d-flex flex-column justify-content-start">
+                <div className="d-flex  flex-row justify-content-start mt-3">
+                    <div className="card card-body w-50 h-100 d-flex flex-column justify-content-start">
                         <div className="d-flex h-100 flex-column mb-3">
                             <Title level={5}>Поиск платежа</Title>
                             <UniversalSelect
@@ -420,7 +420,11 @@ export default function ApparatReRegistrationPage() {
                                             justify-content-center'>
                                             <Title level={5}>Не удалось выгрузить логи - {timeLeft} :( </Title>
                                             <Text className='ms-3 me-3' type='secondary'>
-                                                {logsResult.desc || 'Во время запроса произошла не предвиденная ошибка'}
+                                             <span
+                                                 dangerouslySetInnerHTML={{
+                                                     __html: logsResult.desc || 'Во время запроса произошла непредвиденная ошибка',
+                                                 }}
+                                             />
                                             </Text>
                                         </div>
                                     </div>
@@ -454,7 +458,7 @@ export default function ApparatReRegistrationPage() {
                                 терминала, так и расшифрованные данные по платежам.
                             </Text>
 
-                            {logsResult.status === 'success' && !loading && (
+                            {(logsResult.status === 'success' || logsResult.status === 'warning') && !loading && (
                                 <>
                                     <Divider className="border-secondary" dashed={true}>Скачать логи</Divider>
                                     <div
