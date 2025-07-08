@@ -279,8 +279,8 @@ export default function ApparatReRegistrationPage() {
                                                 </Text>
                                             </Paragraph>
                                             <Paragraph>
-                                                <CloseCircleOutlined
-                                                    className="site-result-demo-error-icon"/> {taskResult.desc}
+                                                <CloseCircleOutlined className="site-result-demo-error-icon"/>
+                                                {taskResult.desc}
                                             </Paragraph>
                                         </div>
                                     </Result>

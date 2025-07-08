@@ -31,7 +31,8 @@ import {
     REPORT_DEALERS_TSJ_URL,
     REPORT_SERVICES_GAZPROM_URL,
     REPORT_SERVICES_NORTH_ELECTRO_URL,
-    ROLES_INDEX_URL, TERMINAL_FIND_PAY_URL,
+    ROLES_INDEX_URL, TERMINAL_ENCASHMENTS_URL,
+    TERMINAL_FIND_PAY_URL,
     TERMINAL_RE_REGISTRATION_URL,
     TERMINAL_TASK_URL,
     TEST_ZONE_URL
@@ -83,6 +84,7 @@ const SidebarTab = () => {
         },
         {
             label: 'Терминалы', permission: 'apparats_managment', icon: faComputer, showInSubMenu: true, subMenu: [
+                // {label: 'Инкассации', permission: 'apparats_encashment', link: TERMINAL_ENCASHMENTS_URL},
                 {label: 'Поиск платежа', permission: 'apparats_service_menu', link: TERMINAL_FIND_PAY_URL},
                 {label: 'Задания', permission: 'apparats_service_menu', link: TERMINAL_TASK_URL},
                 {label: 'Перерегистрация', permission: 'apparat_re_register', link: TERMINAL_RE_REGISTRATION_URL},
@@ -117,7 +119,7 @@ const SidebarTab = () => {
             <Tooltip placement="right" {...((label && collapsed && showInSubMenu) ? {title: label} : {})}>
                 <SubMenu label={label} style={{height: height}} icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
                     {showInSubMenu && collapsed && (
-                        <MenuItem title={label} className='fw-bold border-bottom text-nowrap'
+                        <MenuItem title={label}  className='fw-bold border-bottom text-nowrap'
                                   icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
                             {label || ''}
                         </MenuItem>
@@ -144,10 +146,20 @@ const SidebarTab = () => {
     };
 
     const buildMenuItem = (item) => {
-        const {label, link, height = 50, icon, permission, showInSubMenu, subMenu, targetLink, hideWhereCollapsed = false} = item;
+        const {
+            label,
+            link,
+            height = 50,
+            icon,
+            permission,
+            showInSubMenu,
+            subMenu,
+            targetLink,
+            hideWhereCollapsed = false
+        } = item;
 
         if (subMenu) {
-            return buildSubMenu(subMenu, label,height, icon, showInSubMenu, permission);
+            return buildSubMenu(subMenu, label, height, icon, showInSubMenu, permission);
         } else {
             const menuItemContent = (
                 <Tooltip placement="right" {...((label && collapsed && !hideWhereCollapsed) ? {title: label} : {})}>
@@ -156,7 +168,7 @@ const SidebarTab = () => {
                         component={link ? <Link href={link} target={targetLink || ''}/> : null}
                         style={{
                             height: height,
-                            ...(hideWhereCollapsed ? { opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px' } : {})
+                            ...(hideWhereCollapsed ? {opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px'} : {})
                         }}
                     >
                         {label || ''}

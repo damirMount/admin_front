@@ -41,7 +41,7 @@ const TypeSend = (props) => {
 
     return (
         <div className="col-auto action-table-buttons flex-nowrap d-flex flex-column">
-                <span className="status text-start status-dashed d-flex flex-column">
+                <span className="status-dashed status text-start  d-flex flex-column">
                     <div>
                         <FontAwesomeIcon className="me-2" icon={faClockRotateLeft} size="lg"/>
                         {formatTypeValue((type))}

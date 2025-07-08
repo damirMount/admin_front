@@ -1,4 +1,4 @@
-import {Button, Checkbox, DatePicker, Divider, Input, Typography} from "antd";
+import {Button, Checkbox, DatePicker, Descriptions, Divider, Input, Typography} from "antd";
 import React, {useEffect, useRef, useState} from "react";
 import {useSession} from "next-auth/react";
 import Head from "next/head";
@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import {
     DOWNLOAD_TERMINAL_PAYMENT_LOGS_API,
     FIND_TERMINAL_PAYMENT_LOGS_API,
+    GET_TERMINAL_CONNECTION_STATUS_API,
     GET_TERMINALS_LIST_API
 } from "../../routes/api";
 import humanizeDuration from "humanize-duration";
@@ -45,10 +46,21 @@ export default function ApparatReRegistrationPage() {
     });
 
     const secondsRef = useRef(0);
+    const startTimeRef = useRef(0);
     const timerRef = useRef(null);
-    const [timeLeft, setTimeLeft] = useState('0 сек');
 
-    const MAX_ATTEMPTS = 5;
+    const lastRequestIdRef = useRef(0);
+    const [timeLeft, setTimeLeft] = useState('0 сек');
+    const [terminalConnectionStatus, setTerminalConnectionStatus] = useState([]);
+    const [terminalDesc, setTerminalDesc] = useState([
+        {label: 'Терминал', children: 'Выберете терминал'},
+        {label: 'Последнее событие', children: ''},
+        {label: 'Связь', children: ''},
+        {label: 'Последний платёж', children: ''},
+    ]);
+
+    const MAX_ATTEMPTS = 3;
+
 
     const sendWithRetry = async (attempt = 1) => {
         if (!selectedTerminal) {
@@ -148,6 +160,7 @@ export default function ApparatReRegistrationPage() {
     const handleSend = async () => {
         setTimeLeft('0 сек');
         secondsRef.current = 0;
+        startTimeRef.current = new Date();
 
         setLogsResult(prev => ({...prev, payments: []}));
         setLoading(true);
@@ -161,20 +174,24 @@ export default function ApparatReRegistrationPage() {
     useEffect(() => {
         if (loading) {
             timerRef.current = setInterval(() => {
-                secondsRef.current += 1;
-                setTimeLeft(humanizeDuration(secondsRef.current * 1000, {
-                    language: 'shortRu',
-                    languages: {
-                        shortRu: {
-                            y: () => 'г', mo: () => 'мес', w: () => 'нед', d: () => 'дн',
-                            h: () => 'ч', m: () => 'мин', s: () => 'сек', ms: () => 'мс',
-                        }
-                    },
-                    largest: 2,
-                    round: true,
-                    units: ['h', 'm', 's'],
-                    spacer: ' ',
-                }));
+                if (startTimeRef.current) {
+                    const diffMs = new Date().getTime() - startTimeRef.current.getTime();
+                    secondsRef.current = Math.floor(diffMs / 1000);
+
+                    setTimeLeft(humanizeDuration(diffMs, {
+                        language: 'shortRu',
+                        languages: {
+                            shortRu: {
+                                y: () => 'г', mo: () => 'мес', w: () => 'нед', d: () => 'дн',
+                                h: () => 'ч', m: () => 'мин', s: () => 'сек', ms: () => 'мс',
+                            }
+                        },
+                        largest: 2,
+                        round: true,
+                        units: ['h', 'm', 's'],
+                        spacer: ' ',
+                    }));
+                }
             }, 1000);
         } else {
             if (timerRef.current) clearInterval(timerRef.current);
@@ -184,6 +201,7 @@ export default function ApparatReRegistrationPage() {
             if (timerRef.current) clearInterval(timerRef.current);
         };
     }, [loading]);
+
 
     const loadData = async () => {
         try {
@@ -208,6 +226,107 @@ export default function ApparatReRegistrationPage() {
             });
         }
     };
+
+
+    const checkTerminalOnline = async () => {
+        const currentRequestId = ++lastRequestIdRef.current;
+
+        setTerminalDesc([
+            {label: 'Терминал', children: 'Загрузка...'},
+            {label: 'Последнее событие', children: 'Загрузка...'},
+            {label: 'Связь', children: 'Загрузка...'},
+            {label: 'Последний платёж', children: 'Загрузка...'},
+        ]);
+
+        try {
+            const res = await fetch(GET_TERMINAL_CONNECTION_STATUS_API, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session?.accessToken}`,
+                },
+                body: JSON.stringify([{
+                    selectedTerminal,
+                    userId: session?.user?.id,
+                }]),
+            });
+
+            if (currentRequestId !== lastRequestIdRef.current) return false;
+
+            const result = await res.json();
+            if (!res.ok) throw new Error(result.resultDescription || 'Ошибка сервера');
+
+            const terminalConnectionStatus = result.data;
+
+            const now = new Date();
+            const lastOnlineDate = new Date(terminalConnectionStatus.lastOnline);
+            const lastPaymentDate = terminalConnectionStatus.lastPayment ? new Date(terminalConnectionStatus.lastPayment) : null;
+
+            const ONLINE_TIMEOUT = 1200;
+            const PAYMENT_TIMEOUT = 172800;
+
+            const isOnline = (now.getTime() - lastOnlineDate.getTime()) / 1000 < ONLINE_TIMEOUT;
+            const isPaymentStale = lastPaymentDate ? ((now.getTime() - lastPaymentDate.getTime()) / 1000 > PAYMENT_TIMEOUT) : true;
+
+            setTerminalDesc([
+                {
+                    label: 'Терминал',
+                    children: terminalConnectionStatus?.id ?? '(пусто)',
+                },
+                {
+                    label: 'Последнее событие',
+                    children: terminalConnectionStatus?.lastEvent ? (
+                        terminalConnectionStatus.lastEvent
+                    ) : '(пусто)',
+                },
+                {
+                    label: 'Связь',
+                    children: isOnline ? (
+                        <div className='d-flex align-items-center'>
+                            <CheckCircleFilled className="text-success" style={{fontSize: 18}}/>
+                            <span className='text-success ms-2 fw-medium'>На связи</span>
+                        </div>
+                    ) : (
+                        <div className='d-flex align-items-center'>
+                            <WarningFilled className="text-danger" style={{fontSize: 18}}/>
+                            <span className='text-danger ms-1 fw-medium'>
+                                Не на связи {terminalConnectionStatus.lastOnline && `c ${terminalConnectionStatus.lastOnline}`}
+                            </span>
+                        </div>
+                    ),
+                },
+                {
+                    label: 'Последний платёж',
+                    children: terminalConnectionStatus?.lastPayment ? (
+                        <span className={isPaymentStale ? 'text-danger fw-medium' : ''}>
+                            {terminalConnectionStatus.lastPayment}
+                        </span>
+                    ) : '(пусто)',
+                },
+            ]);
+
+            return true;
+
+        } catch (e) {
+            if (currentRequestId !== lastRequestIdRef.current) return false;
+
+            console.error('Ошибка при загрузке данных по терминалу:', e);
+            setTerminalDesc([
+                {label: 'Терминал', children: '(ошибка)'},
+                {label: 'Последнее событие', children: '(ошибка)'},
+                {label: 'Связь', children: '(ошибка)'},
+                {label: 'Последний платёж', children: '(ошибка)'},
+            ]);
+            return false;
+        }
+    };
+
+
+    useEffect(() => {
+        if (!selectedTerminal && selectedTerminal !== terminalConnectionStatus.id) return;
+        checkTerminalOnline();
+
+    }, [selectedTerminal]);
 
     useEffect(() => {
         loadData();
@@ -351,7 +470,8 @@ export default function ApparatReRegistrationPage() {
                                 <div
                                     className='w-100 ms-3 d-flex flex-column align-items-center border-start
                                     justify-content-center'>
-                                    <Title level={5}>Выполнение запроса... ({logsResult.stage}/5) - {timeLeft}</Title>
+                                    <Title level={5}>Выполнение запроса... ({logsResult.stage}/{MAX_ATTEMPTS})
+                                        - {timeLeft}</Title>
                                     <Text className='ms-3 me-3' type='secondary'>
                                         Пожалуйста, подождите — первая загрузка логов требует времени.
                                         Повторные запросы проходят быстрее, но за текущую дату логи загружаются заново
@@ -432,7 +552,14 @@ export default function ApparatReRegistrationPage() {
                             </div>
                         )}
                         <div className="d-flex flex-column card card-body align-items-start ms-3">
-                            <Title level={5}>Описание</Title>
+                            <Descriptions
+                                layout="horizontal"
+                                size="small"
+                                title='Терминал'
+                                column={2}
+                                items={terminalDesc}
+                            />
+                            <Divider className="border-secondary" dashed={true}>Описание</Divider>
                             <Text>
                                 На этой странице вы можете найти информацию о платеже, используя логи выбранного
                                 терминала.
@@ -476,7 +603,7 @@ export default function ApparatReRegistrationPage() {
                                                 Архив содержит оригинальный файл логов и расшифрованный файл с
                                                 платежами, использованный при выгрузке данных.
                                             </Text>
-                                            <Button  type="primary" loading={downloadLoading}
+                                            <Button type="primary" loading={downloadLoading}
                                                     onClick={downloadLog}>Скачать</Button>
                                         </div>
                                     </div>

@@ -12,7 +12,7 @@ const fetchData = async (config, session) => {
                 : undefined, // filters = { column1: 'value', column2: '[value1, value2]', accurateSearch: true}
             // accurateSearch: true - Включает точный поиск по всем аргументам, по стандарту false;
             attributes: config.attributes || undefined, // attributes = 'name,fio'
-            sort: config.sort || undefined, // sort = { column: name, direction: asc }
+            sort: config.sort || undefined, // sort = '{"column":"id","direction":"asc"}'
             limit: config.limit || undefined, // limit = 10
             offset: config.offset || undefined, // offset = 5
         });

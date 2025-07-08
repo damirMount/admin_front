@@ -256,15 +256,6 @@ h1 {
     white-space: nowrap;
 }
 
-.status-dashed {
-    color: #532C59;
-    border: #532C59 1px dashed;
-    inline-size: max-content;
-    white-space: nowrap;
-    display: flex;
-    width: 100%;
-}
-
 .status-large {
     color: #FFFFFF;
     background-color: #532C59;
@@ -279,6 +270,15 @@ h1 {
     background-color: #cfcdcd;
     border: #646464 1px dashed;
     color: #646464;
+}
+
+.status-dashed {
+    color: #532C59;
+    border: #532C59 1px dashed;
+    inline-size: max-content;
+    white-space: nowrap;
+    display: flex;
+    width: 100%;
 }
 
 .status-success {

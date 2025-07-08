@@ -58,6 +58,7 @@ export const ROLE_SHOW_API = `${baseURL}/api/role`
 export const ROLE_UPDATE_API = `${baseURL}/api/role`
 
 export const SEND_TASK_TO_TERMINAL_API = `${baseURL}/api/apparats/task/sendTask`
+export const GET_TERMINAL_CONNECTION_STATUS_API = `${baseURL}/api/apparats/logs/getTerminalConnectionStatus`
 export const FIND_TERMINAL_PAYMENT_LOGS_API = `${baseURL}/api/apparats/logs/findPay`
 export const DOWNLOAD_TERMINAL_PAYMENT_LOGS_API = `${baseURL}/api/apparats/logs/downloadLogs`
 

@@ -142,7 +142,13 @@ export default function RecipientPage() {
             {
                 title: 'Статус',
                 dataIndex: 'is_blocked',
-                render: (text) => StatusIndicator(text),
+                render: (text) => {
+                    if (!text) {
+                        return <StatusIndicator text="ON" color="purple"/>
+                    } else {
+                        return <StatusIndicator text="OFF" color="gray"/>
+                    }
+                },
             },
             {
                 title: 'Сервер',
@@ -216,7 +222,7 @@ export default function RecipientPage() {
         return (
             <>
                 <Divider className='text-secondary text-nowrap'>Список отправляемых реестров</Divider>
-                <Table loading={loading} columns={columns} dataSource={registries} pagination={false}/>
+                <Table bordered={true} loading={loading} columns={columns} dataSource={registries} pagination={false}/>
             </>
         );
     };
