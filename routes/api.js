@@ -62,10 +62,15 @@ export const GET_TERMINAL_CONNECTION_STATUS_API = `${baseURL}/api/apparats/logs/
 export const FIND_TERMINAL_PAYMENT_LOGS_API = `${baseURL}/api/apparats/logs/findPay`
 export const DOWNLOAD_TERMINAL_PAYMENT_LOGS_API = `${baseURL}/api/apparats/logs/downloadLogs`
 
+
 export const GET_TERMINALS_LIST_API = `${baseURL}/api/apparats/reRegistration/getTerminalsList`
 export const GET_UNREGISTERED_TERMINALS_LIST_BY_DEALER_API = `${baseURL}/api/apparats/reRegistration/getUnregisteredTerminalsList`
 export const ADD_TO_TERMINAL_RE_REGISTRATION_QUEUE_API = `${baseURL}/api/apparats/reRegistration/addToQueue`
 export const CHANGE_STATUS_RE_REGISTERED_TERMINAL_RECORD_API = `${baseURL}/api/apparats/reRegistration/changeRecordStatus`
+
+export const GET_XML_POINTS_LIST_API = `${baseURL}/api/apparats/certificate/getXmlPointsList`
+export const GENERATE_XML_CERTIFICATE_API = `${baseURL}/api/apparats/certificate/generate`
+export const DOWNLOAD_XML_CERTIFICATE_API = `${baseURL}/api//apparats/certificate/download`
 
 export const TEST_DATA_UTILS_CREATE_FILE_API = `${baseURL}/api/testZone/testDataUtils/createFile`
 export const TEST_DATA_UTILS_READ_FILE_API = `${baseURL}/api/testZone/testDataUtils/readFile`

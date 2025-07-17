@@ -23,6 +23,7 @@ export const OFFLINE_SERVICE_DATABASE_UPDATE_INDEX_URL = '/updates/offline-servi
 
 export const TERMINAL_FIND_PAY_URL = '/terminals-management/find-pay'
 export const TERMINAL_ENCASHMENTS_URL = '/terminals-management/encashments'
+export const TERMINAL_CERTIFICATE_URL = '/terminals-management/certificate'
 export const TERMINAL_TASK_URL = '/terminals-management/task'
 export const TERMINAL_RE_REGISTRATION_URL = '/terminals-management/re-registration'
 

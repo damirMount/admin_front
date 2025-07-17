@@ -31,7 +31,7 @@ import {
     REPORT_DEALERS_TSJ_URL,
     REPORT_SERVICES_GAZPROM_URL,
     REPORT_SERVICES_NORTH_ELECTRO_URL,
-    ROLES_INDEX_URL, TERMINAL_ENCASHMENTS_URL,
+    ROLES_INDEX_URL, TERMINAL_CERTIFICATE_URL, TERMINAL_ENCASHMENTS_URL,
     TERMINAL_FIND_PAY_URL,
     TERMINAL_RE_REGISTRATION_URL,
     TERMINAL_TASK_URL,
@@ -87,6 +87,7 @@ const SidebarTab = () => {
                 // {label: 'Инкассации', permission: 'apparats_encashment', link: TERMINAL_ENCASHMENTS_URL},
                 {label: 'Поиск платежа', permission: 'apparats_service_menu', link: TERMINAL_FIND_PAY_URL},
                 {label: 'Задания', permission: 'apparats_service_menu', link: TERMINAL_TASK_URL},
+                {label: 'Сертификаты XML', permission: 'develop', link: TERMINAL_CERTIFICATE_URL},
                 {label: 'Перерегистрация', permission: 'apparat_re_register', link: TERMINAL_RE_REGISTRATION_URL},
             ]
         },
