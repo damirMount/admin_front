@@ -333,7 +333,7 @@ export default function ApparatReRegistrationPage() {
     }, [session]);
 
     return (
-        <ProtectedElement allowedPermissions="apparats_managment">
+        <ProtectedElement allowedPermissions="apparats_service_menu">
             <Head>
                 <title>Поиск платежа | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>

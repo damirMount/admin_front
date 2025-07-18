@@ -146,7 +146,7 @@ export default function ApparatReRegistrationPage() {
     }, [session, openNotification]);
 
     return (
-        <ProtectedElement allowedPermissions="apparats_managment">
+        <ProtectedElement allowedPermissions="apparats_service_menu">
             <Head>
                 <title>Задания для терминала | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>

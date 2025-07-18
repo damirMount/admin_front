@@ -271,7 +271,7 @@ export default function ApparatCertificateForm({
     }, [selectedPoint]);
 
     return (
-        <ProtectedElement allowedPermissions="develop">
+        <>
             <ModalWindow
                 showModal={showModal} // Передаем состояние модального окна
                 data={modalData}
@@ -458,6 +458,6 @@ export default function ApparatCertificateForm({
                     </div>
                 </div>
             )}
-        </ProtectedElement>
+        </>
     );
 }

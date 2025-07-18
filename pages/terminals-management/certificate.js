@@ -211,7 +211,7 @@ export default function ApparatReRegistrationPage() {
     };
 
     return (
-        <ProtectedElement allowedPermissions="develop">
+        <ProtectedElement allowedPermissions="apparats_service_menu">
             <Head>
                 <title>Сертификаты XML точек | {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>

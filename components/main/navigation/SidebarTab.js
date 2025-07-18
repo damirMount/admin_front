@@ -87,7 +87,7 @@ const SidebarTab = () => {
                 // {label: 'Инкассации', permission: 'apparats_encashment', link: TERMINAL_ENCASHMENTS_URL},
                 {label: 'Поиск платежа', permission: 'apparats_service_menu', link: TERMINAL_FIND_PAY_URL},
                 {label: 'Задания', permission: 'apparats_service_menu', link: TERMINAL_TASK_URL},
-                {label: 'Сертификаты XML', permission: 'develop', link: TERMINAL_CERTIFICATE_URL},
+                {label: 'Сертификаты XML', permission: 'apparats_service_menu', link: TERMINAL_CERTIFICATE_URL},
                 {label: 'Перерегистрация', permission: 'apparat_re_register', link: TERMINAL_RE_REGISTRATION_URL},
             ]
         },
