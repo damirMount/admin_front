@@ -282,19 +282,20 @@ const ApparatLogsCard = ({logsResult = [], servicesOptionRaw = []}) => {
 
                         <Divider className="border-secondary" dashed={true}>Вложенные купюры</Divider>
 
-                        {dataWithKeys.length > 0 ? (<Table
-                            columns={tableColumns}
-                            size='small'
-                            bordered={true}
-                            pagination={{
-                                ...pagination,
-                                onChange: (current, pageSize) => handlePaginationChange(transactionId, {
-                                    current,
-                                    pageSize
-                                })
-                            }}
-                            dataSource={dataWithKeys}
-                        />) : (<div className='d-flex align-items-center h-100'>
+                        {dataWithKeys.length > 0 ? (
+                            <Table
+                                columns={tableColumns}
+                                size='small'
+                                bordered={true}
+                                pagination={{
+                                    ...pagination,
+                                    onChange: (current, pageSize) => handlePaginationChange(transactionId, {
+                                        current,
+                                        pageSize
+                                    })
+                                }}
+                                dataSource={dataWithKeys}
+                            />) : (<div className='d-flex align-items-center h-100'>
                             <Result
                                 icon={<Empty description={false}/>}
                                 title="Данные отсутствуют"

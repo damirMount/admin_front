@@ -68,9 +68,11 @@ export const GET_UNREGISTERED_TERMINALS_LIST_BY_DEALER_API = `${baseURL}/api/app
 export const ADD_TO_TERMINAL_RE_REGISTRATION_QUEUE_API = `${baseURL}/api/apparats/reRegistration/addToQueue`
 export const CHANGE_STATUS_RE_REGISTERED_TERMINAL_RECORD_API = `${baseURL}/api/apparats/reRegistration/changeRecordStatus`
 
+export const GET_XML_CERTIFICATES_LIST_API = `${baseURL}/api/apparats/certificate/getListCertificates`
 export const GET_XML_POINTS_LIST_API = `${baseURL}/api/apparats/certificate/getXmlPointsList`
+export const GET_XML_CERTIFICATE_INFO_API = `${baseURL}/api/apparats/certificate/getCertificateInfo`
 export const GENERATE_XML_CERTIFICATE_API = `${baseURL}/api/apparats/certificate/generate`
-export const DOWNLOAD_XML_CERTIFICATE_API = `${baseURL}/api//apparats/certificate/download`
+export const DOWNLOAD_XML_CERTIFICATE_API = `${baseURL}/api/apparats/certificate/download`
 
 export const TEST_DATA_UTILS_CREATE_FILE_API = `${baseURL}/api/testZone/testDataUtils/createFile`
 export const TEST_DATA_UTILS_READ_FILE_API = `${baseURL}/api/testZone/testDataUtils/readFile`

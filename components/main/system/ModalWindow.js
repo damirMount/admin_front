@@ -35,7 +35,11 @@ const ModalWindow = ({showModal, closeModal, data, onHandle}) => {
                ]}
         >
             <Divider/>
-            <Text>{data.message}</Text>
+            <span
+                dangerouslySetInnerHTML={{
+                    __html: data.message || '',
+                }}
+            />
             <Divider/>
         </Modal>
     );

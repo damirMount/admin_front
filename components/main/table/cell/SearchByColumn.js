@@ -4,7 +4,7 @@ import {SearchOutlined} from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 
 const SearchByColumn = (dataIndex) => {
-    const [searchText, setSearchText] = useState('');
+    const [searchText, setSearchText] = useState();
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
 
@@ -54,7 +54,7 @@ const SearchByColumn = (dataIndex) => {
                         onClick={async () => {
                             if (clearFilters) {
                                 await handleReset(clearFilters);
-                                handleSearch([''], confirm);
+                                handleSearch([], confirm);
                             }
                         }}
                         size="small"
