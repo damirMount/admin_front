@@ -29,7 +29,7 @@ const CERTIFICATE_STATUSES = [
     {value: "5", label: "Просрочен", icon: faBan, color: 'danger'},
 ];
 
-const OLD_CERTIFICATE_LIFE_TIME_DAYS = 670
+const OLD_CERTIFICATE_LIFE_TIME_DAYS = 750
 const NEW_CERTIFICATE_LIFE_TIME_DAYS = 1095
 
 export default function ApparatReRegistrationPage() {
