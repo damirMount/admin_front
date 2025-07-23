@@ -373,7 +373,6 @@ export default function ApparatReRegistrationPage() {
         const stage = getStage(record.stage);
         const dealer = dealersOptionRaw.find((d) => d.id === record.region_id);
 
-
         const dealerName = `${record.region_id} ${dealer.name}`
 
         const formatTimeLeft = () => {
@@ -541,7 +540,7 @@ export default function ApparatReRegistrationPage() {
                 }}
                 size={"small"}
                 columns={tableColumns}
-                data={dataTable}
+                data={dealersOptionRaw && dealersOptionRaw.length > 0 ? dataTable : []}
                 onRow={(record) => ({
                     onClick: (event) => handleRowClick(event, record),
                 })}
