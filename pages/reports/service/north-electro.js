@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from "react";
-import {DOWNLOAD_NORTHELECTRO_REPORT_API, GET_NORTHELECTRO_REPORT_API} from "../../../routes/api";
+import React, { useEffect, useState } from "react";
+import { DOWNLOAD_NORTHELECTRO_REPORT_API, GET_NORTHELECTRO_REPORT_API } from "../../../routes/api";
 import Head from "next/head";
 import DateRangePicker from "../../../components/main/input/DateRangePicker";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
-import {useSession} from "next-auth/react";
-import {useAlert} from "../../../contexts/AlertContext";
+import { useSession } from "next-auth/react";
+import { useAlert } from "../../../contexts/AlertContext";
 import ProtectedElement from "../../../components/main/system/ProtectedElement";
 import SmartTable from "../../../components/main/table/SmartTable";
-import {Button, Divider, Statistic, Typography} from "antd";
-import {DownloadOutlined} from "@ant-design/icons";
+import { Button, Divider, Statistic, Typography } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
 
-const {Text} = Typography;
+const { Text } = Typography;
 
 export default function DealerExportPage() {
     const [startDate, setStartDate] = useState('');
@@ -20,16 +20,21 @@ export default function DealerExportPage() {
     const [dataTable, setDataTable] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
     const [paymentCount, setPaymentCount] = useState(0);
-    const {openNotification} = useAlert();
-    const {data: session} = useSession(); // Получаем сессию
+    const { openNotification } = useAlert();
+    const { data: session } = useSession(); // Получаем сессию
     const [oldFormData, setOldFormData] = useState([]);
     const [formData, setFormData] = useState({
         serviceType: 'offline',
+        server: 'rest',
         clientType: 'physical',
         paymentType: 'ordinary',
         startDate: startDate,
         endDate: endDate,
     });
+
+    const isServerForcingOffline =
+        formData.server === '10804' || formData.server === 'all';
+
 
     const tableColumns = [
         {
@@ -93,13 +98,13 @@ export default function DealerExportPage() {
 
                 setDataTable(responseData);
 
-                openNotification({type: "success", message: "Отчет успешно получен."});
+                openNotification({ type: "success", message: "Отчет успешно получен." });
             } else {
                 const errorResponse = await response.json();
-                openNotification({type: "error", message: errorResponse.message});
+                openNotification({ type: "error", message: errorResponse.message });
             }
         } catch (error) {
-            openNotification({type: "error", message: "Произошла ошибка при получении отчета"});
+            openNotification({ type: "error", message: "Произошла ошибка при получении отчета" });
         } finally {
             setLoading(false);
         }
@@ -140,21 +145,53 @@ export default function DealerExportPage() {
             } else {
                 const errorResponse = await response.json();
 
-                openNotification({type: "error", message: errorResponse.message});
+                openNotification({ type: "error", message: errorResponse.message });
             }
         } catch (error) {
-            openNotification({type: "error", message: "Произошла ошибка во время скачивания отчета"});
+            openNotification({ type: "error", message: "Произошла ошибка во время скачивания отчета" });
         } finally {
             setDownloadLoading(false)
         }
     };
 
-    const handleSelectorChange = (valuesArray, name) => {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: valuesArray,
-        }));
-    }
+    const handleSelectorChange = (value, name) => {
+        const selectedValue = Array.isArray(value) ? value[0] : value;
+
+        setFormData(prev => {
+            // 🟢 Сервер
+            if (name === 'server') {
+                if (selectedValue === '10804' || selectedValue === 'all') {
+                    return {
+                        ...prev,
+                        server: selectedValue,
+                        serviceType: 'offline',
+                    };
+                }
+
+                return {
+                    ...prev,
+                    server: selectedValue,
+                };
+            }
+
+            // 🟢 Тип сервиса
+            if (name === 'serviceType') {
+                if (isServerForcingOffline && selectedValue === 'online') {
+                    return prev;
+                }
+
+                return {
+                    ...prev,
+                    serviceType: selectedValue,
+                };
+            }
+
+            return {
+                ...prev,
+                [name]: selectedValue,
+            };
+        });
+    };
 
     useEffect(() => {
         setFormData((prevFormData) => ({
@@ -187,7 +224,7 @@ export default function DealerExportPage() {
                                 <div className='d-flex w-100 mt-3 align-items-center justify-content-between'>
                                     <DownloadOutlined className='opacity-25' style={{
                                         fontSize: '60px',
-                                    }}/>
+                                    }} />
                                     <div className='d-flex align-items-center w-100 h-100 ms-2 border-start'>
                                         <Text className='ms-3 me-2' type="secondary">
                                             Все данные из выше указанной таблицы вы можете скачать на ваш компьютер, в
@@ -195,7 +232,7 @@ export default function DealerExportPage() {
                                             Exel файла.
                                         </Text>
                                         <Button type="primary" onClick={handleDownload}
-                                                loading={loading || downloadLoading}>Скачать</Button>
+                                            loading={loading || downloadLoading}>Скачать</Button>
                                     </div>
                                 </div>
                             ) : ''}
@@ -204,20 +241,46 @@ export default function DealerExportPage() {
                         <div className='border-end ms-3 mt-3 me-2'></div>
 
                         <div className='d-flex w-75 ms-4 flex-column'>
+                            <div className="form-group">
+                                <label htmlFor="selected_report_type">Фильтр по серверу</label>
+                                <UniversalSelect
+                                    isSearchable={true}
+                                    firstOptionSelected
+                                    options={[
+                                        { value: 'rest', label: 'Остальные' },
+                                        { value: '10804', label: 'НЭСК Биллинг' },
+                                        { value: 'all', label: 'Все' }
+                                    ]}
+
+                                    onSelectChange={handleSelectorChange}
+                                    required
+                                    name="server"
+                                />
+                            </div>
+
                             <div className='d-flex justify-content-between'>
                                 <div className="form-group w-50 me-2">
                                     <label htmlFor="selected_report_type">Тип сервиса</label>
                                     <UniversalSelect
+                                        key={JSON.stringify(isServerForcingOffline)}
                                         isSearchable={false}
-                                        firstOptionSelected
-                                        options={[
-                                            {value: 'offline', label: 'Оффлайн сервис'},
-                                            {value: 'online', label: 'Онлайн сервис'},
+                                        selectedOptions={[
+                                            formData.serviceType,
                                         ]}
+                                        options={[
+                                            { value: 'offline', label: 'Оффлайн сервис' },
+                                            { value: 'online', label: 'Онлайн сервис' },
+                                        ]}
+                                        isDisabled={isServerForcingOffline}
                                         onSelectChange={handleSelectorChange}
                                         required
                                         name="serviceType"
                                     />
+                                    {isServerForcingOffline && (
+                                        <Text type="secondary" className="mt-1">
+                                            Для выбранного сервера доступен только оффлайн-сервис
+                                        </Text>
+                                    )}
                                 </div>
 
                                 <div className="form-group w-50">
@@ -226,8 +289,8 @@ export default function DealerExportPage() {
                                         isSearchable={false}
                                         selectedOptions={'physical'}
                                         options={[
-                                            {value: 'physical', label: 'Физ. лица'},
-                                            {value: 'legal', label: 'Юр. лица'},
+                                            { value: 'physical', label: 'Физ. лица' },
+                                            { value: 'legal', label: 'Юр. лица' },
                                         ]}
                                         isDisabled={formData.serviceType === 'online'}
                                         onSelectChange={handleSelectorChange}
@@ -243,9 +306,9 @@ export default function DealerExportPage() {
                                     isSearchable={false}
                                     selectedOptions={'ordinary'}
                                     options={[
-                                        {value: 'all', label: 'Все платежи'},
-                                        {value: 'ordinary', label: 'Обычные платежи'},
-                                        {value: 'penalty', label: 'Оплата пени'},
+                                        { value: 'all', label: 'Все платежи' },
+                                        { value: 'ordinary', label: 'Обычные платежи' },
+                                        { value: 'penalty', label: 'Оплата пени' },
                                     ]}
                                     isDisabled={formData.serviceType === 'online'}
                                     onSelectChange={handleSelectorChange}
@@ -261,22 +324,22 @@ export default function DealerExportPage() {
                                 }}
                             />
 
-                            <Divider/>
+                            <Divider />
 
                             <div className='d-flex justify-content-between'>
                                 <Statistic title="Итоговая сумма" value={totalAmount} precision={2} suffix={'сом'}
-                                           loading={loading}
+                                    loading={loading}
                                 />
                                 <Statistic title="Количество платежей" value={paymentCount} suffix={'шт.'}
-                                           loading={loading}
+                                    loading={loading}
                                 />
                             </div>
 
-                            <Divider/>
+                            <Divider />
 
                             <div className="d-flex justify-content-center">
                                 <Button type="primary" className='fw-bold' size={'large'} onClick={handleCreateReport}
-                                        loading={loading}>
+                                    loading={loading}>
                                     Получить отчёт
                                 </Button>
                             </div>
