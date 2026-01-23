@@ -10,7 +10,6 @@ import {SessionProvider} from "next-auth/react";
 import {AuthProvider} from "../contexts/AccessContext";
 import authCheck from "../components/hocs/authCheck";
 import "dayjs/locale/ru";
-
 function MyApp({Component, pageProps}) {
     const AuthCheckedComponent = authCheck(Component);
 
