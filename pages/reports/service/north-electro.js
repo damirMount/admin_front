@@ -25,7 +25,7 @@ export default function DealerExportPage() {
     const [oldFormData, setOldFormData] = useState([]);
     const [formData, setFormData] = useState({
         serviceType: 'offline',
-        server: 'rest',
+        server: 'main',
         clientType: 'physical',
         paymentType: 'ordinary',
         startDate: startDate,
@@ -247,8 +247,8 @@ export default function DealerExportPage() {
                                     isSearchable={true}
                                     firstOptionSelected
                                     options={[
-                                        { value: 'rest', label: 'Остальные' },
-                                        { value: '10804', label: 'НЭСК Биллинг' },
+                                        { value: 'main', label: 'Основные сервера Северэлектро' },
+                                        { value: '10804', label: '10804 ЧУПЕС Токмок (Биллинг КГ)' },
                                         { value: 'all', label: 'Все' }
                                     ]}
 
