@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from "react";
-import {DOWNLOAD_GAZPROM_REPORT_API, GET_GAZPROM_REPORT_API} from "../../../routes/api";
+import React, { useEffect, useState } from "react";
+import { DOWNLOAD_GAZPROM_REPORT_API, GET_GAZPROM_REPORT_API } from "../../../routes/api";
 import Head from "next/head";
 import DateRangePicker from "../../../components/main/input/DateRangePicker";
 import UniversalSelect from "../../../components/main/input/UniversalSelect";
-import {useSession} from "next-auth/react";
-import {useAlert} from "../../../contexts/AlertContext";
+import { useSession } from "next-auth/react";
+import { useAlert } from "../../../contexts/AlertContext";
 import ProtectedElement from "../../../components/main/system/ProtectedElement";
 import SmartTable from "../../../components/main/table/SmartTable";
-import {Button, Divider, Statistic, Typography} from "antd";
-import {DownloadOutlined} from "@ant-design/icons";
+import { Button, Divider, Statistic, Typography } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
 
-const {Text} = Typography;
+const { Text } = Typography;
 
 export default function DealerExportPage() {
     const [startDate, setStartDate] = useState('');
@@ -20,10 +20,11 @@ export default function DealerExportPage() {
     const [dataTable, setDataTable] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
     const [paymentCount, setPaymentCount] = useState(0);
-    const {openNotification} = useAlert();
-    const {data: session} = useSession(); // Получаем сессию
+    const { openNotification } = useAlert();
+    const { data: session } = useSession(); // Получаем сессию
     const [oldFormData, setOldFormData] = useState([]);
     const [formData, setFormData] = useState({
+        server: '10770',
         clientType: 'physical',
         startDate: startDate,
         endDate: endDate,
@@ -96,13 +97,13 @@ export default function DealerExportPage() {
 
                 setDataTable(responseData);
 
-                openNotification({type: "success", message: "Отчет успешно получен."});
+                openNotification({ type: "success", message: "Отчет успешно получен." });
             } else {
                 const errorResponse = await response.json();
-                openNotification({type: "error", message: errorResponse.message});
+                openNotification({ type: "error", message: errorResponse.message });
             }
         } catch (error) {
-            openNotification({type: "error", message: "Произошла ошибка при получении отчета"});
+            openNotification({ type: "error", message: "Произошла ошибка при получении отчета" });
         } finally {
             setLoading(false);
         }
@@ -143,10 +144,10 @@ export default function DealerExportPage() {
             } else {
                 const errorResponse = await response.json();
 
-                openNotification({type: "error", message: errorResponse.message});
+                openNotification({ type: "error", message: errorResponse.message });
             }
         } catch (error) {
-            openNotification({type: "error", message: "Произошла ошибка во время скачивания отчета"});
+            openNotification({ type: "error", message: "Произошла ошибка во время скачивания отчета" });
         } finally {
             setDownloadLoading(false)
         }
@@ -190,7 +191,7 @@ export default function DealerExportPage() {
                                 <div className='d-flex w-100 mt-3 align-items-center justify-content-between'>
                                     <DownloadOutlined className='opacity-25' style={{
                                         fontSize: '60px',
-                                    }}/>
+                                    }} />
                                     <div className='d-flex align-items-center w-100 h-100 ms-2 border-start'>
                                         <Text className='ms-3 me-2' type="secondary">
                                             Все данные из выше указанной таблицы вы можете скачать на ваш компьютер, в
@@ -198,7 +199,7 @@ export default function DealerExportPage() {
                                             Exel файла.
                                         </Text>
                                         <Button type="primary" onClick={handleDownload}
-                                                loading={loading || downloadLoading}>Скачать</Button>
+                                            loading={loading || downloadLoading}>Скачать</Button>
                                     </div>
                                 </div>
                             ) : ''}
@@ -207,6 +208,23 @@ export default function DealerExportPage() {
                         <div className='border-end ms-3 mt-3 me-2'></div>
 
                         <div className='d-flex w-75 ms-4 flex-column'>
+
+                            <div className="form-group">
+                                <label htmlFor="selected_report_type">Фильтр по серверу</label>
+                                <UniversalSelect
+                                    isSearchable={true}
+                                    firstOptionSelected
+                                    options={[
+                                        { value: '10770', label: '10770 Газпром Кыргызстан онлайн' },
+                                        { value: '10805', label: '10805 Газпром Токмок (Биллинг КГ)' },
+                                        { value: 'all', label: 'Все' }
+                                    ]}
+                                    required
+                                    name="server"
+                                    onSelectChange={handleSelectorChange}
+                                />
+                            </div>
+
                             <div className='d-flex justify-content-between align-items-center'>
                                 <div className="form-group w-50 me-2">
                                     <Text type='secondary' htmlFor="selected_report_type">Тип клиентов</Text>
@@ -214,8 +232,8 @@ export default function DealerExportPage() {
                                         isSearchable={false}
                                         selectedOptions={'physical'}
                                         options={[
-                                            {value: 'physical', label: 'Физ. лица'},
-                                            {value: 'legal', label: 'Юр. лица'},
+                                            { value: 'physical', label: 'Физ. лица' },
+                                            { value: 'legal', label: 'Юр. лица' },
                                         ]}
                                         isDisabled={formData.serviceType === 'online'}
                                         onSelectChange={handleSelectorChange}
@@ -232,22 +250,22 @@ export default function DealerExportPage() {
                                 />
                             </div>
 
-                            <Divider/>
+                            <Divider />
 
                             <div className='d-flex justify-content-between'>
                                 <Statistic title="Итоговая сумма" value={totalAmount} precision={2} suffix={'сом'}
-                                           loading={loading}
+                                    loading={loading}
                                 />
                                 <Statistic title="Количество платежей" value={paymentCount} suffix={'шт.'}
-                                           loading={loading}
+                                    loading={loading}
                                 />
                             </div>
 
-                            <Divider/>
+                            <Divider />
 
                             <div className="d-flex justify-content-center">
                                 <Button type="primary" className='fw-bold' size={'large'} onClick={handleCreateReport}
-                                        loading={loading}>
+                                    loading={loading}>
                                     Получить отчёт
                                 </Button>
                             </div>
