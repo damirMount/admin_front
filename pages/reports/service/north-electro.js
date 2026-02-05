@@ -248,7 +248,7 @@ export default function DealerExportPage() {
                                     firstOptionSelected
                                     options={[
                                         { value: 'main', label: 'Основные сервера Северэлектро' },
-                                        { value: '10804', label: '10804 ЧУПЕС Токмок (Биллинг КГ)' },
+                                        { value: '10804', label: '10804 ЧУПЕС (Биллинг КГ)' },
                                         { value: 'all', label: 'Все' }
                                     ]}
 

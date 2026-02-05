@@ -216,7 +216,7 @@ export default function DealerExportPage() {
                                     firstOptionSelected
                                     options={[
                                         { value: '10770', label: '10770 Газпром Кыргызстан онлайн' },
-                                        { value: '10805', label: '10805 Газпром Токмок (Биллинг КГ)' },
+                                        { value: '10805', label: '10805 Газпром (Биллинг КГ)' },
                                         { value: 'all', label: 'Все' }
                                     ]}
                                     required
