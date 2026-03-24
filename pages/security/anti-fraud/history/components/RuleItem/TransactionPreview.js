@@ -7,7 +7,7 @@ import FormatDate from "../../../../../../components/main/system/FormatDate";
 
 const {Text} = Typography;
 
-export const TransactionPreview = ({payment, dealersList, apparatsList}) => {
+const TransactionPreview = ({payment, dealersList, apparatsList}) => {
     const findById = (list, id) => {
         if (!id || !list) {
             {
@@ -80,3 +80,5 @@ export const TransactionPreview = ({payment, dealersList, apparatsList}) => {
         </div>
     );
 };
+
+export default TransactionPreview;

@@ -1,4 +1,4 @@
-import {TERMINAL_TYPES} from "../../../../../components/main/payments/PaymentsConstants";
+import {TERMINAL_TYPES} from "../../../main/payments/PaymentsConstants";
 
 export const ACTION_MAP = {
     'add': '➕ Начислить баллы',

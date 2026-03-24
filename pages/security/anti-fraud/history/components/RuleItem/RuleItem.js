@@ -3,14 +3,14 @@ import {Button, Card, Empty, Input, Popover, Row, Space, Tag, Typography} from '
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import * as Icons from "@fortawesome/free-solid-svg-icons";
 
-import {MetricItem} from './MetricItem';
-import {TransactionPreview} from './TransactionPreview';
+import MetricItem from './MetricItem';
+import TransactionPreview from './TransactionPreview';
 import {MoneyFormatNumber} from "../../../../../../components/main/system/MoneyFormatNumber";
 import CodeBlock from "../../../../../../components/main/DataDisplay/CodeBlock/CodeBlock";
 
 const {Text} = Typography;
 
-export const RuleItem = ({rule, forceOpen, dealersList, apparatsList}) => {
+const RuleItem = ({rule, forceOpen, dealersList, apparatsList}) => {
     const [isVisible, setIsVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -280,3 +280,5 @@ export const RuleItem = ({rule, forceOpen, dealersList, apparatsList}) => {
         </Card>
     );
 };
+
+export default RuleItem;

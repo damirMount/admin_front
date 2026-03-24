@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const {Text} = Typography;
 
-export const MetricItem = ({label, val, subVal, color, icon, bg, isOverLimit}) => {
+const MetricItem = ({label, val, subVal, color, icon, bg, isOverLimit}) => {
     {
         return (
             <Col span={12}>
@@ -31,3 +31,4 @@ export const MetricItem = ({label, val, subVal, color, icon, bg, isOverLimit}) =
         );
     }
 };
+export default MetricItem;

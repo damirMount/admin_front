@@ -14,7 +14,7 @@ import {useAlert} from "../../../../contexts/AlertContext";
 import PaymentRulesDetails from "./components/PaymentRulesDetails/PaymentRulesDetails";
 import {MoneyFormatNumber} from "../../../../components/main/system/MoneyFormatNumber";
 
-import {getDefaults, useAntiFraudData} from "./hooks/useAntiFraudData";
+import useAntiFraudData, {getDefaults} from "./hooks/useAntiFraudData";
 import FilterForm from "./components/FilterForm";
 import {getPaymentStatusInfo} from "../../../../components/main/payments/PaymentsConstants";
 

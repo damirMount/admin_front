@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 import fetchData from "../../../../../components/main/database/DataFetcher";
 
-export const useAntiFraudData = (session, openNotification) => {
+const useAntiFraudData = (session, openNotification) => {
     const [serviceTypes, setServiceTypes] = useState([]);
     const [dealersList, setDealersList] = useState([]);
     const [apparatsList, setApparatsList] = useState([]);
@@ -77,3 +77,4 @@ export const useAntiFraudData = (session, openNotification) => {
         }
     };
 };
+export default useAntiFraudData;

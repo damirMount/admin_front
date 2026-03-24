@@ -2,13 +2,14 @@ import {Badge, Space, Tag, Typography} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClockRotateLeft, faFlag, faGears, faShieldHalved} from "@fortawesome/free-solid-svg-icons";
 
-import {prepareFormValues} from './helpers';
+
 import SearchByColumn from "../../../../../components/main/table/cell/SearchByColumn";
 import ActionButtons from "../../../../../components/main/table/cell/ActionButtons";
+import {prepareFormValues} from "../../../../../components/pages/security/anti-fraud/helpers";
 
 const {Text} = Typography;
 
-export const getTableColumns = ({form, setIsModalOpen, setOpenDropdownId, openDropdownId}) => {
+const getTableColumns = ({form, setIsModalOpen, setOpenDropdownId, openDropdownId}) => {
 
     return [
         {
@@ -154,3 +155,4 @@ export const getTableColumns = ({form, setIsModalOpen, setOpenDropdownId, openDr
         }
     ];
 };
+export default getTableColumns;

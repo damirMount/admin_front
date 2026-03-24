@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {useSession} from "next-auth/react";
 
-import {getTableColumns} from './utils/columns';
+
 import SmartTable from "../../../../components/main/table/SmartTable";
 import ProtectedElement from "../../../../components/main/system/ProtectedElement";
 import {useAlert} from "../../../../contexts/AlertContext";
@@ -13,9 +13,11 @@ import {useAlert} from "../../../../contexts/AlertContext";
 import RuleFormModal from "./components/RuleFormModal/RuleFormModal";
 import RuleCard from "./components/RuleCard/RuleCard";
 import RiskAnalysisDashboard from "./components/RiskAnalysisDashboard/RiskAnalysisDashboard";
+import useAntiFraudData from "./hooks/useAntiFraudData";
+import useAntiFraudActions from "./hooks/useAntiFraudActions";
+import getTableColumns from "./utils/columns";
 
-import {useAntiFraudData} from "./hooks/useAntiFraudData";
-import {useAntiFraudActions} from "./hooks/useAntiFraudActions";
+
 
 const {Title} = Typography;
 

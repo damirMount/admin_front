@@ -2,7 +2,7 @@ import React, {useMemo} from 'react';
 import {Button, Card, Col, Divider, Form, Input, InputNumber, Row, Select, Space, TimePicker, Typography} from 'antd';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock, faCube, faFilter, faPlus, faTrashCan} from "@fortawesome/free-solid-svg-icons";
-import {ALL_OPERATORS, DAYS_OF_WEEK, SUBJECTS, TIME_WINDOWS} from "../../utils/constants";
+import {ALL_OPERATORS, DAYS_OF_WEEK, SUBJECTS, TIME_WINDOWS} from "../../../../../../components/pages/security/anti-fraud/constants";
 
 const {Text} = Typography;
 

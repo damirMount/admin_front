@@ -40,7 +40,7 @@ const buildQueryParams = (values) => {
     return params;
 };
 
-export function useAntiFraudData(session, openNotification) {
+function useAntiFraudData(session, openNotification) {
     const [historyData, setHistoryData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [dictionaries, setDictionaries] = useState({
@@ -147,3 +147,5 @@ export function useAntiFraudData(session, openNotification) {
         getHistory
     };
 }
+
+export default useAntiFraudData;

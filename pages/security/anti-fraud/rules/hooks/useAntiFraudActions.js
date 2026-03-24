@@ -2,7 +2,7 @@ import {useCallback} from "react";
 import {ANTIFRAUD_RULE_CREATE_API, ANTIFRAUD_RULE_UPDATE_API} from "../../../../../routes/api";
 import {getCleanedConditions} from "../utils/dataTransformers";
 
-export const useAntiFraudActions = (session, openNotification, refresh) => {
+const useAntiFraudActions = (session, openNotification, refresh) => {
 
     /**
      * Создание или обновление правила
@@ -72,3 +72,4 @@ export const useAntiFraudActions = (session, openNotification, refresh) => {
         handleSaveRule
     };
 };
+export default useAntiFraudActions;

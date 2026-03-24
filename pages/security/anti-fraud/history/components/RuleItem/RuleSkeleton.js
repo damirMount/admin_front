@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card, Space} from 'antd';
 
-export const RuleSkeleton = () => {
+const RuleSkeleton = () => {
     return (
         <Card
             size="small"
@@ -50,3 +50,4 @@ export const RuleSkeleton = () => {
         </Card>
     );
 };
+export default RuleSkeleton;

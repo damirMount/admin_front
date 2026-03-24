@@ -1,5 +1,5 @@
-import {ALL_OPERATORS, SUBJECTS} from "../../utils/constants";
-import {formatTimeWindow} from "../../utils/helpers";
+import {ALL_OPERATORS, SUBJECTS} from "../../../../../../components/pages/security/anti-fraud/constants";
+import {formatTimeWindow} from "../../../../../../components/pages/security/anti-fraud/helpers";
 import {Divider, Space, Tag, Typography} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {

@@ -2,7 +2,7 @@ import React from 'react';
 import {Form, InputNumber, Select, Slider, Space, Typography} from 'antd';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBolt, faCircleInfo, faTriangleExclamation} from "@fortawesome/free-solid-svg-icons";
-import {ACTION_MAP} from "../../utils/constants";
+import {ACTION_MAP} from "../../../../../../components/pages/security/anti-fraud/constants";
 
 const {Text} = Typography;
 

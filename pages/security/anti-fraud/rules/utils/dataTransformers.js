@@ -1,4 +1,6 @@
-import {ALL_OPERATORS} from "./constants";
+
+import useAntiFraudData from "../hooks/useAntiFraudData";
+import {ALL_OPERATORS} from "../../../../../components/pages/security/anti-fraud/constants";
 
 export const getCleanedConditions = (conditions = []) => {
     return conditions.map(cond => {
@@ -41,3 +43,4 @@ export const getCleanedConditions = (conditions = []) => {
         };
     });
 };
+export default useAntiFraudData;

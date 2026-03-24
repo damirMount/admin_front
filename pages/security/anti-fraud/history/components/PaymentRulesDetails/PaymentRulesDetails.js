@@ -6,10 +6,12 @@ import * as Icons from "@fortawesome/free-solid-svg-icons";
 import PaymentDescriptionCard
     from "../../../../../../components/main/payments/paymentDescription/PaymentDescriptionCard";
 import {ANTIFRAUD_OPERATOR_ACTION_API, GET_ANTIFRAUD_HISTORY_DETAIL_API} from "../../../../../../routes/api";
-import {RuleSkeleton} from '../RuleItem/RuleSkeleton';
-import {RuleItem} from '../RuleItem/RuleItem';
+
+
 import FormatDate from "../../../../../../components/main/system/FormatDate";
 import './PaymentRulesDetails.css';
+import RuleSkeleton from "../RuleItem/RuleSkeleton";
+import RuleItem from "../RuleItem/RuleItem";
 
 const {Text, Title} = Typography;
 const {Panel} = Collapse;
