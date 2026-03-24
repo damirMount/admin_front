@@ -52,10 +52,10 @@ export default function RolesAndPermissionsPage() {
         <ProtectedElement allowedPermissions={'access_management'}>
             <div>
                 <Head>
-                    <title>Список ролей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                    <title>Роли пользователей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
                 </Head>
                 <div>
-                    <h1>Список ролей</h1>
+                    <h1>Роли пользователей</h1>
                     <SmartTable
                         model='Role'
                         columns={tableColumns}

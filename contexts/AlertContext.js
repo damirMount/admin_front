@@ -11,7 +11,7 @@ export const AlertProvider = ({children}) => {
 
     const CustomNotification = ({message, notificationKey}) => (
         <div className="toast d-block" role="alert" aria-live="assertive" aria-atomic="true">
-            <div className={`w-100 d-flex justify-content-between toast-header bg-danger text-white`}>
+            <div className={`w-100 d-flex justify-content-between toast-header mt-0 bg-danger text-white`}>
                 <div>
                     <FontAwesomeIcon className="fs-5 me-2" icon={faTriangleExclamation} size="xl"/>
                     <strong> Ошибка! </strong>

@@ -1,0 +1,123 @@
+:root {
+    /* Основные цвета блока кода */
+    --cb-bg-main: #1e293b;          /* Slate 800 */
+    --cb-text-main: #cbd5e1;        /* Slate 300 */
+    --cb-accent-color: #38bdf8;     /* Sky 400 */
+
+    /* Шапка и границы */
+    --cb-bg-header: #f8fafc;        /* Slate 50 */
+    --cb-bg-header-active: #f1f5f9; /* Slate 100 */
+    --cb-border-color: #e2e8f0;     /* Slate 200 */
+
+    --cb-icon-inactive: #64748b;
+    --cb-code-font: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+.code-block {
+    border: 1px solid var(--cb-border-color);
+    border-radius: 12px;           /* Более мягкое скругление */
+    background: white;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    margin-top: 16px;
+}
+
+/* Эффект тени при раскрытии, чтобы выделить активный блок */
+.code-block--expanded {
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+    border-color: #cbd5e1;
+}
+
+.code-block__header {
+    padding: 10px 16px;
+    background: var(--cb-bg-header);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.code-block__header:hover {
+    background: var(--cb-bg-header-active);
+}
+
+.code-block__header--active {
+    background: var(--cb-bg-header-active);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+.code-block__icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cb-icon-inactive);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    border: 1px solid rgba(15, 23, 42, 0.03);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.code-block__icon-box--active {
+    color: var(--cb-accent-color);
+    transform: rotate(90deg);
+    background: white;
+    box-shadow: 0 2px 4px rgba(56, 189, 248, 0.15);
+}
+
+.code-block__copy-btn {
+    padding: 6px 10px;
+    color: #94a3b8;
+    border-radius: 6px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.code-block__copy-btn:hover {
+    background: white;
+    color: var(--cb-accent-color);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.code-block__content {
+    margin: 0;
+    background: var(--cb-bg-main) !important;
+    color: var(--cb-text-main) !important;
+    padding: 20px;                 /* Больше внутреннего пространства */
+    font-family: var(--cb-code-font);
+    font-size: 13px;
+    line-height: 1.7;              /* Увеличен межстрочный интервал для читаемости */
+    max-height: 450px;
+    overflow: auto;
+    border-top: 1px solid rgba(15, 23, 42, 0.2);
+}
+
+/* Scrollbar: делаем его современным и "стеклянным" */
+.code-block__content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.code-block__content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.code-block__content::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3); /* Slate 400 с прозрачностью */
+    border-radius: 10px;
+    border: 2px solid var(--cb-bg-main);  /* Отступ от краев */
+}
+
+.code-block__content::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5);
+}
+
+/* Для Firefox */
+.code-block__content {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+}

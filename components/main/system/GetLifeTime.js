@@ -1,7 +1,7 @@
 // Функция для генерации уникальных ключей
 import moment from "moment-timezone";
 
- const getLifetime = (createdAt, days_to_life) => {
+const getLifetime = (createdAt, days_to_life) => {
     const creationMoment = moment(createdAt);
     const expiresAt = creationMoment.clone().add(days_to_life, 'days');
     const now = moment();

@@ -25,6 +25,9 @@
     line-height: 1.5714285714285714;
     word-wrap: break-word;
 }
+.ant-notification-notice-description {
+    margin-top: 0 !important;
+}
 
 .ant-notification .ant-notification-notice-wrapper .ant-notification-notice-message {
     margin-bottom: 0;

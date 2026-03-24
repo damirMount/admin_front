@@ -1,0 +1,328 @@
+/* ==========================================================================
+   1. ОБЩИЕ КОНТЕЙНЕРЫ И УТИЛИТЫ
+   ========================================================================== */
+.af-refined-container {
+    padding: 20px;
+    margin: -8px;
+    background: #fdfdfd;
+    min-height: 100vh;
+}
+
+.af-timeline-scroll-area {
+    padding: 5px 0 0 24px;
+    overflow-y: hidden;
+}
+
+.af-label-uppercase {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: block;
+}
+
+/* Анимация пульсации для скелетонов и точек */
+@keyframes af-pulse {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.af-skeleton-pulse {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: af-pulse 1.5s infinite;
+    border-radius: 4px;
+}
+
+/* ==========================================================================
+   2. ШАПКА И УПРАВЛЕНИЕ (GLASS HEADER)
+   ========================================================================== */
+.af-filter-toggle {
+    display: flex;
+    background: #f5f5f5;
+    padding: 3px;
+    border-radius: 10px;
+}
+
+.af-filter-toggle button {
+    border: none;
+    background: transparent;
+    padding: 4px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.af-filter-toggle button.active {
+    background: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    color: #1890ff;
+}
+
+.af-filter-toggle button.active.danger {
+    color: #ff4d4f;
+}
+
+/* ==========================================================================
+   3. ТАЙМЛАЙН (TIMELINE)
+   ========================================================================== */
+.af-modern-timeline-v2 .ant-timeline-item-tail {
+    border-left: 2px solid #f0f0f0 !important;
+    left: 4px;
+}
+
+.af-modern-timeline-v2 .ant-timeline-item-head {
+    background: transparent;
+    padding: 0;
+    left: 4px;
+}
+
+.af-modern-timeline-v2 .ant-timeline-item-content {
+    margin-left: 14px;
+}
+
+.af-compact-node {
+    padding-bottom: 20px;
+}
+
+.af-final-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-left: -10px;
+}
+
+.af-final-dot.allow {
+    background: #52c41a;
+    box-shadow: 0 0 10px rgba(82, 196, 26, 0.4);
+}
+
+.af-final-dot.wait {
+    background: #faad14;
+    box-shadow: 0 0 10px rgba(250, 173, 20, 0.4);
+}
+
+.af-final-dot.deny {
+    background: #ff4d4f;
+    box-shadow: 0 0 10px rgba(255, 77, 79, 0.4);
+}
+
+/* ==========================================================================
+   4. КАРТОЧКИ АНАЛИЗА И ПРАВИЛА
+   ========================================================================== */
+.af-iteration-external-container {
+    margin-left: -32px;
+    position: relative;
+    z-index: 2;
+}
+
+.af-iteration-collapse-v2 {
+    background: #fff !important;
+    border: 1px solid #f0f0f0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+}
+
+.af-iteration-collapse-v2:hover {
+    border-color: #d1e9ff !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.af-header-shield-icon {
+    width: 24px;
+    height: 24px;
+    background: #1890ff;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.af-rule-card {
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.af-rule-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.rule-icon-box {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Причины и Evidence */
+.af-reason-badge {
+    display: flex;
+    border-radius: 10px;
+    gap: 16px;
+    padding: 14px;
+    align-items: center;
+}
+
+.af-reason-badge.is-danger {
+    background: #fff1f0;
+    border: 1px solid #ffa39e;
+}
+
+.af-reason-badge.is-info {
+    background: #e6f7ff;
+    border: 1px solid #91d5ff;
+}
+
+.af-evidence-scrollpane {
+    max-height: 180px;
+    overflow-y: auto;
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #f0f0f0;
+}
+
+.af-payment-chip {
+    cursor: pointer;
+    padding: 4px 10px;
+    background: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.af-payment-chip:hover {
+    border-color: #1890ff;
+    color: #1890ff;
+    background: #e6f7ff;
+}
+
+/* ==========================================================================
+   5. МЕТРИКИ (METRIC ITEM)
+   ========================================================================== */
+.af-new-metric-card {
+    border: 1px solid #f0f0f0;
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 100%;
+    background: #ffffff;
+}
+
+.af-new-metric-card.is-limit {
+    border-color: #ff4d4f;
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.05);
+}
+
+.af-metric-icon-wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.af-metric-label-new {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: #8c8c8c;
+    text-transform: uppercase;
+}
+
+/* ==========================================================================
+   6. ОПЕРАТОР И ВЕРДИКТЫ
+   ========================================================================= */
+.af-operator-card.compact {
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin: 8px 0 20px 0;
+    transition: all 0.3s ease;
+}
+
+/* Стили для одобрения */
+.af-op-card-approve {
+    background: #f6ffed;
+    border: 1px solid #b7eb8f;
+}
+
+.af-op-card-approve .af-op-comment-text {
+    border-left: 2px solid #b7eb8f;
+}
+
+/* Стили для отклонения */
+.af-op-card-reject {
+    background: #fff1f0;
+    border: 1px solid #f14f46;
+}
+
+.af-op-card-reject .af-op-comment-text {
+    border-left: 2px solid #f14f46;
+}
+
+.af-op-comment-text {
+    margin-top: 8px;
+    padding-left: 12px;
+    color: #595959;
+    font-size: 13px;
+}
+
+.af-verdict-aesthetic {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    color: white;
+}
+
+/* Цвета вердиктов */
+.af-verdict-aesthetic.allow {
+    background: linear-gradient(135deg, #52c41a, #389e0d);
+    border: 1px solid #b7eb8f;
+}
+
+.af-verdict-aesthetic.deny {
+    background: linear-gradient(135deg, #ff4d4f, #cf1322);
+    border: 1px solid #ffa39e;
+}
+
+.af-verdict-aesthetic.wait {
+    background: linear-gradient(135deg, #faad14, #d48806);
+    border: 1px solid #ffe58f;
+}
+
+/* Специальный класс для пунктирной линии */
+.af-dashed-line .ant-timeline-item-tail {
+    border-inline-start: 2px dashed #d9d9d9 !important;
+    background: none !important;
+}
+
+/* Убираем стандартный фон, если он мешает */
+.af-modern-timeline-v2 .ant-timeline-item-tail {
+    background-color: #f0f0f0;
+}

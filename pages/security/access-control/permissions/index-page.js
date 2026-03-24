@@ -66,10 +66,10 @@ export default function RolesAndPermissionsPage() {
         <ProtectedElement allowedPermissions={'access_management'}>
             <div>
                 <Head>
-                    <title>Лист разрешений | {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                    <title>Матрица прав | {process.env.NEXT_PUBLIC_APP_NAME}</title>
                 </Head>
                 <div>
-                    <h1>Лист разрешений</h1>
+                    <h1>Матрица прав</h1>
                     <div className='mt-2'>
                         <div className="d-flex justify-content-end w-100">
                             <Link href={PERMISSION_CREATE_URL} className="btn btn-purple">Добавить запись</Link>

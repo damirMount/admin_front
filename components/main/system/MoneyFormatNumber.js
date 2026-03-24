@@ -6,7 +6,7 @@ export function MoneyFormatNumber(num, formatType = 'short') {
     }
 
     // Определяем форматировщик для чисел
-    const formatter = new Intl.NumberFormat('en-EN', {
+    const formatter = new Intl.NumberFormat('ru-RU', {
         maximumFractionDigits: 2,
         minimumFractionDigits: 0,
         useGrouping: true,

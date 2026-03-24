@@ -15,7 +15,7 @@ import {
 import {faEnvelopeOpen, faFileLines} from "@fortawesome/free-regular-svg-icons";
 import Link from "next/link";
 import {
-    ACQUIRING_URL,
+    ACQUIRING_URL, ANTI_FRAUD_HISTORY_URL, ANTI_FRAUD_RULES_URL,
     DATA_UTILS_TEST_URL,
     GSFR_UPDATE_URL,
     MAIN_PAGE_URL,
@@ -31,7 +31,8 @@ import {
     REPORT_DEALERS_TSJ_URL,
     REPORT_SERVICES_GAZPROM_URL,
     REPORT_SERVICES_NORTH_ELECTRO_URL,
-    ROLES_INDEX_URL, TERMINAL_CERTIFICATE_URL, TERMINAL_ENCASHMENTS_URL,
+    ROLES_INDEX_URL,
+    TERMINAL_CERTIFICATE_URL,
     TERMINAL_FIND_PAY_URL,
     TERMINAL_RE_REGISTRATION_URL,
     TERMINAL_TASK_URL,
@@ -98,9 +99,19 @@ const SidebarTab = () => {
             showInSubMenu: true,
             subMenu: [
                 {
-                    label: 'Права доступа', permission: 'access_management', subMenu: [
-                        {label: 'Список ролей', link: ROLES_INDEX_URL},
-                        {label: 'Лист разрешений', link: PERMISSION_INDEX_URL},
+                    label: 'Антифрод',
+                    permission: 'access_management',
+                    subMenu: [
+                        {label: 'Алгоритмы проверки', link: ANTI_FRAUD_RULES_URL},
+                        {label: 'Журнал аудита', link: ANTI_FRAUD_HISTORY_URL},
+                    ],
+                },
+                {
+                    label: 'Доступ',
+                    permission: 'access_management',
+                    subMenu: [
+                        {label: 'Роли пользователей', link: ROLES_INDEX_URL},
+                        {label: 'Матрица прав', link: PERMISSION_INDEX_URL},
                     ],
                 },
             ]
@@ -120,7 +131,7 @@ const SidebarTab = () => {
             <Tooltip placement="right" {...((label && collapsed && showInSubMenu) ? {title: label} : {})}>
                 <SubMenu label={label} style={{height: height}} icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
                     {showInSubMenu && collapsed && (
-                        <MenuItem title={label}  className='fw-bold border-bottom text-nowrap'
+                        <MenuItem title={label} className='fw-bold border-bottom text-nowrap'
                                   icon={icon && <FontAwesomeIcon icon={icon} size="lg"/>}>
                             {label || ''}
                         </MenuItem>

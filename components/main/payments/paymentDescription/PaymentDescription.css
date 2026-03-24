@@ -1,0 +1,126 @@
+.payment-card {
+    border-radius: 12px !important;
+}
+
+.payment-icon-box {
+    width: 40px;
+    height: 40px;
+}
+
+.label-small {
+    font-size: 11px;
+}
+
+.label-medium {
+    font-size: 12px;
+}
+
+.money-main {
+    font-size: 16px;
+}
+
+.money-secondary {
+    font-size: 14px;
+}
+
+.money-prefix {
+    text-underline-offset: 2px;
+}
+
+.status-tag {
+    height: fit-content;
+    border-radius: 6px;
+    font-weight: 700;
+}
+
+.status-info-box {
+    padding: 8px;
+    border-radius: 8px;
+    border-left-width: 4px;
+    border-left-style: solid;
+}
+
+.status-info-box.error {
+    background-color: #fff9f9;
+    border: 1px solid #ffccc7;
+    border-left: 2px solid #ff4d4f;
+}
+
+.status-info-box.info {
+    background-color: #f0f5ff;
+    border: 1px solid #adc6ff;
+    border-left: 2px solid #1677ff;
+}
+
+.status-info-box.success {
+    background-color: #f6ffed;
+    border: 1px solid #b7eb8f;
+    border-left: 2px solid #52c41a;
+}
+
+/* Стили для скролла в описании статуса */
+.status-message-container {
+    max-height: 48px;
+    overflow-y: auto;
+}
+
+.status-message-text {
+    line-height: 1.4;
+    display: block;
+}
+
+/* Разделители в блоках финансов */
+.finance-divider {
+    height: 30px !important;
+}
+
+/* Цвета для динамических значений */
+.af-high {
+    color: #ff4d4f;
+}
+
+.af-low {
+    color: #52c41a;
+}
+
+.income-positive {
+    color: #1677ff;
+}
+
+.income-negative {
+    color: #ff4d4f;
+}
+
+
+
+/* Контейнер: делаем границы еще мягче */
+.account-json-container {
+    border: 1px solid #e4e4e7 !important;
+    border-radius: 8px;
+    margin-top: 16px;
+    background-color: #fafdff; /* Еле заметный голубоватый оттенок */
+}
+
+/* Шапка: чуть плотнее фона */
+.account-header {
+    background-color: #f4f4f5 !important;
+    border-bottom: 1px solid #e4e4e7;
+    padding: 8px 16px !important;
+    cursor: pointer;
+}
+
+/* Кнопка копирования и иконки */
+.copy-button-wrapper {
+    color: #a1a1aa;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.copy-button-wrapper:hover {
+    color: #1890ff;
+    background: #e6f7ff;
+}
+
+.light-divider {
+    background-color: #e4e4e7 !important;
+}

@@ -39,4 +39,7 @@ export const PERMISSION_INDEX_URL = '/security/access-control/permissions/index-
 export const PERMISSION_CREATE_URL = '/security/access-control/permissions/create-permission'
 export const PERMISSION_EDIT_URL = '/security/access-control/permissions/edit-permission'
 
+export const ANTI_FRAUD_RULES_URL = '/security/anti-fraud/rules/index-page'
+export const ANTI_FRAUD_HISTORY_URL = '/security/anti-fraud/history/index-page'
+
 export const ERROR_PAGE_403 = '/error/403'
