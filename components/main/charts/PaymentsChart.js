@@ -132,9 +132,6 @@ const PaymentsChart = () => {
             if (response.ok) {
                 const responseData = await response.json();
                 setData(responseData.data);
-            } else {
-                const errorResponse = await response.json();
-                openNotification({type: 'error', message: errorResponse.message});
             }
         } catch (error) {
             openNotification({type: 'error', message: 'Произошла ошибка при создании отчета'});
@@ -151,95 +148,100 @@ const PaymentsChart = () => {
         getPaymentsStatistic();
     }, [startDate, endDate]);
 
-    return (<div className="d-flex justify-content-between">
-        <div className="w-75 d-flex flex-column">
-            <div className="card card-body">
-                <div className="d-flex flex-row w-100 align-items-center justify-content-between">
-                    <div className="d-flex flex-column">
-                        <Text className="fs-5">Динамика платежей</Text>
-                        <Text type='secondary'> {`
+    return (
+
+        <div className="d-flex justify-content-between">
+            <div className="w-75 d-flex flex-column">
+                <div className="card card-body">
+                    <div className="d-flex flex-row w-100 align-items-center justify-content-between">
+                        <div className="d-flex flex-column">
+                            <Text className="fs-5">Динамика платежей</Text>
+                            <Text type='secondary'> {`
                                 C ${startDate ? new Date(startDate).toLocaleDateString('ru-RU') : ''}
                                 по ${endDate ? new Date(endDate).toLocaleDateString('ru-RU') : ''}
                             `}
-                        </Text>
+                            </Text>
+                        </div>
                     </div>
+                    {loading ? (
+                        <Skeleton.Node className="w-100 mt-1 h-100 " style={{fontSize: 0}} active/>
+                    ) : (
+                        <>
+                            <ResponsiveContainer width="100%" height={420}>
+                                <AreaChart
+                                    syncId="paymentsChart"
+                                    data={data}
+                                    margin={{top: 20, right: 40, bottom: 40}}
+                                >
+                                    <CartesianGrid strokeDasharray="3 3"/>
+                                    <XAxis
+                                        dataKey="date_proc"
+                                        tickFormatter={formatDateTick}
+                                        tick={{angle: 45, textAnchor: 'start', fontSize: 12}}
+                                        interval={data.length > 50 ? 'preserveStartEnd' : 0}
+                                    />
+                                    <YAxis tickFormatter={(value) => MoneyFormatNumber(value, 'short')}/>
+                                    <Tooltip content={TotalPayTooltip}/>
+                                    <Area type="monotone" dataKey="success_total_pay" stackId="1" stroke="green"
+                                          fill="green"
+                                          name="Успешные"/>
+                                    <Area type="monotone" dataKey="error_total_pay" stackId="1" stroke="red" fill="red"
+                                          name="Ошибочные"/>
+                                    <Area type="monotone" dataKey="processing_total_pay" stackId="1" stroke="orange"
+                                          fill="orange" name="В обработке"/>
+                                    <Area type="monotone" dataKey="total_pay" stroke="darkBlue" fill="none"
+                                          name="Итого"/>
+                                </AreaChart>
+                            </ResponsiveContainer>
+                            <ResponsiveContainer width="100%" height={250}>
+                                <AreaChart
+                                    syncId="paymentsChart"
+                                    data={data}
+                                    margin={{top: 20, right: 40, bottom: 40}}
+                                >
+                                    <CartesianGrid strokeDasharray="3 3"/>
+                                    <XAxis
+                                        dataKey="date_proc"
+                                        tickFormatter={formatDateTick}
+                                        tick={{angle: 45, textAnchor: 'start', fontSize: 12}}
+                                        interval={data.length > 50 ? 'preserveStartEnd' : 0}
+                                    />
+                                    <YAxis tickFormatter={(value) => MoneyFormatNumber(value, 'short')}/>
+                                    <Tooltip content={TotalCountTooltip}/>
+                                    <Area type="monotone" dataKey="success_total_count" stackId="1" stroke="green"
+                                          fill="green"
+                                          name="Успешные"/>
+                                    <Area type="monotone" dataKey="error_total_count" stackId="1" stroke="red"
+                                          fill="red"
+                                          name="Ошибочные"/>
+                                    <Area type="monotone" dataKey="processing_total_count" stackId="1" stroke="orange"
+                                          fill="orange" name="В обработке"/>
+                                    <Area type="monotone" dataKey="total_count" stroke="darkBlue" fill="none"
+                                          name="Итого"/>
+                                </AreaChart>
+
+                            </ResponsiveContainer>
+                        </>
+                    )}
                 </div>
-                {loading ? (
-                    <Skeleton.Node className="w-100 mt-1 h-100 " style={{fontSize: 0}} active/>
-                ) : (
-                    <>
-                        <ResponsiveContainer width="100%" height={420}>
-                            <AreaChart
-                                syncId="paymentsChart"
-                                data={data}
-                                margin={{top: 20, right: 40, bottom: 40}}
-                            >
-                                <CartesianGrid strokeDasharray="3 3"/>
-                                <XAxis
-                                    dataKey="date_proc"
-                                    tickFormatter={formatDateTick}
-                                    tick={{angle: 45, textAnchor: 'start', fontSize: 12}}
-                                    interval={data.length > 50 ? 'preserveStartEnd' : 0}
-                                />
-                                <YAxis tickFormatter={(value) => MoneyFormatNumber(value, 'short')}/>
-                                <Tooltip content={TotalPayTooltip}/>
-                                <Area type="monotone" dataKey="success_total_pay" stackId="1" stroke="green"
-                                      fill="green"
-                                      name="Успешные"/>
-                                <Area type="monotone" dataKey="error_total_pay" stackId="1" stroke="red" fill="red"
-                                      name="Ошибочные"/>
-                                <Area type="monotone" dataKey="processing_total_pay" stackId="1" stroke="orange"
-                                      fill="orange" name="В обработке"/>
-                                <Area type="monotone" dataKey="total_pay" stroke="darkBlue" fill="none" name="Итого"/>
-                            </AreaChart>
-                        </ResponsiveContainer>
-                        <ResponsiveContainer width="100%" height={250}>
-                            <AreaChart
-                                syncId="paymentsChart"
-                                data={data}
-                                margin={{top: 20, right: 40, bottom: 40}}
-                            >
-                                <CartesianGrid strokeDasharray="3 3"/>
-                                <XAxis
-                                    dataKey="date_proc"
-                                    tickFormatter={formatDateTick}
-                                    tick={{angle: 45, textAnchor: 'start', fontSize: 12}}
-                                    interval={data.length > 50 ? 'preserveStartEnd' : 0}
-                                />
-                                <YAxis tickFormatter={(value) => MoneyFormatNumber(value, 'short')}/>
-                                <Tooltip content={TotalCountTooltip}/>
-                                <Area type="monotone" dataKey="success_total_count" stackId="1" stroke="green"
-                                      fill="green"
-                                      name="Успешные"/>
-                                <Area type="monotone" dataKey="error_total_count" stackId="1" stroke="red" fill="red"
-                                      name="Ошибочные"/>
-                                <Area type="monotone" dataKey="processing_total_count" stackId="1" stroke="orange"
-                                      fill="orange" name="В обработке"/>
-                                <Area type="monotone" dataKey="total_count" stroke="darkBlue" fill="none" name="Итого"/>
-                            </AreaChart>
 
-                        </ResponsiveContainer>
-                    </>
-                )}
             </div>
-
-        </div>
-        <div className="w-25 ms-3 text-nowrap">
-            <div className='card card-body mb-2'>
-                <DateRangePicker
-                    allowClear={false}
-                    startDate={startDate}
-                    endDate={endDate}
-                    onDateChange={(dates) => {
-                        setStartDate(dates[0]);
-                        setEndDate(dates[1]);
-                    }}
-                />
+            <div className="w-25 ms-3 text-nowrap">
+                <div className='card card-body mb-2'>
+                    <DateRangePicker
+                        allowClear={false}
+                        startDate={startDate}
+                        endDate={endDate}
+                        onDateChange={(dates) => {
+                            setStartDate(dates[0]);
+                            setEndDate(dates[1]);
+                        }}
+                    />
+                </div>
+                <DealerBalance/>
+                <PaymentsToday/>
             </div>
-            <DealerBalance/>
-            <PaymentsToday/>
-        </div>
-    </div>)
+        </div>)
         ;
 };
 
