@@ -49,7 +49,7 @@ const PaymentDescriptionCard = ({
             const findById = (list, id) => {
                 return list?.find(
                     (item) => {
-                        return item.id === id;
+                        return Number(item.id) === id;
                     }
                 ) || {};
             };

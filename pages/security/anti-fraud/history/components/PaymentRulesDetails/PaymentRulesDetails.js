@@ -2,11 +2,11 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {Avatar, Button, Col, Collapse, Divider, Input, message, Row, Space, Tag, Timeline, Typography} from 'antd';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import * as Icons from "@fortawesome/free-solid-svg-icons";
+import {faDiscord} from "@fortawesome/free-brands-svg-icons";
 
 import PaymentDescriptionCard
     from "../../../../../../components/main/payments/paymentDescription/PaymentDescriptionCard";
 import {ANTIFRAUD_OPERATOR_ACTION_API, GET_ANTIFRAUD_HISTORY_DETAIL_API} from "../../../../../../routes/api";
-
 
 import FormatDate from "../../../../../../components/main/system/FormatDate";
 import './PaymentRulesDetails.css';
@@ -37,7 +37,6 @@ const IterationWrapper = ({
     const rules = (Array.isArray(entry.triggered_rules) ? entry.triggered_rules : [])
         .filter(r => {
             return r.id_rule;
-
         });
 
     if (rules.length === 0) {
@@ -95,19 +94,16 @@ const IterationWrapper = ({
                     }
                 >
                     <div className="af-iteration-content" style={{paddingTop: '16px'}}>
-                        {rules.map((rule, idx) => {
-                                return (
-                                    <div key={`${rule.id_rule}-${idx}`} className="af-rule-card-wrapper mb-3">
-                                        <RuleItem
-                                            rule={rule}
-                                            forceOpen={expandAll}
-                                            apparatsList={apparatsList}
-                                            dealersList={dealersList}
-                                        />
-                                    </div>
-                                );
-                            }
-                        )}
+                        {rules.map((rule, idx) => (
+                            <div key={`${rule.id_rule}-${idx}`} className="af-rule-card-wrapper mb-3">
+                                <RuleItem
+                                    rule={rule}
+                                    forceOpen={expandAll}
+                                    apparatsList={apparatsList}
+                                    dealersList={dealersList}
+                                />
+                            </div>
+                        ))}
 
                         {entry.runtime_snapshot?.[0] && (
                             <div className="mt-4">
@@ -167,12 +163,10 @@ const PaymentRulesDetails = ({record, servicesList, serversList, dealersList, ap
         }
 
         setLoading(true);
-
         try {
-            const response = await fetch(`${GET_ANTIFRAUD_HISTORY_DETAIL_API}/${record.id}`,
-                {
-                    headers: {'Authorization': `Bearer ${session?.accessToken}`}
-                });
+            const response = await fetch(`${GET_ANTIFRAUD_HISTORY_DETAIL_API}/${record.id}`, {
+                headers: {'Authorization': `Bearer ${session?.accessToken}`}
+            });
             if (response.ok) {
                 const result = await response.json();
                 const data = Array.isArray(result.data) ? result.data : [result.data];
@@ -196,33 +190,26 @@ const PaymentRulesDetails = ({record, servicesList, serversList, dealersList, ap
         }
 
         setSubmitting(true);
-
         try {
-            const response = await fetch(ANTIFRAUD_OPERATOR_ACTION_API,
-                {
-                    method: 'POST',
-                    headers:
-                        {
-                            'Authorization': `Bearer ${session?.accessToken}`,
-                            'Content-Type': 'application/json'
-                        },
-                    body: JSON.stringify(
-                        {
-                            recordId: recordId,
-                            paymentId: record.id,
-                            action: actionType === 'allow' ? 'approve' : 'reject',
-                            comment: comment,
-                            operatorId: session?.user?.id || 0,
-                            operatorName: session?.user?.name || 'Operator'
-                        }
-                    )
-                }
-            );
+            const response = await fetch(ANTIFRAUD_OPERATOR_ACTION_API, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${session?.accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    recordId: recordId,
+                    paymentId: record.id,
+                    action: actionType === 'allow' ? 'approve' : 'reject',
+                    comment: comment,
+                    operatorId: session?.user?.id || 0,
+                    operatorName: session?.user?.name || 'Operator'
+                })
+            });
 
             if (response.ok) {
                 message.success(`Платеж успешно ${actionType === 'allow' ? 'разрешен' : 'отклонен'}`);
                 setComment('');
-                // Обновляем историю, чтобы увидеть изменения в таймлайне
                 await fetchHistory();
             } else {
                 const errorData = await response.json();
@@ -238,148 +225,174 @@ const PaymentRulesDetails = ({record, servicesList, serversList, dealersList, ap
 
     const timelineItems = useMemo(() => {
         if (loading && history.length === 0) {
-            return [1, 2].map((i) => (
-                {
-                    children: <RuleSkeleton key={i}/>,
-                    color: 'gray'
-                }));
+            return [1, 2].map((i) => ({
+                children: <RuleSkeleton key={i}/>,
+                color: 'gray'
+            }));
         }
 
         const items = [];
 
-        items.push(
-            {
-                dot: <FontAwesomeIcon icon={Icons.faCirclePlay} style={{fontSize: '16px', color: '#bfbfbf'}}/>,
+        items.push({
+            dot: <FontAwesomeIcon icon={Icons.faCirclePlay} style={{fontSize: '16px', color: '#bfbfbf'}}/>,
+            children: (
+                <div className="af-compact-node mt-2 d-flex justify-content-between" style={{marginLeft: '10px'}}>
+                    <div>
+                        <Text type="secondary">Платёж поступил: </Text>
+                        <Text strong> {FormatDate(record.time)}</Text>
+                    </div>
+                    <Button size="small" onClick={() => setExpandAll(!expandAll)}>
+                        {expandAll ? 'Свернуть всё' : 'Развернуть всё'}
+                    </Button>
+                </div>
+            )
+        });
+
+        history.forEach((entry, entryIdx) => {
+            const isWait = entry.final_action === 'wait';
+            const isDeny = entry.final_action === 'deny';
+            const isLastEntry = entryIdx === history.length - 1;
+
+            items.push({
                 children: (
-                    <div className="af-compact-node mt-2 d-flex justify-content-between" style={{marginLeft: '10px'}}>
-                        <div>
-                            <Text type="secondary">Платёж поступил: </Text>
-                            <Text strong> {FormatDate(record.time)}</Text>
-                        </div>
-                        <Button size="small" onClick={() => setExpandAll(!expandAll)}>
-                            {expandAll ? 'Свернуть всё' : 'Развернуть всё'}
-                        </Button>
+                    <IterationWrapper
+                        key={`iter-${entry.iteration}`}
+                        entry={entry}
+                        expandAll={expandAll}
+                        isDefaultOpen={true}
+                        apparatsList={apparatsList}
+                        dealersList={dealersList}
+                        servicesList={servicesList}
+                        serversList={serversList}
+                    />
+                )
+            });
+
+            // Статус системы: добавляем пунктирную линию, если есть дальнейшие действия
+            const hasActionsAfterSystem = (Array.isArray(entry.operator_actions) && entry.operator_actions.length > 0) || (isWait && isLastEntry);
+
+            items.push({
+                className: hasActionsAfterSystem ? "af-dashed-line" : "",
+                dot: (
+                    <Avatar
+                        size={26}
+                        style={{backgroundColor: isDeny ? '#ff4d4f' : (isWait ? '#faad14' : '#52c41a')}}
+                        icon={
+                            <FontAwesomeIcon
+                                icon={isDeny ? Icons.faBan : (isWait ? Icons.faHourglassHalf : Icons.faCircleCheck)}
+                                style={{fontSize: '14px', color: '#ffffff'}}
+                            />
+                        }
+                    />
+                ),
+                children: (
+                    <div style={{marginLeft: '10px', marginBottom: '20px', marginTop: '-10px'}}>
+                        <Space direction="vertical" size={0}>
+                            <Text strong style={{
+                                fontSize: '12px',
+                                color: isDeny ? '#cf1322' : (isWait ? '#d48806' : '#389e0d')
+                            }}>
+                                {isDeny ? 'Платёж отклонён системой' : (isWait ? 'Платёж приостановлен' : 'Проверка пройдена')}
+                            </Text>
+                            <Text type="secondary" style={{fontSize: '11px'}}>
+                                {isDeny ? 'Сработали критические правила блокировки' : (isWait ? 'Подозрительный платёж, требуется проверка оператором' : 'Уровень риска в пределах нормы')}
+                            </Text>
+                        </Space>
                     </div>
                 )
             });
 
-        history.forEach((entry, entryIdx) => {
-            items.push(
-                {
-                    children: (
-                        <IterationWrapper
-                            key={`iter-${entry.iteration}`}
-                            entry={entry}
-                            expandAll={expandAll}
-                            isDefaultOpen={true}
-                            apparatsList={apparatsList}
-                            dealersList={dealersList}
-                            servicesList={servicesList}
-                            serversList={serversList}
-                        />
-                    )
-                });
-
-            const isWait = entry.final_action === 'wait';
-            const isDeny = entry.final_action === 'deny';
-
-            items.push(
-                {
-                    className: (isWait || isDeny) ? "af-dashed-line" : "",
-                    dot: <Avatar size={26}
-                                 style={{backgroundColor: isDeny ? '#ff4d4f' : (isWait ? '#faad14' : '#52c41a')}}
-                                 icon={
-                                     <FontAwesomeIcon
-                                         icon={isDeny ? Icons.faBan : (isWait ? Icons.faHourglassHalf : Icons.faCircleCheck)}
-                                         style={{fontSize: '14px', color: '#ffffff'}}
-                                     />
-                                 }/>,
-                    children: (
-                        <div style={{marginLeft: '10px', marginBottom: '20px', marginTop: '-10px'}}>
-                            <Space direction="vertical" size={0}>
-                                <Text strong style={{
-                                    fontSize: '12px',
-                                    color: isDeny ? '#cf1322' : (isWait ? '#d48806' : '#389e0d')
-                                }}>
-                                    {isDeny ? 'Платёж отклонён системой' : (isWait ? 'Платёж приостановлен' : 'Проверка пройдена')}
-                                </Text>
-                                <Text type="secondary" style={{fontSize: '11px'}}>
-                                    {isDeny ? 'Сработали критические правила блокировки' : (isWait ? 'Подозрительный платёж, требуется проверка оператором' : 'Уровень риска в пределах нормы')}
-                                </Text>
-                            </Space>
-                        </div>
-                    )
-                });
-
             if (Array.isArray(entry.operator_actions) && entry.operator_actions.length > 0) {
-                entry.operator_actions.forEach((action, idx) => {
-                        const isReject = action.action === 'reject';
-                        const statusColor = isReject ? '#f14f46' : '#389e0d';
-                        const cardClass = isReject ? 'af-op-card-reject' : 'af-op-card-approve';
+                // Проверяем наличие финального решения, чтобы знать, рисовать ли пунктир после бота
+                const hasFinalDecision = entry.operator_actions?.some(action =>
+                    ['approve', 'reject', 'deny', 'allow'].includes(action.action)
+                );
 
-                        items.push(
-                            {
-                                dot: (
-                                    <Avatar
-                                        size={26}
-                                        icon={
-                                            <FontAwesomeIcon
-                                                icon={isReject ? Icons.faUserXmark : Icons.faUserCheck}
-                                            />
-                                        }
-                                        style={{backgroundColor: statusColor}}
-                                    />
-                                ),
-                                children: (
-                                    <div
-                                        className={`af-operator-card compact ${cardClass}`}
-                                        style={{marginLeft: '10px'}}
-                                        key={idx}
-                                    >
-                                        <div className='d-flex justify-content-between align-items-start'>
-                                            <div className="af-op-content">
+                entry.operator_actions.forEach((action, idx) => {
+                    const isBot = action.action === 'bot_notification';
+                    const isReject = action.action === 'reject' || action.action === 'deny';
+
+                    const statusColor = isBot ? '#5865F2' : (isReject ? '#f14f46' : '#389e0d');
+                    const currentIcon = isBot ? faDiscord : (isReject ? Icons.faBan : Icons.faCircleCheck);
+                    const cardClass = isBot ? 'af-bot-notification-card' : (isReject ? 'af-op-card-reject' : 'af-op-card-approve');
+
+                    // Рисуем пунктир после уведомления, если:
+                    // 1. Это не последнее действие в массиве
+                    // 2. Или если это последнее действие, но еще нет финального решения (будет форма ввода)
+                    const isLastActionInArray = idx === entry.operator_actions.length - 1;
+                    const isNeedDashedLine = !isLastActionInArray || (isLastActionInArray && !hasFinalDecision && isWait && isLastEntry);
+
+                    items.push({
+                        className: (isBot && isNeedDashedLine) ? "af-dashed-line" : "",
+                        dot: (
+                            <Avatar
+                                size={26}
+                                icon={<FontAwesomeIcon icon={currentIcon}/>}
+                                style={{backgroundColor: statusColor}}
+                            />
+                        ),
+                        children: (
+                            <div className={`af-operator-card compact ${cardClass}`} style={{marginLeft: '10px'}}
+                                 key={`op-${idx}`}>
+                                <div className='d-flex justify-content-between align-items-start'>
+                                    <div className="af-op-content">
+                                        {isBot ? (
+                                            <div className='d-flex flex-column'>
+                                                <Text strong style={{color: statusColor}}>Уведомление в Discord </Text>
+                                                <Text type="secondary" style={{fontSize: '11px'}}>
+                                                    ID сообщения {action.message_id || 'NaN'}
+                                                </Text>
+                                            </div>
+                                        ) : (
+                                            <>
                                                 <Text strong style={{color: statusColor}}>
                                                     {isReject ? 'Отклонено оператором' : 'Разрешено оператором'}
                                                 </Text>
-                                                <Text
-                                                    type="secondary"
-                                                    style={{fontSize: '11px', marginLeft: '8px'}}
-                                                >
+                                                <Text type="secondary" style={{fontSize: '11px', marginLeft: '8px'}}>
                                                     {action.operator_name}
                                                 </Text>
-
-                                                {action.comment && (
-                                                    <div className="af-op-comment-text">
-                                                        <Text italic>«{action.comment}»</Text>
-                                                    </div>
-                                                )}
+                                            </>
+                                        )}
+                                        {action.comment && (
+                                            <div className="af-op-comment-text">
+                                                <Text italic>«{action.comment}»</Text>
                                             </div>
-                                            <Text type="secondary" style={{fontSize: '11px'}}>
-                                                {action.at}
-                                            </Text>
-                                        </div>
+                                        )}
                                     </div>
-                                )
-                            }
-                        );
-                    }
+                                    <Text type="secondary" style={{fontSize: '11px'}}>
+                                        {action.at}
+                                    </Text>
+                                </div>
+                            </div>
+                        )
+                    });
+                });
+            }
+
+            if (isWait && isLastEntry) {
+                const hasFinalDecision = entry.operator_actions?.some(action =>
+                    ['approve', 'reject', 'deny', 'allow'].includes(action.action)
                 );
-            } else if ((isWait) && entryIdx === history.length - 1) {
-                items.push(
-                    {
-                        dot: <Avatar size={26} icon={<FontAwesomeIcon icon={Icons.faUserPen}/>}
-                                     style={{backgroundColor: '#faad14'}}/>,
+
+                if (!hasFinalDecision) {
+                    items.push({
+                        dot: (
+                            <Avatar
+                                size={26}
+                                icon={<FontAwesomeIcon icon={Icons.faUserPen}/>}
+                                style={{backgroundColor: '#faad14'}}
+                            />
+                        ),
                         children: (
                             <div className="af-operator-action-form" style={{marginLeft: '10px'}}>
-                                <Text strong style={{display: 'block', marginBottom: '8px'}}>Ожидание решения
-                                    оператора</Text>
+                                <Text strong style={{display: 'block', marginBottom: '8px'}}>
+                                    Ожидание решения оператора
+                                </Text>
                                 <TextArea
                                     placeholder="Введите обоснование решения..."
                                     rows={2}
                                     value={comment}
-                                    onChange={(e) => {
-                                        setComment(e.target.value);
-                                    }}
+                                    onChange={(e) => setComment(e.target.value)}
                                     style={{marginBottom: '12px', fontSize: '13px'}}
                                 />
                                 <Space>
@@ -389,9 +402,7 @@ const PaymentRulesDetails = ({record, servicesList, serversList, dealersList, ap
                                         icon={<FontAwesomeIcon icon={Icons.faCheck}/>}
                                         loading={submitting}
                                         style={{backgroundColor: '#52c41a', border: 'none'}}
-                                        onClick={() => {
-                                            handleAction('allow', entry.id);
-                                        }}
+                                        onClick={() => handleAction('allow', entry.id)}
                                     >
                                         Разрешить платеж
                                     </Button>
@@ -400,17 +411,15 @@ const PaymentRulesDetails = ({record, servicesList, serversList, dealersList, ap
                                         size="small"
                                         icon={<FontAwesomeIcon icon={Icons.faXmark}/>}
                                         loading={submitting}
-                                        onClick={() => {
-                                            handleAction('deny', entry.id);
-                                        }}
+                                        onClick={() => handleAction('deny', entry.id)}
                                     >
                                         Отклонить
                                     </Button>
                                 </Space>
                             </div>
                         )
-                    }
-                );
+                    });
+                }
             }
         });
 

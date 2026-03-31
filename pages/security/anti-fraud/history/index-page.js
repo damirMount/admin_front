@@ -89,7 +89,7 @@ export default function AntiFraudHistoryPage() {
                     render: (val, payment) => {
                         const service = dictionaries.services.find(
                             (s) => {
-                                return s.id === payment.id_service;
+                                return Number(s.id) === Number(payment.id_service);
                             }
                         );
                         const serviceName = service?.name || `Сервис #${payment.id_service}`;

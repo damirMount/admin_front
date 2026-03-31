@@ -606,6 +606,10 @@ h1 {
 .af-info-card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+.af-bot-notification-card {
+    border-left: 3px dashed #5865f2 !important;
+    background: #f0f5ff;
+}
 
 /* Строки параметров */
 .af-param-row {

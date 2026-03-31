@@ -1,112 +1,284 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {Button, Card, Empty, Input, Popover, Row, Space, Tag, Typography} from 'antd';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import React, {
+    useEffect,
+    useMemo,
+    useState
+} from 'react';
+import {
+    Button,
+    Card,
+    Input,
+    Popover,
+    Space,
+    Tag,
+    Typography
+} from 'antd';
+import {
+    FontAwesomeIcon
+} from "@fortawesome/react-fontawesome";
 import * as Icons from "@fortawesome/free-solid-svg-icons";
-
-import MetricItem from './MetricItem';
 import TransactionPreview from './TransactionPreview';
-import {MoneyFormatNumber} from "../../../../../../components/main/system/MoneyFormatNumber";
+import {
+    MoneyFormatNumber
+} from "../../../../../../components/main/system/MoneyFormatNumber";
 import CodeBlock from "../../../../../../components/main/DataDisplay/CodeBlock/CodeBlock";
+import {
+    ALL_OPERATORS,
+    SUBJECTS
+} from "../../../../../../components/pages/security/anti-fraud/constants";
 
-const {Text} = Typography;
+const {
+    Text
+} = Typography;
 
-const RuleItem = ({rule, forceOpen, dealersList, apparatsList}) => {
+// --- Вспомогательные функции парсинга (Mapping) ---
+
+const getSubjectLabel = (key) => {
+    return SUBJECTS[key]?.label || key;
+};
+
+const getFieldLabel = (subKey, fieldKey) => {
+    const field = SUBJECTS[subKey]?.fields.find(
+        (f) => {
+            return f.value === fieldKey;
+        }
+    );
+    return field ? field.label : fieldKey;
+};
+
+const getOperatorLabel = (opKey) => {
+    const op = ALL_OPERATORS.find(
+        (o) => {
+            return o.value === opKey;
+        }
+    );
+    return op ? op.label.split('(')[0].trim() : opKey;
+};
+
+const formatValue = (val) => {
+    if (!isNaN(val) && val !== null && val !== '' && typeof val !== 'object') {
+        return Number(val).toLocaleString('ru-RU');
+    }
+    return val || '—';
+};
+
+const styles = {
+    container: {
+        background: '#ffffff',
+        borderRadius: '8px',
+        border: '1px solid #e8e8e8',
+        borderLeft: '4px solid #1890ff',
+        padding: '12px 16px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+        marginBottom: '12px'
+    },
+    column: {
+        padding: '0 20px',
+        borderInlineStart: '1px solid #f0f0f0',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center'
+    },
+    firstColumn: {
+        paddingRight: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        flex: '0 0 140px'
+    },
+    label: {
+        fontSize: '10px',
+        fontWeight: 700,
+        color: '#bfbfbf',
+        textTransform: 'uppercase',
+        marginBottom: '4px',
+        letterSpacing: '0.02em'
+    },
+    value: {
+        fontSize: '13px',
+        color: '#262626',
+        fontWeight: 500
+    },
+    operatorBadge: {
+        background: '#fff1f0',
+        color: '#ff4d4f',
+        border: 'none',
+        fontWeight: 800,
+        fontSize: '10px',
+        padding: '2px 8px',
+        borderRadius: '4px'
+    },
+    factBox: {
+        background: '#fffbe6',
+        border: '1px solid #ffe58f',
+        borderRadius: '6px',
+        padding: '6px 12px',
+        minWidth: '120px',
+        display: 'flex',
+        alignItems: 'center'
+    }
+};
+
+const ConditionRow = ({
+                          condition: c
+                      }) => {
+    const getSubjectIcon = (s) => {
+        return Icons.faDatabase;
+    }
+
+    return (
+        <div style={styles.container}>
+            <div style={styles.firstColumn}>
+                <Text style={styles.label}>Объект</Text>
+                <Space size={8}>
+                    <FontAwesomeIcon
+                        icon={getSubjectIcon(c.subject)}
+                        style={{
+                            color: '#bfbfbf',
+                            fontSize: '12px'
+                        }}
+                    />
+                    <Text style={styles.value}>{getSubjectLabel(c.subject)}</Text>
+                </Space>
+            </div>
+
+            <div style={{
+                ...styles.column,
+                flex: '1'
+            }}>
+                <Text style={styles.label}>Параметр</Text>
+                <Text style={{
+                    ...styles.value,
+                    fontWeight: 700
+                }}>
+                    {getFieldLabel(c.subject, c.field)}
+                </Text>
+            </div>
+
+            <div style={{
+                ...styles.column,
+                flex: '0 0 120px',
+                alignItems: 'center'
+            }}>
+                <Text style={styles.label}>Условие</Text>
+                <Tag style={styles.operatorBadge}>
+                    {getOperatorLabel(c.operator).toUpperCase()}
+                </Tag>
+            </div>
+
+            <div style={{
+                ...styles.column,
+                flex: '1'
+            }}>
+                <Text style={styles.label}>Порог правила</Text>
+                <Space>
+                    <Text type="secondary" style={{
+                        fontSize: '10px'
+                    }}>
+                        {c.value_type === 'field' ? 'ПОЛЕ' : 'КОНСТАНТА'}
+                    </Text>
+                    <Text strong style={{
+                        fontSize: '13px',
+                        color: '#1890ff'
+                    }}>
+                        {c.value_type === 'field' ? getFieldLabel(c.target_subject, c.value) : formatValue(c.value)}
+                    </Text>
+                </Space>
+            </div>
+
+            <div style={{
+                ...styles.column,
+                borderInlineStart: '1px solid #f0f0f0'
+            }}>
+                <Text style={styles.label}>Факт (сейчас)</Text>
+                <div style={styles.factBox}>
+                    <Text strong>
+                        {formatValue(c.current_value)}
+                    </Text>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const RuleItem = ({
+                      rule,
+                      forceOpen,
+                      dealersList,
+                      apparatsList
+                  }) => {
     const [isVisible, setIsVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-
-    const getReasonPhrase = (ruleName, condition, currentValue) => {
-        if (!condition) {
-            return `Правило "${ruleName}" сработало по системному событию без дополнительных условий.`;
-        }
-
-        const fields = {
-            'identifier': 'номеру (реквизиту)',
-            'id_apparat': 'терминалу',
-            'card_hash': 'банковской карте',
-            'account': 'счёту',
-            'id_dealer': 'дилеру'
-        };
-
-        const target = fields[condition.group_by] || `полю ${condition.group_by}`;
-        const time = condition.window;
-        const limit = condition.value;
-        const isSum = condition.agg_func === 'sum';
-
-        const formatVal = (v) => {
-            return isSum ? `${MoneyFormatNumber(v, 'short')} сом` : `${v} транз.`;
-        };
-
-        if (currentValue >= limit) {
-            return (
-                <span>
-                    Критическое превышение: зафиксирована {isSum ? 'сумма' : 'активность'}
-                    <b className="text-danger"> {formatVal(currentValue)}</b> (порог {formatVal(limit)})
-                    по {target} за последние <b>{time} мин.</b>
-                </span>
-            );
-        }
-
-        return `Условие: не более ${formatVal(limit)} по ${target} в окне ${time} мин.`;
-    };
 
     useEffect(() => {
         setIsVisible(forceOpen);
     }, [forceOpen]);
 
-    // Данные из новой структуры (объект details уже распарсен бэкендом или SafeParse)
     const details = rule.details || {};
     const params = details.params || {};
-    const condition = params?.conditions?.[0];
-
     const evidencePayments = useMemo(() => {
         return Array.isArray(details.evidence_payments) ? details.evidence_payments : [];
     }, [details.evidence_payments]);
 
+    const currentValue = useMemo(() => {
+        // Безопасное извлечение оператора из условий или параметров
+        const conditions = params.conditions;
+        const firstOp = Array.isArray(conditions) && conditions.length > 0 ?
+            conditions[0].operator :
+            params.agg_func;
+
+        // Регулярное выражение или интуитивный поиск "sum" в операторе
+        const isSum = typeof firstOp === 'string' && firstOp.toLowerCase().includes('sum');
+
+        if (isSum) {
+            return evidencePayments.reduce((acc, p) => {
+                return acc + parseFloat(p.total || 0);
+            }, 0);
+        }
+        return evidencePayments.length;
+    }, [params, evidencePayments]);
+
+    const conditions = useMemo(() => {
+        if (Array.isArray(params.conditions)) {
+            return params.conditions;
+        }
+        if (params.group_by) {
+            return [{
+                subject: 'payment',
+                field: params.group_by,
+                operator: params.agg_func || 'count',
+                value: params.value,
+                value_type: 'constant'
+            }];
+        }
+        return [];
+    }, [params]);
+
     const filteredPayments = useMemo(() => {
         return evidencePayments.filter((p) => {
             const search = searchTerm.toLowerCase();
-            return String(p.id).includes(search) ||
-                String(p.identifier || '').toLowerCase().includes(search);
+            return String(p.id).includes(search) || String(p.identifier || '').toLowerCase().includes(search);
         });
     }, [evidencePayments, searchTerm]);
 
-    // Параметры вердикта
     const actionType = rule.action || params?.action_type || 'add';
     const riskValue = rule.score || params?.risk_value || 0;
     const isBlock = actionType === 'block';
-
-    // Расчет текущего значения метрики на основе совпавших платежей
-    const currentValue = useMemo(() => {
-        if (!condition) return 0;
-        if (condition.agg_func === 'sum') {
-            return evidencePayments.reduce((acc, p) => acc + parseFloat(p.total || 0), 0);
-        }
-        return evidencePayments.length;
-    }, [condition, evidencePayments]);
-
-    const threshold = condition?.value || 0;
-    const isAlwaysOn = !condition || (threshold === 0 && currentValue === 0);
-    const isOverLimit = !isAlwaysOn && currentValue >= threshold;
-
-    const renderActionLabel = () => {
-        if (isBlock) return `БЛОКИРОВКА ПЛАТЕЖА`;
-        return actionType === 'multiply' ? `МНОЖИТЕЛЬ ×${riskValue}` : `БАЛЛЫ +${riskValue}`;
-    };
-
-    const formatMetric = (v) => {
-        if (isAlwaysOn) return 'ВСЕГДА ВКЛ';
-        return condition?.agg_func === 'sum' ? MoneyFormatNumber(v, 'short') : v;
-    };
 
     return (
         <Card
             size="small"
             className={`af-rule-card ${isVisible ? 'shadow-md' : 'shadow-sm'}`}
-            style={{borderLeft: `4px solid ${isBlock ? '#ff4d4f' : '#1890ff'}`}}
+            style={{
+                borderLeft: `4px solid ${isBlock ? '#ff4d4f' : '#1890ff'}`
+            }}
         >
             <div
                 className="d-flex justify-content-between align-items-center cursor-pointer"
-                onClick={() => setIsVisible(!isVisible)}
+                onClick={() => {
+                    setIsVisible(!isVisible);
+                }}
             >
                 <Space size={14}>
                     <div
@@ -117,26 +289,29 @@ const RuleItem = ({rule, forceOpen, dealersList, apparatsList}) => {
                             border: `2px solid ${isBlock ? '#ffa39e' : '#91d5ff'}`
                         }}
                     >
-                        <FontAwesomeIcon icon={isBlock ? Icons.faCircleXmark : Icons.faShieldHalved} size="lg"/>
+                        <FontAwesomeIcon icon={isBlock ? Icons.faCircleXmark : Icons.faShieldHalved} size="lg" />
                     </div>
                     <div>
-                        <Text strong className="af-title-text" style={{color: isBlock ? '#cf1322' : 'inherit'}}>
+                        <Text strong className="af-title-text" style={{
+                            color: isBlock ? '#cf1322' : 'inherit'
+                        }}>
                             {rule.name}
                         </Text>
-                        <div className="d-flex align-items-center mt-1" style={{gap: '12px'}}>
+                        <div className="d-flex align-items-center mt-1" style={{
+                            gap: '12px'
+                        }}>
                             <code className="px-1 rounded">ID: {rule.id_rule}</code>
-                            {isBlock && (
-                                <Tag color="error" style={{margin: 0, fontSize: '10px', borderRadius: '4px'}}>
-                                    CRITICAL
-                                </Tag>
-                            )}
-                            <code className="px-1 rounded">{rule.details.at}</code>
+                            {isBlock && <Tag color="error" style={{
+                                fontSize: '10px'
+                            }}>CRITICAL</Tag>}
+                            <code className="px-1 rounded">{details.at}</code>
                         </div>
                     </div>
                 </Space>
+
                 <Space size={16}>
                     <div className="text-end ms-3">
-                        <Text type="secondary" className="af-label-uppercase">Вердикт</Text>
+                        <Text type="secondary" className='me-2' style={styles.labelSmall}>Вердикт</Text>
                         <Tag color={isBlock ? 'error' : 'processing'}>
                             {isBlock ? 'СТОП' : actionType === 'multiply' ? `x${riskValue}` : `+${riskValue}`}
                         </Tag>
@@ -144,136 +319,69 @@ const RuleItem = ({rule, forceOpen, dealersList, apparatsList}) => {
                     <Button
                         type="text"
                         shape="circle"
-                        icon={<FontAwesomeIcon icon={isVisible ? Icons.faChevronUp : Icons.faChevronDown}/>}
+                        icon={<FontAwesomeIcon icon={isVisible ? Icons.faChevronUp : Icons.faChevronDown} />}
                     />
                 </Space>
             </div>
 
             {isVisible && (
                 <div className="mt-3 pt-3 border-top">
-                    {/* Блок вердикта и причины */}
                     <div className="mb-4">
-                        <div className={`af-reason-badge ${isBlock ? 'is-danger' : 'is-info'}`}>
-                            <FontAwesomeIcon
-                                icon={isBlock ? Icons.faTriangleExclamation : Icons.faCircleInfo}
-                            />
-                            <div>
-                                {isBlock && (
-                                    <Text strong className="d-block text-danger mb-1" style={{fontSize: '11px'}}>
-                                        ПРИЧИНА БЛОКИРОВКИ:
-                                    </Text>
-                                )}
-                                <Text>
-                                    {getReasonPhrase(rule.name, condition, currentValue)}
-                                </Text>
-                            </div>
+                        <Text type="secondary" style={styles.labelSmall}>Детализация условий:</Text>
+                        <div className="mt-2">
+                            {conditions.map((cond, idx) => {
+                                return (
+                                    <ConditionRow
+                                        key={idx}
+                                        condition={{
+                                            ...cond,
+                                            current_value: currentValue
+                                        }}
+                                    />
+                                );
+                            })}
                         </div>
                     </div>
 
-                    {/* Сетка метрик */}
-                    <Row gutter={[12, 12]} className="mb-4">
-                        <MetricItem
-                            label="Текущее значение"
-                            val={formatMetric(currentValue)}
-                            subVal={!isAlwaysOn && threshold > 0 ? `порог ${formatMetric(threshold)}` : null}
-                            color={isOverLimit ? '#ff4d4f' : '#1890ff'}
-                            icon={Icons.faArrowTrendUp}
-                            isOverLimit={isOverLimit}
-                            bg={'#f8fbf1'}
-                        />
-                        <MetricItem
-                            label="Тип действия"
-                            val={renderActionLabel()}
-                            color={isBlock ? '#cf1322' : '#722ed1'}
-                            icon={isBlock ? Icons.faBan : Icons.faGears}
-                            bg={isBlock ? '#fff1f0' : '#f8fbf1'}
-                        />
-                    </Row>
-
-                    {/* Связанные транзакции */}
                     {evidencePayments.length > 0 && (
                         <div className="mt-4">
                             <div className="d-flex justify-content-between align-items-center mb-3">
-                                <Space direction="vertical" size={0}>
-                                    <Text strong style={{fontSize: '13px'}}>
-                                        <FontAwesomeIcon
-                                            icon={Icons.faLink}
-                                            className="me-2"
-                                            style={{opacity: 0.5}}
-                                        />
-                                        Связанные события
-                                    </Text>
-                                    <Text type="secondary" style={{fontSize: '11px'}}>
-                                        Найдено: {evidencePayments.length} шт.
-                                    </Text>
-                                </Space>
-
+                                <Text strong style={{
+                                    fontSize: '13px'
+                                }}>Связанные события ({evidencePayments.length})</Text>
                                 <Input
                                     size="small"
-                                    placeholder="Фильтр ID..."
-                                    style={{width: '160px', borderRadius: '6px'}}
-                                    onChange={(e) => {
-                                        {
-                                            setSearchTerm(e.target.value);
-                                        }
+                                    placeholder="Поиск по ID..."
+                                    style={{
+                                        width: '160px'
                                     }}
-                                    prefix={
-                                        <FontAwesomeIcon
-                                            icon={Icons.faMagnifyingGlass}
-                                            style={{fontSize: '10px', color: '#bfbfbf'}}
-                                        />
-                                    }
+                                    onChange={(e) => {
+                                        setSearchTerm(e.target.value);
+                                    }}
+                                    prefix={<FontAwesomeIcon icon={Icons.faMagnifyingGlass} style={{
+                                        opacity: 0.3
+                                    }} />}
                                 />
                             </div>
-
-                            <div className="af-evidence-scrollpane">
-                                <div className="d-flex flex-wrap gap-2">
-                                    {filteredPayments.length > 0 ? (
-                                        filteredPayments.map((payment) => {
-                                            {
-                                                return (
-                                                    <Popover
-                                                        key={payment.id}
-                                                        content={
-                                                            <TransactionPreview
-                                                                payment={payment}
-                                                                dealersList={dealersList}
-                                                                apparatsList={apparatsList}
-                                                            />
-                                                        }
-                                                        trigger="hover"
-                                                        placement="top"
-                                                    >
-                                                        <div className="af-payment-chip">
-                                                            <span
-                                                                style={{color: '#bfbfbf', marginRight: '2px'}}
-                                                            >#</span>
-                                                            {payment.id}
-                                                        </div>
-                                                    </Popover>
-                                                );
-                                            }
-                                        })
-                                    ) : (
-                                        <div style={{width: '100%', padding: '20px 0'}}>
-                                            <Empty
-                                                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                                description="Ничего не найдено"
-                                            />
-                                        </div>
-                                    )}
-                                </div>
+                            <div className="d-flex flex-wrap gap-2">
+                                {filteredPayments.map((p) => {
+                                    return (
+                                        <Popover
+                                            key={p.id}
+                                            content={<TransactionPreview payment={p} dealersList={dealersList} apparatsList={apparatsList} />}
+                                        >
+                                            <div className="af-payment-chip">#{p.id}</div>
+                                        </Popover>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
 
-                    {/* Технический блок */}
                     <div className="mt-4">
-                        <CodeBlock
-                            code={{details: rule.details}}
-                            title="Технические параметры (JSON)"
-                            defaultVisible={false}
-                        />
+                        <CodeBlock code={{
+                            details: rule.details
+                        }} title="JSON данные" defaultVisible={false} />
                     </div>
                 </div>
             )}

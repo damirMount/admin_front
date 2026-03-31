@@ -68,8 +68,10 @@ const UserDropdownMenu = (collapsed) => {
                                            title={session.user.role}>{session.user.role}</small>
                                 </div>
                             ) : (
-                                <div className="d-flex flex-column w-100">
+                                <div className="w-100">
+                                    <div className='d-flex justify-content-center'>
                                     <FontAwesomeIcon icon={faUser} size="lg"/>
+                                    </div>
                                 </div>)}
 
                             </MenuItem>
