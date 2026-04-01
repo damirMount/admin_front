@@ -1,12 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { Button, Descriptions, Typography } from "antd";
-import { useSession } from "next-auth/react";
+import React, {useEffect, useState} from "react";
+import {Button, Descriptions, Typography} from "antd";
+import {useSession} from "next-auth/react";
 import Head from "next/head";
-import Link from "next/link";
 import humanizeDuration from 'humanize-duration';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckCircle, faCirclePause, faCirclePlay, faCircleXmark, faCreditCard, faFloppyDisk, faHourglassHalf, faIdCard, faKeyboard, faMoneyBill1, faSquarePlus, faTrashCan, faCircleCheck } from "@fortawesome/free-regular-svg-icons";
-import { faArrows, faArrowUpRightFromSquare, faBan, faClockRotateLeft, faGears, faHashtag, faLaptopCode, faPercent, faRotateRight, faSpinner, faTriangleExclamation, faUserMinus } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {
+    faCheckCircle,
+    faCircleCheck,
+    faCirclePause,
+    faCirclePlay,
+    faCircleXmark,
+    faCreditCard,
+    faFloppyDisk,
+    faHourglassHalf,
+    faIdCard,
+    faKeyboard,
+    faMoneyBill1,
+    faSquarePlus,
+    faTrashCan
+} from "@fortawesome/free-regular-svg-icons";
+import {
+    faArrows,
+    faBan,
+    faClockRotateLeft,
+    faGears,
+    faHashtag,
+    faLaptopCode,
+    faPercent,
+    faRotateRight,
+    faSpinner,
+    faTriangleExclamation,
+    faUserMinus
+} from "@fortawesome/free-solid-svg-icons";
 
 import ProtectedElement from "../../components/main/system/ProtectedElement";
 import fetchData from "../../components/main/database/DataFetcher";
@@ -15,8 +40,8 @@ import StatusIndicator from "../../components/main/table/cell/StatusIndicator";
 import SearchByColumn from "../../components/main/table/cell/SearchByColumn";
 import ApparatReRegistrationForm from "../../components/pages/apparat/ApparatReRegistrationForm";
 import ActionButtons from "../../components/main/table/cell/ActionButtons";
-import { useAlert } from "../../contexts/AlertContext";
-import { CHANGE_STATUS_RE_REGISTERED_TERMINAL_RECORD_API } from "../../routes/api";
+import {useAlert} from "../../contexts/AlertContext";
+import {CHANGE_STATUS_RE_REGISTERED_TERMINAL_RECORD_API} from "../../routes/api";
 
 const { Title, Text } = Typography;
 
@@ -92,6 +117,7 @@ export default function ApparatReRegistrationPage() {
         if (!userId) return null;
         if (userNameCache[userId]) return userNameCache[userId];
         const result = await fetchData({ model: "User", searchTerm: { id: userId } }, session);
+        console.log(result)
         const fio = result.data[0]?.fio;
         setUserNameCache(prev => ({ ...prev, [userId]: fio }));
         return fio;
@@ -125,7 +151,7 @@ export default function ApparatReRegistrationPage() {
             title: "Дилер",
             dataIndex: "region_id",
             render: (id) => {
-                const d = dealersOptionRaw.find(item => item.id === id);
+                const d = dealersOptionRaw.find(item => Number(item.id) === Number(id));
                 return d ? `${id} ${d.name}` : id;
             }
         },
@@ -196,7 +222,7 @@ export default function ApparatReRegistrationPage() {
         }, [record]);
 
         const stage = getStage(record.stage);
-        const dealer = dealersOptionRaw.find(d => d.id === record.region_id);
+        const dealer = dealersOptionRaw.find(d =>Number(d.id) === Number(record.region_id));
 
         const statusItems = [
             { label: 'Статус', children: <StatusCell statusKey={record.status} record={record} justText /> },

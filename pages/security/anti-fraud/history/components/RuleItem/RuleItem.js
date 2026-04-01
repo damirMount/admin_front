@@ -1,30 +1,10 @@
-import React, {
-    useEffect,
-    useMemo,
-    useState
-} from 'react';
-import {
-    Button,
-    Card,
-    Input,
-    Popover,
-    Space,
-    Tag,
-    Typography
-} from 'antd';
-import {
-    FontAwesomeIcon
-} from "@fortawesome/react-fontawesome";
+import React, {useEffect, useMemo, useState} from 'react';
+import {Button, Card, Empty, Input, Popover, Space, Tag, Typography} from 'antd';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import * as Icons from "@fortawesome/free-solid-svg-icons";
 import TransactionPreview from './TransactionPreview';
-import {
-    MoneyFormatNumber
-} from "../../../../../../components/main/system/MoneyFormatNumber";
 import CodeBlock from "../../../../../../components/main/DataDisplay/CodeBlock/CodeBlock";
-import {
-    ALL_OPERATORS,
-    SUBJECTS
-} from "../../../../../../components/pages/security/anti-fraud/constants";
+import {ALL_OPERATORS, SUBJECTS} from "../../../../../../components/pages/security/anti-fraud/constants";
 
 const {
     Text
@@ -289,7 +269,7 @@ const RuleItem = ({
                             border: `2px solid ${isBlock ? '#ffa39e' : '#91d5ff'}`
                         }}
                     >
-                        <FontAwesomeIcon icon={isBlock ? Icons.faCircleXmark : Icons.faShieldHalved} size="lg" />
+                        <FontAwesomeIcon icon={isBlock ? Icons.faCircleXmark : Icons.faShieldHalved} size="lg"/>
                     </div>
                     <div>
                         <Text strong className="af-title-text" style={{
@@ -319,7 +299,7 @@ const RuleItem = ({
                     <Button
                         type="text"
                         shape="circle"
-                        icon={<FontAwesomeIcon icon={isVisible ? Icons.faChevronUp : Icons.faChevronDown} />}
+                        icon={<FontAwesomeIcon icon={isVisible ? Icons.faChevronUp : Icons.faChevronDown}/>}
                     />
                 </Space>
             </div>
@@ -327,21 +307,46 @@ const RuleItem = ({
             {isVisible && (
                 <div className="mt-3 pt-3 border-top">
                     <div className="mb-4">
-                        <Text type="secondary" style={styles.labelSmall}>Детализация условий:</Text>
+                        <Text type="secondary" style={styles.labelSmall}>
+                            Детализация условий:
+                        </Text>
                         <div className="mt-2">
-                            {conditions.map((cond, idx) => {
-                                return (
-                                    <ConditionRow
-                                        key={idx}
-                                        condition={{
-                                            ...cond,
-                                            current_value: currentValue
-                                        }}
+                            {conditions && conditions.length > 0 ? (
+                                conditions.map((cond, idx) => {
+                                    return (
+                                        <ConditionRow
+                                            key={idx}
+                                            condition={{
+                                                ...cond,
+                                                current_value: currentValue
+                                            }}
+                                        />
+                                    );
+                                })
+                            ) : (
+                                <div
+                                    style={{
+                                        padding: '20px 0',
+                                        textAlign: 'center',
+                                        background: '#fafafa',
+                                        borderRadius: '8px',
+                                        border: '1px dashed #d9d9d9'
+                                    }}
+                                >
+                                    <Empty
+                                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                        description={
+                                            <Text type="secondary" style={{fontSize: '13px'}}>
+                                                Для данного правила не настроены особые условия срабатывания,
+                                                данное правило активно всегда
+                                            </Text>
+                                        }
                                     />
-                                );
-                            })}
+                                </div>
+                            )}
                         </div>
                     </div>
+
 
                     {evidencePayments.length > 0 && (
                         <div className="mt-4">
@@ -355,38 +360,40 @@ const RuleItem = ({
                                     style={{
                                         width: '160px'
                                     }}
-                                    onChange={(e) => {
-                                        setSearchTerm(e.target.value);
-                                    }}
-                                    prefix={<FontAwesomeIcon icon={Icons.faMagnifyingGlass} style={{
-                                        opacity: 0.3
-                                    }} />}
-                                />
-                            </div>
-                            <div className="d-flex flex-wrap gap-2">
-                                {filteredPayments.map((p) => {
-                                    return (
-                                        <Popover
-                                            key={p.id}
-                                            content={<TransactionPreview payment={p} dealersList={dealersList} apparatsList={apparatsList} />}
-                                        >
-                                            <div className="af-payment-chip">#{p.id}</div>
-                                        </Popover>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
+        onChange={(e) => {
+            setSearchTerm(e.target.value);
+        }}
+        prefix={<FontAwesomeIcon icon={Icons.faMagnifyingGlass} style={{
+            opacity: 0.3
+        }}/>}
+    />
+</div>
+    <div className="d-flex flex-wrap gap-2">
+        {filteredPayments.map((p) => {
+            console.log(p)
+            return (
+                <Popover
+                    key={p.id}
+                    content={<TransactionPreview payment={p} dealersList={dealersList} apparatsList={apparatsList}/>}
+                >
+                    <div className="af-payment-chip">#{p.id}</div>
+                </Popover>
+            );
+        })}
+    </div>
+</div>
+)}
 
-                    <div className="mt-4">
-                        <CodeBlock code={{
-                            details: rule.details
-                        }} title="JSON данные" defaultVisible={false} />
-                    </div>
-                </div>
-            )}
-        </Card>
-    );
+    <div className="mt-4">
+        <CodeBlock code={{
+            details: rule.details
+        }} title="JSON данные" defaultVisible={false}/>
+    </div>
+</div>
+)}
+</Card>
+)
+    ;
 };
 
 export default RuleItem;

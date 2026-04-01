@@ -15,7 +15,7 @@ import dayjs from "dayjs";
 import {useRouter} from "next/router";
 
 import {getDefaults} from "../hooks/useAntiFraudData";
-import {RISK_LEVELS} from "../../../../../components/main/payments/PaymentsConstants";
+import {RISK_LEVELS, STATUS_LEVELS} from "../../../../../components/main/payments/PaymentsConstants";
 
 const {Text} = Typography;
 const {RangePicker} = DatePicker;
@@ -156,7 +156,6 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
                 form={form}
                 layout="vertical"
                 onFinish={handleSubmit}
-                initialValues={getDefaults()}
                 requiredMark={false}
             >
                 <Row gutter={[24, 16]} align="bottom">
@@ -222,10 +221,10 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
                 </Col>
 
 
-                    <Col xs={24} md={9}>
+                    <Col xs={24} md={12}>
                         <Form.Item name="score_range" label={renderLabel(faTriangleExclamation, "Уровень риска")}
                                    className="mb-0">
-                            <Select mode="multiple" placeholder="Выберите уровни" showSearch={false} allowClear
+                            <Select mode="multiple" placeholder="Все платежи" showSearch={false} allowClear
                                     className="rounded-3">
                                 {RISK_LEVELS.map(
                                     (risk) => {
@@ -242,7 +241,30 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={7}>
+                    <Col xs={24} sm={12}>
+                        <Form.Item
+                            name="status"
+                            label={renderLabel(faSitemap, "Статус проверки платежа")}
+                            className="mb-0"
+                        >
+                            <Select mode="multiple" showSearch={false} placeholder="Все платежи" allowClear
+                                    className="rounded-3">
+                                {STATUS_LEVELS.map(
+                                    (risk) => {
+                                        return (
+                                            <Option key={risk.value} value={risk.value}>
+                                                <Space size={4}>
+                                                    <Badge color={risk.color}/>
+                                                    <Text>{risk.label}</Text>
+                                                </Space>
+                                            </Option>
+                                        );
+                                    }
+                                )}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
                         <Form.Item
                             name="id_service"
                             label={renderLabel(faSitemap, "Сервис")}
@@ -261,7 +283,7 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col xs={24} md={8} className="d-flex justify-content-end gap-2">
+                    <Col xs={24} md={12} className="d-flex justify-content-end gap-2">
                         {isFiltersChanged && (
                             <Button
                                 icon={<FontAwesomeIcon icon={faEraser}/>}

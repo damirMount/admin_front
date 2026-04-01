@@ -41,6 +41,24 @@ export const RISK_LEVELS = [
     }
 ];
 
+export const STATUS_LEVELS = [
+    {
+        value: "medium",
+        color: "orange",
+        label: "В ожидании"
+    },
+    {
+        value: "high",
+        color: "red",
+        label: "Отклонён"
+    },
+    {
+        value: "low",
+        color: "green",
+        label: "Разрешён"
+    }
+];
+
 /**
  * Возвращает объект с описанием статуса, цветом и иконкой
  * @param {number} status - Значение из RUN_STATUS

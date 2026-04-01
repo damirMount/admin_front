@@ -26,7 +26,7 @@ const TransactionPreview = ({payment, dealersList, apparatsList}) => {
     const apparat = findById(apparatsList, payment.id_apparat);
 
     return (
-        <div style={{width: '360px'}}>
+        <div style={{width: '300px'}}>
             <div className="d-flex justify-content-between align-items-center">
                 <Text strong style={{fontSize: '12px'}}>
                     Транзакция #{payment.id}
@@ -36,7 +36,7 @@ const TransactionPreview = ({payment, dealersList, apparatsList}) => {
                     style={{fontSize: '10px', color: '#94a3b8'}}
                 />
             </div>
-            <div className="p-3">
+            <div className="p-2">
                 <div className="mb-2 d-flex flex-column">
                     <Text type="secondary" style={{fontSize: '11px'}}>Дилер:</Text>
                     <Text strong copyable>

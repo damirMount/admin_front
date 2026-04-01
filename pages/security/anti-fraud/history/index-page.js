@@ -1,22 +1,19 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import Head from "next/head";
 import {Badge, Card, Space, Tag, theme, Typography} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faShieldHalved} from "@fortawesome/free-solid-svg-icons";
+import {faDisplay, faShieldHalved, faUser} from "@fortawesome/free-solid-svg-icons";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 import {useSession} from "next-auth/react";
 import dayjs from "dayjs";
-import {useRouter} from "next/router";
 
 import SmartTable from "../../../../components/main/table/SmartTable";
 import ProtectedElement from "../../../../components/main/system/ProtectedElement";
 import {useAlert} from "../../../../contexts/AlertContext";
 import PaymentRulesDetails from "./components/PaymentRulesDetails/PaymentRulesDetails";
-import {MoneyFormatNumber} from "../../../../components/main/system/MoneyFormatNumber";
 
-import useAntiFraudData, {getDefaults} from "./hooks/useAntiFraudData";
+import useAntiFraudData from "./hooks/useAntiFraudData";
 import FilterForm from "./components/FilterForm";
-import {getPaymentStatusInfo} from "../../../../components/main/payments/PaymentsConstants";
 
 const {Text, Title} = Typography;
 
@@ -24,7 +21,6 @@ export default function AntiFraudHistoryPage() {
     const {token} = theme.useToken();
     const {openNotification} = useAlert();
     const {data: session} = useSession();
-    const router = useRouter();
 
     const {historyData, loading, dictionaries, getHistory} = useAntiFraudData(session, openNotification);
     const [pagination, setPagination] = useState(
@@ -32,19 +28,6 @@ export default function AntiFraudHistoryPage() {
             current: 1,
             pageSize: 100
         }
-    );
-
-    useEffect(
-        () => {
-            if (session?.accessToken && router.isReady) {
-                const hasQueryParams = Object.keys(router.query).length > 0;
-
-                if (!hasQueryParams && historyData.length === 0 && !loading) {
-                    getHistory(getDefaults());
-                }
-            }
-        },
-        [session, getHistory, router.isReady]
     );
 
     const columns = useMemo(
@@ -60,11 +43,9 @@ export default function AntiFraudHistoryPage() {
                 },
                 {
                     title: "ID Платежа",
-                    dataIndex: "id",
+                    dataIndex: "id_payment",
                     width: "150px",
                     render: (id, payment) => {
-                        const statusInfo = getPaymentStatusInfo(payment.payments_run, payment.additional1);
-
                         return (
                             <Space direction="vertical" size={0}>
                                 <Text copyable strong style={{color: token.colorPrimary}}>
@@ -72,11 +53,10 @@ export default function AntiFraudHistoryPage() {
                                 </Text>
                                 <Space size={4}>
                                     <Badge
-                                        color={statusInfo.color}
-
+                                        color="#722ed1"
                                     />
                                     <Text type="secondary" style={{fontSize: "11px"}}>
-                                        {statusInfo.text}
+                                        Кол-во проверок {payment.iteration}
                                     </Text>
                                 </Space>
                             </Space>
@@ -106,42 +86,90 @@ export default function AntiFraudHistoryPage() {
                     }
                 },
                 {
-                    title: "Сумма",
-                    dataIndex: "real_pay",
-                    width: "160px",
+                    title: "Статус",
+                    dataIndex: "final_action",
+                    width: "200px",
                     render: (val, payment) => {
+                        const score = Number(payment.total_score || 0);
+                        let statusScore;
+                        if (score >= 79) {
+                            statusScore = {
+                                color: 'red',
+                                label:  `${score} AF - ВЫСОКИЙ РИСК`
+                            }
+                        } else if (score >= 29 ){
+                            statusScore = {
+                                color: 'gold',
+                                label:  `${score} AF - СРЕДНИЙ РИСК`
+                            }
+                        } else {
+                            statusScore = {
+                                color: 'green',
+                                label:  `${score} AF - НИЗКИЙ РИСК`
+                            }
+                        }
+
+                        const statusMap = {
+                            allow: {
+                                color: 'green-inverse',
+                                label: 'Разрешён системой', icon: <FontAwesomeIcon icon={faDisplay} className="me-2"/>,
+                            },
+                            deny: {
+                                color: 'red-inverse',
+                                label: 'Отклонён системой', icon: <FontAwesomeIcon icon={faDisplay} className="me-2"/>
+                            },
+                            wait: {
+                                color: '#838585',
+                                label: 'В ожидании проверки', icon: <FontAwesomeIcon icon={faClock} className="me-2"/>
+                            },
+                            approve: {
+                                color: 'blue-inverse',
+                                label: 'Разрешён оператором', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
+                            },
+                            reject: {
+                                color: 'volcano-inverse',
+                                label: 'Отклонён оператором', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
+                            }
+                        };
+
+
+                        const style = statusMap[val] || statusMap.wait;
+
                         return (
-                            <div className="d-flex flex-column">
-                                <Text strong style={{fontSize: "15px"}}>
-                                    {MoneyFormatNumber(val, "full")} сом
-                                </Text>
-                                {payment.total !== payment.real_pay && (
-                                    <Text type="secondary" style={{fontSize: "11px"}}>
-                                        Внесено {MoneyFormatNumber(payment.total, "full")} сом
+                            <div
+                                className="d-flex flex-column"
+                                style={{gap: '5px'}}
+                            >
+                                <Tag
+                                    icon={style.icon}
+                                    className='fw-bold m-0 text-center'
+                                    color={style.color}
+                                >
+                                    {style.label}
+                                </Tag>
+
+                                <div className="d-flex align-items-center">
+                                    <Badge
+                                        color={statusScore.color}
+                                        className='me-2'
+                                    />
+                                    <Text
+                                        type="secondary"
+                                        className='fw-medium'
+                                        style={{
+                                            fontSize: '13px',
+                                        }}
+                                    >
+                                        {statusScore.label}
                                     </Text>
-                                )}
+                                </div>
                             </div>
                         );
                     }
                 },
                 {
-                    title: "Риск",
-                    dataIndex: "additional2",
-                    width: "110px",
-                    align: "center",
-                    render: (val) => {
-                        const score = Number(val || 0);
-                        const color = score >= 80 ? "#ff4d4f" : score >= 30 ? "#faad14" : "#52c41a";
-                        return (
-                            <Tag color={color} style={{borderRadius: "10px", fontWeight: "bold", border: "none"}}>
-                                {score} Баллов
-                            </Tag>
-                        );
-                    }
-                },
-                {
                     title: "Дата",
-                    dataIndex: "time",
+                    dataIndex: "createdAt",
                     width: "160px",
                     render: (date) => {
                         return (

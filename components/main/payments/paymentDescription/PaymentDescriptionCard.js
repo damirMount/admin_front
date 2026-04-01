@@ -37,7 +37,7 @@ const MoneyColumn = ({label, value, color, type = 'full', prefix = 'с'}) => {
 };
 
 const PaymentDescriptionCard = ({
-                                    record,
+                                    record = {},
                                     servicesList,
                                     dealersList,
                                     apparatsList,
@@ -53,7 +53,7 @@ const PaymentDescriptionCard = ({
                     }
                 ) || {};
             };
-
+            console.log(record)
             const service = findById(servicesList, Number(record.id_service));
             const dealer = findById(dealersList, Number(record.id_region));
             const server = findById(serversList, Number(record.id_bserver));
