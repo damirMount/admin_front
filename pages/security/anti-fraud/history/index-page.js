@@ -123,11 +123,11 @@ export default function AntiFraudHistoryPage() {
                                 label: 'В ожидании проверки', icon: <FontAwesomeIcon icon={faClock} className="me-2"/>
                             },
                             approve: {
-                                color: 'blue-inverse',
+                                color: 'blue',
                                 label: 'Разрешён оператором', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
                             },
                             reject: {
-                                color: 'volcano-inverse',
+                                color: 'volcano',
                                 label: 'Отклонён оператором', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
                             }
                         };

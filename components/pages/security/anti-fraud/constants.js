@@ -28,17 +28,19 @@ export const SUBJECTS = {
         label: 'Платёж',
         fields: [
             {value: 'identifier', label: 'Реквизит', ops: ['count', '==']},
-            {value: 'total', label: 'Сумма вложения', ops: [...OP_GROUPS.numeric, 'sum'],
+            {
+                value: 'total', label: 'Сумма вложения', ops: [...OP_GROUPS.numeric, 'sum'],
                 compareWith: [
                     {
                         target_subject: 'service',
                         label: 'Cервис',
                         fields: [
-                            { value: 'minpay', label: 'Мин. сумма сервиса' },
-                            { value: 'maxpay', label: 'Макс. сумма сервиса' }
+                            {value: 'minpay', label: 'Мин. сумма сервиса'},
+                            {value: 'maxpay', label: 'Макс. сумма сервиса'}
                         ]
                     }
-                ]},
+                ]
+            },
             {value: 'id_region', label: 'Дилер', ops: [...OP_GROUPS.identity, 'unique'], listName: 'dealers'},
             {value: 'id_service', label: 'Сервис', ops: [...OP_GROUPS.identity, 'unique'], listName: 'services'},
             {value: 'id_apparat', label: 'Аппарат', ops: [...OP_GROUPS.identity, 'unique'], listName: 'apparats'},
@@ -81,6 +83,22 @@ export const SUBJECTS = {
                 ops: [...OP_GROUPS.identity],
                 listName: 'dealers'
             },
+        ]
+    },
+    whitelist: {
+        label: 'Белый список',
+        fields: [
+            {
+                value: 'status', label: 'Статус клиента', ops: ['=='], fields: [
+                    {value: 'NEW', label: 'Новый'},
+                    {value: 'NORMAL', label: 'Обычный'},
+                    {value: 'TRUSTED', label: 'Доверенный'},
+                    {value: 'PROBATION', label: 'Подозрительный'},
+                    {value: 'BLOCKED', label: 'Заблокированный'},
+                ]
+            },
+            {value: 'avg_amount', label: 'Средняя сумма', ops: [...OP_GROUPS.numeric,]},
+            {value: 'total_score', label: 'Уровень доверия', ops: [...OP_GROUPS.numeric,]},
         ]
     },
     // blacklist: {

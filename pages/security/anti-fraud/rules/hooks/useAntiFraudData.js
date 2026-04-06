@@ -30,7 +30,7 @@ const useAntiFraudData = (session, openNotification) => {
                 fetchData({model: 'Dealer', sort: '{"column":"id","direction":"asc"}'}, session),
                 fetchData({model: 'Apparat', sort: '{"column":"id","direction":"asc"}'}, session),
                 fetchData({model: 'Service', sort: '{"column":"id","direction":"asc"}'}, session),
-                fetchData({model: 'AntiFraudRule', sort: '{"column":"id","direction":"desc"}'}, session)
+                fetchData({model: 'AntiFraudRule', sort: '{"column":"priority","direction":"asc"}'}, session)
             ]);
 
             if (servicesTypesRes) {

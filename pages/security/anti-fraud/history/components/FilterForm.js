@@ -231,7 +231,7 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
                                         return (
                                             <Option key={risk.value} value={risk.value}>
                                                 <Space size={4}>
-                                                    <Badge color={risk.color}/>
+                                                    <Badge className='me-1' color={risk.color}/>
                                                     <Text>{risk.label}</Text>
                                                 </Space>
                                             </Option>
@@ -254,7 +254,7 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
                                         return (
                                             <Option key={risk.value} value={risk.value}>
                                                 <Space size={4}>
-                                                    <Badge color={risk.color}/>
+                                                    <Badge className='me-1' color={risk.color}/>
                                                     <Text>{risk.label}</Text>
                                                 </Space>
                                             </Option>

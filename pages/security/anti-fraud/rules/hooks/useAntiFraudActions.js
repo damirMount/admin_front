@@ -1,5 +1,9 @@
 import {useCallback} from "react";
-import {ANTIFRAUD_RULE_CREATE_API, ANTIFRAUD_RULE_UPDATE_API} from "../../../../../routes/api";
+import {
+    ANTIFRAUD_RULE_CREATE_API,
+    ANTIFRAUD_RULE_UPDATE_API,
+    ANTIFRAUD_RULES_UPDATE_ORDER_API
+} from "../../../../../routes/api";
 import {getCleanedConditions} from "../utils/dataTransformers";
 
 const useAntiFraudActions = (session, openNotification, refresh) => {
@@ -68,8 +72,46 @@ const useAntiFraudActions = (session, openNotification, refresh) => {
      * или быстрое переключение статуса (toggleRuleStatus)
      */
 
+    /**
+     * Массовое обновление приоритетов (сортировки)
+     */
+    const handleSaveRulesOrder = useCallback(async (sortedIds) =>
+    {
+        try
+        {
+            const response = await fetch(`${ANTIFRAUD_RULES_UPDATE_ORDER_API}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session.accessToken}`,
+                },
+                body: JSON.stringify({ ids: sortedIds }),
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok)
+            {
+                throw new Error(responseData.message || 'Ошибка при сохранении порядка');
+            }
+
+            // Обновляем данные на странице после успешного сохранения
+            await refresh();
+        }
+        catch (error)
+        {
+            openNotification({
+                type: 'error',
+                message: error.message
+            });
+            throw error; // Пробрасываем ошибку для обработки в компоненте
+        }
+    }, [session, openNotification, refresh]);
+
+// Не забудьте добавить в return:
     return {
-        handleSaveRule
+        handleSaveRule,
+        handleSaveRulesOrder
     };
 };
 export default useAntiFraudActions;

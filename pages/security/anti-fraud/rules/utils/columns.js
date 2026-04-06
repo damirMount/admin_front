@@ -1,6 +1,14 @@
 import {Badge, Space, Tag, Typography} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faClockRotateLeft, faFlag, faGears, faShieldHalved} from "@fortawesome/free-solid-svg-icons";
+import {
+    faAnglesDown,
+    faAnglesUp,
+    faArrowDownShortWide,
+    faClockRotateLeft,
+    faFlag,
+    faGears,
+    faShieldHalved
+} from "@fortawesome/free-solid-svg-icons";
 
 
 import SearchByColumn from "../../../../../components/main/table/cell/SearchByColumn";
@@ -13,17 +21,18 @@ const getTableColumns = ({form, setIsModalOpen, setOpenDropdownId, openDropdownI
 
     return [
         {
-            title: 'ID',
+            title: <FontAwesomeIcon icon={faArrowDownShortWide}/>,
             dataIndex: 'id',
-            width: '60px',
-            render: (id) => (
-                <Text type="secondary" style={{fontSize: '12px'}}>#{id}</Text>
+            width: '40px',
+            className: 'text-center',
+            render: (id, record) => (
+                <Text type="secondary" style={{fontSize: '12px'}}>#{record.priority}</Text>
             )
         },
         {
             title: 'Название',
             dataIndex: 'name',
-            width: '45%',
+            width: '40%',
             render: (t, r) => (
                 <div className="af-algorithm-cell">
                     <div className="mb-1 d-flex flex-column">
@@ -95,27 +104,28 @@ const getTableColumns = ({form, setIsModalOpen, setOpenDropdownId, openDropdownI
         {
             title: 'Реакция',
             align: 'center',
-            width: '100px',
+            width: '50px',
             render: (_, r) => {
                 const type = r.params?.action_type;
                 const score = r.params?.risk_value;
 
                 if (type === 'block') {
                     return (
-                        <Tag color="red"
-                             style={{fontWeight: 'bold', minWidth: '55px', textAlign: 'center', borderRadius: '4px'}}>
+                        <Tag color="red-inverse"
+                             className={`w-100 text-center fw-bold ${!r.is_active ? 'opacity-25' : ''}`}>
                             Стоп
                         </Tag>
                     );
                 }
 
                 const isMultiply = type === 'multiply';
-                const tagText = isMultiply ? `×${score}` : `+${score}`;
-                const tagColor = isMultiply ? 'purple' : 'orange';
+                const tagText = isMultiply ? `×${score}` : `+${score} AF`;
+                const tagColor = isMultiply ? score > 1.0 ? 'purple-inverse' : 'green-inverse' : 'blue';
 
+                const icon = isMultiply && score > 1.0 ? faAnglesUp : faAnglesDown
                 return (
-                    <Tag color={tagColor}
-                         style={{fontWeight: 'bold', minWidth: '55px', textAlign: 'center', borderRadius: '4px'}}>
+                    <Tag color={tagColor} className={`w-100 text-center fw-bold ${!r.is_active ? 'opacity-25' : ''}`}>
+                        {isMultiply && <FontAwesomeIcon icon={icon} className="me-1"/>}
                         {tagText}
                     </Tag>
                 );
@@ -126,7 +136,7 @@ const getTableColumns = ({form, setIsModalOpen, setOpenDropdownId, openDropdownI
             dataIndex: 'is_active',
             width: '80px',
             render: (a) => (
-                <div className="d-flex align-items-center" style={{gap: '8px'}}>
+                <div className="d-flex align-items-center text-nowrap" style={{gap: '8px'}}>
                     <Badge status={a ? "success" : "default"}/>
                     <Text style={{color: a ? '#52c41a' : '#bfbfbf', fontSize: '13px'}}>
                         {a ? 'Активно' : 'Пауза'}
