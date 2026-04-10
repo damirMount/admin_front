@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from "react";
 import Head from "next/head";
-import {Badge, Card, Space, Tag, theme, Typography} from "antd";
+import {Badge, Card, Form, Space, Tag, theme, Typography} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDisplay, faShieldHalved, faUser} from "@fortawesome/free-solid-svg-icons";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
@@ -10,20 +10,25 @@ import dayjs from "dayjs";
 import SmartTable from "../../../../components/main/table/SmartTable";
 import ProtectedElement from "../../../../components/main/system/ProtectedElement";
 import {useAlert} from "../../../../contexts/AlertContext";
-import PaymentRulesDetails from "./components/PaymentRulesDetails/PaymentRulesDetails";
+import ProfileDetails from "./components/ProfileDetails/ProfileDetails";
 
-import useAntiFraudData from "./hooks/useAntiFraudData";
+import useAntiFraudProfiles from "./hooks/useAntiFraudProfiles";
 import FilterForm from "./components/FilterForm";
-import {ANTI_FRAUD_CHECK_STATUS} from "../../../../components/pages/security/anti-fraud/constants";
+import ActionButtons from "../../../../components/main/table/cell/ActionButtons";
+import {prepareFormValues} from "../../../../components/pages/security/anti-fraud/helpers";
+import RuleFormModal from "../rules/components/RuleFormModal/RuleFormModal";
 
 const {Text, Title} = Typography;
 
-export default function AntiFraudHistoryPage() {
+export default function AntiFraudProfilePage() {
     const {token} = theme.useToken();
     const {openNotification} = useAlert();
     const {data: session} = useSession();
+    const [form] = Form.useForm();
 
-    const {historyData, loading, dictionaries, getHistory} = useAntiFraudData(session, openNotification);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [openDropdownId, setOpenDropdownId] = useState(null);
+    const {historyData, loading, dictionaries, getHistory} = useAntiFraudProfiles(session, openNotification);
     const [pagination, setPagination] = useState(
         {
             current: 1,
@@ -43,10 +48,10 @@ export default function AntiFraudHistoryPage() {
                     }
                 },
                 {
-                    title: "ID Платежа",
-                    dataIndex: "id_payment",
-                    width: "150px",
-                    render: (id, payment) => {
+                    title: "ID Клиента",
+                    dataIndex: "id",
+                    width: "100px",
+                    render: (id, profile) => {
                         return (
                             <Space direction="vertical" size={0}>
                                 <Text copyable strong style={{color: token.colorPrimary}}>
@@ -56,8 +61,8 @@ export default function AntiFraudHistoryPage() {
                                     <Badge
                                         color="#722ed1"
                                     />
-                                    <Text type="secondary" style={{fontSize: "11px"}}>
-                                        Правил активно - <b>{payment.triggered_rules?.length || 0}</b>
+                                    <Text type="secondary" className='fw-medium' style={{fontSize: "12px"}}>
+                                        {profile.total_payments || 0} Транзак.
                                     </Text>
                                 </Space>
                             </Space>
@@ -67,20 +72,20 @@ export default function AntiFraudHistoryPage() {
                 {
                     title: "Реквизит",
                     dataIndex: "identifier",
-                    render: (val, payment) => {
+                    render: (val, profile) => {
                         const service = dictionaries.services.find(
                             (s) => {
-                                return Number(s.id) === Number(payment.id_service);
+                                return Number(s.id) === Number(profile.id_service);
                             }
                         );
-                        const serviceName = service?.name || `Сервис #${payment.id_service}`;
+                        const serviceName = service?.name || `Сервис #${profile.id_service}`;
                         return (
                             <Space direction="vertical" size={0}>
                                 <Text strong copyable>
                                     {val}
                                 </Text>
                                 <Text type="secondary" style={{fontSize: "11px"}}>
-                                    ({payment.id_service}) {serviceName}
+                                    ({profile.id_service}) {serviceName}
                                 </Text>
                             </Space>
                         );
@@ -88,29 +93,33 @@ export default function AntiFraudHistoryPage() {
                 },
                 {
                     title: "Статус",
-                    dataIndex: "final_action",
-                    width: "200px",
-                    render: (val, payment) => {
-                        const score = Number(payment.total_score || 0);
-                        let statusScore;
-                        if (score >= 79) {
-                            statusScore = {
-                                color: 'red',
-                                label:  `${score} AF - ВЫСОКИЙ РИСК`
+                    dataIndex: "status",
+                    width: "190px",
+                    render: (val, profile) => {
+                        const statusMap = {
+                            TRUSTED: {
+                                color: 'green-inverse',
+                                label: 'ДОВЕРЯННЫЙ', icon: <FontAwesomeIcon icon={faDisplay} className="me-2"/>,
+                            },
+                            BLOCKED: {
+                                color: 'red-inverse',
+                                label: 'ЗАБЛОКИРОВАН', icon: <FontAwesomeIcon icon={faDisplay} className="me-2"/>
+                            },
+                            NEW: {
+                                color: '#8fb68c',
+                                label: 'НОВЫЙ КЛИЕНТ', icon: <FontAwesomeIcon icon={faClock} className="me-2"/>
+                            },
+                            REGULAR: {
+                                color: 'blue',
+                                label: 'ПОСТОЯННЫЙ', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
+                            },
+                            PROBATION: {
+                                color: 'volcano',
+                                label: 'ПОДОЗРИТЕЛЬНЫЙ', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
                             }
-                        } else if (score >= 29 ){
-                            statusScore = {
-                                color: 'gold',
-                                label:  `${score} AF - СРЕДНИЙ РИСК`
-                            }
-                        } else {
-                            statusScore = {
-                                color: 'green',
-                                label:  `${score} AF - НИЗКИЙ РИСК`
-                            }
-                        }
+                        };
 
-                        const statusMap = ANTI_FRAUD_CHECK_STATUS
+
                         const style = statusMap[val] || statusMap.wait;
 
                         return (
@@ -119,26 +128,26 @@ export default function AntiFraudHistoryPage() {
                                 style={{gap: '5px'}}
                             >
                                 <Tag
-                                    icon={style.icon}
+                                    icon={style?.icon}
                                     className='fw-bold m-0 text-center'
-                                    color={style.color}
+                                    color={style?.color}
                                 >
-                                    {style.label}
+                                    {style?.label ?? val}
                                 </Tag>
 
                                 <div className="d-flex align-items-center">
                                     <Badge
-                                        color={statusScore.color}
+                                        color='green'
                                         className='me-2'
                                     />
                                     <Text
                                         type="secondary"
-                                        className='fw-medium'
+                                        className='fw-medium d-flex justify-content-between w-100'
                                         style={{
                                             fontSize: '13px',
                                         }}
                                     >
-                                        {statusScore.label}
+                                        <span>УР. ДОВЕРИЯ</span>  <span> {profile.trust_score} / 100</span>
                                     </Text>
                                 </div>
                             </div>
@@ -146,9 +155,9 @@ export default function AntiFraudHistoryPage() {
                     }
                 },
                 {
-                    title: "Дата",
-                    dataIndex: "createdAt",
-                    width: "160px",
+                    title: "Последний платёж",
+                    dataIndex: "last_payment_at",
+                    width: "150px",
                     render: (date) => {
                         return (
                             <Space className="text-secondary">
@@ -159,43 +168,37 @@ export default function AntiFraudHistoryPage() {
                             </Space>
                         );
                     }
+                },
+                {
+                    width: '50px',
+                    render: (_, r) => (
+                        <ActionButtons
+                            {...r}
+                            buttonsLinks={{
+                                editRoute: {
+                                    label: 'Изменить',
+                                    action: (id) => {
+                                        form.setFieldsValue({...prepareFormValues(r), id: id});
+                                        setIsModalOpen(true);
+                                    }
+                                },
+                            }}
+                            dropdownOpen={openDropdownId === r.id}
+                            setDropdownOpen={(o) => setOpenDropdownId(o ? r.id : null)}
+                        />
+                    )
                 }
             ];
         },
-        [pagination, dictionaries.services, token.colorPrimary]
+        [pagination, dictionaries.services, token.colorPrimary, openDropdownId]
     );
 
     return (
         <ProtectedElement allowedPermissions={"access_management"}>
             <Head>
-                <title>Аудит Антифрод</title>
+                <title>Клиенты Антифрод</title>
             </Head>
             <div className="container-fluid py-4">
-                <div
-                    className="d-flex justify-content-between align-items-center mb-4 p-4 shadow-sm border-primary"
-                    style={{
-                        borderRadius: "1rem",
-                        borderLeft: "5px solid #4c3a75",
-                        backgroundColor: "#fff"
-                    }}
-                >
-                    <div className="d-flex align-items-center">
-                        <div className="bg-primary text-white me-3 shadow-sm" style={{
-                            padding: "1rem",
-                            borderRadius: "0.75rem"
-                        }}>
-                            <FontAwesomeIcon icon={faShieldHalved} size="2x"/>
-                        </div>
-                        <div>
-                            <Title level={3} className="m-0">
-                                Мониторинг безопасности Антифрод
-                            </Title>
-                            <Text type="secondary">
-                                Анализ транзакций и подозрительной активности
-                            </Text>
-                        </div>
-                    </div>
-                </div>
 
                 <FilterForm onSearch={getHistory} loading={loading} dictionaries={dictionaries}/>
 
@@ -220,13 +223,11 @@ export default function AntiFraudHistoryPage() {
                         expandableContent={
                             (record) => {
                                 return (
-                                    <PaymentRulesDetails
+                                    <ProfileDetails
                                         record={record}
                                         session={session}
-                                        servicesList={dictionaries.services}
-                                        dealersList={dictionaries.dealers}
                                         apparatsList={dictionaries.apparats}
-                                        serversList={dictionaries.servers}
+                                        token={token}
                                     />
                                 );
                             }
@@ -241,6 +242,21 @@ export default function AntiFraudHistoryPage() {
                     />
                 </Card>
             </div>
+            <RuleFormModal
+                open={isModalOpen}
+                onCancel={() => {
+                    setIsModalOpen(false);
+                }}
+                onFinish={(values) => {
+                    handleSaveRule(values, {
+                        onSuccess: () => {
+                            setIsModalOpen(false);
+                            form.resetFields();
+                        }
+                    });
+                }}
+                form={form}
+            />
         </ProtectedElement>
     );
 }

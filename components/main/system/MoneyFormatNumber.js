@@ -1,4 +1,4 @@
-export function MoneyFormatNumber(num, formatType = 'short') {
+export function MoneyFormatNumber(num, formatType = 'short' | 'full') {
     // Функция усечения числа до указанного количества знаков после запятой
     function truncate(number, digits) {
         const factor = Math.pow(10, digits);

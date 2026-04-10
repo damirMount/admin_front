@@ -1,0 +1,136 @@
+.af-whitelist-panel {
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.af-panel-section {
+    padding: 20px;
+}
+
+.af-panel-section.main-info {
+    background: linear-gradient(90deg, #fafafa 0%, #ffffff 100%);
+    border-right: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+}
+
+.af-status-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    gap: 12px;
+}
+
+/* Красивый бейдж статуса */
+.af-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 11px;
+    width: fit-content;
+}
+
+.af-status-badge.trusted {
+    background: #f6ffed;
+    color: #389e0d;
+    border: 1px solid #b7eb8f;
+}
+
+.af-status-badge.new {
+    background: #f6ffed;
+    color: #389e0d;
+    border: 1px solid #b7eb8f;
+}
+
+.af-status-badge.regular {
+    background: #ffffff;
+    color: #137acf;
+    border: 1px solid #9ebdff;
+}
+
+.af-status-badge.probation {
+    background: #fff1f0;
+    color: #cf7713;
+    border: 1px solid #ffc69e;
+}
+
+.af-status-badge.blocked {
+    background: #fff1f0;
+    color: #cf1322;
+    border: 1px solid #ffa39e;
+}
+
+.af-tiny-label {
+    display: block;
+    font-size: 9px;
+    color: #aaaaaa; /* Сделали чуть светлее */
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 0px; /* Убрали отступ, чтобы "прижать" к значению */
+    line-height: 1.2;
+}
+
+.af-score-display Title small {
+    font-size: 12px;
+    color: #bfbfbf;
+    margin-left: 4px;
+}
+
+.af-metric-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 32px; /* Фиксированная высота как у иконки для выравнивания */
+}
+
+/* Стили метрик */
+.af-metric {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.af-metric-icon {
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    background: #f0f7ff;
+    color: #1890ff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.af-metric-value {
+    font-size: 16px; /* Чуть уменьшили для баланса */
+    color: #262626;
+    line-height: 1.2;
+}
+
+.af-id-tag {
+    font-size: 11px;
+    color: #bfbfbf;
+    background: #f4f4f4;
+    border: 1px solid #f0f0f0;
+    padding: 0px 4px;
+    border-radius: 3px;
+    font-family: 'Roboto Mono', monospace; /* Моноширинный шрифт для ID выглядит круче */
+}
+
+/* Эффект при наведении на всю панель */
+.af-whitelist-panel:hover {
+    border-color: #d9d9d9;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}

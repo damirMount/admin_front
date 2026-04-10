@@ -114,7 +114,6 @@ tr, td, table, tbody, th, thead, tfoot {
 }
 
 .ant-table ul li::before {
-    content: "•";
     margin-left: 5px; /* контролируй расстояние */
     font-size: 15px;
     display: inline-block;

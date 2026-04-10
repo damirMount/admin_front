@@ -4,6 +4,7 @@ import {faEllipsis} from '@fortawesome/free-solid-svg-icons';
 import DataRemover from '../../database/DataRemover';
 import Link from 'next/link';
 import {Dropdown} from 'antd';
+import dayjs from "dayjs";
 
 const ActionButtons = ({
                            buttonsLinks = {},
@@ -69,19 +70,19 @@ const ActionButtons = ({
                         {createdAt && (
                             <div className="d-flex flex-column justify-content-start">
                                 <small className="text-secondary">Создано:</small>
-                                <small>{createdAt}</small>
+                                <small>{createdAt ? dayjs(createdAt).format("DD.MM.YY HH:mm:ss") : "-"}</small>
                             </div>
                         )}
                         {updatedAt && (
                             <div className="d-flex mt-2 flex-column justify-content-start">
                                 <small className="text-secondary">Последнее изменение:</small>
-                                <small>{updatedAt}</small>
+                                <small>{updatedAt ? dayjs(updatedAt).format("DD.MM.YY HH:mm:ss") : "-"}</small>
                             </div>
                         )}
                         {deletedAt && (
                             <div className="d-flex mt-2 flex-column justify-content-start">
                                 <small className="text-secondary">Удалено:</small>
-                                <small>{deletedAt}</small>
+                                <small>{deletedAt ? dayjs(deletedAt).format("DD.MM.YY HH:mm:ss") : "-"}</small>
                             </div>
                         )}
                     </div>

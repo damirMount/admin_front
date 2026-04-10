@@ -55,6 +55,8 @@ export const ANTIFRAUD_RULES_UPDATE_ORDER_API = `${baseURL}/antiFraud/rules/orde
 export const GET_ANTIFRAUD_HISTORY_API = `${baseURL}/antiFraud/history`
 export const GET_ANTIFRAUD_HISTORY_DETAIL_API = `${baseURL}/antiFraud/history`
 export const ANTIFRAUD_OPERATOR_ACTION_API = `${baseURL}/antiFraud/operator/action`
+export const GET_ANTIFRAUD_PROFILE_API = `${baseURL}/antiFraud/profiles`
+export const GET_ANTIFRAUD_PROFILE_PAYMENTS_API = `${baseURL}/antiFraud/profiles/payments`
 
 export const GET_DEALER_BALANCE_API = `${baseURL}/dealer/getBalance`
 export const GET_DEALER_CREDIT_API = `${baseURL}/dealer/getCredit`

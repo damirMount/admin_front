@@ -1,4 +1,8 @@
 import {TERMINAL_TYPES} from "../../../main/payments/PaymentsConstants";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faDisplay, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faClock} from "@fortawesome/free-regular-svg-icons";
+import React from "react";
 
 export const ACTION_MAP = {
     'add': '➕ Начислить баллы',
@@ -85,13 +89,13 @@ export const SUBJECTS = {
             },
         ]
     },
-    whitelist: {
-        label: 'Белый список',
+    clients: {
+        label: 'Клиент',
         fields: [
             {
                 value: 'status', label: 'Статус клиента', ops: ['=='], fields: [
                     {value: 'NEW', label: 'Новый'},
-                    {value: 'NORMAL', label: 'Обычный'},
+                    {value: 'REGULAR', label: 'Постоянный'},
                     {value: 'TRUSTED', label: 'Доверенный'},
                     {value: 'PROBATION', label: 'Подозрительный'},
                     {value: 'BLOCKED', label: 'Заблокированный'},
@@ -149,3 +153,26 @@ export const TIME_WINDOWS = [
         label: '30 дней'
     }
 ];
+
+export const ANTI_FRAUD_CHECK_STATUS = {
+    allow: {
+        color: 'green-inverse',
+        label: 'Разрешён системой', icon: <FontAwesomeIcon icon={faDisplay} className="me-2"/>,
+    },
+    deny: {
+        color: 'red-inverse',
+        label: 'Отклонён системой', icon: <FontAwesomeIcon icon={faDisplay} className="me-2"/>
+    },
+    wait: {
+        color: '#838585',
+        label: 'В ожидании проверки', icon: <FontAwesomeIcon icon={faClock} className="me-2"/>
+    },
+    approve: {
+        color: 'blue',
+        label: 'Разрешён оператором', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
+    },
+    reject: {
+        color: 'volcano',
+        label: 'Отклонён оператором', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
+    }
+};

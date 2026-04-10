@@ -15,7 +15,7 @@ import {
 import {faEnvelopeOpen, faFileLines} from "@fortawesome/free-regular-svg-icons";
 import Link from "next/link";
 import {
-    ACQUIRING_URL, ANTI_FRAUD_HISTORY_URL, ANTI_FRAUD_RULES_URL,
+    ACQUIRING_URL, ANTI_FRAUD_HISTORY_URL, ANTI_FRAUD_PROFILES_URL, ANTI_FRAUD_RULES_URL,
     DATA_UTILS_TEST_URL,
     GSFR_UPDATE_URL,
     MAIN_PAGE_URL,
@@ -104,6 +104,7 @@ const SidebarTab = () => {
                     subMenu: [
                         {label: 'Алгоритмы проверки', link: ANTI_FRAUD_RULES_URL},
                         {label: 'Журнал аудита', link: ANTI_FRAUD_HISTORY_URL},
+                        {label: 'Список пользователей', link: ANTI_FRAUD_PROFILES_URL},
                     ],
                 },
                 {

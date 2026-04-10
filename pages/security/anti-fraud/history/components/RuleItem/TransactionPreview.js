@@ -4,23 +4,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import * as Icons from "@fortawesome/free-solid-svg-icons";
 import {MoneyFormatNumber} from "../../../../../../components/main/system/MoneyFormatNumber";
 import FormatDate from "../../../../../../components/main/system/FormatDate";
+import {findById} from "../../../../../../components/main/system/FindById";
 
 const {Text} = Typography;
 
 const TransactionPreview = ({payment, dealersList, apparatsList}) => {
-    const findById = (list, id) => {
-        if (!id || !list) {
-            {
-                return {};
-            }
-        }
 
-        return list.find((item) => {
-            {
-                return String(item.id) === String(id);
-            }
-        }) || {};
-    };
 
     const dealer = findById(dealersList, payment.id_region);
     const apparat = findById(apparatsList, payment.id_apparat);

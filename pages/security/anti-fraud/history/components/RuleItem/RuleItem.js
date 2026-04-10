@@ -43,10 +43,10 @@ const formatValue = (val) => {
 
 const styles = {
     container: {
-        background: '#ffffff',
+        background: 'linear-gradient(90deg, #fafafa 0%, #ffffff 100%)',
         borderRadius: '8px',
         border: '1px solid #e8e8e8',
-        borderLeft: '4px solid #1890ff',
+        // borderLeft: '4px solid #1890ff',
         padding: '12px 16px',
         display: 'flex',
         alignItems: 'center',
@@ -252,6 +252,7 @@ const RuleItem = ({
             className={`af-rule-card ${isVisible ? 'shadow-md' : 'shadow-sm'}`}
             style={{
                 borderLeft: `4px solid ${isBlock ? '#ff4d4f' : '#1890ff'}`
+
             }}
         >
             <div
@@ -360,40 +361,39 @@ const RuleItem = ({
                                     style={{
                                         width: '160px'
                                     }}
-        onChange={(e) => {
-            setSearchTerm(e.target.value);
-        }}
-        prefix={<FontAwesomeIcon icon={Icons.faMagnifyingGlass} style={{
-            opacity: 0.3
-        }}/>}
-    />
-</div>
-    <div className="d-flex flex-wrap gap-2">
-        {filteredPayments.map((p) => {
-            console.log(p)
-            return (
-                <Popover
-                    key={p.id}
-                    content={<TransactionPreview payment={p} dealersList={dealersList} apparatsList={apparatsList}/>}
-                >
-                    <div className="af-payment-chip">#{p.id}</div>
-                </Popover>
-            );
-        })}
-    </div>
-</div>
-)}
+                                    onChange={(e) => {
+                                        setSearchTerm(e.target.value);
+                                    }}
+                                    prefix={<FontAwesomeIcon icon={Icons.faMagnifyingGlass} style={{
+                                        opacity: 0.3
+                                    }}/>}
+                                />
+                            </div>
+                            <div className="d-flex flex-wrap gap-2">
+                                {filteredPayments.map((p) => {
+                                    return (
+                                        <Popover
+                                            key={p.id}
+                                            content={<TransactionPreview payment={p} dealersList={dealersList}
+                                                                         apparatsList={apparatsList}/>}
+                                        >
+                                            <div className="af-payment-chip">#{p.id}</div>
+                                        </Popover>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
 
-    <div className="mt-4">
-        <CodeBlock code={{
-            details: rule.details
-        }} title="JSON данные" defaultVisible={false}/>
-    </div>
-</div>
-)}
-</Card>
-)
-    ;
+                    <div className="mt-4">
+                        <CodeBlock code={{
+                            details: rule.details
+                        }} title="JSON данные" defaultVisible={false}/>
+                    </div>
+                </div>
+            )}
+        </Card>
+    );
 };
 
 export default RuleItem;

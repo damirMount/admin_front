@@ -1,51 +1,23 @@
-import React, {
-    useEffect,
-    useMemo,
-    useState
-} from 'react';
-import {
-    Avatar,
-    Button,
-    Col,
-    Collapse,
-    Divider,
-    Input,
-    message,
-    Row,
-    Space,
-    Tag,
-    Timeline,
-    Typography
-} from 'antd';
-import {
-    FontAwesomeIcon
-} from "@fortawesome/react-fontawesome";
+import React, {useEffect, useMemo, useState} from 'react';
+import {Avatar, Button, Col, Collapse, Divider, Input, message, Row, Space, Tag, Timeline, Typography} from 'antd';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import * as Icons from "@fortawesome/free-solid-svg-icons";
-import {
-    faDiscord
-} from "@fortawesome/free-brands-svg-icons";
+import {faDiscord} from "@fortawesome/free-brands-svg-icons";
 
-import PaymentDescriptionCard from "../../../../../../components/main/payments/paymentDescription/PaymentDescriptionCard";
-import {
-    ANTIFRAUD_OPERATOR_ACTION_API,
-    GET_ANTIFRAUD_HISTORY_DETAIL_API
-} from "../../../../../../routes/api";
+import PaymentDescriptionCard
+    from "../../../../../../components/main/payments/paymentDescription/PaymentDescriptionCard";
+import {ANTIFRAUD_OPERATOR_ACTION_API, GET_ANTIFRAUD_HISTORY_DETAIL_API} from "../../../../../../routes/api";
 
 import FormatDate from "../../../../../../components/main/system/FormatDate";
 import './PaymentRulesDetails.css';
 import RuleSkeleton from "../RuleItem/RuleSkeleton";
 import RuleItem from "../RuleItem/RuleItem";
+import ProfileWhitelistCard
+    from "../../../../../../components/pages/security/anti-fraud/ProfileWhitelistCard/ProfileWhitelistCard";
 
-const {
-    Text,
-    Title
-} = Typography;
-const {
-    Panel
-} = Collapse;
-const {
-    TextArea
-} = Input;
+const {Text, Title} = Typography;
+const {Panel} = Collapse;
+const {TextArea} = Input;
 
 const getStatusConfig = (action) => {
     switch (action) {
@@ -116,22 +88,22 @@ const IterationWrapper = ({
                     key={String(entry.iteration)}
                     header={
                         <div className="af-iteration-header-v2">
-                            <Row justify="space-between" align="middle" style={{ width: '100%' }}>
+                            <Row justify="space-between" align="middle" style={{width: '100%'}}>
                                 <Col>
                                     <Space size={12}>
                                         <div className="af-header-shield-icon">
-                                            <FontAwesomeIcon icon={Icons.faShieldHalved} />
+                                            <FontAwesomeIcon icon={Icons.faShieldHalved}/>
                                         </div>
-                                        <Text strong style={{ fontSize: '14px' }}>Антифрод проверка</Text>
+                                        <Text strong style={{fontSize: '14px'}}>Антифрод проверка</Text>
                                         <Tag color="blue" bordered={false}>{entry.total_score} AF Баллы</Tag>
                                     </Space>
                                 </Col>
                                 <Col>
                                     <Space>
-                                        <Text type="secondary" style={{ fontSize: '11px' }}>
+                                        <Text type="secondary" style={{fontSize: '11px'}}>
                                             {FormatDate(entry.createdAt)}
                                         </Text>
-                                        <Tag color={status.color} style={{ fontWeight: 'bold', margin: 0 }}>
+                                        <Tag color={status.color} style={{fontWeight: 'bold', margin: 0}}>
                                             {status.text}
                                         </Tag>
                                     </Space>
@@ -140,7 +112,17 @@ const IterationWrapper = ({
                         </div>
                     }
                 >
-                    <div className="af-iteration-content" style={{ paddingTop: '16px' }}>
+                    <div className="af-iteration-content">
+                        <Divider plain orientation="left">
+                            <Space>
+                                <FontAwesomeIcon icon={Icons.faUserShield} style={{color: '#1890ff'}}/>
+                                <Text strong>Данные по клиенту на момент проверки</Text>
+                            </Space>
+                        </Divider>
+
+                        <ProfileWhitelistCard client={entry.runtime_snapshot['profile']}/>
+
+                        <Divider>Сработавшие правила</Divider>
                         {rules.map(
                             (rule, idx) => {
                                 return (
@@ -156,7 +138,7 @@ const IterationWrapper = ({
                             }
                         )}
 
-                        {entry.runtime_snapshot?.[0] && (
+                        {entry.runtime_snapshot['oper'] && (
                             <div className="mt-4">
                                 <Collapse ghost className="af-snapshot-collapse">
                                     <Panel
@@ -165,17 +147,17 @@ const IterationWrapper = ({
                                                 <Space>
                                                     <FontAwesomeIcon
                                                         icon={Icons.faHistory}
-                                                        style={{ fontSize: '10px', color: '#8c8c8c' }}
+                                                        style={{fontSize: '10px', color: '#8c8c8c'}}
                                                     />
-                                                    <Text type="secondary" style={{ fontSize: '12px' }}>
+                                                    <Text type="secondary" style={{fontSize: '12px'}}>
                                                         Данные платежа на момент проверки (Snapshot)
                                                     </Text>
                                                 </Space>
                                                 <Space>
                                                     <Text
                                                         type="secondary"
-                                                        copyable={{ text: String(entry.id) }}
-                                                        style={{ fontSize: '12px' }}
+                                                        copyable={{text: String(entry.id)}}
+                                                        style={{fontSize: '12px'}}
                                                     >
                                                         ID {entry.id}
                                                     </Text>
@@ -186,7 +168,7 @@ const IterationWrapper = ({
                                     >
                                         <div className="af-snapshot-card-container">
                                             <PaymentDescriptionCard
-                                                record={entry.runtime_snapshot?.[0]}
+                                                record={entry.runtime_snapshot['oper']}
                                                 servicesList={servicesList}
                                                 dealersList={dealersList}
                                                 apparatsList={apparatsList}
@@ -229,7 +211,7 @@ const PaymentRulesDetails = ({
         setLoading(true);
         try {
             const response = await fetch(`${GET_ANTIFRAUD_HISTORY_DETAIL_API}/${record.id_payment}`, {
-                headers: { 'Authorization': `Bearer ${session?.accessToken}` }
+                headers: {'Authorization': `Bearer ${session?.accessToken}`}
             });
 
             if (response.ok) {
@@ -306,17 +288,19 @@ const PaymentRulesDetails = ({
             if (payment) {
                 items.push(
                     {
-                        dot: <FontAwesomeIcon icon={Icons.faCirclePlay} style={{ fontSize: '16px', color: '#bfbfbf' }} />,
+                        dot: <FontAwesomeIcon icon={Icons.faCirclePlay} style={{fontSize: '16px', color: '#bfbfbf'}}/>,
                         children: (
                             <div
                                 className="af-compact-node mt-2 d-flex justify-content-between"
-                                style={{ marginLeft: '10px' }}
+                                style={{marginLeft: '10px'}}
                             >
                                 <div>
                                     <Text type="secondary">Платёж поступил: </Text>
                                     <Text strong> {FormatDate(payment.time)}</Text>
                                 </div>
-                                <Button size="small" onClick={() => { setExpandAll(!expandAll); }}>
+                                <Button size="small" onClick={() => {
+                                    setExpandAll(!expandAll);
+                                }}>
                                     {expandAll ? 'Свернуть всё' : 'Развернуть всё'}
                                 </Button>
                             </div>
@@ -356,17 +340,17 @@ const PaymentRulesDetails = ({
                             dot: (
                                 <Avatar
                                     size={26}
-                                    style={{ backgroundColor: isDeny ? '#ff4d4f' : (isWait ? '#faad14' : '#52c41a') }}
+                                    style={{backgroundColor: isDeny ? '#ff4d4f' : (isWait ? '#faad14' : '#52c41a')}}
                                     icon={
                                         <FontAwesomeIcon
                                             icon={isDeny ? Icons.faBan : (isWait ? Icons.faHourglassHalf : Icons.faCircleCheck)}
-                                            style={{ fontSize: '14px', color: '#ffffff' }}
+                                            style={{fontSize: '14px', color: '#ffffff'}}
                                         />
                                     }
                                 />
                             ),
                             children: (
-                                <div style={{ marginLeft: '10px', marginBottom: '20px', marginTop: '-10px' }}>
+                                <div style={{marginLeft: '10px', marginBottom: '20px', marginTop: '-10px'}}>
                                     <Space direction="vertical" size={0}>
                                         <Text
                                             strong
@@ -377,7 +361,7 @@ const PaymentRulesDetails = ({
                                         >
                                             {isDeny ? 'Платёж отклонён системой' : (isWait ? 'Платёж приостановлен' : 'Проверка пройдена')}
                                         </Text>
-                                        <Text type="secondary" style={{ fontSize: '11px' }}>
+                                        <Text type="secondary" style={{fontSize: '11px'}}>
                                             {isDeny
                                                 ? 'Сработали критические правила блокировки'
                                                 : (isWait ? 'Требуется проверка оператором' : 'Уровень риска в норме')}
@@ -416,33 +400,34 @@ const PaymentRulesDetails = ({
                                         dot: (
                                             <Avatar
                                                 size={26}
-                                                icon={<FontAwesomeIcon icon={currentIcon} />}
-                                                style={{ backgroundColor: statusColor }}
+                                                icon={<FontAwesomeIcon icon={currentIcon}/>}
+                                                style={{backgroundColor: statusColor}}
                                             />
                                         ),
                                         children: (
                                             <div
                                                 className={`af-operator-card compact ${cardClass}`}
-                                                style={{ marginLeft: '10px' }}
+                                                style={{marginLeft: '10px'}}
                                                 key={`op-${idx}`}
                                             >
                                                 <div className='d-flex justify-content-between align-items-start'>
                                                     <div className="af-op-content">
                                                         {isBot ? (
                                                             <div className='d-flex flex-column'>
-                                                                <Text strong style={{ color: statusColor }}>
+                                                                <Text strong style={{color: statusColor}}>
                                                                     Уведомление в Discord
                                                                 </Text>
-                                                                <Text type="secondary" style={{ fontSize: '11px' }}>
+                                                                <Text type="secondary" style={{fontSize: '11px'}}>
                                                                     ID сообщения {action.message_id || 'NaN'}
                                                                 </Text>
                                                             </div>
                                                         ) : (
                                                             <>
-                                                                <Text strong style={{ color: statusColor }}>
+                                                                <Text strong style={{color: statusColor}}>
                                                                     {isReject ? 'Отклонено оператором' : 'Разрешено оператором'}
                                                                 </Text>
-                                                                <Text type="secondary" style={{ fontSize: '11px', marginLeft: '8px' }}>
+                                                                <Text type="secondary"
+                                                                      style={{fontSize: '11px', marginLeft: '8px'}}>
                                                                     {action.operator_name}
                                                                 </Text>
                                                             </>
@@ -453,7 +438,7 @@ const PaymentRulesDetails = ({
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <Text type="secondary" style={{ fontSize: '11px' }}>
+                                                    <Text type="secondary" style={{fontSize: '11px'}}>
                                                         {action.at}
                                                     </Text>
                                                 </div>
@@ -479,39 +464,45 @@ const PaymentRulesDetails = ({
                                     dot: (
                                         <Avatar
                                             size={26}
-                                            icon={<FontAwesomeIcon icon={Icons.faUserPen} />}
-                                            style={{ backgroundColor: '#faad14' }}
+                                            icon={<FontAwesomeIcon icon={Icons.faUserPen}/>}
+                                            style={{backgroundColor: '#faad14'}}
                                         />
                                     ),
                                     children: (
-                                        <div className="af-operator-action-form" style={{ marginLeft: '10px' }}>
-                                            <Text strong style={{ display: 'block', marginBottom: '8px' }}>
+                                        <div className="af-operator-action-form" style={{marginLeft: '10px'}}>
+                                            <Text strong style={{display: 'block', marginBottom: '8px'}}>
                                                 Ожидание решения оператора
                                             </Text>
                                             <TextArea
                                                 placeholder="Введите обоснование решения..."
                                                 rows={2}
                                                 value={comment}
-                                                onChange={(e) => { setComment(e.target.value); }}
-                                                style={{ marginBottom: '12px', fontSize: '13px' }}
+                                                onChange={(e) => {
+                                                    setComment(e.target.value);
+                                                }}
+                                                style={{marginBottom: '12px', fontSize: '13px'}}
                                             />
                                             <Space>
                                                 <Button
                                                     type="primary"
                                                     size="small"
-                                                    icon={<FontAwesomeIcon icon={Icons.faCheck} />}
+                                                    icon={<FontAwesomeIcon icon={Icons.faCheck}/>}
                                                     loading={submitting}
-                                                    style={{ backgroundColor: '#52c41a', border: 'none' }}
-                                                    onClick={() => { handleAction('allow', entry.id); }}
+                                                    style={{backgroundColor: '#52c41a', border: 'none'}}
+                                                    onClick={() => {
+                                                        handleAction('allow', entry.id);
+                                                    }}
                                                 >
                                                     Разрешить платеж
                                                 </Button>
                                                 <Button
                                                     danger
                                                     size="small"
-                                                    icon={<FontAwesomeIcon icon={Icons.faXmark} />}
+                                                    icon={<FontAwesomeIcon icon={Icons.faXmark}/>}
                                                     loading={submitting}
-                                                    onClick={() => { handleAction('deny', entry.id); }}
+                                                    onClick={() => {
+                                                        handleAction('deny', entry.id);
+                                                    }}
                                                 >
                                                     Отклонить
                                                 </Button>
@@ -539,12 +530,12 @@ const PaymentRulesDetails = ({
             <div className="af-timeline-scroll-area mt-4">
                 {loading && history.length === 0 ? (
                     <div className="p-3">
-                        <RuleSkeleton />
-                        <RuleSkeleton />
-                        <RuleSkeleton />
+                        <RuleSkeleton/>
+                        <RuleSkeleton/>
+                        <RuleSkeleton/>
                     </div>
                 ) : (
-                    <Timeline className="af-modern-timeline-v2" items={timelineItems} />
+                    <Timeline className="af-modern-timeline-v2" items={timelineItems}/>
                 )}
             </div>
 

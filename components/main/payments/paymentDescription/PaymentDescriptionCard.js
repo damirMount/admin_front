@@ -19,6 +19,7 @@ import FormatDate from "../../system/FormatDate";
 import CodeBlock from "../../DataDisplay/CodeBlock/CodeBlock";
 import {Account2str} from "../../system/Account2str";
 import {ANTI_FRAUD_HISTORY_URL} from "../../../../routes/web";
+import {findById} from "../../system/FindById";
 
 const {Text, Title} = Typography;
 
@@ -46,14 +47,7 @@ const PaymentDescriptionCard = ({
                                 }) => {
     const info = useMemo(
         () => {
-            const findById = (list, id) => {
-                return list?.find(
-                    (item) => {
-                        return Number(item.id) === id;
-                    }
-                ) || {};
-            };
-            console.log(record)
+
             const service = findById(servicesList, Number(record.id_service));
             const dealer = findById(dealersList, Number(record.id_region));
             const server = findById(serversList, Number(record.id_bserver));
