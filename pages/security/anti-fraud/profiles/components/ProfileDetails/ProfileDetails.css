@@ -32,3 +32,6 @@
     transition: transform 0.15s ease-out !important;
     pointer-events: none !important;
 }
+.money-prefix {
+    text-underline-offset: 2px;
+}

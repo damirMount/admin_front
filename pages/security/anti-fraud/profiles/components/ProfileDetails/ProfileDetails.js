@@ -62,7 +62,7 @@ const ProfileDetails = ({record, session, apparatsList, token}) => {
             render: (sum) => (
                 <span className="fw-medium">
                     {MoneyFormatNumber(sum, 'full')}
-                    <span className='ms-1 text-decoration-underline small'>c</span>
+                    <span className='ms-1 text-decoration-underline small money-prefix'>c</span>
                 </span>
             )
         },
@@ -157,17 +157,17 @@ const ProfileDetails = ({record, session, apparatsList, token}) => {
                     </Card>
                 </Col>
                 <Col span={12}>
-                    <Card title="Анализ сумм">
+                    <Card title="Анализ сумм" size="small">
                         <AmountRangesChart payments={payments} token={token}/>
                     </Card>
                 </Col>
                 <Col span={12}>
-                    <Card title="По точкам">
+                    <Card title="По точкам" size="small">
                         <TerminalDistributionChart payments={payments} apparatsList={apparatsList} token={token}/>
                     </Card>
                 </Col>
                 <Col span={24}>
-                    <Card title="Динамика">
+                    <Card title="Динамика" size="small">
                         <PaymentTimelineChart payments={payments} token={token}/>
                     </Card>
                 </Col>
