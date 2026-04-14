@@ -10,6 +10,9 @@ import {SessionProvider} from "next-auth/react";
 import {AuthProvider} from "../contexts/AccessContext";
 import authCheck from "../components/hocs/authCheck";
 import "dayjs/locale/ru";
+import {FloatButton} from "antd";
+import {ArrowUpOutlined} from "@ant-design/icons";
+
 function MyApp({Component, pageProps}) {
     const AuthCheckedComponent = authCheck(Component);
 
@@ -29,7 +32,9 @@ function MyApp({Component, pageProps}) {
                         <AuthCheckedComponent {...pageProps} />
                     </AuthProvider>
                 </AlertProvider>
+                <FloatButton.BackTop icon={<ArrowUpOutlined />} visibilityHeight={400} />
             </SessionProvider>
+
         </div>
     );
 }

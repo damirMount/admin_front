@@ -323,7 +323,7 @@ const PaymentDescriptionCard = ({
 
                     <Col xs={24} sm={15}>
                         <div className="p-3 rounded-3 h-100 bg-light border">
-                            <Text type="secondary" className="label-medium" style={{textTransform: 'uppercase'}}>
+                            <Text type="secondary" className="label-medium">
                                 <Space><FontAwesomeIcon icon={faLayerGroup}/> Дилер</Space>
                             </Text>
                             <div className="mt-2 mb-2 d-flex flex-column gap-1 mb-3">
