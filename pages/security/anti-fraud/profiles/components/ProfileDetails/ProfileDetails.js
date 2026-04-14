@@ -1,10 +1,9 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Card, Col, Divider, message, Row, Statistic, Tag, Typography} from 'antd';
+import {Card, Col, Collapse, Divider, message, Row, Space, Statistic, Tag, Typography} from 'antd';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChartLine, faWallet} from "@fortawesome/free-solid-svg-icons";
+import {faChartLine, faClockRotateLeft, faWallet} from "@fortawesome/free-solid-svg-icons";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 import dayjs from "dayjs";
-
 // API & Components
 import {GET_ANTIFRAUD_PROFILE_PAYMENTS_API} from "../../../../../../routes/api";
 import ProfileWhitelistCard
@@ -20,6 +19,9 @@ import WeeklyActivityChart from "../../../../../../components/main/charts/Weekly
 import AmountRangesChart from "../../../../../../components/main/charts/AmountRangesChart";
 import TerminalDistributionChart from "../../../../../../components/main/charts/TerminalDistributionChart";
 import PaymentTimelineChart from "../../../../../../components/main/charts/PaymentTimelineChart";
+import Preloader from "../../../../../../components/main/system/Preloader";
+
+const {Panel} = Collapse;
 
 const {Text, Title} = Typography;
 
@@ -114,9 +116,16 @@ const ProfileDetails = ({record, session, apparatsList, token}) => {
         fetchHistory();
     }, [fetchHistory]);
 
+    if (loading) {
+        return (
+            <div className="p-3">
+                <Preloader/>
+            </div>)
+    }
+
     return (
         <div className="p-3">
-            <ProfileWhitelistCard client={record}/>
+            <ProfileWhitelistCard client={record} session={session}/>
 
             <Divider orientation="left" plain className="my-4">
                 <Title level={5} className="m-0">Аналитические сводки</Title>
@@ -147,40 +156,53 @@ const ProfileDetails = ({record, session, apparatsList, token}) => {
                     </div>
                 </Col>
                 <Col span={11}>
-                    <Card title="Активность (24ч)" size="small">
+                    <Card title="Активность (24ч)" className='shadow-sm' size="small">
                         <HourlyActivityChart payments={payments} token={token}/>
                     </Card>
                 </Col>
                 <Col span={8}>
-                    <Card title="По дням недели" size="small">
+                    <Card title="По дням недели" className='shadow-sm' size="small">
                         <WeeklyActivityChart payments={payments} token={token}/>
                     </Card>
                 </Col>
                 <Col span={12}>
-                    <Card title="Анализ сумм" size="small">
+                    <Card title="Анализ сумм" className='shadow-sm' size="small">
                         <AmountRangesChart payments={payments} token={token}/>
                     </Card>
                 </Col>
                 <Col span={12}>
-                    <Card title="По точкам" size="small">
+                    <Card title="По точкам" className='shadow-sm' size="small">
                         <TerminalDistributionChart payments={payments} apparatsList={apparatsList} token={token}/>
                     </Card>
                 </Col>
                 <Col span={24}>
-                    <Card title="Динамика" size="small">
+                    <Card title="Динамика" className='shadow-sm' size="small">
                         <PaymentTimelineChart payments={payments} token={token}/>
                     </Card>
                 </Col>
             </Row>
-
-            <SmartTable
-                loading={loading}
-                data={payments}
-                size="small"
-                columns={columns}
-                onChange={setPagination}
-                pagination={{position: ['rightBottom'], defaultPageSize: 10}}
-            />
+            <Collapse ghost className="af-snapshot-collapse mt-3">
+                <Panel
+                    header={
+                        <div className='d-flex justify-content-start align-content-center'>
+                            <Space>
+                                <FontAwesomeIcon icon={faClockRotateLeft} className="fs-6"/>
+                                <Title level={5} className="m-0">История платежей</Title>
+                            </Space>
+                        </div>
+                    }
+                    key="history"
+                >
+                    <SmartTable
+                        loading={loading}
+                        data={payments}
+                        size="small"
+                        columns={columns}
+                        onChange={setPagination}
+                        pagination={{position: ['rightBottom'], defaultPageSize: 10}}
+                    />
+                </Panel>
+            </Collapse>
         </div>
     );
 };

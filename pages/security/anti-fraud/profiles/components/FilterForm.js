@@ -1,15 +1,24 @@
-import React, { useEffect, useMemo } from "react";
-import {Badge, Button, Card, Col, Form, Input, Row, Select, Space, theme, Typography} from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEraser, faFilter, faMagnifyingGlass, faSearch, faSitemap, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import React, {useEffect, useMemo} from "react";
+import {Badge, Button, Card, Col, DatePicker, Divider, Form, Input, Row, Select, Space, Typography} from "antd";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {
+    faCalendarDays,
+    faEraser,
+    faFilter,
+    faMagnifyingGlass,
+    faSearch,
+    faSitemap,
+    faTriangleExclamation
+} from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
-import { useRouter } from "next/router";
-import { getDefaults } from "../hooks/useAntiFraudProfiles";
-import { RISK_LEVELS } from "../../../../../components/main/payments/PaymentsConstants";
+import {useRouter} from "next/router";
+import {getDefaults} from "../hooks/useAntiFraudProfiles";
+import {USERS_TRUST_STATUS} from "../../../../../components/pages/security/anti-fraud/constants";
 
-const { Text } = Typography;
+const {Text} = Typography;
+const {RangePicker} = DatePicker;
 
-export default function FilterForm({ onSearch, loading, dictionaries }) {
+export default function FilterForm({onSearch, loading, dictionaries}) {
     const [form] = Form.useForm();
     const router = useRouter();
     const formValues = Form.useWatch([], form);
@@ -22,25 +31,24 @@ export default function FilterForm({ onSearch, loading, dictionaries }) {
             if (key === "date_range" && Array.isArray(value)) {
                 query.start = value[0].toISOString();
                 query.end = value[1].toISOString();
-            } else if (key === "score_range" && Array.isArray(value)) {
-                query.score_range = value.join(",");
+            } else if (key === "status" && Array.isArray(value)) {
+                query.status = value.join(",");
             } else {
                 query[key] = value;
             }
         });
 
-        router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
+        router.push({pathname: router.pathname, query}, undefined, {shallow: true});
     };
 
     useEffect(() => {
         if (router.isReady) {
-            const { start, end, score_range, ...rest } = router.query;
+            const {start, end, status, ...rest} = router.query;
             const currentFilters = {
                 ...rest,
                 id_service: rest.id_service ? Number(rest.id_service) : undefined,
-                status: rest.status !== undefined ? Number(rest.status) : undefined,
                 date_range: start && end ? [dayjs(start), dayjs(end)] : undefined,
-                score_range: score_range ? (Array.isArray(score_range) ? score_range : score_range.split(",")) : undefined,
+                status: status ? (Array.isArray(status) ? status : status.split(",")) : undefined,
             };
 
             form.setFieldsValue(currentFilters);
@@ -54,18 +62,30 @@ export default function FilterForm({ onSearch, loading, dictionaries }) {
 
         // Быстрая проверка на наличие любых заполненных полей, кроме дат и скора
         const hasBaseFields = Object.entries(formValues).some(([k, v]) =>
-            !["date_range", "score_range"].includes(k) && v !== undefined && v !== "" && v !== null
+            !["date_range", "status"].includes(k) && v !== undefined && v !== "" && v !== null
         );
 
-        const currentScore = (formValues.score_range || []).sort().join(",");
-        const defaultScore = (defaults.score_range || []).sort().join(",");
+        const currentScore = (formValues.status || []).sort().join(",");
+        const defaultScore = (defaults.status || []).sort().join(",");
 
         return hasBaseFields || currentScore !== defaultScore;
     }, [formValues]);
 
+    const handleQuickDate = (type) => {
+        const range = type === "today"
+            ? [dayjs().startOf("day"), dayjs().endOf("day")]
+            : [dayjs().subtract(1, "day").startOf("day"), dayjs().subtract(1, "day").endOf("day")];
+
+        form.setFieldsValue(
+            {
+                date_range: range
+            }
+        );
+    };
+
     const renderLabel = (icon, label) => (
         <Text strong>
-            <FontAwesomeIcon icon={icon} className="me-2 text-primary" />
+            <FontAwesomeIcon icon={icon} className="me-2 text-primary"/>
             {label}
         </Text>
     );
@@ -76,47 +96,109 @@ export default function FilterForm({ onSearch, loading, dictionaries }) {
                 <Row gutter={[24, 16]} align="bottom">
                     <Col xs={24} md={4}>
                         <Form.Item name="id" label={renderLabel(faSearch, "ID")} className="mb-0">
-                            <Input placeholder="№" allowClear />
+                            <Input placeholder="№" allowClear/>
                         </Form.Item>
                     </Col>
 
                     <Col xs={24} md={8}>
                         <Form.Item name="identifier" label={renderLabel(faFilter, "Реквизит")} className="mb-0">
-                            <Input placeholder="Телефон, карта, кошелек" allowClear />
+                            <Input placeholder="Телефон, карта, кошелек" allowClear/>
                         </Form.Item>
                     </Col>
 
                     <Col xs={24} sm={12}>
                         <Form.Item name="id_service" label={renderLabel(faSitemap, "Сервис")} className="mb-0">
-                            <Select showSearch placeholder="Все сервисы" allowClear
-                                    options={dictionaries.services.map(s => ({ label: s.name, value: s.id }))}
+                            <Select
+                                showSearch
+                                placeholder="Все сервисы"
+                                allowClear
+                                optionFilterProp="label"
+                                // Важно: если данных еще нет, показываем состояние загрузки или пустой массив
+                                loading={!dictionaries?.services}
+                                filterOption={(input, option) =>
+                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                }
+                                // Формируем опции только если массив существует
+                                options={useMemo(() =>
+                                    (dictionaries?.services || []).map(s => ({
+                                        label: `${s.id} | ${s.name}`,
+                                        // Гарантируем, что value — число, чтобы соответствовать Number() из useEffect
+                                        value: Number(s.id)
+                                    })), [dictionaries?.services])
+                                }
                             />
                         </Form.Item>
                     </Col>
 
-                    <Col xs={24} md={12}>
-                        <Form.Item name="score_range" label={renderLabel(faTriangleExclamation, "Статус")} className="mb-0">
-                            <Select mode="multiple" placeholder="Все статусы" allowClear
-                                    options={RISK_LEVELS.map(r => ({
-                                        value: r.value,
-                                        label: (
-                                            <Space size={4}>
-                                                <Badge color={r.color} /> {r.label}
-                                            </Space>
-                                        )
-                                    }))}
+                    <Col xs={24} md={10}>
+                        <Form.Item name="status" label={renderLabel(faTriangleExclamation, "Статус")}
+                                   className="mb-0">
+                            <Select mode="multiple" placeholder="Все статусы" allowClear maxTagCount={2}
+                                    options={Object.entries(USERS_TRUST_STATUS).map(([key, status]) => {
+                                        return {
+                                            value: key,
+                                            label: (
+                                                <Space size={4}>
+                                                    <Badge color={status.color || 'green'}/>
+                                                    <span className='ms-2'>{status.label}</span>
+                                                </Space>
+                                            )
+                                        };
+                                    })
+                                    }
                             />
                         </Form.Item>
                     </Col>
-
-                    <Col xs={24} md={12} className="d-flex justify-content-end gap-2">
+                    <Col xs={24} md={8} className="d-flex flex-column justify-content-end gap-2">
+                        <div className="d-flex justify-content-between mb-2">
+                            {renderLabel(faCalendarDays, "Период")}
+                            <Space split={<Divider type="vertical" style={{margin: "0 4px"}}/>} size={0}>
+                                <Button
+                                    type="link"
+                                    size="small"
+                                    className="p-0"
+                                    onClick={() => {
+                                        return handleQuickDate("today");
+                                    }}
+                                >
+                                    Сегодня
+                                </Button>
+                                <Button
+                                    type="link"
+                                    size="small"
+                                    className="p-0"
+                                    onClick={() => {
+                                        return handleQuickDate("yesterday");
+                                    }}
+                                >
+                                    Вчера
+                                </Button>
+                            </Space>
+                        </div>
+                        <Form.Item name="date_range" className="mb-0">
+                            <RangePicker
+                                style={{width: "100%"}}
+                                showTime={{format: "HH:mm"}}
+                                format="YYYY-MM-DD HH:mm"
+                                className="rounded-3"
+                                disabledDate={
+                                    (c) => {
+                                        return c && c > dayjs().endOf("day");
+                                    }
+                                }
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={6} className="d-flex justify-content-end gap-2">
                         {isFiltersChanged && (
-                            <Button icon={<FontAwesomeIcon icon={faEraser} />} onClick={() => form.setFieldsValue(getDefaults())}>
+                            <Button icon={<FontAwesomeIcon icon={faEraser}/>}
+                                    onClick={() => form.setFieldsValue(getDefaults())}>
                                 Сброс
                             </Button>
                         )}
-                        <Button type="primary" htmlType="submit" loading={loading} icon={<FontAwesomeIcon icon={faMagnifyingGlass} />}
-                                style={{ backgroundColor: "#4c3a75", borderColor: "#4c3a75" }} className="px-4"
+                        <Button type="primary" htmlType="submit" loading={loading}
+                                icon={<FontAwesomeIcon icon={faMagnifyingGlass}/>}
+                                style={{backgroundColor: "#4c3a75", borderColor: "#4c3a75"}} className="px-4"
                         >
                             Найти
                         </Button>

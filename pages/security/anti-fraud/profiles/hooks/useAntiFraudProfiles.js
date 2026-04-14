@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
-import dayjs from "dayjs";
-import {GET_ANTIFRAUD_HISTORY_API, GET_ANTIFRAUD_PROFILE_API} from "../../../../../routes/api";
+import {useCallback, useEffect, useState} from "react";
+import {GET_ANTIFRAUD_PROFILE_API} from "../../../../../routes/api";
 import fetchData from "../../../../../components/main/database/DataFetcher";
 
 export const getDefaults = () => ({
-    date_range: [dayjs().startOf("month"), dayjs().endOf("day")],
-    score_range: ["high", "medium"],
+    date_range: undefined,
+    score_range: undefined,
     id: undefined,
     identifier: undefined,
     status: undefined
@@ -29,7 +28,7 @@ const buildQueryParams = (values) => {
 function useAntiFraudProfiles(session, openNotification) {
     const [historyData, setHistoryData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [dictionaries, setDictionaries] = useState({ services: [], apparats: [] });
+    const [dictionaries, setDictionaries] = useState({services: [], apparats: []});
 
     const getHistory = useCallback(async (values = {}) => {
         if (!session?.accessToken) return;
@@ -37,7 +36,7 @@ function useAntiFraudProfiles(session, openNotification) {
         setLoading(true);
         try {
             const response = await fetch(`${GET_ANTIFRAUD_PROFILE_API}?${buildQueryParams(values)}`, {
-                headers: { Authorization: `Bearer ${session.accessToken}` }
+                headers: {Authorization: `Bearer ${session.accessToken}`}
             });
             const result = await response.json();
 
@@ -48,7 +47,7 @@ function useAntiFraudProfiles(session, openNotification) {
             }
         } catch (error) {
             setHistoryData([]);
-            openNotification({ type: "error", message: error.message });
+            openNotification({type: "error", message: error.message});
         } finally {
             setLoading(false);
         }
@@ -58,7 +57,8 @@ function useAntiFraudProfiles(session, openNotification) {
         if (!session?.accessToken || dictionaries.services.length > 0) return;
 
         const models = ["Service", "Apparat"];
-        Promise.all(models.map(model => fetchData({ model }, session)))
+
+        Promise.all(models.map(model => fetchData({model}, session)))
             .then(results => {
                 setDictionaries({
                     services: results[0]?.data || [],
@@ -68,7 +68,11 @@ function useAntiFraudProfiles(session, openNotification) {
             .catch(e => console.error("Ошибка словарей:", e));
     }, [session, dictionaries.services.length]);
 
-    return { historyData, loading, dictionaries, getHistory };
+    return {
+        historyData, loading, dictionaries, getHistory, refresh: () => {
+            return fetchInitialData(true);
+        }
+    };
 }
 
 export default useAntiFraudProfiles;

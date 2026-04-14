@@ -1,6 +1,6 @@
 import {TERMINAL_TYPES} from "../../../main/payments/PaymentsConstants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faDisplay, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faDisplay, faUser, faUserCheck, faUserPlus, faUserShield, faUserSlash} from "@fortawesome/free-solid-svg-icons";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 import React from "react";
 
@@ -175,4 +175,25 @@ export const ANTI_FRAUD_CHECK_STATUS = {
         color: 'volcano',
         label: 'Отклонён оператором', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
     }
+};
+export const USERS_TRUST_STATUS = {
+    TRUSTED: {
+        color: '#51c21a',
+        label: 'Доверенный', icon: <FontAwesomeIcon icon={faUserCheck}/>,
+    },
+    REGULAR: {
+        color: '#1677ff',
+        label: 'Обычный', icon: <FontAwesomeIcon icon={faUser}/>
+    },
+    PROBATION: {
+        color: 'volcano',
+        label: 'Подозрительный', icon: <FontAwesomeIcon icon={faUserShield}/>
+    },
+    BLOCKED: {
+        color: '#f5222d',
+        label: 'Заблокирован', icon: <FontAwesomeIcon icon={faUserSlash}/>
+    },
+    NEW: {
+        label: 'Новый', icon: <FontAwesomeIcon icon={faUserPlus}/>
+    },
 };

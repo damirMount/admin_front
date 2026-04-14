@@ -2,7 +2,7 @@ import React, {useMemo, useState} from "react";
 import Head from "next/head";
 import {Badge, Card, Space, Tag, theme, Typography} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faDisplay, faShieldHalved, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faShieldHalved} from "@fortawesome/free-solid-svg-icons";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 import {useSession} from "next-auth/react";
 import dayjs from "dayjs";
@@ -96,17 +96,17 @@ export default function AntiFraudHistoryPage() {
                         if (score >= 79) {
                             statusScore = {
                                 color: 'red',
-                                label:  `${score} AF - ВЫСОКИЙ РИСК`
+                                label: `${score} AF - ВЫСОКИЙ РИСК`
                             }
-                        } else if (score >= 29 ){
+                        } else if (score >= 29) {
                             statusScore = {
                                 color: 'gold',
-                                label:  `${score} AF - СРЕДНИЙ РИСК`
+                                label: `${score} AF - СРЕДНИЙ РИСК`
                             }
                         } else {
                             statusScore = {
                                 color: 'green',
-                                label:  `${score} AF - НИЗКИЙ РИСК`
+                                label: `${score} AF - НИЗКИЙ РИСК`
                             }
                         }
 

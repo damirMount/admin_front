@@ -2,7 +2,6 @@ import React, {useMemo, useState} from "react";
 import Head from "next/head";
 import {Badge, Card, Form, Space, Tag, theme, Typography} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faDisplay, faShieldHalved, faUser} from "@fortawesome/free-solid-svg-icons";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 import {useSession} from "next-auth/react";
 import dayjs from "dayjs";
@@ -16,7 +15,9 @@ import useAntiFraudProfiles from "./hooks/useAntiFraudProfiles";
 import FilterForm from "./components/FilterForm";
 import ActionButtons from "../../../../components/main/table/cell/ActionButtons";
 import {prepareFormValues} from "../../../../components/pages/security/anti-fraud/helpers";
-import RuleFormModal from "../rules/components/RuleFormModal/RuleFormModal";
+import {USERS_TRUST_STATUS} from "../../../../components/pages/security/anti-fraud/constants";
+import EditProfileModal from "./components/EditProfileModal";
+import useAntiFraudProfileActions from "./hooks/useAntiFraudProfileActions";
 
 const {Text, Title} = Typography;
 
@@ -27,8 +28,22 @@ export default function AntiFraudProfilePage() {
     const [form] = Form.useForm();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingClient, setEditingClient] = useState(null); // Добавили стейт для хранения данных клиента
     const [openDropdownId, setOpenDropdownId] = useState(null);
+
     const {historyData, loading, dictionaries, getHistory} = useAntiFraudProfiles(session, openNotification);
+    const {handleSaveProfile} = useAntiFraudProfileActions(session, openNotification, getHistory);
+
+    const onSave = async (values) => {
+        if (typeof handleSaveProfile === 'function') {
+            await handleSaveProfile({id: editingClient?.id, ...values}, {
+                onSuccess: () => {
+                    setIsModalOpen(false);
+                    setEditingClient(null);
+                }
+            });
+        }
+    };
     const [pagination, setPagination] = useState(
         {
             current: 1,
@@ -96,31 +111,8 @@ export default function AntiFraudProfilePage() {
                     dataIndex: "status",
                     width: "190px",
                     render: (val, profile) => {
-                        const statusMap = {
-                            TRUSTED: {
-                                color: 'green-inverse',
-                                label: 'ДОВЕРЯННЫЙ', icon: <FontAwesomeIcon icon={faDisplay} className="me-2"/>,
-                            },
-                            BLOCKED: {
-                                color: 'red-inverse',
-                                label: 'ЗАБЛОКИРОВАН', icon: <FontAwesomeIcon icon={faDisplay} className="me-2"/>
-                            },
-                            NEW: {
-                                color: '#8fb68c',
-                                label: 'НОВЫЙ КЛИЕНТ', icon: <FontAwesomeIcon icon={faClock} className="me-2"/>
-                            },
-                            REGULAR: {
-                                color: 'blue',
-                                label: 'ПОСТОЯННЫЙ', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
-                            },
-                            PROBATION: {
-                                color: 'volcano',
-                                label: 'ПОДОЗРИТЕЛЬНЫЙ', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
-                            }
-                        };
-
-
-                        const style = statusMap[val] || statusMap.wait;
+                        const statusMap = USERS_TRUST_STATUS;
+                        const style = statusMap[val] || statusMap.undefind;
 
                         return (
                             <div
@@ -129,10 +121,10 @@ export default function AntiFraudProfilePage() {
                             >
                                 <Tag
                                     icon={style?.icon}
-                                    className='fw-bold m-0 text-center'
+                                    className='fw-bold m-0 text-center text-uppercase'
                                     color={style?.color}
                                 >
-                                    {style?.label ?? val}
+                                    <span className='ms-2'>{style?.label ?? val}</span>
                                 </Tag>
 
                                 <div className="d-flex align-items-center">
@@ -147,7 +139,7 @@ export default function AntiFraudProfilePage() {
                                             fontSize: '13px',
                                         }}
                                     >
-                                        <span>УР. ДОВЕРИЯ</span>  <span> {profile.trust_score} / 100</span>
+                                        <span>УР. ДОВЕРИЯ</span> <span> {profile.trust_score} / 100</span>
                                     </Text>
                                 </div>
                             </div>
@@ -178,7 +170,11 @@ export default function AntiFraudProfilePage() {
                                 editRoute: {
                                     label: 'Изменить',
                                     action: (id) => {
+                                        // 1. Сохраняем данные записи в стейт
+                                        setEditingClient(r);
+                                        // 2. Заполняем поля формы
                                         form.setFieldsValue({...prepareFormValues(r), id: id});
+                                        // 3. Открываем модалку
                                         setIsModalOpen(true);
                                     }
                                 },
@@ -220,18 +216,17 @@ export default function AntiFraudProfilePage() {
                         size={"small"}
                         columns={columns}
                         onChange={setPagination}
-                        expandableContent={
-                            (record) => {
-                                return (
-                                    <ProfileDetails
-                                        record={record}
-                                        session={session}
-                                        apparatsList={dictionaries.apparats}
-                                        token={token}
-                                    />
-                                );
-                            }
-                        }
+                        expandableContent={(record) => {
+                            return (
+                                <ProfileDetails
+                                    key={`details-${record.id}`}
+                                    record={record}
+                                    session={session}
+                                    apparatsList={dictionaries.apparats}
+                                    token={token}
+                                />
+                            );
+                        }}
                         pagination={
                             {
                                 position: ['rightTop', 'rightBottom'],
@@ -242,20 +237,16 @@ export default function AntiFraudProfilePage() {
                     />
                 </Card>
             </div>
-            <RuleFormModal
+            {/* Вынесенная модалка */}
+            <EditProfileModal
                 open={isModalOpen}
+                loading={loading}
+                initialData={editingClient}
+                onSave={onSave}
                 onCancel={() => {
                     setIsModalOpen(false);
+                    setEditingClient(null);
                 }}
-                onFinish={(values) => {
-                    handleSaveRule(values, {
-                        onSuccess: () => {
-                            setIsModalOpen(false);
-                            form.resetFields();
-                        }
-                    });
-                }}
-                form={form}
             />
         </ProtectedElement>
     );

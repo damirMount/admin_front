@@ -265,22 +265,26 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
-                        <Form.Item
-                            name="id_service"
-                            label={renderLabel(faSitemap, "Сервис")}
-                            className="mb-0"
-                        >
-                            <Select showSearch placeholder="Все сервисы" allowClear className="rounded-3">
-                                {dictionaries.services.map(
-                                    (s) => {
-                                        return (
-                                            <Option key={s.id} value={s.id}>
-                                                {s.name}
-                                            </Option>
-                                        );
-                                    }
-                                )}
-                            </Select>
+                        <Form.Item name="id_service" label={renderLabel(faSitemap, "Сервис")} className="mb-0">
+                            <Select
+                                showSearch
+                                placeholder="Все сервисы"
+                                allowClear
+                                optionFilterProp="label"
+                                // Важно: если данных еще нет, показываем состояние загрузки или пустой массив
+                                loading={!dictionaries?.services}
+                                filterOption={(input, option) =>
+                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                }
+                                // Формируем опции только если массив существует
+                                options={useMemo(() =>
+                                    (dictionaries?.services || []).map(s => ({
+                                        label: `${s.id} | ${s.name}`,
+                                        // Гарантируем, что value — число, чтобы соответствовать Number() из useEffect
+                                        value: Number(s.id)
+                                    })), [dictionaries?.services])
+                                }
+                            />
                         </Form.Item>
                     </Col>
                     <Col xs={24} md={12} className="d-flex justify-content-end gap-2">

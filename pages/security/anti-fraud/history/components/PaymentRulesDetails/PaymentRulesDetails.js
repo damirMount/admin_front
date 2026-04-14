@@ -41,6 +41,7 @@ const getStatusConfig = (action) => {
 
 const IterationWrapper = ({
                               entry,
+                              session,
                               expandAll,
                               serversList,
                               servicesList,
@@ -120,7 +121,7 @@ const IterationWrapper = ({
                             </Space>
                         </Divider>
 
-                        <ProfileWhitelistCard client={entry.runtime_snapshot['profile']}/>
+                        <ProfileWhitelistCard client={entry.runtime_snapshot['profile']} session={session}/>
 
                         <Divider>Сработавшие правила</Divider>
                         {rules.map(
@@ -168,6 +169,7 @@ const IterationWrapper = ({
                                     >
                                         <div className="af-snapshot-card-container">
                                             <PaymentDescriptionCard
+                                                session={session}
                                                 record={entry.runtime_snapshot['oper']}
                                                 servicesList={servicesList}
                                                 dealersList={dealersList}
@@ -322,6 +324,7 @@ const PaymentRulesDetails = ({
                                 <IterationWrapper
                                     key={`iter-${entry.id}`}
                                     entry={entry}
+                                    session={session}
                                     expandAll={expandAll}
                                     isDefaultOpen={true}
                                     apparatsList={apparatsList}
@@ -546,6 +549,7 @@ const PaymentRulesDetails = ({
                     </Divider>
                     <PaymentDescriptionCard
                         record={payment}
+                        session={session}
                         servicesList={servicesList}
                         dealersList={dealersList}
                         apparatsList={apparatsList}

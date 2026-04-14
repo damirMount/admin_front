@@ -7,19 +7,24 @@ const {Text} = Typography;
 
 const RangeTooltip = ({active, payload, label}) => {
     if (active && payload && payload.length) {
+        const data = payload[0].payload;
         return (
             <div className="card card-body shadow-sm border-0"
-                 style={{minWidth: '200px', backgroundColor: 'rgba(255, 255, 255, 0.96)'}}>
+                 style={{minWidth: '200px', backgroundColor: 'rgba(255, 255, 255, 0.96)', zIndex: 100}}>
                 <Text type="secondary" className="mb-2 d-block small">{label}</Text>
+
                 <div className="d-flex justify-content-between align-items-center mb-1">
-                    <span className="small">Сумма:</span>
+                    <span className="small">Транзакций:</span>
                     <span className="fw-bold small text-primary">
-                        {MoneyFormatNumber(payload[0].value, 'full')}
+                        {data.count}
                     </span>
                 </div>
+
                 <div className="d-flex justify-content-between align-items-center">
-                    <span className="small">Транзакций:</span>
-                    <span className="fw-bold small">{payload[0].payload.count}</span>
+                    <span className="small">Общая сумма:</span>
+                    <span className="fw-bold small">
+                        {MoneyFormatNumber(data.totalSum, 'full')}
+                    </span>
                 </div>
             </div>
         );
@@ -83,6 +88,7 @@ const AmountRangesChart = ({payments, token}) => {
             return r.count > 0;
         });
 
+        // Объединение до 6 столбцов
         while (filled.length > 6) {
             let minIdx = 0;
             let minVal = filled[0].totalSum;
@@ -134,7 +140,7 @@ const AmountRangesChart = ({payments, token}) => {
     return (
         <div style={{height: 150, width: '100%'}}>
             <ResponsiveContainer>
-                <BarChart data={data} margin={{top: 10, right: 10, left: -20, bottom: 0}}>
+                <BarChart data={data} margin={{top: 10, right: 10, left: -25, bottom: 0}}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0"/>
                     <XAxis
                         dataKey="name"
@@ -146,12 +152,15 @@ const AmountRangesChart = ({payments, token}) => {
                         axisLine={false}
                         tickLine={false}
                         tick={{fontSize: 11}}
-                        tickFormatter={(v) => {
-                            return MoneyFormatNumber(v, 'short');
-                        }}
+                        allowDecimals={false}
                     />
                     <Tooltip content={<RangeTooltip/>}/>
-                    <Bar dataKey="totalSum" radius={[4, 4, 0, 0]} barSize={40}>
+                    <Bar
+                        dataKey="count"
+                        name="Количество"
+                        radius={[4, 4, 0, 0]} //9243
+                        barSize={40}
+                    >
                         {data.map((e, i) => {
                             return (
                                 <Cell key={i} fill={token.colorInfo} fillOpacity={0.8}/>

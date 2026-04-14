@@ -12,7 +12,7 @@ import {
 import {ALL_OPERATORS, SUBJECTS} from "../../../../../../components/pages/security/anti-fraud/constants";
 import CodeBlock from "../../../../../../components/main/DataDisplay/CodeBlock/CodeBlock";
 
-const { Text } = Typography;
+const {Text} = Typography;
 
 const styles = {
     container: {
@@ -93,7 +93,7 @@ const formatValue = (val) => {
     return val || '—';
 };
 
-const ConditionRow = ({ condition: c }) => {
+const ConditionRow = ({condition: c}) => {
     return (
         <div
             className="d-flex align-items-center p-2 rounded-3 mb-2 flex-wrap"
@@ -119,11 +119,11 @@ const ConditionRow = ({ condition: c }) => {
                 <Space size={4}>
                     <FontAwesomeIcon
                         icon={faDatabase}
-                        style={{ fontSize: '10px', color: '#bfbfbf' }}
+                        style={{fontSize: '10px', color: '#bfbfbf'}}
                     />
                     <Text
                         strong
-                        style={{ fontSize: '11px' }}
+                        style={{fontSize: '11px'}}
                     >
                         {getSubjectLabel(c.subject)}
                     </Text>
@@ -146,7 +146,7 @@ const ConditionRow = ({ condition: c }) => {
                 </Text>
                 <Text
                     strong
-                    style={{ fontSize: '12px', display: 'block' }}
+                    style={{fontSize: '12px', display: 'block'}}
                     ellipsis
                 >
                     {getFieldLabel(c.subject, c.field)}
@@ -201,7 +201,7 @@ const ConditionRow = ({ condition: c }) => {
                     {c.value_type === 'field' && c.target_subject ? (
                         <div
                             className="d-flex align-items-center flex-wrap"
-                            style={{ color: '#1677ff' }}
+                            style={{color: '#1677ff'}}
                         >
                             <Text
                                 strong
@@ -211,11 +211,11 @@ const ConditionRow = ({ condition: c }) => {
                             </Text>
                             <FontAwesomeIcon
                                 icon={faArrowRightLong}
-                                style={{ margin: '0 6px', fontSize: '10px', opacity: 0.3 }}
+                                style={{margin: '0 6px', fontSize: '10px', opacity: 0.3}}
                             />
                             <Text
                                 strong
-                                style={{ fontSize: '13px', color: '#1677ff' }}
+                                style={{fontSize: '13px', color: '#1677ff'}}
                                 ellipsis
                             >
                                 {getFieldLabel(c.target_subject, c.value || c.target_field)}
@@ -224,7 +224,7 @@ const ConditionRow = ({ condition: c }) => {
                     ) : (
                         <Text
                             strong
-                            style={{ fontSize: '14px', color: '#262626' }}
+                            style={{fontSize: '14px', color: '#262626'}}
                         >
                             {formatValue(c.value)}
                         </Text>
@@ -235,7 +235,7 @@ const ConditionRow = ({ condition: c }) => {
     );
 };
 
-const RuleCard = ({ record, serviceMap }) => {
+const RuleCard = ({record, serviceMap}) => {
     const isActive = record.is_active;
     const params = record.params || {};
     const conditions = params.conditions || [];

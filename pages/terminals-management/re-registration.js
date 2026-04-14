@@ -42,18 +42,19 @@ import ApparatReRegistrationForm from "../../components/pages/apparat/ApparatReR
 import ActionButtons from "../../components/main/table/cell/ActionButtons";
 import {useAlert} from "../../contexts/AlertContext";
 import {CHANGE_STATUS_RE_REGISTERED_TERMINAL_RECORD_API} from "../../routes/api";
+import {getUserFio} from "../../components/main/system/GetUserFio";
 
-const { Title, Text } = Typography;
+const {Title, Text} = Typography;
 
 // --- Константы маппинга ---
 const STATUS_MAP = {
-    completed: { icon: faCheckCircle, label: "Выполнено", color: "success" },
-    failed: { icon: faTriangleExclamation, label: "Ошибка", color: "danger" },
-    cancelled: { icon: faBan, label: "Отменён", color: "danger" },
-    pending: { icon: faClockRotateLeft, label: "В очереди", color: "default" },
-    in_progress: { icon: faSpinner, label: "Обрабатывается", color: "primary" },
-    paused: { icon: faCirclePause, label: "Приостановлен", color: "gray" },
-    waiting: { icon: faHourglassHalf, label: "В ожидании", color: "warning" },
+    completed: {icon: faCheckCircle, label: "Выполнено", color: "success"},
+    failed: {icon: faTriangleExclamation, label: "Ошибка", color: "danger"},
+    cancelled: {icon: faBan, label: "Отменён", color: "danger"},
+    pending: {icon: faClockRotateLeft, label: "В очереди", color: "default"},
+    in_progress: {icon: faSpinner, label: "Обрабатывается", color: "primary"},
+    paused: {icon: faCirclePause, label: "Приостановлен", color: "gray"},
+    waiting: {icon: faHourglassHalf, label: "В ожидании", color: "warning"},
 };
 
 const STAGE_MAP = {
@@ -75,8 +76,8 @@ const STAGE_MAP = {
 const getStage = (stage) => STAGE_MAP[stage] || [0, "Ожидание", faCirclePause];
 
 export default function ApparatReRegistrationPage() {
-    const { openNotification } = useAlert();
-    const { data: session } = useSession();
+    const {openNotification} = useAlert();
+    const {data: session} = useSession();
 
     const [dataTable, setDataTable] = useState([]);
     const [dealersOptionRaw, setDealersOptionRaw] = useState([]);
@@ -86,45 +87,42 @@ export default function ApparatReRegistrationPage() {
     // --- Логика данных ---
     const getReRegisteredTerminalsList = async () => {
         try {
-            const config = { model: "ApparatReRegistrations", sort: '{"column":"updatedAt","direction":"desc"}' };
+            const config = {model: "ApparatReRegistrations", sort: '{"column":"updatedAt","direction":"desc"}'};
             const result = await fetchData(config, session);
             setDataTable(result.data || []);
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
     };
 
     const loadDealers = async () => {
         try {
-            const result = await fetchData({ model: "Dealer" }, session);
+            const result = await fetchData({model: "Dealer"}, session);
             setDealersOptionRaw(result.data || []);
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
     };
 
     const handleChangeStatus = async (id, status) => {
         try {
             const response = await fetch(CHANGE_STATUS_RE_REGISTERED_TERMINAL_RECORD_API, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.accessToken}` },
-                body: JSON.stringify([{ recordId: id, status, userId: session?.user?.id }]),
+                headers: {"Content-Type": "application/json", Authorization: `Bearer ${session?.accessToken}`},
+                body: JSON.stringify([{recordId: id, status, userId: session?.user?.id}]),
             });
             if (response.ok) {
-                openNotification({ type: "success", message: "Запись обновлена" });
+                openNotification({type: "success", message: "Запись обновлена"});
                 getReRegisteredTerminalsList();
             }
-        } catch (error) { openNotification({ type: "error", message: "Ошибка обновления" }); }
+        } catch (error) {
+            openNotification({type: "error", message: "Ошибка обновления"});
+        }
     };
 
-    const getUserFio = async (userId) => {
-        if (!userId) return null;
-        if (userNameCache[userId]) return userNameCache[userId];
-        const result = await fetchData({ model: "User", searchTerm: { id: userId } }, session);
-        console.log(result)
-        const fio = result.data[0]?.fio;
-        setUserNameCache(prev => ({ ...prev, [userId]: fio }));
-        return fio;
-    };
 
     // --- Компоненты ячеек ---
-    const StatusCell = ({ statusKey, record, justText = false }) => {
+    const StatusCell = ({statusKey, record, justText = false}) => {
         const status = STATUS_MAP[statusKey] || {};
         const [stageNum] = getStage(record.stage);
         const text = (["completed", "cancelled"].includes(statusKey) || stageNum <= 0)
@@ -133,15 +131,15 @@ export default function ApparatReRegistrationPage() {
 
         return justText ? (
             <div className='d-flex align-items-center me-5 text-nowrap'>
-                <FontAwesomeIcon size='lg' className='me-2' icon={status.icon} />
+                <FontAwesomeIcon size='lg' className='me-2' icon={status.icon}/>
                 <Text>{status.label || '(пусто)'}</Text>
             </div>
-        ) : <StatusIndicator text={text} color={status.color} icon={status.icon} />;
+        ) : <StatusIndicator text={text} color={status.color} icon={status.icon}/>;
     };
 
     const tableColumns = [
-        { title: "ID", dataIndex: "id", key: "id", sorter: (a, b) => a.id - b.id, ...SearchByColumn("id") },
-        { title: "ID терминала", dataIndex: "apparat_id", key: "apparat_id", ...SearchByColumn("apparat_id") },
+        {title: "ID", dataIndex: "id", key: "id", sorter: (a, b) => a.id - b.id, ...SearchByColumn("id")},
+        {title: "ID терминала", dataIndex: "apparat_id", key: "apparat_id", ...SearchByColumn("apparat_id")},
         {
             title: "Новый ID",
             dataIndex: "new_apparat_id",
@@ -158,9 +156,9 @@ export default function ApparatReRegistrationPage() {
         {
             title: "Статус",
             dataIndex: "status",
-            render: (status, record) => <StatusCell statusKey={status} record={record} />,
+            render: (status, record) => <StatusCell statusKey={status} record={record}/>,
         },
-        { title: "Дата создания", dataIndex: "createdAt" },
+        {title: "Дата создания", dataIndex: "createdAt"},
         {
             key: 'actions',
             render: (_, record) => {
@@ -168,19 +166,39 @@ export default function ApparatReRegistrationPage() {
                 const links = {};
 
                 if (['failed', 'cancelled'].includes(record.status)) {
-                    links.retry = { label: 'Повторить', icon: faRotateRight, action: (id) => handleChangeStatus(id, 'retry') };
+                    links.retry = {
+                        label: 'Повторить',
+                        icon: faRotateRight,
+                        action: (id) => handleChangeStatus(id, 'retry')
+                    };
                 }
                 if (!['failed', 'cancelled', 'paused', 'completed'].includes(record.status)) {
-                    links.pause = { label: 'Пауза', icon: faCirclePause, action: (id) => handleChangeStatus(id, 'pause') };
+                    links.pause = {
+                        label: 'Пауза',
+                        icon: faCirclePause,
+                        action: (id) => handleChangeStatus(id, 'pause')
+                    };
                 }
                 if (['paused', 'waiting'].includes(record.status)) {
-                    links.play = { label: "Продолжить", icon: faCirclePlay, action: (id) => handleChangeStatus(id, 'continue') };
+                    links.play = {
+                        label: "Продолжить",
+                        icon: faCirclePlay,
+                        action: (id) => handleChangeStatus(id, 'continue')
+                    };
                 }
                 if (stageNum <= 6 && record.status !== 'cancelled') {
                     if (stageNum === 6 && !record.encashment_terminal) {
-                        links.cash = { label: 'Инкассировать', icon: faCreditCard, action: (id) => handleChangeStatus(id, 'encashmentTerminal') };
+                        links.cash = {
+                            label: 'Инкассировать',
+                            icon: faCreditCard,
+                            action: (id) => handleChangeStatus(id, 'encashmentTerminal')
+                        };
                     }
-                    links.cancel = { label: 'Отменить', icon: faCircleXmark, action: (id) => handleChangeStatus(id, 'cancel') };
+                    links.cancel = {
+                        label: 'Отменить',
+                        icon: faCircleXmark,
+                        action: (id) => handleChangeStatus(id, 'cancel')
+                    };
                 }
 
                 return Object.keys(links).length > 0 && (
@@ -198,14 +216,18 @@ export default function ApparatReRegistrationPage() {
     ];
 
     // --- Рендер раскрывающейся части ---
-    const ExpandableContent = ({ record }) => {
-        const [users, setUsers] = useState({ create: '', update: '' });
+    const ExpandableContent = ({record}) => {
+        const [users, setUsers] = useState({create: '', update: ''});
         const [timeLeft, setTimeLeft] = useState('');
 
         useEffect(() => {
             const updateTime = () => {
                 const remaining = (record.time_out * 1000) - (Date.now() - new Date(record.updatedAt).getTime());
-                setTimeLeft(remaining > 0 && record.status === 'waiting' ? humanizeDuration(remaining, { language: 'ru', largest: 2, round: true }) : '0 сек');
+                setTimeLeft(remaining > 0 && record.status === 'waiting' ? humanizeDuration(remaining, {
+                    language: 'ru',
+                    largest: 2,
+                    round: true
+                }) : '0 сек');
             };
             updateTime();
             const timer = setInterval(updateTime, 1000);
@@ -214,44 +236,51 @@ export default function ApparatReRegistrationPage() {
 
         useEffect(() => {
             const load = async () => {
-                const c = await getUserFio(record.create_author_id);
-                const u = await getUserFio(record.update_author_id);
-                setUsers({ create: c, update: u });
+                const c = await getUserFio(record.create_author_id, session);
+                const u = await getUserFio(record.update_author_id, session);
+                setUsers({create: c, update: u});
             };
             load();
         }, [record]);
 
         const stage = getStage(record.stage);
-        const dealer = dealersOptionRaw.find(d =>Number(d.id) === Number(record.region_id));
+        const dealer = dealersOptionRaw.find(d => Number(d.id) === Number(record.region_id));
 
         const statusItems = [
-            { label: 'Статус', children: <StatusCell statusKey={record.status} record={record} justText /> },
-            { label: `Этап ${stage[0]}/13`, children: <div><FontAwesomeIcon icon={stage[2]} className='me-2'/>{stage[1]}</div> },
-            { label: 'Ошибка', children: record.error_desc || '—' },
-            { label: 'Попытки', children: (
+            {label: 'Статус', children: <StatusCell statusKey={record.status} record={record} justText/>},
+            {
+                label: `Этап ${stage[0]}/13`,
+                children: <div><FontAwesomeIcon icon={stage[2]} className='me-2'/>{stage[1]}</div>
+            },
+            {label: 'Ошибка', children: record.error_desc || '—'},
+            {
+                label: 'Попытки', children: (
                     <div className="d-flex align-items-center">
                         {record.retries || 0}/20
                         {record.retries > 0 && !['completed', 'failed'].includes(record.status) && (
-                            <Button type="link" size="small" onClick={() => handleChangeStatus(record.id, 'clearRetries')}>(Сбросить)</Button>
+                            <Button type="link" size="small"
+                                    onClick={() => handleChangeStatus(record.id, 'clearRetries')}>(Сбросить)</Button>
                         )}
                     </div>
-                )},
-            { label: 'Ожидание', children: timeLeft },
-            { label: 'Обновлено', children: record.updatedAt },
+                )
+            },
+            {label: 'Ожидание', children: timeLeft},
+            {label: 'Обновлено', children: record.updatedAt},
         ];
 
         return (
             <div className='m-4'>
-                <Descriptions layout="vertical" column={3} title="Статус перерегистрации" items={statusItems} size="small" className="mb-4" />
+                <Descriptions layout="vertical" column={3} title="Статус перерегистрации" items={statusItems}
+                              size="small" className="mb-4"/>
                 <Descriptions layout="horizontal" column={3} title="Описание" size="small" items={[
-                    { label: 'ID терминала', children: record.apparat_id },
-                    { label: 'ID нового', children: record.new_apparat_id || '—' },
-                    { label: 'Дилер', children: dealer ? `${record.region_id} ${dealer.name}` : record.region_id },
-                    { label: 'Создан', children: record.createdAt },
-                    { label: 'Автор', children: users.create || '—' },
-                    { label: 'Редактор', children: users.update || '—' },
-                    { label: 'Инкассация', children: record.encashment_terminal ? 'Авто' : 'Ручная' },
-                ]} />
+                    {label: 'ID терминала', children: record.apparat_id},
+                    {label: 'ID нового', children: record.new_apparat_id || '—'},
+                    {label: 'Дилер', children: dealer ? `${record.region_id} ${dealer.name}` : record.region_id},
+                    {label: 'Создан', children: record.createdAt},
+                    {label: 'Автор', children: users.create || '—'},
+                    {label: 'Редактор', children: users.update || '—'},
+                    {label: 'Инкассация', children: record.encashment_terminal ? 'Авто' : 'Ручная'},
+                ]}/>
             </div>
         );
     };
@@ -270,11 +299,11 @@ export default function ApparatReRegistrationPage() {
         <ProtectedElement allowedPermissions="apparats_managment">
             <Head><title>Перерегистрация | {process.env.NEXT_PUBLIC_APP_NAME}</title></Head>
             <Title level={2}>Перерегистрация терминала</Title>
-            <ApparatReRegistrationForm />
+            <ApparatReRegistrationForm/>
             <SmartTable
                 columns={tableColumns}
                 data={dealersOptionRaw.length > 0 ? dataTable : []}
-                expandableContent={(record) => <ExpandableContent record={record} />}
+                expandableContent={(record) => <ExpandableContent record={record}/>}
 
             />
         </ProtectedElement>

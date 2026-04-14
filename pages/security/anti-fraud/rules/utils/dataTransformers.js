@@ -1,4 +1,3 @@
-
 import useAntiFraudData from "../hooks/useAntiFraudData";
 import {ALL_OPERATORS} from "../../../../../components/pages/security/anti-fraud/constants";
 

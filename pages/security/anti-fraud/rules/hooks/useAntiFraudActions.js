@@ -75,31 +75,26 @@ const useAntiFraudActions = (session, openNotification, refresh) => {
     /**
      * Массовое обновление приоритетов (сортировки)
      */
-    const handleSaveRulesOrder = useCallback(async (sortedIds) =>
-    {
-        try
-        {
+    const handleSaveRulesOrder = useCallback(async (sortedIds) => {
+        try {
             const response = await fetch(`${ANTIFRAUD_RULES_UPDATE_ORDER_API}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${session.accessToken}`,
                 },
-                body: JSON.stringify({ ids: sortedIds }),
+                body: JSON.stringify({ids: sortedIds}),
             });
 
             const responseData = await response.json();
 
-            if (!response.ok)
-            {
+            if (!response.ok) {
                 throw new Error(responseData.message || 'Ошибка при сохранении порядка');
             }
 
             // Обновляем данные на странице после успешного сохранения
             await refresh();
-        }
-        catch (error)
-        {
+        } catch (error) {
             openNotification({
                 type: 'error',
                 message: error.message

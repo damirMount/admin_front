@@ -89,10 +89,8 @@ export default function AntiFraudRulesPage() {
         openDropdownId,
     });
 
-    const handleSaveNewOrder = async (finalData) =>
-    {
-        try
-        {
+    const handleSaveNewOrder = async (finalData) => {
+        try {
             // ПРАВИЛЬНО: Берем ID, а не priority
             const newOrderIds = finalData.map(
                 (item) => {
@@ -111,9 +109,7 @@ export default function AntiFraudRulesPage() {
 
             closeConfirmAction();
             refresh();
-        }
-        catch (error)
-        {
+        } catch (error) {
             openNotification({
                 type: 'error',
                 message: 'Ошибка при сохранении порядка',

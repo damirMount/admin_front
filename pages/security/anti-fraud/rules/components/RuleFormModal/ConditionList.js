@@ -2,7 +2,12 @@ import React, {useMemo} from 'react';
 import {Button, Card, Col, Divider, Form, Input, InputNumber, Row, Select, Space, TimePicker, Typography} from 'antd';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock, faCube, faFilter, faPlus, faTrashCan} from "@fortawesome/free-solid-svg-icons";
-import {ALL_OPERATORS, DAYS_OF_WEEK, SUBJECTS, TIME_WINDOWS} from "../../../../../../components/pages/security/anti-fraud/constants";
+import {
+    ALL_OPERATORS,
+    DAYS_OF_WEEK,
+    SUBJECTS,
+    TIME_WINDOWS
+} from "../../../../../../components/pages/security/anti-fraud/constants";
 
 const {Text} = Typography;
 
@@ -62,13 +67,13 @@ const ConditionList = ({form, dealersList = [], servicesList = [], apparatsList 
                     return (
                         <Space.Compact className="w-100">
                             <Form.Item name={[name, 'time_window']} noStyle>
-                                <Select style={{width: '30%'}} options={TIME_WINDOWS} />
+                                <Select style={{width: '30%'}} options={TIME_WINDOWS}/>
                             </Form.Item>
                             <Form.Item name={[name, 'sub_operator']} noStyle initialValue=">">
-                                <Select style={{width: '40%'}} options={ALL_OPERATORS.filter(op => !op.isAggregate)} />
+                                <Select style={{width: '40%'}} options={ALL_OPERATORS.filter(op => !op.isAggregate)}/>
                             </Form.Item>
                             <Form.Item name={[name, 'value']} noStyle rules={[{required: true}]}>
-                                <InputNumber placeholder="0" style={{width: '30%'}} />
+                                <InputNumber placeholder="0" style={{width: '30%'}}/>
                             </Form.Item>
                         </Space.Compact>
                     );
@@ -102,7 +107,10 @@ const ConditionList = ({form, dealersList = [], servicesList = [], apparatsList 
                                         <Select
                                             style={{width: '35%'}}
                                             placeholder="Объект"
-                                            options={compareConfig.map(c => ({value: c.target_subject, label: c.label}))}
+                                            options={compareConfig.map(c => ({
+                                                value: c.target_subject,
+                                                label: c.label
+                                            }))}
                                             onChange={() => form.setFieldValue(['conditions', name, 'value'], undefined)}
                                         />
                                     </Form.Item>
@@ -117,9 +125,9 @@ const ConditionList = ({form, dealersList = [], servicesList = [], apparatsList 
                             ) : (
                                 <Form.Item name={[name, 'value']} noStyle rules={[{required: true}]}>
                                     {selectedField?.role === 'amount' ? (
-                                        <InputNumber className="w-100" style={{width: '70%'}} placeholder="0.00" />
+                                        <InputNumber className="w-100" style={{width: '70%'}} placeholder="0.00"/>
                                     ) : (
-                                        <Input className="w-100" style={{width: '70%'}} placeholder="Введите..." />
+                                        <Input className="w-100" style={{width: '70%'}} placeholder="Введите..."/>
                                     )}
                                 </Form.Item>
                             )}
@@ -144,9 +152,9 @@ const ConditionList = ({form, dealersList = [], servicesList = [], apparatsList 
                         />
                     ) : (
                         selectedField?.role === 'amount' ? (
-                            <InputNumber className="w-100" placeholder="0.00" />
+                            <InputNumber className="w-100" placeholder="0.00"/>
                         ) : (
-                            <Input className="w-100" placeholder="Введите значение..." />
+                            <Input className="w-100" placeholder="Введите значение..."/>
                         )
                     )}
                 </Form.Item>

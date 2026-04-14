@@ -7,7 +7,6 @@ import fetchData from "../../components/main/database/DataFetcher";
 import SmartTable from "../../components/main/table/SmartTable";
 import StatusIndicator from "../../components/main/table/cell/StatusIndicator";
 import SearchByColumn from "../../components/main/table/cell/SearchByColumn";
-import ApparatReRegistrationForm from "../../components/pages/apparat/ApparatReRegistrationForm";
 import ActionButtons from "../../components/main/table/cell/ActionButtons";
 import {useAlert} from "../../contexts/AlertContext";
 import {CHANGE_STATUS_RE_REGISTERED_TERMINAL_RECORD_API} from "../../routes/api";
@@ -30,7 +29,8 @@ import {
     faArrowUpRightFromSquare,
     faBan,
     faClockRotateLeft,
-    faGears, faHashtag,
+    faGears,
+    faHashtag,
     faLaptopCode,
     faPercent,
     faRotateRight,
@@ -42,6 +42,7 @@ import {faCircleCheck} from "@fortawesome/free-regular-svg-icons/faCircleCheck";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import humanizeDuration from 'humanize-duration';
+import {getUserFio} from "../../components/main/system/GetUserFio";
 
 const {Title, Text} = Typography;
 
@@ -54,7 +55,6 @@ export default function EncashmentsPage() {
     const [openDropdownId, setOpenDropdownId] = useState(null);
     const [openExpandId, setOpenExpandId] = useState(null);
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
-    const [userNameCache, setUserNameCache] = useState({});
 
     const handleExpand = (expanded, record) => {
         const key = record.key;
@@ -337,34 +337,6 @@ export default function EncashmentsPage() {
         }
     };
 
-    const getUser = async (userId) => {
-        if (userId === null) {
-            return false
-        }
-
-        if (userNameCache[userId]) {
-            return userNameCache[userId];
-        }
-
-        try {
-            const config = {model: "User", searchTerm: {id: userId}};
-            const result = await fetchData(config, session);
-
-            setUserNameCache(prev => ({
-                ...prev,
-                [userId]: result.data[0]?.fio, // или data.fullName / data.username
-            }));
-            return result.data[0]?.fio
-
-        } catch (error) {
-            console.error("Ошибка при загрузке пользователя:", error);
-            openNotification({
-                type: "error",
-                message: `Не удалось загрузить пользователя: ${error.message}`,
-            });
-        }
-    };
-
     const ExpandedRow = ({record}) => {
         const [createUser, setCreateUser] = useState(null);
         const [updateUser, setUpdateUser] = useState(null);
@@ -407,8 +379,8 @@ export default function EncashmentsPage() {
 
         useEffect(() => {
             const fetchUsers = async () => {
-                const createUser = await getUser(record.create_author_id);
-                const updateUser = await getUser(record.update_author_id);
+                const createUser = await getUserFio(record.create_author_id, session);
+                const updateUser = await getUserFio(record.update_author_id, session);
                 setCreateUser(createUser);
                 setUpdateUser(updateUser);
             };

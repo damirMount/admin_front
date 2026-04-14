@@ -1,9 +1,9 @@
-import React, {useMemo} from 'react';
-import {Button, Card, Col, Divider, Row, Space, Tag, Typography} from 'antd';
+import React, {useMemo, useState, useEffect} from 'react';
+import {Button, Card, Col, Divider, Row, Space, Tag, Typography, Skeleton} from 'antd';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faCircleExclamation,
-    faCoins,
+    faCoins, faExternalLinkAlt,
     faLayerGroup,
     faMicrochip,
     faUser,
@@ -18,8 +18,9 @@ import {getPaymentStatusInfo, PAYMENT_ERRORS, RUN_STATUS, TERMINAL_TYPES} from "
 import FormatDate from "../../system/FormatDate";
 import CodeBlock from "../../DataDisplay/CodeBlock/CodeBlock";
 import {Account2str} from "../../system/Account2str";
-import {ANTI_FRAUD_HISTORY_URL} from "../../../../routes/web";
+import {ANTI_FRAUD_HISTORY_URL, ANTI_FRAUD_PROFILES_URL} from "../../../../routes/web";
 import {findById} from "../../system/FindById";
+import fetchData from "../../database/DataFetcher";
 
 const {Text, Title} = Typography;
 
@@ -37,16 +38,61 @@ const MoneyColumn = ({label, value, color, type = 'full', prefix = 'с'}) => {
     );
 };
 
+// Убрали async — теперь это обычный компонент
 const PaymentDescriptionCard = ({
                                     record = {},
+                                    session,
                                     servicesList,
                                     dealersList,
                                     apparatsList,
                                     serversList,
                                     showActions = true
                                 }) => {
+    const [client, setClient] = useState(null);
+    const [loadingClient, setLoadingClient] = useState(true);
+
+    // Загрузка данных строго 1 раз по ключу сервиса и идентификатора
+    useEffect(() => {
+        // Если данные уже есть, не перезагружаем
+        if (client) return;
+
+        let isMounted = true;
+        const loadClientData = async () => {
+            setLoadingClient(true);
+            try {
+                const result = await fetchData({
+                    model: 'AntiFraudProfiles',
+                    searchTerm: {
+                        accurateSearch: true,
+                        id_service: Number(record.id_service),
+                        identifier: String(record.identifier)
+                    }
+                }, session);
+
+                if (isMounted) {
+                    setClient(result || { data: [] });
+                }
+            } catch (e) {
+                console.error("Ошибка при загрузке профиля антифрода:", e);
+                if (isMounted) setClient({ data: [] });
+            } finally {
+                if (isMounted) setLoadingClient(false);
+            }
+        };
+
+        if (record.id_service && record.identifier) {
+            loadClientData();
+        } else {
+            setLoadingClient(false);
+        }
+
+        return () => { isMounted = false; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [record.id_service, record.identifier]);
+
     const info = useMemo(
         () => {
+            if (loadingClient || !client) return null;
 
             const service = findById(servicesList, Number(record.id_service));
             const dealer = findById(dealersList, Number(record.id_region));
@@ -56,11 +102,8 @@ const PaymentDescriptionCard = ({
 
             const rawError = record.additional1;
             const accountInfo = Account2str(record.account);
-
-            // Вызов внешней функции для получения статуса
             const statusInfo = getPaymentStatusInfo(record.payments_run, rawError);
 
-            // Формирование сообщения об ошибке
             const messageCandidate =
                 accountInfo?.af_operator_action ||
                 accountInfo?.comment ||
@@ -68,18 +111,16 @@ const PaymentDescriptionCard = ({
                 PAYMENT_ERRORS.getError(rawError) ||
                 rawError;
 
-            let errorMessage = 'Платёж находится в процессе обработки';
+            let errorMessage = record.payments_run === RUN_STATUS.SUCCESS
+                ? 'Платёж успешно проведён'
+                : (record.payments_run === RUN_STATUS.ERROR ? `Код ${rawError}: ${messageCandidate}` : 'В процессе обработки');
 
-            if (record.payments_run !== RUN_STATUS.SUCCESS) {
-                errorMessage = `Код ${rawError}: ${messageCandidate}`;
-            } else if (record.payments_run === RUN_STATUS.SUCCESS) {
-                errorMessage = 'Платёж успешно проведён';
-
-                // Специфическая логика для сервера 600
-                if (server.id === 600) {
-                    statusInfo.text += ` ${rawError}`;
-                }
+            if (record.payments_run === RUN_STATUS.SUCCESS && server.id === 600) {
+                statusInfo.text += ` ${rawError}`;
             }
+
+            // Безопасное получение ID клиента из массива data
+            const dbClientId = client.data?.[0]?.id || '—';
 
             return {
                 service,
@@ -88,12 +129,8 @@ const PaymentDescriptionCard = ({
                 apparat,
                 parentDealer,
                 errorMessage,
-                status: {
-                    color: statusInfo.color,
-                    text: statusInfo.text,
-                    icon: statusInfo.icon,
-                    type: statusInfo.type
-                },
+                status: statusInfo,
+                clientId: dbClientId,
                 serviceName: service.id ? `${service.id} ${service.name}` : `Сервис #${record.id_service}`,
                 apparatName: apparat.id ? `${apparat.id} ${apparat.name}` : `Точка #${record.id_apparat}`,
                 dealerName: dealer.id ? `${dealer.id} ${dealer.name}` : `Дилер #${record.id_region}`,
@@ -101,49 +138,34 @@ const PaymentDescriptionCard = ({
                 parentDealerName: parentDealer.id ? `${parentDealer.id} ${parentDealer.name}` : `Дилер #${dealer.parentid}`,
             };
         },
-        [record, servicesList, dealersList, serversList, apparatsList]
+        [record, servicesList, dealersList, serversList, apparatsList, client, loadingClient]
     );
 
-    const finance = useMemo(
-        () => {
-            const pDlr = record.p_dlr || 0;
-            const pFed = record.p_fed || 0;
-            const comDlr = record.com_dlr || 0;
-            const commission = record.commission || 0;
-            const sumReduce = record.sum_reduce || 0;
+    const finance = useMemo(() => ({
+        reduce: record.sum_reduce || 0,
+        comDlr: record.com_dlr || 0,
+        pDlr: record.p_dlr || 0,
+        pFed: record.p_fed || 0,
+        commission: record.commission || 0,
+        netWriteOff: (record.sum_reduce || 0) - (record.com_dlr || 0) - (record.p_dlr || 0) - (record.p_fed || 0),
+        income: (record.p_dlr || 0) + (record.commission || 0) - (record.com_dlr || 0)
+    }), [record]);
 
-            return {
-                reduce: sumReduce,
-                comDlr,
-                pDlr,
-                pFed,
-                commission,
-                netWriteOff: sumReduce - comDlr - pDlr - pFed,
-                income: pDlr + commission - comDlr
-            };
-        },
-        [record]
-    );
+    const redisKey = useMemo(() => {
+        if (!record.identifier) return 'Н/Д';
+        return `pay:*:{${record.id_service}:${md5(String(record.identifier))}}`;
+    }, [record.id_service, record.identifier]);
 
-    const redisKey = useMemo(
-        () => {
-            if (!record.identifier) {
-                return 'Н/Д';
-            }
-            const hash = md5(String(record.identifier));
-            return `pay:*:{${record.id_service}:${hash}}`;
-        },
-        [record.id_service, record.identifier]
-    );
-
+    if (loadingClient || !info) {
+        return <Card size="small" className="border shadow-sm mb-3"><Skeleton active paragraph={{ rows: 4 }} /></Card>;
+    }
     return (
         <Card size="small" className="border shadow-sm mb-3 payment-card">
             <div className="p-1">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <div className='d-flex justify-content-between w-100'>
                         <Space size={16}>
-                            <div
-                                className="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center payment-icon-box">
+                            <div className="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center payment-icon-box">
                                 <FontAwesomeIcon icon={faMicrochip} size="lg"/>
                             </div>
                             <div>
@@ -155,7 +177,7 @@ const PaymentDescriptionCard = ({
                         </Space>
                         <div className="text-end">
                             <Text type="secondary" className="label-medium mb-1 d-block">REDIS KEY</Text>
-                            <Text level={5} type='secondary' copyable={{text: redisKey}} className="m-0">
+                            <Text type='secondary' copyable={{text: redisKey}} className="m-0 ">
                                 {redisKey}
                             </Text>
                         </div>
@@ -166,17 +188,27 @@ const PaymentDescriptionCard = ({
                     <Col xs={24} md={9}>
                         <div className="p-3 rounded-3 h-100 bg-light border">
                             <div className='d-flex justify-content-between'>
-                                <Text type="secondary" className="label-medium" uppercase>
-                                    <Space><FontAwesomeIcon icon={faUser}/> Реквизит клиента</Space>
+                                <Text type="secondary" className="label-medium">
+                                    <Space>
+                                        <FontAwesomeIcon icon={faUser}/>
+                                        <span>Клиент № {info.clientId}</span>
+                                    </Space>
+                                        <Button
+                                            type="link"
+                                            size="small"
+                                            className="p-0"
+                                            icon={<FontAwesomeIcon icon={faExternalLinkAlt} style={{ fontSize: '12px' }} />}
+                                            href={`${ANTI_FRAUD_PROFILES_URL}?id=${info.clientId}`}
+                                            target="_blank"
+                                        />
                                 </Text>
-                                <Text type="secondary" className="label-medium">№ {record.id_trans}</Text>
+                                <Text type="secondary" className="label-medium">Транзак. № {record.id_trans}</Text>
                             </div>
                             <div className="d-flex mt-2 mb-1 align-items-end justify-content-between w-100">
                                 <Text strong className="money-main" copyable>{record.identifier}</Text>
                                 <Tag
                                     color={info.status.color}
                                     className="status-tag m-0 d-block"
-                                    style={{color: 'white', fontWeight: 'bold'}}
                                 >
                                     {info.status.text.toUpperCase()}
                                 </Tag>
@@ -196,13 +228,13 @@ const PaymentDescriptionCard = ({
                             </div>
                             <div className="d-flex justify-content-between align-items-center pt-2 border-top">
                                 <Space direction="vertical" size={0}>
-                                    <Text type="secondary" className="label-medium" uppercase>Приём</Text>
+                                    <Text type="secondary" className="label-medium" style={{textTransform: 'uppercase'}}>Приём</Text>
                                     <Text strong className="money-secondary">{FormatDate(record.time)}</Text>
                                 </Space>
                                 <Space direction="vertical" size={0} className="text-end">
-                                    <Text type="secondary" className="label-medium" uppercase>Проведение</Text>
+                                    <Text type="secondary" className="label-medium" style={{textTransform: 'uppercase'}}>Проведение</Text>
                                     <Text strong className="money-secondary">
-                                        {record.time === record.time_proc ? FormatDate('') : FormatDate(record.time_proc)}
+                                        {record.time === record.time_proc ? '-' : FormatDate(record.time_proc)}
                                     </Text>
                                 </Space>
                             </div>
@@ -291,7 +323,7 @@ const PaymentDescriptionCard = ({
 
                     <Col xs={24} sm={15}>
                         <div className="p-3 rounded-3 h-100 bg-light border">
-                            <Text type="secondary" className="label-medium" uppercase>
+                            <Text type="secondary" className="label-medium" style={{textTransform: 'uppercase'}}>
                                 <Space><FontAwesomeIcon icon={faLayerGroup}/> Дилер</Space>
                             </Text>
                             <div className="mt-2 mb-2 d-flex flex-column gap-1 mb-3">
@@ -305,7 +337,7 @@ const PaymentDescriptionCard = ({
                                         {info.apparatName}
                                     </Text>
                                     <Text type="secondary" className="label-medium">
-                                        Тип аппарата: {TERMINAL_TYPES[info.apparat.terminal_type] || 'Неизвестно'}
+                                        Тип аппарата: {TERMINAL_TYPES[info.apparat?.terminal_type] || 'Неизвестно'}
                                     </Text>
                                 </div>
                             </div>
