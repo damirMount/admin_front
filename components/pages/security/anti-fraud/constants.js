@@ -156,11 +156,11 @@ export const TIME_WINDOWS = [
 
 export const ANTI_FRAUD_CHECK_STATUS = {
     allow: {
-        color: 'green-inverse',
+        color: '#51c21a',
         label: 'Разрешён системой', icon: <FontAwesomeIcon icon={faDisplay} className="me-2"/>,
     },
     deny: {
-        color: 'red-inverse',
+        color: '#f3222d',
         label: 'Отклонён системой', icon: <FontAwesomeIcon icon={faDisplay} className="me-2"/>
     },
     wait: {
@@ -176,6 +176,7 @@ export const ANTI_FRAUD_CHECK_STATUS = {
         label: 'Отклонён оператором', icon: <FontAwesomeIcon icon={faUser} className="me-2"/>
     }
 };
+
 export const USERS_TRUST_STATUS = {
     TRUSTED: {
         color: '#51c21a',

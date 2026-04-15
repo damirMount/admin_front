@@ -5,8 +5,9 @@ import fetchData from "../../../../../components/main/database/DataFetcher";
 
 export const getDefaults = () => {
     return {
-        date_range: [dayjs().startOf("month"), dayjs().endOf("day")],
-        score_range: ["high", "medium"],
+        date_range: undefined,
+        score_range: undefined,
+        final_action: ["wait"],
         id: undefined,
         identifier: undefined,
         status: undefined,

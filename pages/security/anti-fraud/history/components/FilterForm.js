@@ -15,7 +15,8 @@ import dayjs from "dayjs";
 import {useRouter} from "next/router";
 
 import {getDefaults} from "../hooks/useAntiFraudData";
-import {RISK_LEVELS, STATUS_LEVELS} from "../../../../../components/main/payments/PaymentsConstants";
+import {RISK_LEVELS} from "../../../../../components/main/payments/PaymentsConstants";
+import {ANTI_FRAUD_CHECK_STATUS} from "../../../../../components/pages/security/anti-fraud/constants";
 
 const {Text} = Typography;
 const {RangePicker} = DatePicker;
@@ -46,6 +47,11 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
                     return;
                 }
 
+                if (key === "final_action" && Array.isArray(value)) {
+                    query.final_action = value.join(",");
+                    return;
+                }
+
                 query[key] = value;
             }
         );
@@ -66,7 +72,7 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
             const queryParams = router.query;
 
             // Преобразуем параметры URL в формат формы
-            const {start, end, score_range, ...rest} = queryParams;
+            const {start, end, score_range,final_action, ...rest} = queryParams;
 
             const currentFilters = {
                 ...rest,
@@ -77,6 +83,9 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
                 date_range: start && end ? [dayjs(start), dayjs(end)] : undefined,
                 score_range: score_range
                     ? (Array.isArray(score_range) ? score_range : score_range.split(","))
+                    : undefined,
+                final_action: final_action
+                    ? (Array.isArray(final_action) ? final_action : final_action.split(","))
                     : undefined,
             };
 
@@ -92,37 +101,20 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
         updateUrlWithFilters(values);
     };
 
-    const isFiltersChanged = useMemo(
-        () => {
-            if (!formValues) {
-                return false;
-            }
+    const isFiltersChanged = useMemo(() => {
+        if (!formValues) return false;
+        const defaults = getDefaults();
 
-            const defaults = getDefaults();
-            const {date_range: fRange, score_range: fScore} = formValues;
-            const {date_range: dRange, score_range: dScore} = defaults;
+        // Быстрая проверка на наличие любых заполненных полей, кроме дат и скора
+        const hasBaseFields = Object.entries(formValues).some(([k, v]) =>
+            !["date_range", "final_action"].includes(k) && v !== undefined && v !== "" && v !== null
+        );
 
-            const isDateSame = fRange &&
-                Array.isArray(fRange) &&
-                fRange[0]?.isSame(dRange[0], "minute") &&
-                fRange[1]?.isSame(dRange[1], "minute");
+        const currentScore = (formValues.final_action || []).sort().join(",");
+        const defaultScore = (defaults.final_action || []).sort().join(",");
 
-            const currentScore = [...(fScore || [])].sort().join(",");
-            const defaultScore = [...(dScore || [])].sort().join(",");
-
-            const hasExtraFields = Object.entries(formValues).some(
-                ([key, value]) => {
-                    if (key === "date_range" || key === "score_range") {
-                        return false;
-                    }
-                    return value !== undefined && value !== null && value !== "";
-                }
-            );
-
-            return !isDateSame || currentScore !== defaultScore || hasExtraFields;
-        },
-        [formValues]
-    );
+        return hasBaseFields || currentScore !== defaultScore;
+    }, [formValues]);
 
 
     const handleQuickDate = (type) => {
@@ -243,25 +235,24 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
                     </Col>
                     <Col xs={24} sm={12}>
                         <Form.Item
-                            name="status"
+                            name="final_action"
                             label={renderLabel(faSitemap, "Статус проверки платежа")}
                             className="mb-0"
                         >
-                            <Select mode="multiple" showSearch={false} placeholder="Все платежи" allowClear
-                                    className="rounded-3">
-                                {STATUS_LEVELS.map(
-                                    (risk) => {
-                                        return (
-                                            <Option key={risk.value} value={risk.value}>
+                            <Select mode="multiple" showSearch={false} placeholder="Все платежи" allowClear maxTagCount={2}
+                                    className="rounded-3"
+                                    options={Object.entries(ANTI_FRAUD_CHECK_STATUS).map(([key, status]) => {
+                                        return {
+                                            value: key,
+                                            label: (
                                                 <Space size={4}>
-                                                    <Badge className='me-1' color={risk.color}/>
-                                                    <Text>{risk.label}</Text>
+                                                    <Badge color={status.color || 'green'}/>
+                                                    <span className='ms-2'>{status.label}</span>
                                                 </Space>
-                                            </Option>
-                                        );
-                                    }
-                                )}
-                            </Select>
+                                            )
+                                        };
+                                    })}
+                            />
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
