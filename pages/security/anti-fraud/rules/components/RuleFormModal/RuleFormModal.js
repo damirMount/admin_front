@@ -21,6 +21,7 @@ const RuleFormModal = ({open, onCancel, onFinish, form, serviceTypes, dealersLis
             name,
             is_active,
             service_types_ids,
+            description,
             risk_value,
             ...paramsData
         } = values;
@@ -30,7 +31,7 @@ const RuleFormModal = ({open, onCancel, onFinish, form, serviceTypes, dealersLis
             name: name,
             is_active: is_active,
             service_types_ids: service_types_ids,
-
+            description,
             params: {
                 ...paramsData,
                 risk_value: risk_value,

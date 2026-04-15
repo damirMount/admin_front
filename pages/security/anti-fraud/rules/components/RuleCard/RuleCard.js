@@ -295,6 +295,17 @@ const RuleCard = ({record, serviceMap}) => {
                         </div>
 
                         <div className="flex-grow-1">
+                            <div className="mb-4 d-flex flex-column">
+                                <Text type="secondary" style={styles.labelSmall}>
+                                    ОПИСАНИЕ:
+                                </Text>
+
+                                {(record.description !== undefined && record.description !== '') ?
+                                    <Text> {record.description}</Text>
+                                    :
+                                    <Text className='af-text-sm fst-italic'> Описание отсутствует</Text>
+                                }
+                            </div>
                             <div className="d-flex flex-column gap-2 mb-4">
                                 {conditions.length > 0 ? (
                                     conditions.map(

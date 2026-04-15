@@ -46,6 +46,7 @@ export const prepareFormValues = (record) => {
         id: record.id,
         name: record.name,
         is_active: record.is_active,
+        description: record.description,
         service_types_ids: record.service_types_ids || [],
         action_type: params.action_type || 'add',
         risk_value: params.risk_value || 0,

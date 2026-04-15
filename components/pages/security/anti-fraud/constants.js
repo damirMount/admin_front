@@ -89,7 +89,7 @@ export const SUBJECTS = {
             },
         ]
     },
-    clients: {
+    profile: {
         label: 'Клиент',
         fields: [
             {

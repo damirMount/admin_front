@@ -1,7 +1,7 @@
 import React from 'react';
 import {Form, Input, Select, Space, Switch, Typography} from 'antd';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTag} from "@fortawesome/free-solid-svg-icons";
+import {faTag,  faComment} from "@fortawesome/free-solid-svg-icons";
 
 const {Text} = Typography;
 const {Option} = Select;
@@ -19,6 +19,7 @@ const RuleHeader = ({isActive, serviceTypes}) => {
                         <Input variant="borderless" className="rf-name-input" placeholder="Введите название..."/>
                     </Form.Item>
                 </div>
+
                 <div className="text-end">
                     <Text className="rf-panel-label">Статус</Text>
                     <div className="mt-2 d-flex align-items-center gap-2">
@@ -30,6 +31,15 @@ const RuleHeader = ({isActive, serviceTypes}) => {
                         </Form.Item>
                     </div>
                 </div>
+            </div>
+            <div className="flex-grow-1 mt-2">
+                <Space style={{color: '#389e0d'}}>
+                    <FontAwesomeIcon icon={faComment}/>
+                    <Text strong>Описание</Text>
+                </Space>
+                <Form.Item name="description" className="mb-0 mt-2">
+                    <Input.TextArea  placeholder="Введите описание..."/>
+                </Form.Item>
             </div>
             <div className="mt-3">
                 <Form.Item

@@ -126,9 +126,6 @@ export default function AntiFraudRulesPage() {
         // 1. Берем ПОЛНЫЙ список правил из текущего стейта (или из props)
         const currentFullList = [...localRules];
 
-        // 2. Создаем карту (map) новых позиций для отфильтрованных элементов
-        const reorderedMap = new Map(reorderedFilteredData.map((item, index) => [item.id, item]));
-
         // 3. Формируем новый полный список
         // Мы заменяем старые объекты на новые в тех же местах, где они были в отфильтрованном списке
         let filterIdx = 0;

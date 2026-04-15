@@ -305,8 +305,20 @@ const RuleItem = ({
                 </Space>
             </div>
 
+
             {isVisible && (
                 <div className="mt-3 pt-3 border-top">
+                    <div className="mb-4 d-flex flex-column">
+                        <Text type="secondary" style={styles.labelSmall}>
+                            Описание:
+                        </Text>
+
+                        {(rule.description !== undefined && rule.description !== '') ?
+                            <Text className=' fst-italic'> {rule.description}</Text>
+                            :
+                            <Text className='af-text-sm fst-italic'> Описание отсутствует</Text>
+                        }
+                    </div>
                     <div className="mb-4">
                         <Text type="secondary" style={styles.labelSmall}>
                             Детализация условий:
