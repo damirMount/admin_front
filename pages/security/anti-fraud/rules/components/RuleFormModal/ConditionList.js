@@ -192,7 +192,7 @@ const ConditionList = ({form, dealersList = [], servicesList = [], apparatsList 
                                                     options={Object.entries(dynamicSubjects).map(([k, v]) => ({
                                                         value: k,
                                                         label: v.label
-                                                    })
+                                                    }))}
                                                     onChange={() => resetRow(name)}
                                                     suffixIcon={<FontAwesomeIcon icon={faCube} style={{
                                                         fontSize: '10px',
