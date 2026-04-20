@@ -35,6 +35,7 @@ const RuleFormModal = ({open, onCancel, onFinish, form, serviceTypes, dealersLis
             params: {
                 ...paramsData,
                 risk_value: risk_value,
+                error_code: values.error_code,
                 time_range: values.time_range
                     ? [values.time_range[0].format('HH:mm'), values.time_range[1].format('HH:mm')]
                     : null,

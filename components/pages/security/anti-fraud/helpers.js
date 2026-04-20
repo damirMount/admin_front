@@ -52,6 +52,7 @@ export const prepareFormValues = (record) => {
         risk_value: params.risk_value || 0,
         conditions: enrichedConditions, // Передаем условия с проставленным subject
         working_days: params.working_days || [],
+        error_code: params.error_code,
         time_range: params.time_range
             ? [dayjs(params.time_range[0], 'HH:mm'), dayjs(params.time_range[1], 'HH:mm')]
             : null,

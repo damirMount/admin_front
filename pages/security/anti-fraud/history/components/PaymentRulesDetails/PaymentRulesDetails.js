@@ -313,8 +313,8 @@ const PaymentRulesDetails = ({
 
             history.forEach(
                 (entry, entryIdx) => {
-                    const isWait = entry.final_action === 'wait';
-                    const isDeny = entry.final_action === 'deny';
+                    const isWait = entry.final_action === 'wait' || payment.payments_run === 3;
+                    const isDeny = ['approve', 'reject', 'deny'].includes(entry.final_action);
                     const isLastEntry = entryIdx === history.length - 1;
 
                     // 1. Отрисовка основной карточки итерации
@@ -359,7 +359,7 @@ const PaymentRulesDetails = ({
                                             strong
                                             style={{
                                                 fontSize: '12px',
-                                                color: isDeny ? '#cf1322' : (isWait ? '#d48806' : '#389e0d')
+                                                color: isDeny ? '#cf1322' : (isWait ? '#d48806' : '#52c41a')
                                             }}
                                         >
                                             {isDeny ? 'Платёж отклонён системой' : (isWait ? 'Платёж приостановлен' : 'Проверка пройдена')}
@@ -388,7 +388,7 @@ const PaymentRulesDetails = ({
                                 const isBot = action.action === 'bot_notification';
                                 const isReject = action.action === 'reject' || action.action === 'deny';
 
-                                const statusColor = isBot ? '#5865F2' : (isReject ? '#f14f46' : '#389e0d');
+                                const statusColor = isBot ? '#5865F2' : (isReject ? '#f14f46' : '#52c41a');
                                 const currentIcon = isBot ? faDiscord : (isReject ? Icons.faBan : Icons.faCircleCheck);
                                 const cardClass = isBot
                                     ? 'af-bot-notification-card'
@@ -455,66 +455,58 @@ const PaymentRulesDetails = ({
 
                     // 4. Форма ввода решения
                     if (isWait && isLastEntry) {
-                        const hasFinalDecision = entry.operator_actions?.some(
-                            (action) => {
-                                return ['approve', 'reject', 'deny', 'allow'].includes(action.action);
+                        items.push(
+                            {
+                                dot: (
+                                    <Avatar
+                                        size={26}
+                                        icon={<FontAwesomeIcon icon={Icons.faUserPen}/>}
+                                        style={{backgroundColor: '#faad14'}}
+                                    />
+                                ),
+                                children: (
+                                    <div className="af-operator-action-form" style={{marginLeft: '10px'}}>
+                                        <Text strong style={{display: 'block', marginBottom: '8px'}}>
+                                            Ожидание решения оператора
+                                        </Text>
+                                        <TextArea
+                                            placeholder="Введите обоснование решения..."
+                                            rows={2}
+                                            value={comment}
+                                            onChange={(e) => {
+                                                setComment(e.target.value);
+                                            }}
+                                            style={{marginBottom: '12px', fontSize: '13px'}}
+                                        />
+                                        <Space>
+                                            <Button
+                                                type="primary"
+                                                size="small"
+                                                icon={<FontAwesomeIcon icon={Icons.faCheck}/>}
+                                                loading={submitting}
+                                                style={{backgroundColor: '#52c41a', border: 'none'}}
+                                                onClick={() => {
+                                                    handleAction('allow', entry.id);
+                                                }}
+                                            >
+                                                Разрешить платеж
+                                            </Button>
+                                            <Button
+                                                danger
+                                                size="small"
+                                                icon={<FontAwesomeIcon icon={Icons.faXmark}/>}
+                                                loading={submitting}
+                                                onClick={() => {
+                                                    handleAction('deny', entry.id);
+                                                }}
+                                            >
+                                                Отклонить
+                                            </Button>
+                                        </Space>
+                                    </div>
+                                )
                             }
                         );
-
-                        if (!hasFinalDecision) {
-                            items.push(
-                                {
-                                    dot: (
-                                        <Avatar
-                                            size={26}
-                                            icon={<FontAwesomeIcon icon={Icons.faUserPen}/>}
-                                            style={{backgroundColor: '#faad14'}}
-                                        />
-                                    ),
-                                    children: (
-                                        <div className="af-operator-action-form" style={{marginLeft: '10px'}}>
-                                            <Text strong style={{display: 'block', marginBottom: '8px'}}>
-                                                Ожидание решения оператора
-                                            </Text>
-                                            <TextArea
-                                                placeholder="Введите обоснование решения..."
-                                                rows={2}
-                                                value={comment}
-                                                onChange={(e) => {
-                                                    setComment(e.target.value);
-                                                }}
-                                                style={{marginBottom: '12px', fontSize: '13px'}}
-                                            />
-                                            <Space>
-                                                <Button
-                                                    type="primary"
-                                                    size="small"
-                                                    icon={<FontAwesomeIcon icon={Icons.faCheck}/>}
-                                                    loading={submitting}
-                                                    style={{backgroundColor: '#52c41a', border: 'none'}}
-                                                    onClick={() => {
-                                                        handleAction('allow', entry.id);
-                                                    }}
-                                                >
-                                                    Разрешить платеж
-                                                </Button>
-                                                <Button
-                                                    danger
-                                                    size="small"
-                                                    icon={<FontAwesomeIcon icon={Icons.faXmark}/>}
-                                                    loading={submitting}
-                                                    onClick={() => {
-                                                        handleAction('deny', entry.id);
-                                                    }}
-                                                >
-                                                    Отклонить
-                                                </Button>
-                                            </Space>
-                                        </div>
-                                    )
-                                }
-                            );
-                        }
                     }
                 }
             );

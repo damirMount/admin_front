@@ -274,7 +274,7 @@ const ConditionList = ({form, dealersList = [], servicesList = [], apparatsList 
             <Row gutter={16}>
                 <Col span={12}>
                     <Form.Item name="time_range"
-                               label={<Text type="secondary" className="small">Часы работы (UTC)</Text>}
+                               label={<Text type="secondary" className="small">Часы работы</Text>}
                                className="mb-0">
                         <TimePicker.RangePicker format={'HH:mm'} className="w-100"/>
                     </Form.Item>
@@ -282,7 +282,7 @@ const ConditionList = ({form, dealersList = [], servicesList = [], apparatsList 
                 <Col span={12}>
                     <Form.Item name="working_days" label={<Text type="secondary" className="small">Дни недели</Text>}
                                className="mb-0">
-                        <Select mode="multiple" placeholder="Ежедневно" options={DAYS_OF_WEEK} maxTagCount={2}/>
+                        <Select mode="multiple" placeholder="Ежедневно" options={DAYS_OF_WEEK} allowClear={true}/>
                     </Form.Item>
                 </Col>
             </Row>
