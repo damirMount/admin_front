@@ -15,6 +15,7 @@ import RiskAnalysisDashboard from "./components/RiskAnalysisDashboard/RiskAnalys
 import useAntiFraudData from "./hooks/useAntiFraudData";
 import useAntiFraudActions from "./hooks/useAntiFraudActions";
 import getTableColumns from "./utils/columns";
+import AntiFraudStatsDashboard from "./components/AntiFraudStatsDashboard/AntiFraudStatsDashboard";
 
 const {Title} = Typography;
 
@@ -199,12 +200,12 @@ export default function AntiFraudRulesPage() {
                     />
                 </Card>
 
+                <AntiFraudStatsDashboard session={session}/>
                 <RiskAnalysisDashboard
                     rules={rules}
                     serviceTypes={serviceTypes}
                     setFilterServiceId={setFilterServiceId}
                 />
-
                 <RuleFormModal
                     open={isModalOpen}
                     onCancel={() => {
