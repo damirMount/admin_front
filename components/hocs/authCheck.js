@@ -22,8 +22,9 @@ const AuthCheck = (WrappedComponent) => {
         }
 
         if ((!session || sessionExpired) && router.pathname !== LOGIN_PAGE_URL) {
-            // Сохраняем путь, на который хотел попасть пользователь
-            router.replace(`${LOGIN_PAGE_URL}?callbackUrl=${encodeURIComponent(router.asPath)}`);
+            // ВАЖНО: используем asPath, чтобы захватить всё, что после домена (включая ?id=...)
+            const returnUrl = encodeURIComponent(router.asPath);
+            router.replace(`${LOGIN_PAGE_URL}?callbackUrl=${returnUrl}`);
             return null;
         } else {
 

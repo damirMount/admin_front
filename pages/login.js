@@ -23,12 +23,16 @@ export default function LoginPage() {
             });
 
             if (responseData.ok) {
-                // 1. Проверяем, есть ли в URL параметр callbackUrl
-                // 2. Если есть — переходим по нему, если нет — на главную
-                const callbackUrl = router.query.callbackUrl || MAIN_PAGE_URL;
+                // Используем нативный парсер URL вместо router.query
+                const searchParams = new URLSearchParams(window.location.search);
+                const callbackUrl = searchParams.get('callbackUrl');
 
-                // Используем window.location.replace для полной перезагрузки состояния сессии
-                window.location.replace(callbackUrl);
+                if (callbackUrl) {
+                    // Декодируем на всякий случай и переходим
+                    window.location.replace(decodeURIComponent(callbackUrl));
+                } else {
+                    window.location.replace(MAIN_PAGE_URL);
+                }
             } else {
                 openNotification({type: "error", message: responseData.error});
             }
