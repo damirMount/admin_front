@@ -23,16 +23,14 @@ export default function LoginPage() {
             });
 
             if (responseData.ok) {
-                // Используем нативный парсер URL вместо router.query
-                const searchParams = new URLSearchParams(window.location.search);
-                const callbackUrl = searchParams.get('callbackUrl');
+                const params = new URLSearchParams(window.location.search);
+                const callbackUrl = params.get('callbackUrl');
 
-                if (callbackUrl) {
-                    // Декодируем на всякий случай и переходим
-                    window.location.replace(decodeURIComponent(callbackUrl));
-                } else {
-                    window.location.replace(MAIN_PAGE_URL);
-                }
+                // Если есть колбэк — идем по нему, иначе на главную
+                const target = callbackUrl ? decodeURIComponent(callbackUrl) : MAIN_PAGE_URL;
+
+                // Используем origin, чтобы избежать проблем с относительными путями на проде
+                window.location.href = window.location.origin + target;
             } else {
                 openNotification({type: "error", message: responseData.error});
             }
