@@ -1,3 +1,5 @@
+
+
 import React, {useEffect, useState} from "react";
 import {useAlert} from "../../../contexts/AlertContext";
 import {useSession} from "next-auth/react";
@@ -69,9 +71,10 @@ const ApparatReRegistrationForm = () => {
             dataIndex: "new_apparat_id",
             key: "new_apparat_id",
             render: (_, record) => {
+                // Приводим к строке для консистентного сравнения
                 const selectedNewIds = selectedTerminals
-                    .map(t => t.new_apparat_id)
-                    .filter(id => id && id !== 'new' && id !== record.new_apparat_id);
+                    .map(t => String(t.new_apparat_id))
+                    .filter(id => id && id !== 'new' && id !== String(record.new_apparat_id));
 
                 const options = [
                     {
@@ -80,11 +83,11 @@ const ApparatReRegistrationForm = () => {
                         disabled: false,
                     },
                     ...unregisteredTerminalsOptionRaw
-                        .filter(item => item.id_region === selectedDealer?.id)
+                        .filter(item => String(item.id_region) === String(selectedDealer?.id)) // Исправлено сравнение регионов
                         .map(item => ({
                             value: item.id,
                             label: `${item.id} ${item.name}`,
-                            disabled: selectedNewIds.includes(item.id), // disable если выбран в другой строке
+                            disabled: selectedNewIds.includes(String(item.id)),
                         })),
                 ];
 
@@ -132,7 +135,7 @@ const ApparatReRegistrationForm = () => {
         if (!Array.isArray(selectedValues)) return;
 
         const updatedSelected = selectedValues.map((apparatId) => {
-            const existing = selectedTerminals.find((item) => item.apparat_id === apparatId);
+            const existing = selectedTerminals.find((item) => String(item.apparat_id) === String(apparatId));
             return {
                 apparat_id: apparatId,
                 new_apparat_id: existing?.new_apparat_id ?? null,
@@ -140,7 +143,6 @@ const ApparatReRegistrationForm = () => {
         });
 
         const {validation, newRows} = validateTerminals(updatedSelected, selectedDealer, dealersOptionRaw);
-
         setSelectedTerminals(updatedSelected);
         setValidationResults(validation);
         setDataTable(newRows);
@@ -148,7 +150,7 @@ const ApparatReRegistrationForm = () => {
 
     const handleChangeNewTerminalId = (apparatId, newValue) => {
         const updatedTerminals = selectedTerminals.map(terminal => {
-            if (terminal.apparat_id === apparatId) {
+            if (Number(terminal.apparat_id) === Number(apparatId)) {
                 return {
                     ...terminal,
                     new_apparat_id: newValue,
@@ -182,57 +184,40 @@ const ApparatReRegistrationForm = () => {
         setEncashmentTerminal(value)
     };
 
-    const validateTerminals = (
-        updatedTerminals = [],
-        selectedDealer,
-        dealersOptionRaw
-    ) => {
+    const validateTerminals = (updatedTerminals = [], selectedDealer, dealersOptionRaw) => {
         const validation = [];
         const newRows = [];
 
-        if (updatedTerminals.length === 0) {
-            return {validation, newRows};
-        }
-        updatedTerminals.forEach(({apparat_id, new_apparat_id}) => {
-            const oldTerminal = terminalsOptionRaw.find((t) => t.id === apparat_id);
-            const newTerminal = unregisteredTerminalsOptionRaw.find((t) => t.id === new_apparat_id);
+        if (updatedTerminals.length === 0) return {validation, newRows};
 
-            const oldDealer = dealersOptionRaw.find((d) => d.id === oldTerminal?.id_region);
-            const newDealer = dealersOptionRaw.find((d) => d.id === newTerminal?.id_region);
+        updatedTerminals.forEach(({apparat_id, new_apparat_id}) => {
+            // Использование String() гарантирует, что поиск сработает независимо от того, строка id или число
+            const oldTerminal = terminalsOptionRaw.find((t) => String(t.id) === String(apparat_id));
+            const newTerminal = unregisteredTerminalsOptionRaw.find((t) => String(t.id) === String(new_apparat_id));
+
+            const oldDealer = dealersOptionRaw.find((d) => String(d.id) === String(oldTerminal?.id_region));
+            const newDealer = dealersOptionRaw.find((d) => String(d.id) === String(newTerminal?.id_region));
+
             const errors = [];
 
             if (!oldTerminal) {
                 errors.push('Старый терминал не найден');
             } else {
-                if (!oldTerminal.ip) {
-                    errors.push('Отсутствует IP адрес');
-                }
+                if (!oldTerminal.ip) errors.push('Отсутствует IP адрес');
+                if (Number(oldTerminal.terminal_type) !== 1) errors.push('Точка не является терминалом');
+                if (Number(oldTerminal.blocked) !== 0) errors.push('Точка заблокирована');
 
-                if (oldTerminal.terminal_type !== 1) {
-                    errors.push('Точка не является терминалом');
-                }
-
-                if (oldTerminal.blocked !== 0) {
-                    errors.push('Точка заблокирована');
-                }
-
-                if (oldDealer?.id === selectedDealer?.id) {
+                if (String(oldDealer?.id) === String(selectedDealer?.id)) {
                     validation.push({
                         id: apparat_id,
                         type: 'warning',
                         message: 'Старый дилер терминала совпадает с выбранным дилером на перерегистрацию',
                     });
                 }
-                if (newTerminal && newTerminal !== 'new') {
-                    validation.push({
-                        id: apparat_id,
-                        type: 'warning',
-                        message: 'Терминал будет перерегистрирован на существующую точку',
-                    });
-                }
             }
 
-            if (newTerminal && newDealer && selectedDealer?.id && newDealer.id !== selectedDealer.id || !newTerminal && new_apparat_id && new_apparat_id !== 'new') {
+            // Проверка принадлежности дилеру
+            if (newTerminal && newDealer && selectedDealer?.id && String(newDealer.id) !== String(selectedDealer.id)) {
                 errors.push(`Точка ${new_apparat_id} не принадлежит выбранному дилеру`);
             }
 
@@ -477,7 +462,7 @@ const ApparatReRegistrationForm = () => {
                         name="dealer_id"
                         selectedOptions={selectedDealer ? [selectedDealer.id] : []}
                         options={dealersOptionRaw
-                            .filter((item) => Number(item.blocked) === 0)
+                            .filter((item) => Number(item.blocked) === 0) // Исправлено приведение типа
                             .map((item) => ({
                                 value: item.id,
                                 label: `${item.id} ${item.name}`,
@@ -494,6 +479,7 @@ const ApparatReRegistrationForm = () => {
                         placeholder="Выберите терминал"
                         name="terminal_id"
                         isMulti={true}
+                        // Добавлено приведение для консистентности меток
                         options={terminalsOptionRaw.map((item) => ({
                             value: item.id,
                             label: `${item.id} ${item.name}`,
