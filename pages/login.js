@@ -4,10 +4,8 @@ import {signIn} from "next-auth/react";
 import FormInput from "../components/main/input/FormInput";
 import Head from "next/head";
 import {useAlert} from "../contexts/AlertContext";
-import {useRouter} from "next/router";
 
 export default function LoginPage() {
-    const router = useRouter(); // Добавляем useRouter
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const {openNotification} = useAlert();

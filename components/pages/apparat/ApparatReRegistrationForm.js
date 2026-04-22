@@ -383,6 +383,7 @@ const ApparatReRegistrationForm = () => {
         try {
             const config = {model: "Dealer", sort: '{"column":"id","direction":"asc"}',};
             const result = await fetchData(config, session);
+            console.log(result.data)
             setDealersOptionRaw(result.data || []);
         } catch (error) {
             console.error("Ошибка при загрузке дилеров:", error);
@@ -476,7 +477,7 @@ const ApparatReRegistrationForm = () => {
                         name="dealer_id"
                         selectedOptions={selectedDealer ? [selectedDealer.id] : []}
                         options={dealersOptionRaw
-                            .filter((item) => item.blocked === 0)
+                            .filter((item) => Number(item.blocked) === 0)
                             .map((item) => ({
                                 value: item.id,
                                 label: `${item.id} ${item.name}`,
