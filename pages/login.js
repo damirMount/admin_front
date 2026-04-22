@@ -4,30 +4,38 @@ import {signIn} from "next-auth/react";
 import FormInput from "../components/main/input/FormInput";
 import Head from "next/head";
 import {useAlert} from "../contexts/AlertContext";
+import {useRouter} from "next/router";
 
 export default function LoginPage() {
+    const router = useRouter(); // Добавляем useRouter
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const {openNotification} = useAlert();
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         try {
             const responseData = await signIn('credentials', {
                 redirect: false,
                 username,
                 password,
-            })
+            });
+
             if (responseData.ok) {
-                window.location.replace(MAIN_PAGE_URL);
+                // 1. Проверяем, есть ли в URL параметр callbackUrl
+                // 2. Если есть — переходим по нему, если нет — на главную
+                const callbackUrl = router.query.callbackUrl || MAIN_PAGE_URL;
+
+                // Используем window.location.replace для полной перезагрузки состояния сессии
+                window.location.replace(callbackUrl);
             } else {
                 openNotification({type: "error", message: responseData.error});
             }
         } catch (error) {
             openNotification({type: "error", message: error});
         }
-    }
+    };
 
     return (
         <div>

@@ -86,7 +86,7 @@ const AntiFraudStatsDashboard = ({session}) => {
     };
 
 
-    const quality = stats.registryQuality || {};
+    const quality = stats?.registryQuality || {};
 
     return (
         <div className="mt-4 mb-4 container-fluid px-0">
@@ -96,7 +96,7 @@ const AntiFraudStatsDashboard = ({session}) => {
                 <div className="m-0">
                     <Title level={3} className="m-0 mb-1">📊 Эффективность Антифрода</Title>
                     <Text className="text-muted">Всего транзакций за
-                        период: <b>{loading ? 'Загрузка...' : stats.totalTransactions?.toLocaleString()}</b></Text>
+                        период: <b>{loading ? 'Загрузка...' : stats?.totalTransactions?.toLocaleString()}</b></Text>
                 </div>
                 {/* Выбор Квартала */}
                 <DatePicker
@@ -122,7 +122,7 @@ const AntiFraudStatsDashboard = ({session}) => {
                                 <Statistic
                                     title={<Text strong style={{fontSize: '11px'}}>ПОДТВЕРЖДЕННЫЙ ФРОД <Tooltip
                                         title="Точность (Precision)"><InfoCircleOutlined/></Tooltip></Text>}
-                                    value={stats.confirmedBlockedRate}
+                                    value={stats?.confirmedBlockedRate}
                                     valueStyle={{color: '#52c41a'}}
                                     prefix={<SafetyCertificateTwoTone twoToneColor="#52c41a"/>}
                                 />
@@ -134,7 +134,7 @@ const AntiFraudStatsDashboard = ({session}) => {
                                 <Statistic
                                     title={<Text strong style={{fontSize: '11px'}}>ПОЛНОТА (RECALL) <Tooltip
                                         title="Доля выявленных мошеннических операций"><InfoCircleOutlined/></Tooltip></Text>}
-                                    value={stats.recallRate}
+                                    value={stats?.recallRate}
                                     valueStyle={{color: '#1890ff'}}
                                     prefix={<CheckCircleTwoTone twoToneColor="#1890ff"/>}
                                 />
@@ -146,8 +146,8 @@ const AntiFraudStatsDashboard = ({session}) => {
                                 <Statistic
                                     title={<Text strong style={{fontSize: '11px'}}>ЛОЖНЫЕ (FPR) <Tooltip
                                         title="Ошибочные блокировки"><InfoCircleOutlined/></Tooltip></Text>}
-                                    value={stats.falsePositiveRate}
-                                    valueStyle={{color: stats.falsePositiveRate === '0.00%' ? '#52c41a' : '#faad14'}}
+                                    value={stats?.falsePositiveRate}
+                                    valueStyle={{color: stats?.falsePositiveRate === '0.00%' ? '#52c41a' : '#faad14'}}
                                     prefix={<WarningTwoTone twoToneColor="#faad14"/>}
                                 />
                                 <Text type="secondary" style={{fontSize: '11px'}}>Ложные срабатывания</Text>
@@ -158,10 +158,10 @@ const AntiFraudStatsDashboard = ({session}) => {
                                 <Statistic
                                     title={<Text strong style={{fontSize: '11px'}} className="text-primary">В ОЧЕРЕДИ
                                         (WAIT)</Text>}
-                                    value={stats.unprocessedAlerts}
-                                    valueStyle={{color: stats.unprocessedAlerts > 0 ? '#ff4d4f' : '#52c41a'}}
+                                    value={stats?.unprocessedAlerts}
+                                    valueStyle={{color: stats?.unprocessedAlerts > 0 ? '#ff4d4f' : '#52c41a'}}
                                     prefix={<ThunderboltTwoTone
-                                        twoToneColor={stats.unprocessedAlerts > 0 ? '#ff4d4f' : '#52c41a'}/>}
+                                        twoToneColor={stats?.unprocessedAlerts > 0 ? '#ff4d4f' : '#52c41a'}/>}
                                 />
                                 <Text type="secondary" style={{fontSize: '11px'}}>Ожидают решения</Text>
                             </Card>
@@ -171,12 +171,12 @@ const AntiFraudStatsDashboard = ({session}) => {
                     <Row gutter={[16, 16]} className="mt-3">
                         <Col span={14}>
                             <Card
-                                title={<Text strong>Топ сработавших правил ({stats.documentedMethodsCount})</Text>}
+                                title={<Text strong>Топ сработавших правил ({stats?.documentedMethodsCount})</Text>}
                                 size='small'
                                 className="shadow-sm border-0 h-100"
                             >
                                 <Table
-                                    dataSource={stats.topMethods || []}
+                                    dataSource={stats?.topMethods || []}
                                     pagination={false}
                                     size="small"
                                     rowKey="name"
@@ -206,7 +206,7 @@ const AntiFraudStatsDashboard = ({session}) => {
                                         <Statistic
                                             title={<Tooltip title="Mean time to detect (Среднее время автоматического обнаружения)">Детекция
                                                 (MTTD) <InfoCircleOutlined/></Tooltip>}
-                                            value={formatTime(stats.mttdMin, true)}
+                                            value={formatTime(stats?.mttdMin, true)}
                                             valueStyle={{fontSize: '18px', fontWeight: 'bold'}}
                                         />
                                     </Col>
@@ -214,7 +214,7 @@ const AntiFraudStatsDashboard = ({session}) => {
                                         <Statistic
                                             title={<Tooltip title="Mean time to respond (Среднее время реакции человека)">Реакция
                                                 (MTTR) <InfoCircleOutlined/></Tooltip>}
-                                            value={formatTime(stats.mttrMin)}
+                                            value={formatTime(stats?.mttrMin)}
                                             valueStyle={{fontSize: '18px', fontWeight: 'bold'}}
                                         />
                                     </Col>
@@ -231,9 +231,9 @@ const AntiFraudStatsDashboard = ({session}) => {
                                               strokeWidth={8} showInfo={false}/>
                                     <div className="d-flex justify-content-between mt-1">
                                         <Text style={{fontSize: '10px'}}
-                                              type="secondary">Всего: {MoneyFormatNumber(stats.totalTransactions)}</Text>
+                                              type="secondary">Всего: {MoneyFormatNumber(stats?.totalTransactions)}</Text>
                                         <Text style={{fontSize: '10px'}} type="danger">В
-                                            ожидании: {stats.unprocessedAlerts}</Text>
+                                            ожидании: {stats?.unprocessedAlerts}</Text>
                                     </div>
                                 </div>
 
@@ -250,7 +250,7 @@ const AntiFraudStatsDashboard = ({session}) => {
                                     className="p-2 bg-light rounded-2 border border-dashed d-flex align-items-center justify-content-between">
                                     <Text type="secondary" style={{fontSize: '12px'}}>Лояльность системы:</Text>
                                     <Tag color="green" className="m-0">Разрешение
-                                        споров: {stats.customerResolutionRate}</Tag>
+                                        споров: {stats?.customerResolutionRate}</Tag>
                                 </div>
                             </Card>
                         </Col>
