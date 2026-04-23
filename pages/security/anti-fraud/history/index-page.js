@@ -166,7 +166,7 @@ export default function AntiFraudHistoryPage() {
     );
 
     return (
-        <ProtectedElement allowedPermissions={"access_management"}>
+        <ProtectedElement allowedPermissions={"antifraud_show"}>
             <Head>
                 <title>Аудит Антифрод</title>
             </Head>

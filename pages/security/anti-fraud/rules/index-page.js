@@ -16,6 +16,7 @@ import useAntiFraudData from "./hooks/useAntiFraudData";
 import useAntiFraudActions from "./hooks/useAntiFraudActions";
 import getTableColumns from "./utils/columns";
 import AntiFraudStatsDashboard from "./components/AntiFraudStatsDashboard/AntiFraudStatsDashboard";
+import {useAuth} from "../../../../contexts/AccessContext";
 
 const {Title} = Typography;
 
@@ -30,6 +31,19 @@ export default function AntiFraudRulesPage() {
 
     // Стейт для хранения измененного порядка до момента сохранения
     const [localRules, setLocalRules] = useState([]);
+    const {checkAccess} = useAuth();
+
+    const [canOperate, setCanOperate] = useState(false);
+
+    useEffect(() => {
+        const verifyAccess = async () => {
+            if (session) {
+                const hasAccess = await checkAccess('antifraud_managment', false);
+                setCanOperate(hasAccess);
+            }
+        };
+        verifyAccess();
+    }, [session, checkAccess]);
 
     const {
         rules,
@@ -88,6 +102,7 @@ export default function AntiFraudRulesPage() {
         setIsModalOpen,
         setOpenDropdownId,
         openDropdownId,
+        canOperate
     });
 
     const handleSaveNewOrder = async (finalData) => {
@@ -157,7 +172,7 @@ export default function AntiFraudRulesPage() {
     };
 
     return (
-        <ProtectedElement allowedPermissions={'access_management'}>
+        <ProtectedElement allowedPermissions={'antifraud_show'}>
             <Head>
                 <title>Антифрод Система</title>
             </Head>
@@ -175,16 +190,20 @@ export default function AntiFraudRulesPage() {
                                 Сбросить фильтр
                             </Button>
                         )}
-                        <Button
-                            className="btn-purple"
-                            onClick={() => {
-                                form.resetFields();
-                                setIsModalOpen(true);
-                            }}
-                            icon={<FontAwesomeIcon icon={faPlus} className="me-2"/>}
-                        >
-                            Создать алгоритм
-                        </Button>
+
+                        {canOperate && (
+                            <Button
+                                className="btn-purple"
+                                onClick={() => {
+                                    form.resetFields();
+                                    setIsModalOpen(true);
+                                }}
+                                icon={<FontAwesomeIcon icon={faPlus} className="me-2"/>}
+                            >
+                                Создать алгоритм
+                            </Button>
+                        )}
+
                     </Space>
                 </div>
 

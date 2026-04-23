@@ -100,7 +100,7 @@ const SidebarTab = () => {
             subMenu: [
                 {
                     label: 'Антифрод',
-                    permission: 'access_management',
+                    permission: 'antifraud_show',
                     subMenu: [
                         {label: 'Алгоритмы проверки', link: ANTI_FRAUD_RULES_URL},
                         {label: 'Журнал аудита', link: ANTI_FRAUD_HISTORY_URL},

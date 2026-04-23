@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import Head from "next/head";
 import {Badge, Card, Form, Space, Tag, theme, Typography} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -18,6 +18,7 @@ import {prepareFormValues} from "../../../../components/pages/security/anti-frau
 import {USERS_TRUST_STATUS} from "../../../../components/pages/security/anti-fraud/constants";
 import EditProfileModal from "./components/EditProfileModal";
 import useAntiFraudProfileActions from "./hooks/useAntiFraudProfileActions";
+import {useAuth} from "../../../../contexts/AccessContext";
 
 const {Text, Title} = Typography;
 
@@ -33,6 +34,19 @@ export default function AntiFraudProfilePage() {
 
     const {historyData, loading, dictionaries, getHistory} = useAntiFraudProfiles(session, openNotification);
     const {handleSaveProfile} = useAntiFraudProfileActions(session, openNotification, getHistory);
+    const {checkAccess} = useAuth();
+
+    const [canOperate, setCanOperate] = useState(false);
+
+    useEffect(() => {
+        const verifyAccess = async () => {
+            if (session) {
+                const hasAccess = await checkAccess('antifraud_operator', false);
+                setCanOperate(hasAccess);
+            }
+        };
+        verifyAccess();
+    }, [session, checkAccess]);
 
     const onSave = async (values) => {
         if (typeof handleSaveProfile === 'function') {
@@ -53,7 +67,7 @@ export default function AntiFraudProfilePage() {
 
     const columns = useMemo(
         () => {
-            return [
+            let column = [
                 {
                     title: "№",
                     width: 50,
@@ -161,36 +175,44 @@ export default function AntiFraudProfilePage() {
                         );
                     }
                 },
-                {
-                    width: '50px',
-                    render: (_, r) => (
-                        <ActionButtons
-                            {...r}
-                            buttonsLinks={{
-                                editRoute: {
-                                    label: 'Изменить',
-                                    action: (id) => {
-                                        // 1. Сохраняем данные записи в стейт
-                                        setEditingClient(r);
-                                        // 2. Заполняем поля формы
-                                        form.setFieldsValue({...prepareFormValues(r), id: id});
-                                        // 3. Открываем модалку
-                                        setIsModalOpen(true);
-                                    }
-                                },
-                            }}
-                            dropdownOpen={openDropdownId === r.id}
-                            setDropdownOpen={(o) => setOpenDropdownId(o ? r.id : null)}
-                        />
-                    )
-                }
+
             ];
+
+            if (canOperate) {
+                column = [
+                    ...column,
+                    {
+                        width: '50px',
+                        render: (_, r) => (
+                            <ActionButtons
+                                {...r}
+                                buttonsLinks={{
+                                    editRoute: {
+                                        label: 'Изменить',
+                                        action: (id) => {
+                                            // 1. Сохраняем данные записи в стейт
+                                            setEditingClient(r);
+                                            // 2. Заполняем поля формы
+                                            form.setFieldsValue({...prepareFormValues(r), id: id});
+                                            // 3. Открываем модалку
+                                            setIsModalOpen(true);
+                                        }
+                                    },
+                                }}
+                                dropdownOpen={openDropdownId === r.id}
+                                setDropdownOpen={(o) => setOpenDropdownId(o ? r.id : null)}
+                            />
+                        )
+                    }]
+            }
+
+            return column
         },
         [pagination, dictionaries.services, token.colorPrimary, openDropdownId]
     );
 
     return (
-        <ProtectedElement allowedPermissions={"access_management"}>
+        <ProtectedElement allowedPermissions={"antifraud_show"}>
             <Head>
                 <title>Клиенты Антифрод</title>
             </Head>

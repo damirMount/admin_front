@@ -14,6 +14,7 @@ import RuleSkeleton from "../RuleItem/RuleSkeleton";
 import RuleItem from "../RuleItem/RuleItem";
 import ProfileWhitelistCard
     from "../../../../../../components/pages/security/anti-fraud/ProfileWhitelistCard/ProfileWhitelistCard";
+import {useAuth} from "../../../../../../contexts/AccessContext";
 
 const {Text, Title} = Typography;
 const {Panel} = Collapse;
@@ -47,14 +48,16 @@ const IterationWrapper = ({
                               servicesList,
                               apparatsList,
                               dealersList,
-                              isDefaultOpen
+
                           }) => {
-    const [isOpen, setIsOpen] = useState(isDefaultOpen);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(
         () => {
             if (expandAll) {
                 setIsOpen(true);
+            } else {
+                setIsOpen(false);
             }
         },
         [expandAll]
@@ -203,6 +206,19 @@ const PaymentRulesDetails = ({
     const [expandAll, setExpandAll] = useState(false);
     const [comment, setComment] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const {checkAccess} = useAuth();
+
+    const [canOperate, setCanOperate] = useState(false);
+
+    useEffect(() => {
+        const verifyAccess = async () => {
+            if (session) {
+                const hasAccess = await checkAccess('antifraud_operator', false);
+                setCanOperate(hasAccess);
+            }
+        };
+        verifyAccess();
+    }, [session, checkAccess]);
 
     const fetchHistory = async () => {
         if (!record.id_payment) {
@@ -326,7 +342,6 @@ const PaymentRulesDetails = ({
                                     entry={entry}
                                     session={session}
                                     expandAll={expandAll}
-                                    isDefaultOpen={true}
                                     apparatsList={apparatsList}
                                     dealersList={dealersList}
                                     servicesList={servicesList}
@@ -454,7 +469,7 @@ const PaymentRulesDetails = ({
                     }
 
                     // 4. Форма ввода решения
-                    if (isWait && isLastEntry) {
+                    if (isWait && isLastEntry && canOperate) {
                         items.push(
                             {
                                 dot: (

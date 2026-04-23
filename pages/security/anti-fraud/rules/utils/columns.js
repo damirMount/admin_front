@@ -14,12 +14,13 @@ import {
 import SearchByColumn from "../../../../../components/main/table/cell/SearchByColumn";
 import ActionButtons from "../../../../../components/main/table/cell/ActionButtons";
 import {prepareFormValues} from "../../../../../components/pages/security/anti-fraud/helpers";
+import ProtectedElement from "../../../../../components/main/system/ProtectedElement";
 
 const {Text} = Typography;
 
-const getTableColumns = ({form, setIsModalOpen, setOpenDropdownId, openDropdownId}) => {
+const getTableColumns = ({form, setIsModalOpen, setOpenDropdownId, openDropdownId, canOperate}) => {
 
-    return [
+    let column = [
         {
             title: <FontAwesomeIcon icon={faArrowDownShortWide}/>,
             dataIndex: 'id',
@@ -144,25 +145,36 @@ const getTableColumns = ({form, setIsModalOpen, setOpenDropdownId, openDropdownI
                 </div>
             )
         },
-        {
-            width: '50px',
-            render: (_, r) => (
-                <ActionButtons
-                    {...r}
-                    buttonsLinks={{
-                        editRoute: {
-                            label: 'Изменить',
-                            action: (id) => {
-                                form.setFieldsValue({...prepareFormValues(r), id: id});
-                                setIsModalOpen(true);
-                            }
-                        },
-                    }}
-                    dropdownOpen={openDropdownId === r.id}
-                    setDropdownOpen={(o) => setOpenDropdownId(o ? r.id : null)}
-                />
-            )
-        }
+
     ];
+
+    if (canOperate) {
+        column = [
+            ...column,
+            {
+                width: '50px',
+                render: (_, r) => (
+                    <ProtectedElement allowedPermissions={'antifraud_managment'} redirect={false}>
+                        <ActionButtons
+                            {...r}
+                            buttonsLinks={{
+                                editRoute: {
+                                    label: 'Изменить',
+                                    action: (id) => {
+                                        form.setFieldsValue({...prepareFormValues(r), id: id});
+                                        setIsModalOpen(true);
+                                    }
+                                },
+                            }}
+                            dropdownOpen={openDropdownId === r.id}
+                            setDropdownOpen={(o) => setOpenDropdownId(o ? r.id : null)}
+                        />
+                    </ProtectedElement>
+                )
+            }
+        ]
+    }
+
+    return column;
 };
 export default getTableColumns;

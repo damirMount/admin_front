@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Area, AreaChart, Line, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ComposedChart } from 'recharts';
+import { Area, Line, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ComposedChart } from 'recharts';
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquare } from "@fortawesome/free-solid-svg-icons";
@@ -13,7 +13,6 @@ const TimelineTooltip = ({ active, payload, label }) => {
             if (item.dataKey === 'total') {
                 return sum;
             }
-
             return sum + (Number(item.value) || 0);
         }, 0);
 
@@ -23,7 +22,6 @@ const TimelineTooltip = ({ active, payload, label }) => {
                 <Text type="secondary" className="mb-2 d-block small">Дата: {label}</Text>
 
                 {payload.map((item, idx) => {
-                    // Скрываем "Итого" из списка категорий, так как выводим его отдельно внизу
                     if (item.dataKey === 'total') {
                         return null;
                     }
@@ -58,37 +56,49 @@ const PaymentTimelineChart = ({ payments, token }) => {
     const data = useMemo(() => {
         const map = {};
 
+        // 1. Группируем все данные по дням
         payments.forEach((p) => {
-            const date = dayjs(p.createdAt).format('DD.MM');
+            const paymentDate = dayjs(p.createdAt);
+            const dateLabel = paymentDate.format('DD.MM');
 
-            if (!map[date]) {
-                map[date] = {
-                    day: date,
+            if (!map[dateLabel]) {
+                map[dateLabel] = {
+                    day: dateLabel,
                     success: 0,
                     decline: 0,
                     wait: 0,
-                    total: 0
+                    total: 0,
+                    timestamp: paymentDate.startOf('day').valueOf()
                 };
             }
 
             if (['allow', 'approve'].includes(p.action)) {
-                map[date].success++;
+                map[dateLabel].success++;
             } else if (['reject', 'deny'].includes(p.action)) {
-                map[date].decline++;
+                map[dateLabel].decline++;
             } else {
-                map[date].wait++;
+                map[dateLabel].wait++;
             }
 
-            map[date].total++;
+            map[dateLabel].total++;
         });
 
-        return Object.values(map).reverse();
+        // 2. Превращаем в массив и сортируем по дате (от старых к новым)
+        const sortedData = Object.values(map).sort((a, b) => {
+            return a.timestamp - b.timestamp;
+        });
+
+        // 3. Берем последние 30 точек (дней), если их больше 30
+        if (sortedData.length > 30) {
+            return sortedData.slice(-30);
+        }
+
+        return sortedData;
     }, [payments]);
 
     return (
         <div style={{ height: 250, width: '100%' }}>
             <ResponsiveContainer>
-                {/* Используем ComposedChart, чтобы смешивать Area и Line */}
                 <ComposedChart data={data} margin={{ top: 10, right: 30, left: -20, bottom: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                     <XAxis
@@ -133,7 +143,6 @@ const PaymentTimelineChart = ({ payments, token }) => {
                         fillOpacity={0.3}
                     />
 
-                    {/* Используем Line вместо Area для итога, чтобы не ломать стек */}
                     <Line
                         name="Итого"
                         type="monotone"

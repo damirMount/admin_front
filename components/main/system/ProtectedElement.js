@@ -1,33 +1,56 @@
-import React, {useEffect, useState} from 'react';
-import {useAuth} from '../../../contexts/AccessContext';
+import React, { useEffect, useState, useMemo } from 'react';
+import { useAuth } from '../../../contexts/AccessContext';
 import Preloader from "./Preloader";
 
-const ProtectedElement = ({children, accessGranted, redirect}) => {
-    if (!accessGranted && redirect) {
-        return <Preloader/>; // Можно отображать загрузочный индикатор здесь
-    }
-    if (!accessGranted) {
-        return false
-    }
+const ProtectedElement = ({
+                              children,
+                              allowedPermissions,
+                              redirect = true,
+                              fallback = null
+                          }) => {
+    const { session, checkAccess } = useAuth();
 
-    return children;
-};
-
-const ProtectedElementContainer = ({children, allowedPermissions, redirect = true}) => {
-    const {session, checkAccess} = useAuth();
-    const [accessGranted, setAccessGranted] = useState(false);
+    // Состояния: 'loading', 'granted', 'denied'
+    const [status, setStatus] = useState('loading');
 
     useEffect(() => {
-        const fetchAccess = async () => {
-            // Выполняем проверку доступа
-            const hasAccess = session && await checkAccess(allowedPermissions, redirect);
-            setAccessGranted(hasAccess);
+        let isMounted = true;
+
+        const verify = async () => {
+            if (!session) {
+                if (isMounted) setStatus('denied');
+                return;
+            }
+
+            try {
+                // Предполагаем, что checkAccess возвращает boolean
+                const hasAccess = await checkAccess(allowedPermissions, redirect);
+
+                if (isMounted) {
+                    setStatus(hasAccess ? 'granted' : 'denied');
+                }
+            } catch (error) {
+                console.error("[AUTH] Access check failed:", error);
+                if (isMounted) setStatus('denied');
+            }
         };
 
-        fetchAccess();
-    }, []);
+        verify();
 
-    return <ProtectedElement accessGranted={accessGranted} redirect={redirect}>{children}</ProtectedElement>;
+        return () => { isMounted = false; };
+    }, [allowedPermissions, session, checkAccess, redirect]);
+
+    // Логика отображения
+    if (status === 'loading') {
+        return redirect ? <Preloader /> : null;
+    }
+
+    if (status === 'granted') {
+        return <>{children}</>;
+    }
+
+    // Если доступ запрещен
+    return redirect ? <Preloader /> : fallback;
 };
 
-export default ProtectedElementContainer;
+export default React.memo(ProtectedElement);
