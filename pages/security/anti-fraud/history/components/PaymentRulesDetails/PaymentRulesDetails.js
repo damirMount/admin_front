@@ -561,6 +561,7 @@ const PaymentRulesDetails = ({
                         dealersList={dealersList}
                         apparatsList={apparatsList}
                         serversList={serversList}
+                        showActions={checkAccess}
                     />
                 </div>
             )}

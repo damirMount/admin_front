@@ -150,8 +150,8 @@ export default function FilterForm({onSearch, loading, dictionaries}) {
                         </Form.Item>
                     </Col>
                     <Col xs={24} md={8} className="d-flex flex-column justify-content-end gap-2">
-                        <div className="d-flex justify-content-between mb-2">
-                            {renderLabel(faCalendarDays, "Период")}
+                        <div className="d-flex justify-content-between">
+                            {renderLabel(faCalendarDays, "Последний платёж")}
                             <Space split={<Divider type="vertical" style={{margin: "0 4px"}}/>} size={0}>
                                 <Button
                                     type="link"

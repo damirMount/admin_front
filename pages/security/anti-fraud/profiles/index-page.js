@@ -227,7 +227,7 @@ export default function AntiFraudProfilePage() {
                         <Space>
                             <div style={{width: 4, height: 20, backgroundColor: token.colorPrimary, borderRadius: 2}}/>
                             <Text strong style={{fontSize: "16px"}}>
-                                Журнал транзакций
+                                Журнал клиентов
                             </Text>
                         </Space>
                     }

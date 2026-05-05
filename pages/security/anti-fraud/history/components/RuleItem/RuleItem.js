@@ -196,7 +196,8 @@ const RuleItem = ({
     }, [forceOpen]);
 
     const details = rule.details || {};
-    const params = details.params || {};
+    let params;
+    params = details.params || {};
     const evidencePayments = useMemo(() => {
         return Array.isArray(details.evidence_payments) ? details.evidence_payments : [];
     }, [details.evidence_payments]);

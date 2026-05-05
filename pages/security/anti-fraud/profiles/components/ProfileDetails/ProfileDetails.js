@@ -176,7 +176,7 @@ const ProfileDetails = ({record, session, apparatsList, token}) => {
                     </Card>
                 </Col>
                 <Col span={24}>
-                    <Card title="Динамика" className='shadow-sm' size="small">
+                    <Card title="Динамика за 30 дней" className='shadow-sm' size="small">
                         <PaymentTimelineChart payments={payments} token={token}/>
                     </Card>
                 </Col>
