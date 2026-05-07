@@ -267,7 +267,7 @@ const ConditionList = ({form, dealersList = [], servicesList = [], apparatsList 
             <Divider orientation="left" plain className="my-4">
                 <Space className="text-primary">
                     <FontAwesomeIcon icon={faClock}/>
-                    <Text strong>Лимиты времени и расписание</Text>
+                    <Text strong>Периоды работы</Text>
                 </Space>
             </Divider>
 

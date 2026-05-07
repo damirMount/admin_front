@@ -218,13 +218,12 @@ export default function AntiFraudRulesPage() {
                         expandableContent={renderExpandableContent}
                     />
                 </Card>
-
-                <AntiFraudStatsDashboard session={session}/>
                 <RiskAnalysisDashboard
                     rules={rules}
                     serviceTypes={serviceTypes}
                     setFilterServiceId={setFilterServiceId}
                 />
+                <AntiFraudStatsDashboard session={session}/>
                 <RuleFormModal
                     open={isModalOpen}
                     onCancel={() => {
