@@ -7,7 +7,6 @@ import {restrictToVerticalAxis} from '@dnd-kit/modifiers';
 import {arrayMove, SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import fetchData from '../database/DataFetcher';
 import {DraggableBodyRow} from './cell/DraggableBodyRow';
-import UniqueKeyGenerator from '../system/UniqueKeyGenerator';
 
 const SmartTable = ({
                         model,
@@ -55,13 +54,17 @@ const SmartTable = ({
         [baseColumns, sortableRows]
     );
 
+    // ИСПРАВЛЕНО: Ключ гарантированно уникален (благодаря префиксу и индексу),
+    // но стабилен (завязан на конкретное имя поля `field` или `id`).
     const addKeyToData = useCallback(
         (items) => {
             return items?.map(
                 (item, index) => {
+                    const uniqueIdentifier = item.id || item.field || 'field';
+                    const stableKey = item.key || `row-${index}-${uniqueIdentifier}`;
                     return {
                         ...item,
-                        key: item.key || item.id?.toString() || `row-${index}-${UniqueKeyGenerator()}`,
+                        key: stableKey,
                     };
                 }
             ) || [];
@@ -100,6 +103,7 @@ const SmartTable = ({
         [fetchDataFromDB, model]
     );
 
+    // Синхронизация внешних данных с dataTable
     useEffect(
         () => {
             if (!model) {
@@ -132,7 +136,6 @@ const SmartTable = ({
     };
 
     const onDragEnd = ({active, over}) => {
-        // Если over не существует (перетащили "в никуда") или ID совпадает с активным
         if (!over || active.id === over.id) {
             return;
         }
@@ -149,7 +152,6 @@ const SmartTable = ({
             }
         );
 
-        // Проверяем, что оба индекса найдены (не равны -1)
         if (oldIndex !== -1 && newIndex !== -1) {
             const reordered = arrayMove(dataTable, oldIndex, newIndex);
             setDataTable(reordered);
@@ -188,7 +190,7 @@ const SmartTable = ({
                                         setExpandedRowKeys(
                                             expandedRowKeys.filter(
                                                 (key) => {
-                                                    return key !== record.key;
+                                                    return key !== record.key
                                                 }
                                             )
                                         );

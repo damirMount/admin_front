@@ -10,7 +10,7 @@ import Preloader from "../../../components/main/system/Preloader";
 
 
 export default function CreateRegistry() {
-    const {data: session} = useSession(); // Получаем сессию
+    const { data: session, status } = useSession();
     const [processingLoader, setProcessingLoader] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
