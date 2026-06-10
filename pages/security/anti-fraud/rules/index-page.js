@@ -1,8 +1,8 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState, useRef} from "react";
 import Head from "next/head";
 import {Button, Card, Form, Space, Typography} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faShieldHalved} from "@fortawesome/free-solid-svg-icons";
 import {useSession} from "next-auth/react";
 
 import SmartTable from "../../../../components/main/table/SmartTable";
@@ -17,6 +17,7 @@ import useAntiFraudActions from "./hooks/useAntiFraudActions";
 import getTableColumns from "./utils/columns";
 import AntiFraudStatsDashboard from "./components/AntiFraudStatsDashboard/AntiFraudStatsDashboard";
 import {useAuth} from "../../../../contexts/AccessContext";
+import AntiFraudControlPanel from "./components/AntiFraudControlPanel/AntiFraudControlPanel";
 
 const {Title} = Typography;
 
@@ -29,10 +30,15 @@ export default function AntiFraudRulesPage() {
     const [openDropdownId, setOpenDropdownId] = useState(null);
     const [filterServiceId, setFilterServiceId] = useState(null);
 
-    // Стейт для хранения измененного порядка до момента сохранения
+    // Флаг, контролирующий состояние видимости окна подтверждения
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
+    // --- СТЕЙТЫ НАСТРОЕК ПАНЕЛИ УПРАВЛЕНИЯ ---
+    const [serverSettings, setServerSettings] = useState({ isSystemActive: null, systemMode: null, checkCoverage: null });
+    const [localSettings, setLocalSettings] = useState({ isSystemActive: null, systemMode: null, checkCoverage: null });
+
     const [localRules, setLocalRules] = useState([]);
     const {checkAccess} = useAuth();
-
     const [canOperate, setCanOperate] = useState(false);
 
     useEffect(() => {
@@ -45,8 +51,10 @@ export default function AntiFraudRulesPage() {
         verifyAccess();
     }, [session, checkAccess]);
 
+    // Достаем актуальный settings из нашего хука данных
     const {
         rules,
+        settings,
         serviceTypes,
         dealersList,
         apparatsList,
@@ -57,45 +65,44 @@ export default function AntiFraudRulesPage() {
 
     const {
         handleSaveRule,
-        handleSaveRulesOrder // Предполагаем, что этот метод есть или будет добавлен
+        handleSaveRulesOrder,
+        handleSaveSettings
     } = useAntiFraudActions(session, openNotification, refresh);
 
-    // Синхронизируем локальные правила при загрузке данных с сервера
-    useEffect(
-        () => {
-            if (rules) {
-                setLocalRules(rules);
-            }
-        },
-        [rules]
-    );
+    // Синхронизация правил при их обновлении с бэкенда
+    useEffect(() => {
+        if (rules) {
+            setLocalRules(rules);
+        }
+    }, [rules]);
 
+    // СИНХРОНИЗАЦИЯ НАСТРОЕК ИЗ БАЗЫ ДАННЫХ
+    useEffect(() => {
+        if (settings) {
+            setServerSettings(settings);
+            setLocalSettings(settings);
+        }
+    }, [settings]);
 
-    const serviceMap = useMemo(
-        () => {
-            const map = {};
-            serviceTypes.forEach((s) => {
-                map[s.id] = s.name;
-            });
-            return map;
-        },
-        [serviceTypes]
-    );
+    const serviceMap = useMemo(() => {
+        const map = {};
+        serviceTypes.forEach((s) => {
+            map[s.id] = s.name;
+        });
+        return map;
+    }, [serviceTypes]);
 
-    const filteredRules = useMemo(
-        () => {
-            const source = localRules.length > 0 ? localRules : rules;
-            if (!filterServiceId) {
-                return source;
-            }
-            return source.filter((r) => {
-                const isGlobal = r.service_types_ids.length === 0;
-                const isSpecific = r.service_types_ids.includes(Number(filterServiceId));
-                return isGlobal || isSpecific;
-            });
-        },
-        [filterServiceId, rules, localRules]
-    );
+    const filteredRules = useMemo(() => {
+        const source = localRules.length > 0 ? localRules : rules;
+        if (!filterServiceId) {
+            return source;
+        }
+        return source.filter((r) => {
+            const isGlobal = r.service_types_ids.length === 0;
+            const isSpecific = r.service_types_ids.includes(Number(filterServiceId));
+            return isGlobal || isSpecific;
+        });
+    }, [filterServiceId, rules, localRules]);
 
     const columns = getTableColumns({
         form,
@@ -105,50 +112,99 @@ export default function AntiFraudRulesPage() {
         canOperate
     });
 
-    const handleSaveNewOrder = async (finalData) => {
+    // --- ДЕКЛАРАТИВНОЕ ВЫЧИСЛЕНИЕ ИЗМЕНЕНИЙ ---
+    const hasChanges = useMemo(() => {
+        if (!rules || rules.length === 0) return false;
+
+        const isOrderChanged = JSON.stringify(localRules.map(r => r.id)) !== JSON.stringify(rules.map(r => r.id));
+        const isSettingsChanged = JSON.stringify(localSettings) !== JSON.stringify(serverSettings);
+
+        return isOrderChanged || isSettingsChanged;
+    }, [localRules, localSettings, rules, serverSettings]);
+
+
+    // --- ЕДИНЫЙ ОБРАБОТЧИК СОХРАНЕНИЯ ВСЕХ ИЗМЕНЕНИЙ НА СТРАНИЦЕ ---
+    const handleGlobalSave = async () => {
         try {
-            // ПРАВИЛЬНО: Берем ID, а не priority
-            const newOrderIds = finalData.map(
-                (item) => {
-                    return item.id;
-                }
-            );
+            const isOrderChanged = JSON.stringify(localRules.map(r => r.id)) !== JSON.stringify(rules.map(r => r.id));
+            const isSettingsChanged = JSON.stringify(localSettings) !== JSON.stringify(serverSettings);
 
-            console.log("Отправляем массив ID на сервер:", newOrderIds);
+            if (isOrderChanged) {
+                const newOrderIds = localRules.map((item) => item.id);
+                await handleSaveRulesOrder(newOrderIds);
+            }
 
-            await handleSaveRulesOrder(newOrderIds);
+            if (isSettingsChanged) {
+                const payload = {
+                    // Отправляем как числа/строки и как booleans одновременно для универсальности
+                    is_system_active: localSettings.isSystemActive ? 1 : 0,
+                    system_mode: localSettings.systemMode,
+                    check_coverage: Number(localSettings.checkCoverage),
+
+                    // Дублируем в camelCase на случай если бэк принимает его
+                    isSystemActive: localSettings.isSystemActive,
+                    systemMode: localSettings.systemMode,
+                    checkCoverage: localSettings.checkCoverage
+                };
+
+                await handleSaveSettings(payload);
+                setServerSettings(localSettings);
+            }
 
             openNotification({
                 type: 'success',
-                message: 'Новый порядок правил успешно сохранен',
+                message: 'Изменения успешно сохранены',
             });
 
             closeConfirmAction();
+            setIsConfirmOpen(false);
             refresh();
         } catch (error) {
             openNotification({
                 type: 'error',
-                message: 'Ошибка при сохранении порядка',
+                message: 'Ошибка при сохранении изменений',
             });
         }
     };
 
-    const handleResetOrder = () => {
-        setLocalRules(rules);
+    // --- ЕДИНЫЙ СБРОС ВСЕХ ИЗМЕНЕНИЙ НА СТРАНИЦЕ ---
+    const handleGlobalReset = () => {
+        setLocalRules(rules || []);
+        setLocalSettings(serverSettings);
         closeConfirmAction();
+        setIsConfirmOpen(false);
     };
 
-    const handleUpdateOrder = (reorderedFilteredData) => {
-        // 1. Берем ПОЛНЫЙ список правил из текущего стейта (или из props)
-        const currentFullList = [...localRules];
+    // --- ИСПОЛЬЗУЕМ REFS ДЛЯ ОБХОДА ЗАМЫКАНИЙ В AlertContext ---
+    const saveRef = useRef(handleGlobalSave);
+    const resetRef = useRef(handleGlobalReset);
 
-        // 3. Формируем новый полный список
-        // Мы заменяем старые объекты на новые в тех же местах, где они были в отфильтрованном списке
+    useEffect(() => {
+        saveRef.current = handleGlobalSave;
+        resetRef.current = handleGlobalReset;
+    });
+
+    // --- АВТОМАТИЧЕСКАЯ СИНХРОНИЗАЦИЯ ОКНА ПОДТВЕРЖДЕНИЯ С НАЛИЧИЕМ ИЗМЕНЕНИЙ ---
+    useEffect(() => {
+        if (hasChanges && !isConfirmOpen) {
+            openConfirmAction({
+                onSave: () => saveRef.current(),
+                onReset: () => resetRef.current()
+            });
+            setIsConfirmOpen(true);
+        }
+        else if (!hasChanges && isConfirmOpen) {
+            closeConfirmAction();
+            setIsConfirmOpen(false);
+        }
+    }, [hasChanges, isConfirmOpen]);
+
+
+    const handleUpdateOrder = (reorderedFilteredData) => {
+        const currentFullList = [...localRules];
         let filterIdx = 0;
         const nextFullList = currentFullList.map((item) => {
-            // Если этот элемент был в отфильтрованном списке, берем его из нового порядка
             const isPartofFilter = reorderedFilteredData.some(f => f.id === item.id);
-
             if (isPartofFilter) {
                 return reorderedFilteredData[filterIdx++];
             }
@@ -156,19 +212,20 @@ export default function AntiFraudRulesPage() {
         });
 
         setLocalRules(nextFullList);
+    };
 
-        openConfirmAction({
-            onSave: () => handleSaveNewOrder(nextFullList), // Отправляем ПОЛНЫЙ список
-            onReset: handleResetOrder
+    const handleSettingsChange = (type, value) => {
+        setLocalSettings((prev) => {
+            const nextSettings = { ...prev };
+            if (type === 'status') nextSettings.isSystemActive = value;
+            if (type === 'mode') nextSettings.systemMode = value;
+            if (type === 'coverage') nextSettings.checkCoverage = value;
+            return nextSettings;
         });
     };
+
     const renderExpandableContent = (record) => {
-        return (
-            <RuleCard
-                record={record}
-                serviceMap={serviceMap}
-            />
-        );
+        return <RuleCard record={record} serviceMap={serviceMap}/>;
     };
 
     return (
@@ -178,19 +235,16 @@ export default function AntiFraudRulesPage() {
             </Head>
             <div className="af-container p-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <Title level={2} className="m-0">🛡️ Алгоритмы проверки</Title>
+                    <Title level={2} className="m-0">
+                        <FontAwesomeIcon icon={faShieldHalved} className="me-2 text-primary"/>
+                        Алгоритмы проверки
+                    </Title>
                     <Space>
                         {filterServiceId && (
-                            <Button
-                                danger
-                                onClick={() => {
-                                    setFilterServiceId(null);
-                                }}
-                            >
+                            <Button danger onClick={() => setFilterServiceId(null)}>
                                 Сбросить фильтр
                             </Button>
                         )}
-
                         {canOperate && (
                             <Button
                                 className="btn-purple"
@@ -203,14 +257,22 @@ export default function AntiFraudRulesPage() {
                                 Создать алгоритм
                             </Button>
                         )}
-
                     </Space>
                 </div>
+
+                <AntiFraudControlPanel
+                    canOperate={canOperate}
+                    loading={loading}
+                    isSystemActive={localSettings.isSystemActive}
+                    systemMode={localSettings.systemMode}
+                    checkCoverage={localSettings.checkCoverage}
+                    onSettingsChange={handleSettingsChange}
+                />
 
                 <Card className="shadow-sm border-0 mb-5" bodyStyle={{padding: 0}}>
                     <SmartTable
                         data={filteredRules}
-                        sortableRows={true}
+                        sortableRows={canOperate}
                         onUpdateData={handleUpdateOrder}
                         loading={loading}
                         size={'small'}
@@ -218,17 +280,18 @@ export default function AntiFraudRulesPage() {
                         expandableContent={renderExpandableContent}
                     />
                 </Card>
+
                 <RiskAnalysisDashboard
                     rules={rules}
                     serviceTypes={serviceTypes}
                     setFilterServiceId={setFilterServiceId}
                 />
+
                 <AntiFraudStatsDashboard session={session}/>
+
                 <RuleFormModal
                     open={isModalOpen}
-                    onCancel={() => {
-                        setIsModalOpen(false);
-                    }}
+                    onCancel={() => setIsModalOpen(false)}
                     onFinish={(values) => {
                         handleSaveRule(values, {
                             onSuccess: () => {

@@ -2,7 +2,8 @@ import {useCallback} from "react";
 import {
     ANTIFRAUD_RULE_CREATE_API,
     ANTIFRAUD_RULE_UPDATE_API,
-    ANTIFRAUD_RULES_UPDATE_ORDER_API
+    ANTIFRAUD_RULES_UPDATE_ORDER_API,
+    ANTIFRAUD_SETTINGS_UPDATE_API
 } from "../../../../../routes/api";
 import {getCleanedConditions} from "../utils/dataTransformers";
 
@@ -47,7 +48,6 @@ const useAntiFraudActions = (session, openNotification, refresh) => {
                     message: responseData.message || 'Данные сохранены'
                 });
 
-                // Триггерим обновление данных в первом хуке
                 await refresh();
 
                 if (onSuccess) {
@@ -68,11 +68,6 @@ const useAntiFraudActions = (session, openNotification, refresh) => {
     }, [session, openNotification, refresh]);
 
     /**
-     * Сюда можно добавить удаление (handleDeleteRule)
-     * или быстрое переключение статуса (toggleRuleStatus)
-     */
-
-    /**
      * Массовое обновление приоритетов (сортировки)
      */
     const handleSaveRulesOrder = useCallback(async (sortedIds) => {
@@ -91,22 +86,50 @@ const useAntiFraudActions = (session, openNotification, refresh) => {
             if (!response.ok) {
                 throw new Error(responseData.message || 'Ошибка при сохранении порядка');
             }
-
-            // Обновляем данные на странице после успешного сохранения
-            await refresh();
         } catch (error) {
             openNotification({
                 type: 'error',
                 message: error.message
             });
-            throw error; // Пробрасываем ошибку для обработки в компоненте
+            throw error;
         }
-    }, [session, openNotification, refresh]);
+    }, [session, openNotification]);
 
-// Не забудьте добавить в return:
+    /**
+     * МЕТОД СОХРАНЕНИЯ ГЛОБАЛЬНЫХ НАСТРОЕК ПАНЕЛИ
+     */
+    const handleSaveSettings = useCallback(async (settings) => {
+        try {
+            console.log("Отправляем новые настройки панели на бэкенд:", settings);
+
+            const response = await fetch(`${ANTIFRAUD_SETTINGS_UPDATE_API}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session.accessToken}`,
+                },
+                body: JSON.stringify(settings),
+            });
+
+            const responseData = await response.json();
+            if (!response.ok) {
+                throw new Error(responseData.message || 'Ошибка при сохранении настроек панели');
+            }
+
+            return true;
+        } catch (error) {
+            openNotification({
+                type: 'error',
+                message: error.message
+            });
+            throw error;
+        }
+    }, [session, openNotification]);
+
     return {
         handleSaveRule,
-        handleSaveRulesOrder
+        handleSaveRulesOrder,
+        handleSaveSettings // <-- Экспортируем новый метод
     };
 };
 export default useAntiFraudActions;

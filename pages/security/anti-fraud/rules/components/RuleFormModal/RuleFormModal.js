@@ -12,7 +12,6 @@ const {Text} = Typography;
 
 const RuleFormModal = ({open, onCancel, onFinish, form, serviceTypes, dealersList, apparatsList, servicesList}) => {
     const formValues = Form.useWatch([], form) || {};
-    const {is_active: isActive, action_type: actionType, risk_value: riskValue} = formValues;
 
     const handleSubmit = (values) => {
 

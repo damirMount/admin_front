@@ -52,6 +52,7 @@ export const PERMISSION_DELETE_API = `${baseURL}/permission`
 export const ANTIFRAUD_RULE_CREATE_API = `${baseURL}/antiFraud/rule`
 export const ANTIFRAUD_RULE_UPDATE_API = `${baseURL}/antiFraud/rule`
 export const ANTIFRAUD_RULES_UPDATE_ORDER_API = `${baseURL}/antiFraud/rules/order`
+export const ANTIFRAUD_SETTINGS_UPDATE_API = `${baseURL}/antiFraud/rules/settings`
 export const GET_ANTIFRAUD_HISTORY_API = `${baseURL}/antiFraud/history`
 export const GET_ANTIFRAUD_STATISTIC_API = `${baseURL}/antiFraud/statistic`
 export const GET_ANTIFRAUD_HISTORY_DETAIL_API = `${baseURL}/antiFraud/history`
