@@ -139,7 +139,7 @@ const PaymentDescriptionCard = ({
                 apparatName: apparat.id ? `${apparat.id} ${apparat.name}` : `Точка #${record.id_apparat}`,
                 dealerName: dealer.id ? `${dealer.id} ${dealer.name}` : `Дилер #${record.id_region}`,
                 serverName: server.id ? `${server.id} ${server.name}` : `Сервер #${record.id_bserver}`,
-                parentDealerName: parentDealer.id ? `${parentDealer.id} ${parentDealer.name}` : `Дилер #${dealer.parentid}`,
+                parentDealerName: parentDealer.id ? `${parentDealer.id} ${parentDealer.name}` : `Род. Дилер #${dealer.parentid}`,
             };
         },
         [record, servicesList, dealersList, serversList, apparatsList, client, loadingClient]
