@@ -346,7 +346,7 @@ export default function UpdateDBPage() {
 
                                 fetchDataConfig={{
                                     model: 'Service',
-                                    searchTerm: {id_type: [5, 206, 220, 213], accurateSearch: false},
+                                    searchTerm: {id_type: [5, 206, 220, 213, 204], accurateSearch: false},
                                     sort: '{"column":"id","direction":"asc"}',
                                 }}
                                 required
