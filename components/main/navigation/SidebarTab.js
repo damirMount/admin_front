@@ -20,7 +20,7 @@ import {
     GSFR_UPDATE_URL,
     MAIN_PAGE_URL,
     OFFLINE_SERVICE_DATABASE_UPDATE_INDEX_URL,
-    OLD_ADMIN_URL,
+    OLD_ADMIN_URL, PAYMENTS_STATISTIC_URL,
     PERMISSION_INDEX_URL,
     RECIPIENT_INDEX_URL,
     REGISTRY_BACKUP_URL,
@@ -63,6 +63,7 @@ const SidebarTab = () => {
         },
         {
             label: 'Отчёты', permission: 'reports_management', icon: faFileLines, showInSubMenu: true, subMenu: [
+                {label: 'Статистика', link: PAYMENTS_STATISTIC_URL},
                 {
                     label: 'Дилеры', permission: 'reports_dealer', subMenu: [
                         {label: 'История счетов', link: REPORT_DEALERS_ACCOUNT_HISTORY_URL},

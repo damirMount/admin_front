@@ -676,3 +676,18 @@ h1 {
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
+.label-small {
+    font-size: 11px;
+}
+
+.label-medium {
+    font-size: 12px;
+}
+
+.money-main {
+    font-size: 16px;
+}
+
+.money-secondary {
+    font-size: 14px;
+}

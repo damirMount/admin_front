@@ -22,22 +22,9 @@ import {Account2str} from "../../system/Account2str";
 import {ANTI_FRAUD_HISTORY_URL, ANTI_FRAUD_PROFILES_URL} from "../../../../routes/web";
 import {findById} from "../../system/FindById";
 import fetchData from "../../database/DataFetcher";
+import MoneyColumn from "../../system/MoneyColumn";
 
 const {Text, Title} = Typography;
-
-const MoneyColumn = ({label, value, color, type = 'full', prefix = 'с'}) => {
-    return (
-        <Space direction="vertical" className="text-center" size={0}>
-            <Text type="secondary" className="label-medium">{label}</Text>
-            <Text strong className="money-main" style={{color}}>
-                {MoneyFormatNumber(value || 0, type)}
-                <small className="ms-1 text-decoration-underline money-prefix">
-                    {prefix}
-                </small>
-            </Text>
-        </Space>
-    );
-};
 
 // Убрали async — теперь это обычный компонент
 const PaymentDescriptionCard = ({
