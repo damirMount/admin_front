@@ -23,6 +23,7 @@ export const GET_REGISTRY_BY_RECIPIENT_API = `${baseURL}/getRegistryByRecipient`
 
 export const REGISTRY_RESEND_API = `${baseURL}/registry/resend`
 export const GET_PAYMENTS_API = `${baseURL}/registry/payments`
+export const GET_STATISTICS_PAYMENTS_API = `${baseURL}/statistics/payments`
 
 export const REGISTRY_BACKUP_INDEX_API = `${baseURL}/registryBackup/index/`
 export const REGISTRY_BACKUP_DOWNLOAD_API = `${baseURL}/registryBackup/download`

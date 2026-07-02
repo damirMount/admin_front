@@ -2,15 +2,25 @@ import Head from "next/head";
 import React from "react";
 import ProtectedElement from "../../../components/main/system/ProtectedElement";
 import PaymentsFilterForm from "./components/PaymentsFilterForm";
-import {Card, Col, Divider, Row, Space, Statistic, Typography} from "antd";
+import {Card, Col, Divider, Form, Row, Space, Statistic, theme, Typography} from "antd";
 import PaymentTimelineChart from "../../../components/main/charts/PaymentTimelineChart";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCoins, faWallet} from "@fortawesome/free-solid-svg-icons";
 import MoneyColumn from "../../../components/main/system/MoneyColumn";
+import {useAlert} from "../../../contexts/AlertContext";
+import {useSession} from "next-auth/react";
+import useAntiFraudProfileActions from "../../security/anti-fraud/profiles/hooks/useAntiFraudProfileActions";
+import usePaymentsStatisticActions from "./hooks/usePaymentsStatisticActions";
 
 
 const {Title, Text} = Typography;
 export default function PaymentsStatisticsPage() {
+    const {token} = theme.useToken();
+    const {openNotification} = useAlert();
+    const {data: session} = useSession();
+    const [form] = Form.useForm();
+
+    const {getPaymentsStatistics} = usePaymentsStatisticActions(session, openNotification);
 
     return (
         <ProtectedElement allowedPermissions={'reports_management'}>
@@ -18,7 +28,7 @@ export default function PaymentsStatisticsPage() {
                 <Head>
                     <title>Статистика платежей | {process.env.NEXT_PUBLIC_APP_NAME}</title>
                 </Head>
-                <PaymentsFilterForm/>
+                <PaymentsFilterForm onSearch={getPaymentsStatistics}/>
                 <div>
                     <Title level={3}>Статистика платежей</Title>
                     <Row gutter={[12, 12]}>

@@ -16,7 +16,7 @@ export default function PaymentsFilterForm({onSearch, loading, dictionaries}) {
     const formValues = Form.useWatch([], form);
 
     const handleSubmit = (values) => {
-        updateUrlWithFilters(values);
+        onSearch(values);
     };
 
 
