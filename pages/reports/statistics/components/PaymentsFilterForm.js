@@ -1,244 +1,166 @@
-import React, {useMemo} from "react";
-import {Button, Card, Col, DatePicker, Divider, Form, Row, Select, Space, Typography} from "antd";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendarDays, faMagnifyingGlass, faSitemap, faTriangleExclamation} from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from "react";
+import { Button, Card, Col, DatePicker, Form, Row, Select, Segmented, Typography, Divider, Space } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarDays, faFilter, faMagnifyingGlass, faTableCells } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
-import {useRouter} from "next/router";
 
+const { Text } = Typography;
+const { RangePicker } = DatePicker;
 
-const {Text} = Typography;
-const {RangePicker} = DatePicker;
-const {Option} = Select;
-
-export default function PaymentsFilterForm({onSearch, loading, dictionaries}) {
+export default function PaymentsFilterForm({ onSearch, loading, dictionaries }) {
     const [form] = Form.useForm();
-    const router = useRouter();
-    const formValues = Form.useWatch([], form);
+    const [modes, setModes] = useState({
+        dealer: "total",
+        server: "total",
+        service: "total",
+        apparat: "total"
+    });
 
-    const handleSubmit = (values) => {
-        onSearch(values);
+    const handleModeChange = (dimension, value) => {
+        setModes(prev => ({ ...prev, [dimension]: value }));
     };
-
 
     const handleQuickDate = (type) => {
         const range = type === "today"
             ? [dayjs().startOf("day"), dayjs().endOf("day")]
             : [dayjs().subtract(1, "day").startOf("day"), dayjs().subtract(1, "day").endOf("day")];
 
-        form.setFieldsValue(
-            {
-                date_range: range
-            }
-        );
+        form.setFieldsValue({ date_range: range });
+    };
+
+    const handleSubmit = (values) => {
+        const payload = {
+            date_range: values.date_range,
+            payments_status: values.payments_status,
+            dealer_id: modes.dealer === "filter" ? values.dealer_select_id : modes.dealer,
+            server_id: modes.server === "filter" ? values.server_select_id : modes.server,
+            service_id: modes.service === "filter" ? values.service_select_id : modes.service,
+            apparat_id: modes.apparat === "filter" ? values.apparat_select_id : modes.apparat,
+        };
+        onSearch(payload);
     };
 
     const handleReset = () => {
-        form.setFieldsValue(getDefaults());
+        form.resetFields();
+        setModes({ dealer: "total", server: "total", service: "total", apparat: "total" });
     };
 
-    const renderLabel = (icon, label) => {
+    const modeOptions = [
+        { label: "Сводно", value: "total" },
+        { label: "Строки", value: "all" },
+        { label: "Фильтр", value: "filter" }
+    ];
+
+    const renderDimensionRow = (label, dimensionKey, dictionaryItems = []) => {
+        const isFilterActive = modes[dimensionKey] === "filter";
+
         return (
-            <Text strong>
-                <FontAwesomeIcon icon={icon} className="me-2 text-primary"/>
-                {label}
-            </Text>
+            <Row gutter={[16, 8]} align="middle" className="mb-2 pb-2 border-bottom border-light">
+                <Col xs={24} md={6}>
+                    <Text strong>{label}</Text>
+                </Col>
+                <Col xs={24} md={10}>
+                    <Segmented
+                        options={modeOptions}
+                        value={modes[dimensionKey]}
+                        onChange={(val) => handleModeChange(dimensionKey, val)}
+                        block
+                    />
+                </Col>
+                <Col xs={24} md={8}>
+                    {isFilterActive ? (
+                        <Form.Item name={`${dimensionKey}_select_id`} className="mb-0" rules={[{ required: true, message: 'Выберите элемент' }]}>
+                            <Select
+                                showSearch
+                                placeholder={`Выберите ${label.toLowerCase()}...`}
+                                optionFilterProp="label"
+                                loading={!dictionaryItems.length}
+                                options={dictionaryItems.map(item => ({
+                                    label: `${item.id} | ${item.name}`,
+                                    value: Number(item.id)
+                                }))}
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
+                    ) : (
+                        <Text type="secondary" className="small">
+                            {modes[dimensionKey] === "total" ? "✦ Сумма в одну строку" : "☰ Развернуть в строки"}
+                        </Text>
+                    )}
+                </Col>
+            </Row>
         );
     };
 
     return (
-        <Card className="mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+        <Card className="mb-4 shadow-sm border-0 rounded-4">
             <Form
                 form={form}
                 layout="vertical"
                 onFinish={handleSubmit}
-                requiredMark={false}
+                initialValues={{
+                    date_range: [dayjs().startOf("day"), dayjs().endOf("day")],
+                    payments_status: undefined
+                }}
             >
-                <Row gutter={[24, 16]} align="bottom">
+                {/* 1. Блок Ограничения */}
+                <div className="mb-3 d-flex align-items-center gap-2 text-muted small uppercase fw-bold">
+                    <FontAwesomeIcon icon={faFilter} className="text-primary" />
+                    <span>1. Ограничение данных</span>
+                </div>
+
+                <Row gutter={[24, 16]} className="mb-4">
                     <Col xs={24} md={8}>
-                        <div className="d-flex justify-content-between mb-2">
-                            {renderLabel(faCalendarDays, "Период")}
-                            <Space split={<Divider type="vertical" style={{margin: "0 4px"}}/>} size={0}>
-                                <Button
-                                    type="link"
-                                    size="small"
-                                    className="p-0"
-                                    onClick={() => {
-                                        return handleQuickDate("today");
-                                    }}
-                                >
-                                    Сегодня
-                                </Button>
-                                <Button
-                                    type="link"
-                                    size="small"
-                                    className="p-0"
-                                    onClick={() => {
-                                        return handleQuickDate("yesterday");
-                                    }}
-                                >
-                                    Вчера
-                                </Button>
+                        <div className="d-flex justify-content-between align-items-end mb-2">
+                            <Text strong><FontAwesomeIcon icon={faCalendarDays} className="me-2 text-primary" /> Период</Text>
+                            <Space split={<Divider type="vertical" />} size={0}>
+                                <Button type="link" size="small" onClick={() => handleQuickDate("today")}>Сегодня</Button>
+                                <Button type="link" size="small" onClick={() => handleQuickDate("yesterday")}>Вчера</Button>
                             </Space>
                         </div>
                         <Form.Item name="date_range" className="mb-0">
-                            <RangePicker
-                                style={{width: "100%"}}
-                                format="YYYY-MM-DD"
-                                className="rounded-3"
-                                disabledDate={
-                                    (c) => {
-                                        return c && c > dayjs().endOf("day");
-                                    }
-                                }
-                            />
+                            <RangePicker style={{ width: "100%" }}  className="rounded-3" />
                         </Form.Item>
                     </Col>
-
                     <Col xs={24} md={8}>
-                        <Form.Item name="score_range" label={renderLabel(faTriangleExclamation, "Тип отчёта")}
-                                   className="mb-0">
-                            <Select mode="multiple" placeholder="Статус" showSearch={false} allowClear
-                                    className="rounded-3">
-                                {/*{RISK_LEVELS.map(*/}
-                                {/*    (risk) => {*/}
-                                {/*        return (*/}
-                                {/*            <Option key={risk.value} value={risk.value}>*/}
-                                {/*                <Space size={4}>*/}
-                                {/*                    <Badge className='me-1' color={risk.color}/>*/}
-                                {/*                    <Text>{risk.label}</Text>*/}
-                                {/*                </Space>*/}
-                                {/*            </Option>*/}
-                                {/*        );*/}
-                                {/*    }*/}
-                                {/*)}*/}
+                        <div className="mb-2"><Text strong>Статус платежей</Text></div>
+                        <Form.Item name="payments_status" className="mb-0">
+                            <Select placeholder="Все статусы" allowClear>
+                                <Select.Option value="success">Успешные</Select.Option>
+                                <Select.Option value="fail">Ошибочные</Select.Option>
                             </Select>
                         </Form.Item>
                     </Col>
+                </Row>
 
-                    <Col xs={24} md={8}>
-                        <Form.Item name="score_range" label={renderLabel(faTriangleExclamation, "Статус")}
-                                   className="mb-0">
-                            <Select mode="multiple" placeholder="Статус" showSearch={false} allowClear
-                                    className="rounded-3">
-                                {/*{RISK_LEVELS.map(*/}
-                                {/*    (risk) => {*/}
-                                {/*        return (*/}
-                                {/*            <Option key={risk.value} value={risk.value}>*/}
-                                {/*                <Space size={4}>*/}
-                                {/*                    <Badge className='me-1' color={risk.color}/>*/}
-                                {/*                    <Text>{risk.label}</Text>*/}
-                                {/*                </Space>*/}
-                                {/*            </Option>*/}
-                                {/*        );*/}
-                                {/*    }*/}
-                                {/*)}*/}
-                            </Select>
-                        </Form.Item>
-                    </Col>
+                <Divider className="my-4" />
 
-                    <Col xs={24} sm={6}>
-                        <Form.Item name="id_service" label={renderLabel(faSitemap, "Дилер")} className="mb-0">
-                            <Select
-                                showSearch
-                                placeholder="Все сервисы"
-                                allowClear
-                                optionFilterProp="label"
-                                // Важно: если данных еще нет, показываем состояние загрузки или пустой массив
-                                loading={!dictionaries?.services}
-                                filterOption={(input, option) =>
-                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                }
-                                // Формируем опции только если массив существует
-                                options={useMemo(() =>
-                                    (dictionaries?.services || []).map(s => ({
-                                        label: `${s.id} | ${s.name}`,
-                                        // Гарантируем, что value — число, чтобы соответствовать Number() из useEffect
-                                        value: Number(s.id)
-                                    })), [dictionaries?.services])
-                                }
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={6}>
-                        <Form.Item
-                            name="final_action"
-                            label={renderLabel(faSitemap, "Сервер")}
-                            className="mb-0"
-                        >
-                            <Select mode="multiple" showSearch={false} placeholder="Все платежи" allowClear
-                                    maxTagCount={2}
-                                    className="rounded-3"
-                                // options={Object.entries(ANTI_FRAUD_CHECK_STATUS).map(([key, status]) => {
-                                //     return {
-                                //         value: key,
-                                //         label: (
-                                //             <Space size={4}>
-                                //                 <Badge color={status.color || 'green'}/>
-                                //                 <span className='ms-2'>{status.label}</span>
-                                //             </Space>
-                                //         )
-                                //     };
-                                // })}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={6}>
-                        <Form.Item name="id_service" label={renderLabel(faSitemap, "Сервис")} className="mb-0">
-                            <Select
-                                showSearch
-                                placeholder="Все сервисы"
-                                allowClear
-                                optionFilterProp="label"
-                                // Важно: если данных еще нет, показываем состояние загрузки или пустой массив
-                                loading={!dictionaries?.services}
-                                filterOption={(input, option) =>
-                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                }
-                                // Формируем опции только если массив существует
-                                options={useMemo(() =>
-                                    (dictionaries?.services || []).map(s => ({
-                                        label: `${s.id} | ${s.name}`,
-                                        // Гарантируем, что value — число, чтобы соответствовать Number() из useEffect
-                                        value: Number(s.id)
-                                    })), [dictionaries?.services])
-                                }
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={6}>
-                        <Form.Item name="id_service" label={renderLabel(faSitemap, "Аппарат")} className="mb-0">
-                            <Select
-                                showSearch
-                                placeholder="Все сервисы"
-                                allowClear
-                                optionFilterProp="label"
-                                // Важно: если данных еще нет, показываем состояние загрузки или пустой массив
-                                loading={!dictionaries?.services}
-                                filterOption={(input, option) =>
-                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                }
-                                // Формируем опции только если массив существует
-                                options={useMemo(() =>
-                                    (dictionaries?.services || []).map(s => ({
-                                        label: `${s.id} | ${s.name}`,
-                                        // Гарантируем, что value — число, чтобы соответствовать Number() из useEffect
-                                        value: Number(s.id)
-                                    })), [dictionaries?.services])
-                                }
-                            />
-                        </Form.Item>
-                    </Col>
+                {/* 2. Блок Структуры */}
+                <div className="mb-4 d-flex align-items-center gap-2 text-muted small uppercase fw-bold">
+                    <FontAwesomeIcon icon={faTableCells} className="text-primary" />
+                    <span>2. Настройка структуры (Куб)</span>
+                </div>
 
-                    <Col xs={24} md={24} className="d-flex justify-content-end gap-2">
+                <div className="px-2">
+                    {renderDimensionRow("Дилеры", "dealer", dictionaries?.dealers || [])}
+                    {renderDimensionRow("Серверы", "server", dictionaries?.servers || [])}
+                    {renderDimensionRow("Сервисы", "service", dictionaries?.services || [])}
+                    {renderDimensionRow("Аппараты", "apparat", dictionaries?.apparatus || [])}
+                </div>
+
+                {/* 3. Блок Действий */}
+                <Row className="mt-4 pt-3 border-top">
+                    <Col span={24} className="d-flex justify-content-end gap-2">
+                        <Button type="text" onClick={handleReset}>Сбросить</Button>
                         <Button
                             type="primary"
                             htmlType="submit"
-                            icon={<FontAwesomeIcon icon={faMagnifyingGlass}/>}
+                            icon={<FontAwesomeIcon icon={faMagnifyingGlass} />}
                             loading={loading}
-                            className="rounded-3 px-4"
-                            style={{backgroundColor: "#4c3a75", borderColor: "#4c3a75"}}
+                            className="px-4 rounded-3"
+                            style={{ backgroundColor: "#4c3a75" }}
                         >
-                            Найти
+                            Сформировать отчет
                         </Button>
                     </Col>
                 </Row>
