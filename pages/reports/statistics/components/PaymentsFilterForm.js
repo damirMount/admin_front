@@ -37,7 +37,7 @@ export default function PaymentsFilterForm({ onSearch, loading, dictionaries }) 
             service_id: modes.service === "filter" ? values.service_select_id : modes.service,
             apparat_id: modes.apparat === "filter" ? values.apparat_select_id : modes.apparat,
         };
-        onSearch(payload);
+        onSearch(payload, modes);
     };
 
     const handleReset = () => {
@@ -103,7 +103,6 @@ export default function PaymentsFilterForm({ onSearch, loading, dictionaries }) 
                     payments_status: undefined
                 }}
             >
-                {/* 1. Блок Ограничения */}
                 <div className="mb-3 d-flex align-items-center gap-2 text-muted small uppercase fw-bold">
                     <FontAwesomeIcon icon={faFilter} className="text-primary" />
                     <span>1. Ограничение данных</span>
@@ -119,7 +118,7 @@ export default function PaymentsFilterForm({ onSearch, loading, dictionaries }) 
                             </Space>
                         </div>
                         <Form.Item name="date_range" className="mb-0">
-                            <RangePicker style={{ width: "100%" }}  className="rounded-3" />
+                            <RangePicker style={{ width: "100%" }} className="rounded-3" />
                         </Form.Item>
                     </Col>
                     <Col xs={24} md={8}>
@@ -135,7 +134,6 @@ export default function PaymentsFilterForm({ onSearch, loading, dictionaries }) 
 
                 <Divider className="my-4" />
 
-                {/* 2. Блок Структуры */}
                 <div className="mb-4 d-flex align-items-center gap-2 text-muted small uppercase fw-bold">
                     <FontAwesomeIcon icon={faTableCells} className="text-primary" />
                     <span>2. Настройка структуры (Куб)</span>
@@ -145,10 +143,9 @@ export default function PaymentsFilterForm({ onSearch, loading, dictionaries }) 
                     {renderDimensionRow("Дилеры", "dealer", dictionaries?.dealers || [])}
                     {renderDimensionRow("Серверы", "server", dictionaries?.servers || [])}
                     {renderDimensionRow("Сервисы", "service", dictionaries?.services || [])}
-                    {renderDimensionRow("Аппараты", "apparat", dictionaries?.apparatus || [])}
+                    {renderDimensionRow("Аппараты", "apparat", dictionaries?.apparats || [])}
                 </div>
 
-                {/* 3. Блок Действий */}
                 <Row className="mt-4 pt-3 border-top">
                     <Col span={24} className="d-flex justify-content-end gap-2">
                         <Button type="text" onClick={handleReset}>Сбросить</Button>
