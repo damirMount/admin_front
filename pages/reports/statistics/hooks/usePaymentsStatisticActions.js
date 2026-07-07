@@ -5,7 +5,15 @@ const usePaymentsStatisticActions = (session, openNotification) => {
 
     const getPaymentsStatistics = useCallback(async (formValues) => {
         try {
-            const { date_range, payments_status, dealer_id, service_id, server_id, apparat_id } = formValues;
+            const {
+                date_range,
+                payments_status,
+                dealer_id,
+                service_id,
+                server_id,
+                apparat_id,
+                actualize_data // Достаем наш флаг пересчета
+            } = formValues;
 
             // Форматируем даты для бэкенда
             const formattedDates = date_range && date_range.length === 2
@@ -15,8 +23,9 @@ const usePaymentsStatisticActions = (session, openNotification) => {
             // Собираем тело запроса под кубическую структуру
             const dataToSend = {
                 date_range: formattedDates,
+                actualize_data: !!actualize_data, // Передаем на бэкенд (true / false)
                 filters: {
-                    payments_status: payments_status || undefined, // если не выбран, не шлем (выгрузит и success и fail)
+                    payments_status: payments_status || undefined,
                     dealer_id: dealer_id ?? "total",
                     service_id: service_id ?? "total",
                     server_id: server_id ?? "total",
@@ -38,7 +47,6 @@ const usePaymentsStatisticActions = (session, openNotification) => {
             const responseData = await response.json();
 
             if (response.ok) {
-                // Возвращаем массив "data" из ответа бэкенда
                 return responseData.data || [];
             } else {
                 openNotification({

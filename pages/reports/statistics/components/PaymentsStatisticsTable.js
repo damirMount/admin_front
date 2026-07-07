@@ -47,14 +47,69 @@ export default function PaymentsStatisticsTable({
     }, [filterModes]);
 
     const processedStatistics = useMemo(() => {
-        const favRows = statistics.filter(item => FAVORITE_DEALER_IDS.includes(Number(item.dealer_id)));
-        const ordinaryRows = statistics.filter(item => !FAVORITE_DEALER_IDS.includes(Number(item.dealer_id)));
+        // Функция сквозной нормализации любых "пустых" или "сводных" значений ID
+        const normalizeId = (id, mode) => {
+            if (mode === "total") return "total";
+            if (id === undefined || id === null || id === 0 || id === "0" || id === "total" || String(id).trim() === "") {
+                return "total";
+            }
+            return String(id).trim();
+        };
 
-        // Группировка и сортировка базовых строк данных
+        const aggregatedMap = new Map();
+
+        // ШАГ 1: Проходим по всем данным и жёстко схлопываем совпадения
+        statistics.forEach(item => {
+            const dId = normalizeId(item.dealer_id, filterModes.dealer);
+            const srId = normalizeId(item.server_id, filterModes.server);
+            const svId = normalizeId(item.service_id, filterModes.service);
+            const aId = normalizeId(item.apparat_id, filterModes.apparat);
+            const status = String(item.payments_status || "").toLowerCase().trim();
+
+            // Создаем эталонный ключ на основе нормализованных данных
+            const groupKey = `d:${dId}_sr:${srId}_sv:${svId}_a:${aId}_st:${status}`;
+
+            if (!aggregatedMap.has(groupKey)) {
+                aggregatedMap.set(groupKey, {
+                    key: groupKey,
+                    dealer_id: dId,
+                    server_id: srId,
+                    service_id: svId,
+                    apparat_id: aId,
+                    payments_status: status,
+                    count: 0,
+                    total: 0,
+                    real_pay: 0,
+                    real_pay_rur: 0,
+                    commission: 0
+                });
+            }
+
+            const current = aggregatedMap.get(groupKey);
+            current.count += Number(item.count || 0);
+            current.total += Number(item.total || 0);
+            current.real_pay += Number(item.real_pay || 0);
+            current.real_pay_rur += Number(item.real_pay_rur || 0);
+            current.commission += Number(item.commission || 0);
+        });
+
+        const aggregatedStatistics = Array.from(aggregatedMap.values());
+
+        // ШАГ 2: Разделение строк на Избранные и Обычные
+        const favRows = aggregatedStatistics.filter(item => FAVORITE_DEALER_IDS.includes(Number(item.dealer_id)));
+        const ordinaryRows = aggregatedStatistics.filter(item => !FAVORITE_DEALER_IDS.includes(Number(item.dealer_id)));
+
+        // Группировка статусов (успех/ошибка) вокруг одного элемента и их сортировка
         const sortGroupedRows = (rows) => {
             const groups = {};
             rows.forEach(row => {
-                const groupKey = `${row.dealer_id || ""}-${row.server_id || ""}-${row.service_id || ""}-${row.apparat_id || ""}`;
+                const keyParts = [];
+                if (filterModes.dealer !== "total") keyParts.push(row.dealer_id);
+                if (filterModes.server !== "total") keyParts.push(row.server_id);
+                if (filterModes.service !== "total") keyParts.push(row.service_id);
+                if (filterModes.apparat !== "total") keyParts.push(row.apparat_id);
+                const groupKey = keyParts.join("-") || "total-group";
+
                 if (!groups[groupKey]) groups[groupKey] = [];
                 groups[groupKey].push(row);
             });
@@ -82,8 +137,8 @@ export default function PaymentsStatisticsTable({
                 }
 
                 const sortedGroupRows = [...groupRows].sort((a, b) => {
-                    const statusA = String(a.payments_status || "").toLowerCase();
-                    const statusB = String(b.payments_status || "").toLowerCase();
+                    const statusA = String(a.payments_status || "");
+                    const statusB = String(b.payments_status || "");
                     if (statusA === "success" && statusB !== "success") return -1;
                     if (statusA !== "success" && statusB === "success") return 1;
                     return statusA.localeCompare(statusB);
@@ -101,14 +156,8 @@ export default function PaymentsStatisticsTable({
                         return isAsc ? a.sortValue - b.sortValue : b.sortValue - a.sortValue;
                     }
                     return isAsc
-                        ? String(a.sortValue).localeCompare(String(b.sortValue), 'ru', {
-                            numeric: true,
-                            sensitivity: 'base'
-                        })
-                        : String(b.sortValue).localeCompare(String(a.sortValue), 'ru', {
-                            numeric: true,
-                            sensitivity: 'base'
-                        });
+                        ? String(a.sortValue).localeCompare(String(b.sortValue), 'ru', { numeric: true, sensitivity: 'base' })
+                        : String(b.sortValue).localeCompare(String(a.sortValue), 'ru', { numeric: true, sensitivity: 'base' });
                 });
             }
 
@@ -121,6 +170,13 @@ export default function PaymentsStatisticsTable({
             if (filterModes.server !== "total") activeKeys.push("server_id");
             if (filterModes.service !== "total") activeKeys.push("service_id");
             if (filterModes.apparat !== "total") activeKeys.push("apparat_id");
+
+            // Инициализируем дефолтные значения span
+            for (let i = start; i < end; i++) {
+                activeKeys.forEach(key => {
+                    rows[i][`${key}_rowSpan`] = 1;
+                });
+            }
 
             for (let i = start; i < end; i++) {
                 if (rows[i].isFavSummary) continue;
@@ -159,11 +215,8 @@ export default function PaymentsStatisticsTable({
                         if (i === start || !rows[i - 1].isFavSummary) {
                             let summarySpan = 0;
                             for (let j = i; j < end; j++) {
-                                if (rows[j].isFavSummary) {
-                                    summarySpan++;
-                                } else {
-                                    break;
-                                }
+                                if (rows[j].isFavSummary) summarySpan++;
+                                else break;
                             }
                             rows[i].favSummaryRowSpan = summarySpan;
                             for (let j = i + 1; j < i + summarySpan; j++) {
@@ -183,7 +236,7 @@ export default function PaymentsStatisticsTable({
 
         // Расчет агрегатов для избранных
         const favSummary = favRows.reduce((acc, curr) => {
-            const isSuccess = String(curr.payments_status || "").toLowerCase() === "success";
+            const isSuccess = String(curr.payments_status || "") === "success";
             acc.all.count += Number(curr.count || 0);
             acc.all.total += Number(curr.total || 0);
             acc.all.real_pay += Number(curr.real_pay || 0);
@@ -217,9 +270,7 @@ export default function PaymentsStatisticsTable({
             ...favSummary.all
         });
 
-        // ИСПРАВЛЕНО: Проверяем, есть ли обычные платежи помимо избранных.
-        // Если обычных строк нет, промежуточный итог для избранных исключается.
-        let fullFlatList = [];
+        let fullFlatList;
         if (favRows.length === 0) {
             fullFlatList = flatOrdinary.map(r => ({ ...r }));
         } else if (ordinaryRows.length === 0) {
@@ -295,8 +346,10 @@ export default function PaymentsStatisticsTable({
                         return cellConfig;
                     }
 
-                    if (record.dealer_id_rowSpan !== undefined) {
-                        cellConfig.props.rowSpan = record.dealer_id_rowSpan;
+                    // ИСПРАВЛЕНО: Применяем рассчитанный rowSpan для Дилера
+                    const specificRowSpan = record[`dealer_id_rowSpan`];
+                    if (specificRowSpan !== undefined) {
+                        cellConfig.props.rowSpan = specificRowSpan;
                     }
 
                     const dealer = dictionaries?.dealers?.find(
@@ -313,8 +366,7 @@ export default function PaymentsStatisticsTable({
                     } else {
                         cellConfig.children = (
                             <span className="small d-inline-flex align-items-center gap-1">
-                                {isFav && <FontAwesomeIcon icon={faStar} className="text-warning me-1"
-                                                           title="Избранный дилер"/>}
+                                {isFav && <FontAwesomeIcon icon={faStar} className="text-warning me-1"/>}
                                 {name ? `${id} | ${name}` : id}
                             </span>
                         );
@@ -412,11 +464,9 @@ export default function PaymentsStatisticsTable({
 
                     let content;
                     if (record.favSummaryType === "success") {
-                        content = <Badge status="success"
-                                         text={<Text strong className="text-success">★ Избранные: Успешные</Text>}/>;
+                        content = <Badge status="success" text={<Text strong className="text-success">★ Избранные: Успешные</Text>}/>;
                     } else if (record.favSummaryType === "fail") {
-                        content = <Badge status="error"
-                                         text={<Text strong className="text-danger">★ Избранные: Ошибочные</Text>}/>;
+                        content = <Badge status="error" text={<Text strong className="text-danger">★ Избранные: Ошибочные</Text>}/>;
                     } else {
                         content = <Text strong className="text-primary">★ Всего по избранным</Text>;
                     }
@@ -526,7 +576,7 @@ export default function PaymentsStatisticsTable({
 
                 return (
                     <Table.Summary fixed="bottom">
-                        {!paymentsStatus && (
+                        {!paymentsStatus && summaryColSpan > 0 && (
                             <Table.Summary.Row style={{backgroundColor: "#f6ffed"}}>
                                 {canGroupSummaryVertically ? (
                                     <>
@@ -539,27 +589,20 @@ export default function PaymentsStatisticsTable({
                                     </>
                                 ) : (
                                     <Table.Summary.Cell index={0} colSpan={textColumnsCount}>
-                                        <Badge status="success"
-                                               text={<Text strong className="text-success">Итого успешных
-                                                   платежей</Text>}/>
+                                        <Badge status="success" text={<Text strong className="text-success">Итого успешных платежей</Text>}/>
                                     </Table.Summary.Cell>
                                 )}
                                 <Table.Summary.Cell index={countIdx} align="right">
                                     <Text strong>{totalSummary.success.count.toLocaleString("ru-RU")} ед.</Text>
                                 </Table.Summary.Cell>
-                                <Table.Summary.Cell index={totalIdx}
-                                                    align="right">{formatCurrency(totalSummary.success.total)}</Table.Summary.Cell>
-                                <Table.Summary.Cell index={realPayIdx}
-                                                    align="right">{formatCurrency(totalSummary.success.real_pay)}</Table.Summary.Cell>
-                                <Table.Summary.Cell index={commIdx}
-                                                    align="right">{formatCurrency(totalSummary.success.commission)}</Table.Summary.Cell>
-                                <Table.Summary.Cell index={rurIdx}
-                                                    align="right">{formatCurrency(totalSummary.success.real_pay_rur,
-                                    <FontAwesomeIcon icon={faCoins}/>)}</Table.Summary.Cell>
+                                <Table.Summary.Cell index={totalIdx} align="right">{formatCurrency(totalSummary.success.total)}</Table.Summary.Cell>
+                                <Table.Summary.Cell index={realPayIdx} align="right">{formatCurrency(totalSummary.success.real_pay)}</Table.Summary.Cell>
+                                <Table.Summary.Cell index={commIdx} align="right">{formatCurrency(totalSummary.success.commission)}</Table.Summary.Cell>
+                                <Table.Summary.Cell index={rurIdx} align="right">{formatCurrency(totalSummary.success.real_pay_rur, <FontAwesomeIcon icon={faCoins}/>)}</Table.Summary.Cell>
                             </Table.Summary.Row>
                         )}
 
-                        {!paymentsStatus && (
+                        {!paymentsStatus && summaryColSpan > 0 && (
                             <Table.Summary.Row style={{backgroundColor: "#fff1f0"}}>
                                 {canGroupSummaryVertically ? (
                                     <Table.Summary.Cell index={summaryColSpan}>
@@ -594,7 +637,7 @@ export default function PaymentsStatisticsTable({
                                 </>
                             ) : (
                                 <Table.Summary.Cell index={0} colSpan={textColumnsCount}>
-                                    <Text strong className="text-primary">💸 ОБЩИЙ ИТОГ (Все статусы)</Text>
+                                    <Text strong className="text-primary">💸 ИТОГО</Text>
                                 </Table.Summary.Cell>
                             )}
                             <Table.Summary.Cell index={countIdx} align="right">
