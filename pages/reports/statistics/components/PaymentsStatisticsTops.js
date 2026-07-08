@@ -112,9 +112,8 @@ export default function PaymentsStatisticsTops({ statistics, dictionaries }) {
                 footer={<Button type="primary" onClick={() => setModalConfig({ ...modalConfig, visible: false })}>Закрыть</Button>}
                 width={550}
                 centered
-                bodyStyle={{ padding: 0 }}
             >
-                <div style={{ maxHeight: '65vh', overflowY: 'auto', padding: '10px 24px' }}>
+                <div style={{ maxHeight: '65vh', overflowY: 'auto', paddingRight: '10px' }}>
                     <List
                         size="middle"
                         dataSource={modalConfig.data}
