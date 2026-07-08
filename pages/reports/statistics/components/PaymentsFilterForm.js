@@ -1,14 +1,18 @@
-import React, {useState} from "react";
-import {Button, Card, Checkbox, Col, DatePicker, Divider, Form, Modal, Row, Segmented, Select, Space, Typography} from "antd";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendarDays, faCoins, faFilter, faMagnifyingGlass, faTableCells} from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from "react";
+import { Button, Card, Checkbox, Col, DatePicker, Divider, Form, Modal, Row, Segmented, Select, Space, Typography } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarDays, faCoins, faFilter, faMagnifyingGlass, faTableCells } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
+import "dayjs/locale/ru"; // Импортируем русскую локаль, если нужно, чтобы недели начинались с понедельника
 import MoneyColumn from "../../../../components/main/system/MoneyColumn";
 
-const {Text} = Typography;
-const {RangePicker} = DatePicker;
+// Установка локали для корректного начала недели с понедельника
+dayjs.locale("ru");
 
-export default function PaymentsFilterForm({onSearch, loading, dictionaries, totalSummary}) {
+const { Text } = Typography;
+const { RangePicker } = DatePicker;
+
+export default function PaymentsFilterForm({ onSearch, loading, dictionaries, totalSummary }) {
     const [form] = Form.useForm();
     const [modes, setModes] = useState({
         dealer: "total",
@@ -18,18 +22,35 @@ export default function PaymentsFilterForm({onSearch, loading, dictionaries, tot
     });
 
     const handleModeChange = (dimension, value) => {
-        setModes(prev => ({...prev, [dimension]: value}));
+        setModes(prev => ({ ...prev, [dimension]: value }));
     };
 
+    // Обновленная логика для точных календарных периодов
     const handleQuickDate = (type) => {
-        const range = type === "today"
-            ? [dayjs().startOf("day"), dayjs().endOf("day")]
-            : [dayjs().subtract(1, "day").startOf("day"), dayjs().subtract(1, "day").endOf("day")];
+        let range;
+        const now = dayjs();
 
-        form.setFieldsValue({date_range: range});
+        switch (type) {
+            case "yesterday":
+                range = [now.subtract(1, "day").startOf("day"), now.subtract(1, "day").endOf("day")];
+                break;
+            case "week":
+                // Прошлая полная календарная неделя (с пн по вс)
+                // subtract(1, 'week') перемещает нас в прошлую неделю,
+                // затем startOf('week') и endOf('week') задают границы
+                range = [now.subtract(1, "week").startOf("week"), now.subtract(1, "week").endOf("week")];
+                break;
+            case "month":
+                // Весь предыдущий календарный месяц (с 1-го по последнее число)
+                range = [now.subtract(1, "month").startOf("month"), now.subtract(1, "month").endOf("month")];
+                break;
+            default:
+                range = [now.subtract(1, "day").startOf("day"), now.subtract(1, "day").endOf("day")];
+        }
+
+        form.setFieldsValue({ date_range: range });
     };
 
-    // Функция для блокировки дат (блокируем всё, что начиная от сегодняшнего дня и позже)
     const disabledDate = (current) => {
         return current && current >= dayjs().startOf("day");
     };
@@ -65,13 +86,13 @@ export default function PaymentsFilterForm({onSearch, loading, dictionaries, tot
 
     const handleReset = () => {
         form.resetFields();
-        setModes({dealer: "total", server: "total", service: "total", apparat: "total"});
+        setModes({ dealer: "total", server: "total", service: "total", apparat: "total" });
     };
 
     const modeOptions = [
-        {label: "Сводно", value: "total"},
-        {label: "Строки", value: "all"},
-        {label: "Фильтр", value: "filter"}
+        { label: "Сводно", value: "total" },
+        { label: "Подробно", value: "all" },
+        { label: "Фильтр", value: "filter" }
     ];
 
     const renderDimensionRow = (label, dimensionKey, dictionaryItems = []) => {
@@ -93,7 +114,7 @@ export default function PaymentsFilterForm({onSearch, loading, dictionaries, tot
                 <Col xs={24} md={8}>
                     {isFilterActive ? (
                         <Form.Item name={`${dimensionKey}_select_id`} className="mb-0"
-                                   rules={[{required: true, message: 'Выберите элемент'}]}>
+                                   rules={[{ required: true, message: 'Выберите элемент' }]}>
                             <Select
                                 showSearch
                                 placeholder={`Выберите ${label.toLowerCase()}...`}
@@ -103,7 +124,7 @@ export default function PaymentsFilterForm({onSearch, loading, dictionaries, tot
                                     label: `${item.id} | ${item.name}`,
                                     value: Number(item.id)
                                 }))}
-                                style={{width: '100%'}}
+                                style={{ width: '100%' }}
                             />
                         </Form.Item>
                     ) : (
@@ -123,14 +144,13 @@ export default function PaymentsFilterForm({onSearch, loading, dictionaries, tot
                 layout="vertical"
                 onFinish={handleSubmit}
                 initialValues={{
-                    // ИЗМЕНЕНО: По умолчанию ставим Вчерашний день вместо Сегодняшнего
                     date_range: [dayjs().subtract(1, "day").startOf("day"), dayjs().subtract(1, "day").endOf("day")],
                     payments_status: undefined,
                     actualize_data: false
                 }}
             >
                 <div className="mb-3 d-flex align-items-center gap-2 text-muted small uppercase fw-bold">
-                    <FontAwesomeIcon icon={faFilter} className="text-primary"/>
+                    <FontAwesomeIcon icon={faFilter} className="text-primary" />
                     <span>1. Ограничение данных</span>
                 </div>
 
@@ -138,17 +158,16 @@ export default function PaymentsFilterForm({onSearch, loading, dictionaries, tot
                     <Col xs={24} md={8}>
                         <div className="d-flex justify-content-between align-items-end mb-2">
                             <Text strong><FontAwesomeIcon icon={faCalendarDays}
-                                                          className="me-2 text-primary"/> Период</Text>
-                            <Space split={<Divider type="vertical"/>} size={0}>
-                                {/* Кнопку "Сегодня" можно либо скрыть, либо оставить, но при клике она не сработает из-за валидации антдизайна. Рекомендую скрыть или оставить только "Вчера" */}
-                                <Button type="link" size="small"
-                                        onClick={() => handleQuickDate("yesterday")}>Вчера</Button>
+                                                          className="me-2 text-primary" /> Период</Text>
+                            <Space split={<Divider type="vertical" />} size={1}>
+                                <Button type="link" size="small" onClick={() => handleQuickDate("month")}>Прош. месяц</Button>
+                                <Button type="link" size="small" onClick={() => handleQuickDate("week")}>Прош. неделя</Button>
+                                <Button type="link" size="small" onClick={() => handleQuickDate("yesterday")}>Вчера</Button>
                             </Space>
                         </div>
                         <Form.Item name="date_range" className="mb-0">
-                            {/* ИЗМЕНЕНО: Добавлено свойство disabledDate */}
                             <RangePicker
-                                style={{width: "100%"}}
+                                style={{ width: "100%" }}
                                 className="rounded-3"
                                 disabledDate={disabledDate}
                                 maxDate={dayjs().endOf('day')}
@@ -174,10 +193,10 @@ export default function PaymentsFilterForm({onSearch, loading, dictionaries, tot
                     </Col>
                 </Row>
 
-                <Divider className="my-4"/>
+                <Divider className="my-4" />
 
                 <div className="mb-4 d-flex align-items-center gap-2 text-muted small uppercase fw-bold">
-                    <FontAwesomeIcon icon={faTableCells} className="text-primary"/>
+                    <FontAwesomeIcon icon={faTableCells} className="text-primary" />
                     <span>2. Настройка структуры (Куб)</span>
                 </div>
 
@@ -191,16 +210,16 @@ export default function PaymentsFilterForm({onSearch, loading, dictionaries, tot
                 <Row className="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
 
                     <div className="d-flex justify-content-between align-items-center w-50">
-                        <MoneyColumn label="Кол-во платежей" value={totalSummary.all.count} prefix={''}/>
-                        <Divider type="vertical" className="finance-divider"/>
-                        <MoneyColumn label="Внесено" value={totalSummary.all.total}/>
-                        <Divider type="vertical" className="finance-divider"/>
-                        <MoneyColumn label="Проведено" value={totalSummary.all.real_pay} color="#52c41a"/>
-                        <Divider type="vertical" className="finance-divider"/>
-                        <MoneyColumn label="Комиссия" value={totalSummary.all.commission}/>
-                        <Divider type="vertical" className="finance-divider"/>
+                        <MoneyColumn label="Кол-во платежей" value={totalSummary.all.count} prefix={''} />
+                        <Divider type="vertical" className="finance-divider" />
+                        <MoneyColumn label="Внесено" value={totalSummary.all.total} />
+                        <Divider type="vertical" className="finance-divider" />
+                        <MoneyColumn label="Проведено" value={totalSummary.all.real_pay} color="#52c41a" />
+                        <Divider type="vertical" className="finance-divider" />
+                        <MoneyColumn label="Комиссия" value={totalSummary.all.commission} />
+                        <Divider type="vertical" className="finance-divider" />
                         <MoneyColumn label="В инстр. валюте" value={totalSummary.all.real_pay_rur}
-                                     prefix={<FontAwesomeIcon icon={faCoins}/>}/>
+                                     prefix={<FontAwesomeIcon icon={faCoins} />} />
                     </div>
 
                     <Row className="d-flex justify-content-end gap-2">
@@ -208,10 +227,10 @@ export default function PaymentsFilterForm({onSearch, loading, dictionaries, tot
                         <Button
                             type="primary"
                             htmlType="submit"
-                            icon={<FontAwesomeIcon icon={faMagnifyingGlass}/>}
+                            icon={<FontAwesomeIcon icon={faMagnifyingGlass} />}
                             loading={loading}
                             className="px-4 rounded-3"
-                            style={{backgroundColor: "#4c3a75"}}
+                            style={{ backgroundColor: "#4c3a75" }}
                         >
                             Сформировать отчет
                         </Button>

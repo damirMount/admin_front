@@ -63,7 +63,7 @@ const SidebarTab = () => {
         },
         {
             label: 'Отчёты', permission: 'reports_management', icon: faFileLines, showInSubMenu: true, subMenu: [
-                {label: 'Статистика', link: PAYMENTS_STATISTIC_URL},
+                {label: 'Статистика', permission: 'get_statistic', link: PAYMENTS_STATISTIC_URL},
                 {
                     label: 'Дилеры', permission: 'reports_dealer', subMenu: [
                         {label: 'История счетов', link: REPORT_DEALERS_ACCOUNT_HISTORY_URL},
