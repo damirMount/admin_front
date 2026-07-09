@@ -12,6 +12,7 @@ const usePaymentsStatisticActions = (session, openNotification) => {
                 service_id,
                 server_id,
                 apparat_id,
+                apparat_type,
                 actualize_data // Достаем наш флаг пересчета
             } = formValues;
 
@@ -29,7 +30,8 @@ const usePaymentsStatisticActions = (session, openNotification) => {
                     dealer_id: dealer_id ?? "total",
                     service_id: service_id ?? "total",
                     server_id: server_id ?? "total",
-                    apparat_id: apparat_id ?? "total"
+                    apparat_id: apparat_id ?? "total",
+                    apparat_type: apparat_type ?? "total"
                 }
             };
 

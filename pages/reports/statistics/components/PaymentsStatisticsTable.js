@@ -38,7 +38,7 @@ export default function PaymentsStatisticsTable({
     };
 
     const textColumnsCount = useMemo(() => {
-        let count = 1; // Учитывает колонку "Статус", которая есть всегда
+        let count = 1; // Колонку "Статус" учитываем всегда
         if (filterModes.dealer !== "total") count++;
         if (filterModes.server !== "total") count++;
         if (filterModes.service !== "total") count++;
@@ -47,7 +47,6 @@ export default function PaymentsStatisticsTable({
     }, [filterModes]);
 
     const processedStatistics = useMemo(() => {
-        // Функция сквозной нормализации любых "пустых" или "сводных" значений ID
         const normalizeId = (id, mode) => {
             if (mode === "total") return "total";
             if (id === undefined || id === null || id === 0 || id === "0" || id === "total" || String(id).trim() === "") {
@@ -58,7 +57,7 @@ export default function PaymentsStatisticsTable({
 
         const aggregatedMap = new Map();
 
-        // ШАГ 1: Проходим по всем данным и жёстко схлопываем совпадения
+        // ШАГ 1: Агрегируем данные
         statistics.forEach(item => {
             const dId = normalizeId(item.dealer_id, filterModes.dealer);
             const srId = normalizeId(item.server_id, filterModes.server);
@@ -66,13 +65,13 @@ export default function PaymentsStatisticsTable({
             const aId = normalizeId(item.apparat_id, filterModes.apparat);
             const status = String(item.payments_status || "").toLowerCase().trim();
 
-            // Создаем эталонный ключ на основе нормализованных данных
             const groupKey = `d:${dId}_sr:${srId}_sv:${svId}_a:${aId}_st:${status}`;
 
             if (!aggregatedMap.has(groupKey)) {
                 aggregatedMap.set(groupKey, {
                     key: groupKey,
                     dealer_id: dId,
+                    parent_id: item.parent_id,
                     server_id: srId,
                     service_id: svId,
                     apparat_id: aId,
@@ -81,7 +80,13 @@ export default function PaymentsStatisticsTable({
                     total: 0,
                     real_pay: 0,
                     real_pay_rur: 0,
-                    commission: 0
+                    commission: 0,
+                    reduce: 0,
+                    comDlr: 0,
+                    pDlr: 0,
+                    pFed: 0,
+                    netWriteOff: 0,
+                    income: 0
                 });
             }
 
@@ -91,15 +96,20 @@ export default function PaymentsStatisticsTable({
             current.real_pay += Number(item.real_pay || 0);
             current.real_pay_rur += Number(item.real_pay_rur || 0);
             current.commission += Number(item.commission || 0);
+            current.reduce += Number(item.reduce || 0);
+            current.comDlr += Number(item.comDlr || 0);
+            current.pDlr += Number(item.pDlr || 0);
+            current.pFed += Number(item.pFed || 0);
+            current.netWriteOff += Number(item.netWriteOff || 0);
+            current.income += Number(item.income || 0);
         });
 
-        const aggregatedStatistics = Array.from(aggregatedMap.values());
+        let aggregatedStatistics = Array.from(aggregatedMap.values());
 
         // ШАГ 2: Разделение строк на Избранные и Обычные
         const favRows = aggregatedStatistics.filter(item => FAVORITE_DEALER_IDS.includes(Number(item.dealer_id)));
         const ordinaryRows = aggregatedStatistics.filter(item => !FAVORITE_DEALER_IDS.includes(Number(item.dealer_id)));
 
-        // Группировка статусов (успех/ошибка) вокруг одного элемента и их сортировка
         const sortGroupedRows = (rows) => {
             const groups = {};
             rows.forEach(row => {
@@ -119,10 +129,10 @@ export default function PaymentsStatisticsTable({
                 let sortValue;
 
                 if (!sortConfig.columnKey || !sortConfig.order) {
-                    sortValue = key;
+                    sortValue = key; // Дефолтный ключ для сквозной иерархии
                 } else {
                     const {columnKey} = sortConfig;
-                    if (["count", "total", "real_pay", "commission", "real_pay_rur"].includes(columnKey)) {
+                    if (["count", "total", "real_pay", "commission", "real_pay_rur", "reduce", "comDlr", "pDlr", "pFed", "netWriteOff", "income"].includes(columnKey)) {
                         sortValue = groupRows.reduce((sum, r) => sum + Number(r[columnKey] || 0), 0);
                     } else {
                         let val = groupRows[0]?.[columnKey];
@@ -144,60 +154,61 @@ export default function PaymentsStatisticsTable({
                     return statusA.localeCompare(statusB);
                 });
 
-                return {sortValue, rows: sortedGroupRows};
+                return {sortValue, fullKey: key, rows: sortedGroupRows};
             });
 
+            // ИСПРАВЛЕНО: Теперь сортировка применяется ВСЕГДА (дефолтная строит правильную структуру смежности)
             if (sortConfig.columnKey && sortConfig.order) {
                 const {columnKey, order} = sortConfig;
                 const isAsc = order === "ascend";
 
                 groupArray.sort((a, b) => {
-                    if (["count", "total", "real_pay", "commission", "real_pay_rur"].includes(columnKey)) {
-                        return isAsc ? a.sortValue - b.sortValue : b.sortValue - a.sortValue;
+                    if (["count", "total", "real_pay", "commission", "real_pay_rur", "reduce", "comDlr", "pDlr", "pFed", "netWriteOff", "income"].includes(columnKey)) {
+                        if (a.sortValue !== b.sortValue) {
+                            return isAsc ? a.sortValue - b.sortValue : b.sortValue - a.sortValue;
+                        }
+                    } else {
+                        const comp = String(a.sortValue).localeCompare(String(b.sortValue), 'ru', { numeric: true, sensitivity: 'base' });
+                        if (comp !== 0) {
+                            return isAsc ? comp : -comp;
+                        }
                     }
-                    return isAsc
-                        ? String(a.sortValue).localeCompare(String(b.sortValue), 'ru', { numeric: true, sensitivity: 'base' })
-                        : String(b.sortValue).localeCompare(String(a.sortValue), 'ru', { numeric: true, sensitivity: 'base' });
+                    // Стабильный fallback по полному ключу, чтобы под-колонки не рассыпались при совпадении главных критериев
+                    return String(a.fullKey).localeCompare(String(b.fullKey), 'ru', { numeric: true, sensitivity: 'base' });
                 });
+            } else {
+                // Сортировка по умолчанию: выстраивает цепочку Дилер-Сервер-Сервис-Аппарат
+                groupArray.sort((a, b) => String(a.sortValue).localeCompare(String(b.sortValue), 'ru', { numeric: true, sensitivity: 'base' }));
             }
 
             return groupArray.flatMap(g => g.rows);
         };
 
-        const applyHierarchicalRowSpansToRange = (rows, start, end) => {
+        // ИСПРАВЛЕНО: Расчет rowSpan сделан независимым для каждого из 4 столбцов
+        const applyIndependentRowSpansToRange = (rows, start, end) => {
             const activeKeys = [];
             if (filterModes.dealer !== "total") activeKeys.push("dealer_id");
             if (filterModes.server !== "total") activeKeys.push("server_id");
             if (filterModes.service !== "total") activeKeys.push("service_id");
             if (filterModes.apparat !== "total") activeKeys.push("apparat_id");
 
-            // Инициализируем дефолтные значения span
             for (let i = start; i < end; i++) {
                 activeKeys.forEach(key => {
                     rows[i][`${key}_rowSpan`] = 1;
                 });
             }
 
-            for (let i = start; i < end; i++) {
-                if (rows[i].isFavSummary) continue;
-
-                activeKeys.forEach((key, dimIdx) => {
-                    if (rows[i][`${key}_rowSpan`] === 0) return;
+            activeKeys.forEach(key => {
+                for (let i = start; i < end; i++) {
+                    if (rows[i].isFavSummary) continue;
+                    if (rows[i][`${key}_rowSpan`] === 0) continue;
 
                     let span = 1;
                     for (let j = i + 1; j < end; j++) {
                         if (rows[j].isFavSummary) break;
 
-                        let isMatch = true;
-                        for (let k = 0; k <= dimIdx; k++) {
-                            const pKey = activeKeys[k];
-                            if (rows[i][pKey] !== rows[j][pKey]) {
-                                isMatch = false;
-                                break;
-                            }
-                        }
-
-                        if (isMatch) {
+                        // Если значение в этом конкретном столбце совпадает — увеличиваем span
+                        if (String(rows[i][key]) === String(rows[j][key])) {
                             span++;
                             rows[j][`${key}_rowSpan`] = 0;
                         } else {
@@ -205,55 +216,41 @@ export default function PaymentsStatisticsTable({
                         }
                     }
                     rows[i][`${key}_rowSpan`] = span;
-                });
-            }
-
-            const canGroupVertically = textColumnsCount > 1;
-            for (let i = start; i < end; i++) {
-                if (rows[i].isFavSummary) {
-                    if (canGroupVertically) {
-                        if (i === start || !rows[i - 1].isFavSummary) {
-                            let summarySpan = 0;
-                            for (let j = i; j < end; j++) {
-                                if (rows[j].isFavSummary) summarySpan++;
-                                else break;
-                            }
-                            rows[i].favSummaryRowSpan = summarySpan;
-                            for (let j = i + 1; j < i + summarySpan; j++) {
-                                rows[j].favSummaryRowSpan = 0;
-                            }
-                            i += summarySpan - 1;
-                        }
-                    } else {
-                        rows[i].favSummaryRowSpan = 1;
-                    }
                 }
-            }
+            });
         };
 
         const flatFavs = sortGroupedRows(favRows);
         const flatOrdinary = sortGroupedRows(ordinaryRows);
 
-        // Расчет агрегатов для избранных
+        const getRowMetricValue = (row, field) => {
+            let sum = Number(row[field] || 0);
+            if (row.children) {
+                row.children.forEach(c => { sum += Number(c[field] || 0); });
+            }
+            return sum;
+        };
+
+        const fieldsToSum = ['count', 'total', 'real_pay', 'real_pay_rur', 'commission', 'reduce', 'comDlr', 'pDlr', 'pFed', 'netWriteOff', 'income'];
+        const createEmptySummaryObj = () => fieldsToSum.reduce((acc, f) => ({ ...acc, [f]: 0 }), {});
+
         const favSummary = favRows.reduce((acc, curr) => {
             const isSuccess = String(curr.payments_status || "") === "success";
-            acc.all.count += Number(curr.count || 0);
-            acc.all.total += Number(curr.total || 0);
-            acc.all.real_pay += Number(curr.real_pay || 0);
-            acc.all.real_pay_rur += Number(curr.real_pay_rur || 0);
-            acc.all.commission += Number(curr.commission || 0);
 
-            const target = isSuccess ? acc.success : acc.fail;
-            target.count += Number(curr.count || 0);
-            target.total += Number(curr.total || 0);
-            target.real_pay += Number(curr.real_pay || 0);
-            target.real_pay_rur += Number(curr.real_pay_rur || 0);
-            target.commission += Number(curr.commission || 0);
+            fieldsToSum.forEach(f => {
+                const val = getRowMetricValue(curr, f);
+                acc.all[f] += val;
+                if (isSuccess) {
+                    acc.success[f] += val;
+                } else {
+                    acc.fail[f] += val;
+                }
+            });
             return acc;
         }, {
-            all: {count: 0, total: 0, real_pay: 0, real_pay_rur: 0, commission: 0},
-            success: {count: 0, total: 0, real_pay: 0, real_pay_rur: 0, commission: 0},
-            fail: {count: 0, total: 0, real_pay: 0, real_pay_rur: 0, commission: 0}
+            all: createEmptySummaryObj(),
+            success: createEmptySummaryObj(),
+            fail: createEmptySummaryObj()
         });
 
         const favSummaryRows = [];
@@ -270,6 +267,19 @@ export default function PaymentsStatisticsTable({
             ...favSummary.all
         });
 
+        if (favSummaryRows.length > 0) {
+            if (textColumnsCount > 1) {
+                favSummaryRows[0].favSummaryRowSpan = favSummaryRows.length;
+                for (let i = 1; i < favSummaryRows.length; i++) {
+                    favSummaryRows[i].favSummaryRowSpan = 0;
+                }
+            } else {
+                favSummaryRows.forEach(row => {
+                    row.favSummaryRowSpan = 1;
+                });
+            }
+        }
+
         let fullFlatList;
         if (favRows.length === 0) {
             fullFlatList = flatOrdinary.map(r => ({ ...r }));
@@ -279,10 +289,11 @@ export default function PaymentsStatisticsTable({
             fullFlatList = [...flatFavs, ...favSummaryRows, ...flatOrdinary].map(r => ({ ...r }));
         }
 
+        // Постраничный расчет rowSpan (чтобы разметка не съезжала на переключениях пагинации)
         const size = pagination.pageSize;
         for (let chunkStart = 0; chunkStart < fullFlatList.length; chunkStart += size) {
             const chunkEnd = Math.min(chunkStart + size, fullFlatList.length);
-            applyHierarchicalRowSpansToRange(fullFlatList, chunkStart, chunkEnd);
+            applyIndependentRowSpansToRange(fullFlatList, chunkStart, chunkEnd);
         }
 
         return fullFlatList;
@@ -342,20 +353,14 @@ export default function PaymentsStatisticsTable({
                     const id = record.dealer_id;
                     const cellConfig = {children: null, props: {}};
 
-                    if (record.isFavSummary) {
-                        return cellConfig;
-                    }
+                    if (record.isFavSummary) return cellConfig;
 
-                    // ИСПРАВЛЕНО: Применяем рассчитанный rowSpan для Дилера
                     const specificRowSpan = record[`dealer_id_rowSpan`];
                     if (specificRowSpan !== undefined) {
                         cellConfig.props.rowSpan = specificRowSpan;
                     }
 
-                    const dealer = dictionaries?.dealers?.find(
-                        (s) => Number(s.id) === Number(id)
-                    );
-
+                    const dealer = dictionaries?.dealers?.find((s) => Number(s.id) === Number(id));
                     const name = dealer?.name;
                     const isFav = FAVORITE_DEALER_IDS.includes(Number(id));
 
@@ -427,10 +432,7 @@ export default function PaymentsStatisticsTable({
                             badgeContent = <Text strong className="text-primary">Всего</Text>;
                         }
 
-                        return {
-                            children: badgeContent,
-                            props: {colSpan: 1, rowSpan: 1}
-                        };
+                        return { children: badgeContent, props: {colSpan: 1, rowSpan: 1} };
                     }
                     return "";
                 }
@@ -450,15 +452,10 @@ export default function PaymentsStatisticsTable({
                         if (record.favSummaryRowSpan > 0) {
                             return {
                                 children: <Text strong className="text-primary">★ Итоги по избранным</Text>,
-                                props: {
-                                    rowSpan: record.favSummaryRowSpan,
-                                    colSpan: textColumnsCount - 1
-                                }
+                                props: { rowSpan: record.favSummaryRowSpan, colSpan: textColumnsCount - 1 }
                             };
                         } else {
-                            return {
-                                props: {rowSpan: 0, colSpan: 0}
-                            };
+                            return { props: {rowSpan: 0, colSpan: 0} };
                         }
                     }
 
@@ -476,54 +473,35 @@ export default function PaymentsStatisticsTable({
             };
         }
 
-        cols.push(
-            {
-                title: "Кол-во",
-                dataIndex: "count",
+        // Числовые колонки
+        const metricFields = [
+            { title: "Кол-во", key: "count", type: "count" },
+            { title: "Внесено", key: "total", type: "money" },
+            { title: "Проведено", key: "real_pay", type: "money" },
+            { title: "Инстр. валюте", key: "real_pay_rur", type: "money", icon: <FontAwesomeIcon icon={faCoins}/> },
+            { title: "Списано", key: "reduce", type: "money" },
+            { title: "Чист. списание", key: "netWriteOff", type: "money" },
+            { title: "Комис. QP", key: "comDlr", type: "money" },
+            { title: "Комиссия дил.", key: "commission", type: "money" },
+            { title: "Вознаг. дил.", key: "pDlr", type: "money" },
+            { title: "Доход дил.", key: "income", type: "money" },
+            { title: "Вознаг. QP", key: "pFed", type: "money" },
+        ];
+
+        metricFields.forEach(field => {
+            cols.push({
+                title: field.title,
+                dataIndex: field.key,
+                key: field.key,
+                align: "right",
                 className: 'text-nowrap',
-                key: "count",
-                align: "right",
                 sorter: true,
-                sortOrder: sortConfig.columnKey === "count" ? sortConfig.order : undefined,
-                render: (val) => <span className="text-muted">{Number(val || 0).toLocaleString("ru-RU")} ед.</span>,
-            },
-            {
-                title: "Внесено",
-                dataIndex: "total",
-                key: "total",
-                align: "right",
-                sorter: true,
-                sortOrder: sortConfig.columnKey === "total" ? sortConfig.order : undefined,
-                render: (val) => formatCurrency(val),
-            },
-            {
-                title: "Проведено",
-                dataIndex: "real_pay",
-                key: "real_pay",
-                align: "right",
-                sorter: true,
-                sortOrder: sortConfig.columnKey === "real_pay" ? sortConfig.order : undefined,
-                render: (val) => formatCurrency(val),
-            },
-            {
-                title: "Комиссия",
-                dataIndex: "commission",
-                key: "commission",
-                align: "right",
-                sorter: true,
-                sortOrder: sortConfig.columnKey === "commission" ? sortConfig.order : undefined,
-                render: (val) => formatCurrency(val),
-            },
-            {
-                title: "Инстр. валюте",
-                dataIndex: "real_pay_rur",
-                key: "real_pay_rur",
-                align: "right",
-                sorter: true,
-                sortOrder: sortConfig.columnKey === "real_pay_rur" ? sortConfig.order : undefined,
-                render: (val) => formatCurrency(val, <FontAwesomeIcon icon={faCoins}/>),
-            },
-        );
+                sortOrder: sortConfig.columnKey === field.key ? sortConfig.order : undefined,
+                render: (val) => field.type === "count"
+                    ? <span className="text-muted">{Number(val || 0).toLocaleString("ru-RU")} ед.</span>
+                    : formatCurrency(val, field.icon || "KGS")
+            });
+        });
 
         return cols;
     }, [sortConfig, filterModes, textColumnsCount, dictionaries]);
@@ -557,6 +535,7 @@ export default function PaymentsStatisticsTable({
             rowClassName={handleRowClassName}
             onRow={handleRowProps}
             onChange={handleTableChange}
+            scroll={{ x: "max-content" }}
             pagination={{
                 position: ['rightTop','rightBottom'],
                 current: pagination.current,
@@ -567,12 +546,24 @@ export default function PaymentsStatisticsTable({
             summary={() => {
                 const summaryColSpan = textColumnsCount - 1;
                 const canGroupSummaryVertically = summaryColSpan > 0;
-
-                const countIdx = canGroupSummaryVertically ? summaryColSpan + 1 : textColumnsCount;
-                const totalIdx = countIdx + 1;
-                const realPayIdx = countIdx + 2;
-                const commIdx = countIdx + 3;
-                const rurIdx = countIdx + 4;
+                const renderMetricCells = (summaryData, startIndex) => {
+                    let currentIndex = startIndex;
+                    return (
+                        <>
+                            <Table.Summary.Cell index={currentIndex++} align="right"><Text strong>{Number(summaryData.count || 0).toLocaleString("ru-RU")} ед.</Text></Table.Summary.Cell>
+                            <Table.Summary.Cell index={currentIndex++} align="right">{formatCurrency(summaryData.total)}</Table.Summary.Cell>
+                            <Table.Summary.Cell index={currentIndex++} align="right">{formatCurrency(summaryData.real_pay)}</Table.Summary.Cell>
+                            <Table.Summary.Cell index={currentIndex++} align="right">{formatCurrency(summaryData.real_pay_rur, <FontAwesomeIcon icon={faCoins}/>)}</Table.Summary.Cell>
+                            <Table.Summary.Cell index={currentIndex++} align="right">{formatCurrency(summaryData.reduce)}</Table.Summary.Cell>
+                            <Table.Summary.Cell index={currentIndex++} align="right">{formatCurrency(summaryData.netWriteOff)}</Table.Summary.Cell>
+                            <Table.Summary.Cell index={currentIndex++} align="right">{formatCurrency(summaryData.comDlr)}</Table.Summary.Cell>
+                            <Table.Summary.Cell index={currentIndex++} align="right">{formatCurrency(summaryData.commission)}</Table.Summary.Cell>
+                            <Table.Summary.Cell index={currentIndex++} align="right">{formatCurrency(summaryData.pDlr)}</Table.Summary.Cell>
+                            <Table.Summary.Cell index={currentIndex++} align="right">{formatCurrency(summaryData.income)}</Table.Summary.Cell>
+                            <Table.Summary.Cell index={currentIndex++} align="right">{formatCurrency(summaryData.pFed)}</Table.Summary.Cell>
+                        </>
+                    );
+                };
 
                 return (
                     <Table.Summary fixed="bottom">
@@ -592,13 +583,7 @@ export default function PaymentsStatisticsTable({
                                         <Badge status="success" text={<Text strong className="text-success">Итого успешных платежей</Text>}/>
                                     </Table.Summary.Cell>
                                 )}
-                                <Table.Summary.Cell index={countIdx} align="right">
-                                    <Text strong>{totalSummary.success.count.toLocaleString("ru-RU")} ед.</Text>
-                                </Table.Summary.Cell>
-                                <Table.Summary.Cell index={totalIdx} align="right">{formatCurrency(totalSummary.success.total)}</Table.Summary.Cell>
-                                <Table.Summary.Cell index={realPayIdx} align="right">{formatCurrency(totalSummary.success.real_pay)}</Table.Summary.Cell>
-                                <Table.Summary.Cell index={commIdx} align="right">{formatCurrency(totalSummary.success.commission)}</Table.Summary.Cell>
-                                <Table.Summary.Cell index={rurIdx} align="right">{formatCurrency(totalSummary.success.real_pay_rur, <FontAwesomeIcon icon={faCoins}/>)}</Table.Summary.Cell>
+                                {renderMetricCells(totalSummary.success, textColumnsCount)}
                             </Table.Summary.Row>
                         )}
 
@@ -613,13 +598,7 @@ export default function PaymentsStatisticsTable({
                                         <Badge status="error" text={<Text strong className="text-danger">Итого ошибочных платежей</Text>}/>
                                     </Table.Summary.Cell>
                                 )}
-                                <Table.Summary.Cell index={countIdx} align="right">
-                                    <Text strong>{totalSummary.fail.count.toLocaleString("ru-RU")} ед.</Text>
-                                </Table.Summary.Cell>
-                                <Table.Summary.Cell index={totalIdx} align="right">{formatCurrency(totalSummary.fail.total)}</Table.Summary.Cell>
-                                <Table.Summary.Cell index={realPayIdx} align="right">{formatCurrency(totalSummary.fail.real_pay)}</Table.Summary.Cell>
-                                <Table.Summary.Cell index={commIdx} align="right">{formatCurrency(totalSummary.fail.commission)}</Table.Summary.Cell>
-                                <Table.Summary.Cell index={rurIdx} align="right">{formatCurrency(totalSummary.fail.real_pay_rur, <FontAwesomeIcon icon={faCoins}/>)}</Table.Summary.Cell>
+                                {renderMetricCells(totalSummary.fail, textColumnsCount)}
                             </Table.Summary.Row>
                         )}
 
@@ -640,13 +619,7 @@ export default function PaymentsStatisticsTable({
                                     <Text strong className="text-primary">💸 ИТОГО</Text>
                                 </Table.Summary.Cell>
                             )}
-                            <Table.Summary.Cell index={countIdx} align="right">
-                                <Text strong>{totalSummary.all.count.toLocaleString("ru-RU")} ед.</Text>
-                            </Table.Summary.Cell>
-                            <Table.Summary.Cell index={totalIdx} align="right">{formatCurrency(totalSummary.all.total)}</Table.Summary.Cell>
-                            <Table.Summary.Cell index={realPayIdx} align="right">{formatCurrency(totalSummary.all.real_pay)}</Table.Summary.Cell>
-                            <Table.Summary.Cell index={commIdx} align="right">{formatCurrency(totalSummary.all.commission)}</Table.Summary.Cell>
-                            <Table.Summary.Cell index={rurIdx} align="right">{formatCurrency(totalSummary.all.real_pay_rur, <FontAwesomeIcon icon={faCoins}/>)}</Table.Summary.Cell>
+                            {renderMetricCells(totalSummary.all, textColumnsCount)}
                         </Table.Summary.Row>
                     </Table.Summary>
                 );

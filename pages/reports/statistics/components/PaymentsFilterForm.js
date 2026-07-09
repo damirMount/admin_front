@@ -60,6 +60,7 @@ export default function PaymentsFilterForm({ onSearch, loading, dictionaries, to
             date_range: values.date_range,
             payments_status: values.payments_status,
             actualize_data: !!values.actualize_data,
+            apparat_type: values.apparat_type,
             dealer_id: modes.dealer === "filter" ? values.dealer_select_id : modes.dealer,
             server_id: modes.server === "filter" ? values.server_select_id : modes.server,
             service_id: modes.service === "filter" ? values.service_select_id : modes.service,
@@ -146,6 +147,7 @@ export default function PaymentsFilterForm({ onSearch, loading, dictionaries, to
                 initialValues={{
                     date_range: [dayjs().subtract(1, "day").startOf("day"), dayjs().subtract(1, "day").endOf("day")],
                     payments_status: undefined,
+                    apparat_type: undefined,
                     actualize_data: false
                 }}
             >
@@ -174,12 +176,27 @@ export default function PaymentsFilterForm({ onSearch, loading, dictionaries, to
                             />
                         </Form.Item>
                     </Col>
-                    <Col xs={24} md={8}>
+                    <Col xs={24} md={4}>
                         <div className="mb-2"><Text strong>Статус платежей</Text></div>
                         <Form.Item name="payments_status" className="mb-0">
                             <Select placeholder="Все статусы" allowClear>
+                                <Select.Option value={undefined}>Все статусы</Select.Option>
                                 <Select.Option value="success">Успешные</Select.Option>
                                 <Select.Option value="fail">Ошибочные</Select.Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={4}>
+                        <div className="mb-2"><Text strong>Тип аппарата</Text></div>
+                        <Form.Item name="apparat_type" className="mb-0">
+                            <Select placeholder="Все статусы" allowClear>
+                                <Select.Option value={undefined}>Все аппараты</Select.Option>
+                                <Select.Option value="1">Терминал</Select.Option>
+                                <Select.Option value="2">Кассир</Select.Option>
+                                <Select.Option value="3">Java/POS-Кассир</Select.Option>
+                                <Select.Option value="100">Суб.точка</Select.Option>
+                                <Select.Option value="101">API точка</Select.Option>
+                                <Select.Option value="5">SMS точка</Select.Option>
                             </Select>
                         </Form.Item>
                     </Col>
