@@ -21,6 +21,7 @@ const SmartTable = ({
                         rowClassName,
                         expandableContent,
                         onRow,
+                        sticky,
                         data = [],
                         onUpdateData,
                         loading = false,
@@ -178,6 +179,7 @@ const SmartTable = ({
                     loading={loading}
                     bordered={bordered}
                     size={size}
+                    sticky={sticky}
                     expandable={
                         expandableContent
                             ? {
