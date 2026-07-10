@@ -191,6 +191,10 @@ tr, td, table, tbody, th, thead, tfoot {
     font-size: 20px !important;
 }
 
+.ant-table-body {
+    overscroll-behavior: contain;
+}
+
 .ant-table-column-sorter-inner {
     margin-left: 10px;
 }
