@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from "react";
 import SmartTable from "../../../../components/main/table/SmartTable";
-import {useTableColumns} from "../hooks/useTableColumns";
-import {useProcessedStatistics} from "../hooks/useProcessedStatistics";
+
 import TableSummary from "./TableSummary";
+import useTableColumns from "../hooks/useTableColumns";
+import useProcessedStatistics from "../hooks/useProcessedStatistics";
 
 
 export default function PaymentsStatisticsTable({
@@ -69,6 +70,7 @@ export default function PaymentsStatisticsTable({
                     textColumnsCount={textColumnsCount}
                     ordinarySummary={ordinarySummary}
                     totalSummary={totalSummary}
+                    filterModes={filterModes}
                 />
             )}
         />

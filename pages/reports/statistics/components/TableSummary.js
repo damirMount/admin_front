@@ -2,21 +2,21 @@ import React from "react";
 import { Table, Typography, Badge } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
-import { formatCurrency } from "./utils";
+import formatCurrency from "./utils"; // Убедитесь, что путь верный
 
 const { Text } = Typography;
 
-export default function TableSummary({ apparatType, paymentsStatus, textColumnsCount, ordinarySummary, totalSummary }) {
+export default function TableSummary({ apparatType, paymentsStatus, textColumnsCount, ordinarySummary, totalSummary, filterModes }) {
+
+    // Блок агентов виден, только если режим дилеров НЕ "total"
+    const isAgentSummaryVisible = filterModes?.dealer !== 'total';
+
     const summaryColSpan = textColumnsCount - 1;
     const canGroupSummaryVertically = summaryColSpan > 0;
 
     const renderMetricCells = (summaryData, startIndex, isTotal = false) => {
         let currentIndex = startIndex;
-
-        // Если это строка "Всего" (isTotal === true), добавляем класс для зеленой подсветки ячеек
-        const getCellClass = (isGreenColumn) => {
-            return isTotal && isGreenColumn ? "summary-cell-green" : "";
-        };
+        const getCellClass = (isGreenColumn) => (isTotal && isGreenColumn ? "summary-cell-green" : "");
 
         return (
             <>
@@ -59,24 +59,21 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
 
     return (
         <>
-            {/* Локальные стили, которые гарантированно перебьют дефолтный белый фон Ant Design во fixed-подвале */}
             <style>{`
                 .summary-row-success-ordinary .ant-table-cell { background: #fcf8e3 !important; }
                 .summary-row-fail-ordinary .ant-table-cell { background: #fff1f0 !important; }
                 .summary-row-all-ordinary .ant-table-cell { background: #e6f7ff !important; }
-                
                 .summary-row-success-total .ant-table-cell { background: #f6ffed !important; }
                 .summary-row-fail-total .ant-table-cell { background: #fff1f0 !important; }
                 .summary-row-all-total .ant-table-cell { background: #e6f7ff !important; }
-                
                 .ant-table-summary .summary-cell-green { background: #b7eb8f !important; }
                 .ant-table-summary .summary-divider-cell { background: #d9d9d9 !important; padding: 0 !important; height: 14px !important; line-height: 0 !important; }
             `}</style>
 
             <Table.Summary fixed="bottom">
-                {Number(apparatType) === 1 && (
+                {/* Блок Итогов по агентам (показываем только если условия соблюдены) */}
+                {Number(apparatType) === 1 && isAgentSummaryVisible && (
                     <>
-                        {/* 1. БЛОК ОСТАЛЬНЫХ ДИЛЕРОВ (УСПЕШНЫЕ) */}
                         {!paymentsStatus && summaryColSpan > 0 && (
                             <Table.Summary.Row className="summary-row-success-ordinary">
                                 {canGroupSummaryVertically ? (
@@ -97,7 +94,6 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                             </Table.Summary.Row>
                         )}
 
-                        {/* 2. БЛОК ОСТАЛЬНЫХ ДИЛЕРОВ (ОШИБКИ) */}
                         {!paymentsStatus && summaryColSpan > 0 && (
                             <Table.Summary.Row className="summary-row-fail-ordinary">
                                 {canGroupSummaryVertically ? (
@@ -113,7 +109,6 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                             </Table.Summary.Row>
                         )}
 
-                        {/* 3. БЛОК ОСТАЛЬНЫХ ДИЛЕРОВ (ВСЕГО ПО АГЕНТАМ) */}
                         <Table.Summary.Row className="summary-row-all-ordinary">
                             {canGroupSummaryVertically ? (
                                 <>
@@ -131,18 +126,16 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                                     <Text strong className="text-primary">👥 ВСЕГО ПО АГЕНТАМ</Text>
                                 </Table.Summary.Cell>
                             )}
-                            {/* Здесь оставляем true: эта строка по агентам получит зеленые ячейки как в image_299700.png */}
                             {renderMetricCells(ordinarySummary.all, textColumnsCount, true)}
                         </Table.Summary.Row>
 
-                        {/* Серый разделитель блоков */}
                         <Table.Summary.Row>
                             <Table.Summary.Cell index={0} colSpan={textColumnsCount + 11} className="summary-divider-cell" />
                         </Table.Summary.Row>
                     </>
                 )}
 
-                {/* 4. ОБЩИЕ ИТОГИ (УСПЕШНЫЕ) */}
+                {/* Общие итоги (отображаются всегда) */}
                 {!paymentsStatus && summaryColSpan > 0 && (
                     <Table.Summary.Row className="summary-row-success-total">
                         {canGroupSummaryVertically ? (
@@ -163,7 +156,6 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                     </Table.Summary.Row>
                 )}
 
-                {/* 5. ОБЩИЕ ИТОГИ (ОШИБКИ) */}
                 {!paymentsStatus && summaryColSpan > 0 && (
                     <Table.Summary.Row className="summary-row-fail-total">
                         {canGroupSummaryVertically ? (
@@ -179,7 +171,6 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                     </Table.Summary.Row>
                 )}
 
-                {/* 6. ОБЩИЕ ИТОГИ (ВСЕГО СВОДНО) */}
                 <Table.Summary.Row className="summary-row-all-total">
                     {canGroupSummaryVertically ? (
                         <>
@@ -197,7 +188,6 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                             <Text strong className="text-primary">🌍 ВСЕГО ОБЩИЕ ИТОГИ</Text>
                         </Table.Summary.Cell>
                     )}
-                    {/* ИСПРАВЛЕНО: передаем false, чтобы строка "Всего общих" была полностью голубой, без зеленых ячеек */}
                     {renderMetricCells(totalSummary?.all || {}, textColumnsCount, false)}
                 </Table.Summary.Row>
             </Table.Summary>

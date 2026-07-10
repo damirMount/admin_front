@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { FAVORITE_DEALER_IDS, FIELDS_TO_SUM } from "../components/utils";
 
-export function useProcessedStatistics({
+function useProcessedStatistics({
                                            statistics,
                                            totalSummary,
                                            filterModes,
@@ -199,3 +199,5 @@ export function useProcessedStatistics({
 
     return { processedStatistics, ordinarySummary };
 }
+
+export default useProcessedStatistics;

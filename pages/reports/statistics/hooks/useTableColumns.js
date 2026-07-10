@@ -2,11 +2,11 @@ import React, { useMemo } from "react";
 import { Typography, Badge } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins, faStar } from "@fortawesome/free-solid-svg-icons";
-import { FAVORITE_DEALER_IDS, formatCurrency } from "../components/utils";
+import formatCurrency, { FAVORITE_DEALER_IDS } from "../components/utils";
 
 const { Text } = Typography;
 
-export function useTableColumns({ sortConfig, filterModes, textColumnsCount, dictionaries, apparatType }) {
+function useTableColumns({ sortConfig, filterModes, textColumnsCount, dictionaries, apparatType }) {
 
     const renderDimensionCell = (idKey, dictionaryArray) => (text, record) => {
         const cellConfig = { children: null, props: {} };
@@ -178,3 +178,5 @@ export function useTableColumns({ sortConfig, filterModes, textColumnsCount, dic
         return cols;
     }, [sortConfig, filterModes, textColumnsCount, dictionaries, apparatType]);
 }
+
+export default useTableColumns;
