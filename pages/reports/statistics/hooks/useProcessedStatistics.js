@@ -2,17 +2,16 @@ import { useMemo } from "react";
 import { FAVORITE_DEALER_IDS, FIELDS_TO_SUM } from "../components/utils";
 
 function useProcessedStatistics({
-                                           statistics,
-                                           totalSummary,
-                                           filterModes,
-                                           paymentsStatus,
-                                           pagination,
-                                           apparatType,
-                                           sortConfig,
-                                           dictionaries
-                                       }) {
+                                    statistics,
+                                    totalSummary,
+                                    filterModes,
+                                    paymentsStatus,
+                                    pagination,
+                                    apparatType,
+                                    sortConfig,
+                                    dictionaries
+                                }) {
 
-    // 1. Создаем карты для быстрого поиска имен (на случай, если dictionaries приходят как массивы)
     const nameMaps = useMemo(() => ({
         dealer_name: new Map(dictionaries?.dealers?.map(d => [String(d.id), d.name]) || []),
         server_name: new Map(dictionaries?.servers?.map(d => [String(d.id), d.name]) || []),
@@ -21,28 +20,46 @@ function useProcessedStatistics({
     }), [dictionaries]);
 
     const favSummary = useMemo(() => {
-        const createEmptySummaryObj = () => FIELDS_TO_SUM.reduce((acc, f) => ({ ...acc, [f]: 0 }), {});
+        const createEmptySummaryObj = () => {
+            const obj = FIELDS_TO_SUM.reduce((acc, f) => ({ ...acc, [f]: 0 }), {});
+            obj.total_income = 0; // Инициализация
+            return obj;
+        };
         const summary = { all: createEmptySummaryObj(), success: createEmptySummaryObj(), fail: createEmptySummaryObj() };
 
         statistics.forEach(item => {
             if (Number(apparatType) === 1 && FAVORITE_DEALER_IDS.includes(Number(item.dealer_id))) {
                 const isSuccess = String(item.payments_status || "").toLowerCase().trim() === "success";
+
+                // Для нашей сети: Комиссия Дил + Вознаграждение Дил + Вознаграждение QP
+                const inc = (Number(item.commission) || 0) + (Number(item.pDlr) || 0) + (Number(item.pFed) || 0);
+
                 FIELDS_TO_SUM.forEach(f => {
                     const val = Number(item[f] || 0);
                     summary.all[f] += val;
                     if (isSuccess) summary.success[f] += val;
                     else summary.fail[f] += val;
                 });
+
+                // Добавление расчета для Дохода
+                summary.all.total_income += inc;
+                if (isSuccess) summary.success.total_income += inc;
+                else summary.fail.total_income += inc;
             }
         });
         return summary;
     }, [statistics, apparatType]);
 
     const ordinarySummary = useMemo(() => {
-        const diff = (totalObj, favObj) => FIELDS_TO_SUM.reduce((acc, f) => {
-            acc[f] = Math.max(0, Number(totalObj?.[f] || 0) - Number(favObj?.[f] || 0));
-            return acc;
-        }, {});
+        const diff = (totalObj, favObj) => {
+            const result = FIELDS_TO_SUM.reduce((acc, f) => {
+                acc[f] = Math.max(0, Number(totalObj?.[f] || 0) - Number(favObj?.[f] || 0));
+                return acc;
+            }, {});
+            // Разница для Дохода
+            result.total_income = Math.max(0, Number(totalObj?.total_income || 0) - Number(favObj?.total_income || 0));
+            return result;
+        };
         return {
             success: diff(totalSummary?.success, favSummary.success),
             fail: diff(totalSummary?.fail, favSummary.fail),
@@ -64,14 +81,22 @@ function useProcessedStatistics({
             };
             const groupKey = `d:${keys.d}_sr:${keys.sr}_sv:${keys.sv}_a:${keys.a}_st:${keys.st}`;
 
+            // Логика расчета 'Доход' в зависимости от сети
+            const isOurNetwork = Number(apparatType) === 1 && FAVORITE_DEALER_IDS.includes(Number(item.dealer_id));
+            const calculatedIncome = isOurNetwork
+                ? ((Number(item.commission) || 0) + (Number(item.pDlr) || 0) + (Number(item.pFed) || 0))
+                : ((Number(item.comDlr) || 0) + (Number(item.pFed) || 0));
+
             if (!aggregatedMap.has(groupKey)) {
                 aggregatedMap.set(groupKey, {
                     ...keys, dealer_id: keys.d, server_id: keys.sr, service_id: keys.sv, apparat_id: keys.a, payments_status: keys.st,
-                    count: 0, total: 0, real_pay: 0, real_pay_rur: 0, commission: 0, reduce: 0, comDlr: 0, pDlr: 0, pFed: 0, netWriteOff: 0, income: 0
+                    count: 0, total: 0, real_pay: 0, real_pay_rur: 0, commission: 0, reduce: 0, comDlr: 0, pDlr: 0, pFed: 0, netWriteOff: 0, income: 0,
+                    total_income: 0 // Инициализация
                 });
             }
             const current = aggregatedMap.get(groupKey);
             FIELDS_TO_SUM.forEach(f => current[f] += Number(item[f] || 0));
+            current.total_income += calculatedIncome; // Прибавляем вычисленный доход
         });
 
         const allRows = Array.from(aggregatedMap.values());
@@ -91,11 +116,14 @@ function useProcessedStatistics({
                 const groupKey = keyParts.join("-") || "total-group";
 
                 if (!groupsMap.has(groupKey)) {
-                    groupsMap.set(groupKey, { rows: [], summary: FIELDS_TO_SUM.reduce((acc, f) => ({ ...acc, [f]: 0 }), {}) });
+                    const summaryObj = FIELDS_TO_SUM.reduce((acc, f) => ({ ...acc, [f]: 0 }), {});
+                    summaryObj.total_income = 0; // Инициализация
+                    groupsMap.set(groupKey, { rows: [], summary: summaryObj });
                 }
                 const group = groupsMap.get(groupKey);
                 group.rows.push(row);
                 FIELDS_TO_SUM.forEach(f => group.summary[f] += Number(row[f] || 0));
+                group.summary.total_income += Number(row.total_income || 0); // Добавляем доход в Summary
             });
 
             let groupsArray = Array.from(groupsMap.values());
@@ -105,12 +133,11 @@ function useProcessedStatistics({
                 const mul = order === "ascend" ? 1 : -1;
 
                 groupsArray.sort((a, b) => {
-                    // 1. Сортировка по суммам
-                    if (FIELDS_TO_SUM.includes(columnKey)) {
+                    // Поддержка сортировки для добавленной колонки total_income
+                    if (FIELDS_TO_SUM.includes(columnKey) || columnKey === "total_income") {
                         return (a.summary[columnKey] - b.summary[columnKey]) * mul;
                     }
 
-                    // 2. Сортировка по именам из словаря (если ключ содержит _name)
                     if (columnKey.includes("_name")) {
                         const idKey = columnKey.replace("_name", "_id");
                         const map = nameMaps[columnKey];
@@ -119,7 +146,6 @@ function useProcessedStatistics({
                         return valA.localeCompare(valB) * mul;
                     }
 
-                    // 3. Fallback (по ID)
                     const valA = String(a.rows[0][columnKey] || "");
                     const valB = String(b.rows[0][columnKey] || "");
                     return valA.localeCompare(valB) * mul;

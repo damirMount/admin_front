@@ -160,7 +160,7 @@ export default function PaymentsFilterForm({ onSearch, loading, dictionaries, to
                     <Col xs={24} md={8}>
                         <div className="d-flex justify-content-between align-items-end mb-2">
                             <Text strong><FontAwesomeIcon icon={faCalendarDays}
-                                                          className="me-2 text-primary" /> Период</Text>
+                                                          className="me-2 text-primary text-nowrap" /> Период</Text>
                             <Space split={<Divider type="vertical" />} size={1}>
                                 <Button type="link" size="small" onClick={() => handleQuickDate("month")}>Прош. месяц</Button>
                                 <Button type="link" size="small" onClick={() => handleQuickDate("week")}>Прош. неделя</Button>
@@ -192,10 +192,10 @@ export default function PaymentsFilterForm({ onSearch, loading, dictionaries, to
                             <Select placeholder="Все статусы" allowClear>
                                 <Select.Option value={undefined}>Все аппараты</Select.Option>
                                 <Select.Option value="1">Терминал</Select.Option>
+                                <Select.Option value="101">API точка</Select.Option>
+                                <Select.Option value="100">Суб.точка</Select.Option>
                                 <Select.Option value="2">Кассир</Select.Option>
                                 <Select.Option value="3">Java/POS-Кассир</Select.Option>
-                                <Select.Option value="100">Суб.точка</Select.Option>
-                                <Select.Option value="101">API точка</Select.Option>
                                 <Select.Option value="5">SMS точка</Select.Option>
                             </Select>
                         </Form.Item>
@@ -226,7 +226,7 @@ export default function PaymentsFilterForm({ onSearch, loading, dictionaries, to
 
                 <Row className="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
 
-                    <div className="d-flex justify-content-between align-items-center w-50">
+                    <div className="d-flex justify-content-between align-items-center w-50 text-nowrap">
                         <MoneyColumn label="Кол-во платежей" value={totalSummary.all.count} prefix={''} />
                         <Divider type="vertical" className="finance-divider" />
                         <MoneyColumn label="Внесено" value={totalSummary.all.total} />

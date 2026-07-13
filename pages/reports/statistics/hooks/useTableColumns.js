@@ -96,7 +96,6 @@ function useTableColumns({ sortConfig, filterModes, textColumnsCount, dictionari
             });
         }
 
-        // Колонка Статус
         cols.push({
             title: "Статус",
             dataIndex: "payments_status",
@@ -118,7 +117,6 @@ function useTableColumns({ sortConfig, filterModes, textColumnsCount, dictionari
             },
         });
 
-        // Модификация первой колонки под нужды отображения Избранного
         if (cols.length > 0) {
             const firstColumn = cols[0];
             const originalRender = firstColumn.render;
@@ -142,7 +140,6 @@ function useTableColumns({ sortConfig, filterModes, textColumnsCount, dictionari
             };
         }
 
-        // Метрики
         const metricFields = [
             { title: "Кол-во", key: "count", type: "count" },
             { title: "Внесено", key: "total", type: "money" },
@@ -155,6 +152,7 @@ function useTableColumns({ sortConfig, filterModes, textColumnsCount, dictionari
             { title: "Вознаг. дил.", key: "pDlr", type: "money" },
             { title: "Доход дил.", key: "income", type: "money" },
             { title: "Вознаг. QP", key: "pFed", type: "money" },
+            { title: "Доход", key: "total_income", type: "money" }, // <-- Добавлен новый столбец
         ];
 
         metricFields.forEach(field => {
@@ -162,11 +160,23 @@ function useTableColumns({ sortConfig, filterModes, textColumnsCount, dictionari
                 title: field.title, dataIndex: field.key, key: field.key, align: "right", className: 'text-nowrap',
                 sorter: true, sortOrder: sortConfig.columnKey === field.key ? sortConfig.order : undefined,
                 render: (val, record) => {
-                    const content = field.type === "count"
-                        ? <span className="text-muted">{Number(val || 0).toLocaleString("ru-RU")} ед.</span>
-                        : formatCurrency(val, field.icon || "KGS");
+                    let displayValue = val;
 
-                    const targetIncomeKeys = ['real_pay', 'commission', 'pDlr', 'pFed'];
+                    // ПЕРЕСЧЕТ ДОХОДА: только для строк данных (не для Summary)
+                    if (field.key === "total_income" && !record.isFavSummary && record.dealer_id !== 'total' && record.dealer_id !== 'all') {
+                        const isOurNetwork = Number(apparatType) === 1 && FAVORITE_DEALER_IDS.includes(Number(record.dealer_id));
+
+                        displayValue = isOurNetwork
+                            ? ((Number(record.commission) || 0) + (Number(record.pDlr) || 0) + (Number(record.pFed) || 0))
+                            : ((Number(record.comDlr) || 0) + (Number(record.pFed) || 0));
+                    }
+
+                    const content = field.type === "count"
+                        ? <span className="text-muted">{Number(displayValue || 0).toLocaleString("ru-RU")} ед.</span>
+                        : formatCurrency(displayValue, field.icon || "KGS");
+
+                    // Подсветка для Summary
+                    const targetIncomeKeys = ['real_pay', 'commission', 'pDlr', 'pFed', 'total_income'];
                     if (record?.isFavSummary && record?.favSummaryType === "all" && targetIncomeKeys.includes(field.key)) {
                         return { children: content, props: { style: { background: "#b7eb8f" } } };
                     }

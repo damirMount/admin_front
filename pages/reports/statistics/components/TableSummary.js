@@ -2,21 +2,23 @@ import React from "react";
 import { Table, Typography, Badge } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
-import formatCurrency from "./utils"; // Убедитесь, что путь верный
+import formatCurrency from "./utils";
 
 const { Text } = Typography;
 
 export default function TableSummary({ apparatType, paymentsStatus, textColumnsCount, ordinarySummary, totalSummary, filterModes }) {
 
-    // Блок агентов виден, только если режим дилеров НЕ "total"
     const isAgentSummaryVisible = filterModes?.dealer !== 'total';
-
     const summaryColSpan = textColumnsCount - 1;
     const canGroupSummaryVertically = summaryColSpan > 0;
 
-    const renderMetricCells = (summaryData, startIndex, isTotal = false) => {
+    const renderMetricCells = (summaryData, startIndex, isTotal = false, isAgency = false) => {
         let currentIndex = startIndex;
         const getCellClass = (isGreenColumn) => (isTotal && isGreenColumn ? "summary-cell-green" : "");
+
+        const calculatedTotalIncome = isAgency
+            ? ((Number(summaryData?.comDlr) || 0) + (Number(summaryData?.pFed) || 0))
+            : ((Number(summaryData?.comDlr) || 0) + (Number(summaryData?.commission) || 0) + (Number(summaryData?.pDlr) || 0) + (Number(summaryData?.pFed) || 0));
 
         return (
             <>
@@ -53,6 +55,9 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                 <Table.Summary.Cell index={currentIndex++} align="right" className={getCellClass(true)}>
                     {formatCurrency(summaryData?.pFed)}
                 </Table.Summary.Cell>
+                <Table.Summary.Cell index={currentIndex++} align="right" className={getCellClass(true)}>
+                    {formatCurrency(calculatedTotalIncome)}
+                </Table.Summary.Cell>
             </>
         );
     };
@@ -71,7 +76,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
             `}</style>
 
             <Table.Summary fixed="bottom">
-                {/* Блок Итогов по агентам (показываем только если условия соблюдены) */}
+                {/* 1. Блок Итогов по агентам (isAgency = true) */}
                 {Number(apparatType) === 1 && isAgentSummaryVisible && (
                     <>
                         {!paymentsStatus && summaryColSpan > 0 && (
@@ -90,7 +95,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                                         <Badge status="success" text={<Text strong className="text-success">Остальные: Успешные</Text>}/>
                                     </Table.Summary.Cell>
                                 )}
-                                {renderMetricCells(ordinarySummary.success, textColumnsCount, false)}
+                                {renderMetricCells(ordinarySummary.success, textColumnsCount, false, true)}
                             </Table.Summary.Row>
                         )}
 
@@ -105,7 +110,8 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                                         <Badge status="error" text={<Text strong className="text-danger">Остальные: Ошибки</Text>}/>
                                     </Table.Summary.Cell>
                                 )}
-                                {renderMetricCells(ordinarySummary.fail, textColumnsCount, false)}
+                                {/* ИСПРАВЛЕНО: передаем ordinarySummary.fail */}
+                                {renderMetricCells(ordinarySummary.fail, textColumnsCount, false, true)}
                             </Table.Summary.Row>
                         )}
 
@@ -126,16 +132,16 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                                     <Text strong className="text-primary">👥 ВСЕГО ПО АГЕНТАМ</Text>
                                 </Table.Summary.Cell>
                             )}
-                            {renderMetricCells(ordinarySummary.all, textColumnsCount, true)}
+                            {renderMetricCells(ordinarySummary.all, textColumnsCount, true, true)}
                         </Table.Summary.Row>
 
                         <Table.Summary.Row>
-                            <Table.Summary.Cell index={0} colSpan={textColumnsCount + 11} className="summary-divider-cell" />
+                            <Table.Summary.Cell index={0} colSpan={textColumnsCount + 12} className="summary-divider-cell" />
                         </Table.Summary.Row>
                     </>
                 )}
 
-                {/* Общие итоги (отображаются всегда) */}
+                {/* 2. Общие итоги (isAgency = false) */}
                 {!paymentsStatus && summaryColSpan > 0 && (
                     <Table.Summary.Row className="summary-row-success-total">
                         {canGroupSummaryVertically ? (
@@ -152,7 +158,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                                 <Badge status="success" text={<Text strong className="text-success">Общие: Успешные</Text>}/>
                             </Table.Summary.Cell>
                         )}
-                        {renderMetricCells(totalSummary?.success || {}, textColumnsCount, false)}
+                        {renderMetricCells(totalSummary?.success || {}, textColumnsCount, false, false)}
                     </Table.Summary.Row>
                 )}
 
@@ -167,7 +173,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                                 <Badge status="error" text={<Text strong className="text-danger">Общие: Ошибки</Text>}/>
                             </Table.Summary.Cell>
                         )}
-                        {renderMetricCells(totalSummary?.fail || {}, textColumnsCount, false)}
+                        {renderMetricCells(totalSummary?.fail || {}, textColumnsCount, false, false)}
                     </Table.Summary.Row>
                 )}
 
@@ -188,7 +194,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                             <Text strong className="text-primary">🌍 ВСЕГО ОБЩИЕ ИТОГИ</Text>
                         </Table.Summary.Cell>
                     )}
-                    {renderMetricCells(totalSummary?.all || {}, textColumnsCount, false)}
+                    {renderMetricCells(totalSummary?.all || {}, textColumnsCount, false, false)}
                 </Table.Summary.Row>
             </Table.Summary>
         </>

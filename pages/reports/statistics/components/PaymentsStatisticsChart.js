@@ -102,7 +102,7 @@ export default function PaymentsStatisticsChart({statistics, totalSummary}) {
                 };
             }
 
-            const total = Number(item.real_pay || 0);
+            const total = Number(item.total || 0);
             const count = Number(item.count || 0);
 
             if (String(item.payments_status).toLowerCase() === 'success') {
