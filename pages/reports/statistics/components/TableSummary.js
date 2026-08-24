@@ -2,23 +2,75 @@ import React from "react";
 import { Table, Typography, Badge } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
-import formatCurrency from "./utils";
+import formatCurrency, { FAVORITE_DEALER_IDS } from "./utils";
 
 const { Text } = Typography;
 
-export default function TableSummary({ apparatType, paymentsStatus, textColumnsCount, ordinarySummary, totalSummary, filterModes }) {
+export default function TableSummary({
+                                         apparatType,
+                                         paymentsStatus,
+                                         textColumnsCount,
+                                         ordinarySummary,
+                                         totalSummary,
+                                         filterModes,
+                                         processedStatistics = []
+                                     }) {
 
+    const isTerminalMode = Number(apparatType) === 1;
     const isAgentSummaryVisible = filterModes?.dealer !== 'total';
     const summaryColSpan = textColumnsCount - 1;
     const canGroupSummaryVertically = summaryColSpan > 0;
 
-    const renderMetricCells = (summaryData, startIndex, isTotal = false, isAgency = false) => {
+    // Функция проверки: является ли строка реальной записью дилера (а не итоговой строкой)
+    const isRealDataRow = (r) => {
+        if (!r) return false;
+        if (
+            r.isSummary ||
+            r.isFavSummary ||
+            r.isAgentSummary ||
+            r.isTotal ||
+            r.isTotalSummary ||
+            r.isGroupSummary ||
+            r.isHeader ||
+            r.type === 'summary' ||
+            r.type === 'total' ||
+            r.type === 'header'
+        ) {
+            return false;
+        }
+        if (typeof r.key === 'string' && (r.key.includes('summary') || r.key.includes('total'))) return false;
+        if (typeof r.id === 'string' && (r.id.includes('summary') || r.id.includes('total'))) return false;
+        return true;
+    };
+
+    // Отбираем ТОЛЬКО чистые данные дилеров (без промежуточных и итоговых строк)
+    const pureRows = processedStatistics.filter(isRealDataRow);
+
+    // Универсальная функция суммирования дохода по отфильтрованным строкам
+    const getIncomeSum = (filterFn) => {
+        return pureRows
+            .filter(filterFn)
+            .reduce((sum, r) => sum + (Number(r.total_income) || 0), 0);
+    };
+
+    // 1. Доход НАШЕЙ СЕТИ (любимые дилеры)
+    const ourNetworkSuccessIncome = getIncomeSum(r => FAVORITE_DEALER_IDS.includes(Number(r.dealer_id)) && r.payments_status === "Успешно");
+    const ourNetworkFailIncome = getIncomeSum(r => FAVORITE_DEALER_IDS.includes(Number(r.dealer_id)) && r.payments_status !== "Успешно");
+    const ourNetworkAllIncome = getIncomeSum(r => FAVORITE_DEALER_IDS.includes(Number(r.dealer_id)));
+
+    // 2. Доход АГЕНТСКОЙ СЕТИ (остальные дилеры)
+    const agencySuccessIncome = getIncomeSum(r => !FAVORITE_DEALER_IDS.includes(Number(r.dealer_id)) && r.payments_status === "Успешно");
+    const agencyFailIncome = getIncomeSum(r => !FAVORITE_DEALER_IDS.includes(Number(r.dealer_id)) && r.payments_status !== "Успешно");
+    const agencyAllIncome = getIncomeSum(r => !FAVORITE_DEALER_IDS.includes(Number(r.dealer_id)));
+
+    // 3. ОБЩИЙ ДОХОД (Строгая сумма: Наша сеть + Агентская сеть)
+    const totalSuccessIncome = ourNetworkSuccessIncome + agencySuccessIncome;
+    const totalFailIncome = ourNetworkFailIncome + agencyFailIncome;
+    const totalAllIncome = ourNetworkAllIncome + agencyAllIncome;
+
+    const renderMetricCells = (summaryData, startIndex, isTotal = false, calculatedTotalIncome = 0) => {
         let currentIndex = startIndex;
         const getCellClass = (isGreenColumn) => (isTotal && isGreenColumn ? "summary-cell-green" : "");
-
-        const calculatedTotalIncome = isAgency
-            ? ((Number(summaryData?.comDlr) || 0) + (Number(summaryData?.pFed) || 0))
-            : ((Number(summaryData?.comDlr) || 0) + (Number(summaryData?.commission) || 0) + (Number(summaryData?.pDlr) || 0) + (Number(summaryData?.pFed) || 0));
 
         return (
             <>
@@ -55,6 +107,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                 <Table.Summary.Cell index={currentIndex++} align="right" className={getCellClass(true)}>
                     {formatCurrency(summaryData?.pFed)}
                 </Table.Summary.Cell>
+                {/* ПРЯМОЙ ВЫВОД СУММЫ ДОХОДА */}
                 <Table.Summary.Cell index={currentIndex++} align="right" className={getCellClass(true)}>
                     {formatCurrency(calculatedTotalIncome)}
                 </Table.Summary.Cell>
@@ -76,8 +129,8 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
             `}</style>
 
             <Table.Summary fixed="bottom">
-                {/* 1. Блок Итогов по агентам (isAgency = true) */}
-                {Number(apparatType) === 1 && isAgentSummaryVisible && (
+                {/* 1. Блок Итогов по агентам */}
+                {isTerminalMode && isAgentSummaryVisible && (
                     <>
                         {!paymentsStatus && summaryColSpan > 0 && (
                             <Table.Summary.Row className="summary-row-success-ordinary">
@@ -95,7 +148,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                                         <Badge status="success" text={<Text strong className="text-success">Остальные: Успешные</Text>}/>
                                     </Table.Summary.Cell>
                                 )}
-                                {renderMetricCells(ordinarySummary.success, textColumnsCount, false, true)}
+                                {renderMetricCells(ordinarySummary?.success, textColumnsCount, false, agencySuccessIncome)}
                             </Table.Summary.Row>
                         )}
 
@@ -110,8 +163,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                                         <Badge status="error" text={<Text strong className="text-danger">Остальные: Ошибки</Text>}/>
                                     </Table.Summary.Cell>
                                 )}
-                                {/* ИСПРАВЛЕНО: передаем ordinarySummary.fail */}
-                                {renderMetricCells(ordinarySummary.fail, textColumnsCount, false, true)}
+                                {renderMetricCells(ordinarySummary?.fail, textColumnsCount, false, agencyFailIncome)}
                             </Table.Summary.Row>
                         )}
 
@@ -132,7 +184,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                                     <Text strong className="text-primary">👥 ВСЕГО ПО АГЕНТАМ</Text>
                                 </Table.Summary.Cell>
                             )}
-                            {renderMetricCells(ordinarySummary.all, textColumnsCount, true, true)}
+                            {renderMetricCells(ordinarySummary?.all, textColumnsCount, true, agencyAllIncome)}
                         </Table.Summary.Row>
 
                         <Table.Summary.Row>
@@ -141,7 +193,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                     </>
                 )}
 
-                {/* 2. Общие итоги (isAgency = false) */}
+                {/* 2. Общие итоги */}
                 {!paymentsStatus && summaryColSpan > 0 && (
                     <Table.Summary.Row className="summary-row-success-total">
                         {canGroupSummaryVertically ? (
@@ -158,7 +210,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                                 <Badge status="success" text={<Text strong className="text-success">Общие: Успешные</Text>}/>
                             </Table.Summary.Cell>
                         )}
-                        {renderMetricCells(totalSummary?.success || {}, textColumnsCount, false, false)}
+                        {renderMetricCells(totalSummary?.success, textColumnsCount, false, totalSuccessIncome)}
                     </Table.Summary.Row>
                 )}
 
@@ -173,7 +225,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                                 <Badge status="error" text={<Text strong className="text-danger">Общие: Ошибки</Text>}/>
                             </Table.Summary.Cell>
                         )}
-                        {renderMetricCells(totalSummary?.fail || {}, textColumnsCount, false, false)}
+                        {renderMetricCells(totalSummary?.fail, textColumnsCount, false, totalFailIncome)}
                     </Table.Summary.Row>
                 )}
 
@@ -194,7 +246,7 @@ export default function TableSummary({ apparatType, paymentsStatus, textColumnsC
                             <Text strong className="text-primary">🌍 ВСЕГО ОБЩИЕ ИТОГИ</Text>
                         </Table.Summary.Cell>
                     )}
-                    {renderMetricCells(totalSummary?.all || {}, textColumnsCount, false, false)}
+                    {renderMetricCells(totalSummary?.all, textColumnsCount, false, totalAllIncome)}
                 </Table.Summary.Row>
             </Table.Summary>
         </>

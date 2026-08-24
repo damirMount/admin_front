@@ -1,15 +1,13 @@
-import React, { useMemo, useState } from "react";
+import React, {useMemo, useState} from "react";
 import SmartTable from "../../../../components/main/table/SmartTable";
 import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
+import {saveAs} from 'file-saver';
 import TableSummary from "./TableSummary";
 import useTableColumns from "../hooks/useTableColumns";
 import useProcessedStatistics from "../hooks/useProcessedStatistics";
-import { Button } from "antd";
-import { FileExcelOutlined } from "@ant-design/icons";
-import { FAVORITE_DEALER_IDS } from "./utils";
+import {Button} from "antd";
+import {FAVORITE_DEALER_IDS} from "./utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowUp, faFileExcel, faFileExport} from "@fortawesome/free-solid-svg-icons";
 import {faArrowAltCircleUp} from "@fortawesome/free-regular-svg-icons";
 
 export default function PaymentsStatisticsTable({
@@ -38,6 +36,33 @@ export default function PaymentsStatisticsTable({
 
     const tableColumns = useTableColumns({ sortConfig, filterModes, textColumnsCount, dictionaries, apparatType });
 
+    const isTerminalMode = Number(apparatType) === 1;
+
+    // 1. Точный расчет дохода отдельной строки (если r.total_income еще не был посчитан)
+    const getRowIncome = (row) => {
+        if (!row) return 0;
+        if (row.total_income !== undefined && row.total_income !== null) {
+            return Number(row.total_income) || 0;
+        }
+
+        const comDlr = Number(row.comDlr || 0);
+        const commission = Number(row.commission || 0);
+        const pDlr = Number(row.pDlr || 0);
+        const pFed = Number(row.pFed || 0);
+
+        if (isTerminalMode) {
+            const isFav = FAVORITE_DEALER_IDS.includes(Number(row.dealer_id));
+            return isFav ? (commission + pDlr + pFed) : (comDlr + pFed);
+        }
+
+        return commission + pDlr + pFed;
+    };
+
+    // 2. Безопасное суммирование доходов
+    const getIncomeSum = (rows) => {
+        return (rows || []).reduce((sum, r) => sum + getRowIncome(r), 0);
+    };
+
     const handleRowClassName = (record) => {
         if (record.isFavSummary) {
             if (record.favSummaryType === "success") return "fw-bold text-success";
@@ -62,7 +87,6 @@ export default function PaymentsStatisticsTable({
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Статистика');
 
-        // 1. Конфигурация столбцов (скрываем то, что в "total")
         const columnsConfig = [
             { key: 'dealer', label: 'Дилер', condition: filterModes.dealer !== 'total' },
             { key: 'server', label: 'Сервер', condition: filterModes.server !== 'total' },
@@ -91,15 +115,6 @@ export default function PaymentsStatisticsTable({
             apparat: new Map(dictionaries?.apparats?.map(d => [String(d.id), d.name]) || []),
         };
 
-        // Расчет дохода (логика как в TableSummary)
-        const getCalculatedIncome = (row, isAgency) => {
-            const comDlr = Number(row.comDlr || 0);
-            const commission = Number(row.commission || 0);
-            const pDlr = Number(row.pDlr || 0);
-            const pFed = Number(row.pFed || 0);
-            return isAgency ? (comDlr + pFed) : (commission + pDlr + pFed);
-        };
-
         const buildDataRow = (row, label = null) => {
             return columnsConfig.map(col => {
                 if (label && col.key === 'dealer') return label;
@@ -109,61 +124,92 @@ export default function PaymentsStatisticsTable({
                 if (col.key === 'apparat') return maps.apparat.get(String(row.apparat_id)) || row.apparat_id || "";
                 if (col.key === 'status') return row.payments_status || "";
 
-                const fields = { count: 'count', total: 'total', real_pay: 'real_pay', reduce: 'reduce', comDlr: 'comDlr', commission: 'commission', pDlr: 'pDlr', pFed: 'pFed', total_income: 'total_income' };
+                if (col.key === 'total_income') return row.total_income !== undefined ? Number(row.total_income || 0) : getRowIncome(row);
+
+                const fields = {
+                    count: 'count', total: 'total', real_pay: 'real_pay',
+                    reduce: 'reduce', comDlr: 'comDlr', commission: 'commission',
+                    pDlr: 'pDlr', pFed: 'pFed'
+                };
                 return Number(row[fields[col.key]] || 0);
             });
         };
 
         const sumStats = (rows) => {
             return rows.reduce((acc, r) => {
-                Object.keys(r).forEach(k => { if (typeof r[k] === 'number') acc[k] = (acc[k] || 0) + Number(r[k]); });
+                Object.keys(r).forEach(k => {
+                    if (typeof r[k] === 'number') acc[k] = (acc[k] || 0) + Number(r[k]);
+                });
                 return acc;
-            }, { count: 0, total: 0, real_pay: 0, reduce: 0, comDlr: 0, commission: 0, pDlr: 0, pFed: 0, total_income: 0 });
+            }, { count: 0, total: 0, real_pay: 0, reduce: 0, comDlr: 0, commission: 0, pDlr: 0, pFed: 0 });
         };
 
-        const isTerminalMode = Number(apparatType) === 1;
+        // Жесткая проверка на чистую строку дилера (исключает любые итоговые и служебные записи)
+        const isRealDataRow = (r) => {
+            if (!r) return false;
+            if (
+                r.isSummary ||
+                r.isFavSummary ||
+                r.isAgentSummary ||
+                r.isTotal ||
+                r.isTotalSummary ||
+                r.isGroupSummary ||
+                r.isHeader ||
+                r.type === 'summary' ||
+                r.type === 'total' ||
+                r.type === 'header'
+            ) {
+                return false;
+            }
+            if (typeof r.key === 'string' && (r.key.includes('summary') || r.key.includes('total'))) return false;
+            if (typeof r.id === 'string' && (r.id.includes('summary') || r.id.includes('total'))) return false;
+            return true;
+        };
+
+        const pureDataRows = (processedStatistics || []).filter(isRealDataRow);
+
+        let overallIncome = 0;
 
         if (isTerminalMode) {
-            const favRows = processedStatistics.filter(r => r.isFavSummary || (isTerminalMode && FAVORITE_DEALER_IDS.includes(Number(r.dealer_id))));
-            // Фильтруем только данные, убирая существующие строки summary
-            const favDataOnly = favRows.filter(r => !r.isFavSummary);
-            const ordinaryRows = processedStatistics.filter(r => !favRows.includes(r));
+            const favDataOnly = pureDataRows.filter(r => FAVORITE_DEALER_IDS.includes(Number(r.dealer_id)));
+            const ordinaryRows = pureDataRows.filter(r => !FAVORITE_DEALER_IDS.includes(Number(r.dealer_id)));
 
-            const rowHeader = worksheet.addRow([">>> НАША СЕТЬ"]);
-            rowHeader.font = { bold: true };
-
+            worksheet.addRow([">>> НАША СЕТЬ"]).font = { bold: true };
             favDataOnly.forEach(row => worksheet.addRow(buildDataRow(row)));
 
             const favTotal = sumStats(favDataOnly);
-            favTotal.total_income = getCalculatedIncome(favTotal, false);
-            const favTotalRow = worksheet.addRow(buildDataRow(favTotal, "ИТОГО ПО НАШЕЙ СЕТИ"));
-            favTotalRow.font = { bold: true };
+            const favIncome = getIncomeSum(favDataOnly);
+            favTotal.total_income = favIncome;
+            worksheet.addRow(buildDataRow(favTotal, "ИТОГО ПО НАШЕЙ СЕТИ")).font = { bold: true };
 
             worksheet.addRow([]);
 
+            let agencyIncome = 0;
             if (filterModes.dealer !== "total") {
-                const rowAgency = worksheet.addRow([">>> АГЕНТСКАЯ СЕТЬ"]);
-                rowAgency.font = { bold: true };
+                worksheet.addRow([">>> АГЕНТСКАЯ СЕТЬ"]).font = { bold: true };
                 ordinaryRows.forEach(row => worksheet.addRow(buildDataRow(row)));
 
-                if (ordinarySummary?.all) {
-                    const agencyTotal = { ...ordinarySummary.all };
-                    agencyTotal.total_income = getCalculatedIncome(agencyTotal, true);
-                    const agencyTotalRow = worksheet.addRow(buildDataRow(agencyTotal, "ИТОГО ПО АГЕНТАМ"));
-                    agencyTotalRow.font = { bold: true };
-                }
+                const agencyTotal = sumStats(ordinaryRows);
+                agencyIncome = getIncomeSum(ordinaryRows);
+                agencyTotal.total_income = agencyIncome;
+                worksheet.addRow(buildDataRow(agencyTotal, "ИТОГО ПО АГЕНТАМ")).font = { bold: true };
                 worksheet.addRow([]);
+            } else {
+                agencyIncome = getIncomeSum(ordinaryRows);
             }
+
+            // Итоговый доход = Наша сеть + Агентская сеть
+            overallIncome = favIncome + agencyIncome;
         } else {
-            processedStatistics.forEach(row => worksheet.addRow(buildDataRow(row)));
+            pureDataRows.forEach(row => worksheet.addRow(buildDataRow(row)));
+            overallIncome = getIncomeSum(pureDataRows);
         }
 
-        if (totalSummary?.all) {
-            const totalRowData = { ...totalSummary.all };
-            totalRowData.total_income = getCalculatedIncome(totalRowData, false);
-            const totalRow = worksheet.addRow(buildDataRow(totalRowData, isTerminalMode ? "ИТОГО" : ">>> ОБЩИЕ ИТОГИ"));
-            totalRow.font = { bold: true };
-        }
+        // ОБЩИЕ ИТОГИ В ЭКСЕЛЬ
+        const totalRowData = sumStats(pureDataRows);
+        totalRowData.total_income = overallIncome; // Строго сумма категорий без удвоений
+        const totalRow = worksheet.addRow(buildDataRow(totalRowData, ">>> ОБЩИЕ ИТОГИ"));
+        totalRow.font = { bold: true };
 
         worksheet.columns.forEach(col => { col.width = 15; });
         worksheet.getColumn(1).width = 30;
@@ -203,6 +249,7 @@ export default function PaymentsStatisticsTable({
                         ordinarySummary={ordinarySummary}
                         totalSummary={totalSummary}
                         filterModes={filterModes}
+                        processedStatistics={processedStatistics}
                     />
                 )}
             />
